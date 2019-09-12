@@ -3,10 +3,17 @@ import { createContainer } from 'meteor/react-meteor-data';
 import { render } from 'react-dom';
 import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 
-import { Meteor } from 'meteor/meteor'
+import ReactDOM from 'react-dom';
+import Button from '@material-ui/core/Button';
 
-Meteor.startup( () => {
-    render(
-        document.getElementById( 'render-root' )
+function App() {
+    return (
+        <Button variant="contained" color="primary">
+            Hello World
+        </Button>
     );
+}
+
+Meteor.startup(() => {
+    ReactDOM.render(<App />, document.getElementById('render-root'));
 });
