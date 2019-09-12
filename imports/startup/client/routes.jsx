@@ -7,18 +7,42 @@ import ReactDOM from 'react-dom';
 import Button from '@material-ui/core/Button';
 import App from '/imports/ui/components/App/App';
 import Login from '/imports/ui/components/Auth/Login';
+import Login1 from '/imports/ui/components/Auth/Login1';
 
 
 
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route, Link, Redirect } from "react-router-dom";
 
-function Routes() {
-    return (
-        <Router>
-            <Route exact path="/" component={App} />
-            <Route exact path="/login" component={Login} />
-        </Router>
-    );
+
+class AuthRequiredRoute extends Route {
+    /**
+     * @example <AuthRequiredRoute path="/" component={Products}>
+     */
+    render(props) {
+        // call some method/function that will validate if user is logged in
+        // if (!Meteor.userId()) {
+        if (false) {
+            return <Redirect to="/login"></Redirect>
+        } else {
+            return <this.props.component />
+        }
+    }
+}
+
+class Routes extends Component {
+    constructor(props) {
+        super(props);
+    }
+    render() {
+        return (
+            <Router>
+                <Route exact path="/" component={App}/>
+                <Route exact path="/login" component={Login}/>
+                <Route exact path="/login1" component={Login1}/>
+            </Router>
+        );
+    }
+
 }
 
 const Root = withTracker(props => {
@@ -33,5 +57,5 @@ const Root = withTracker(props => {
 
 
 Meteor.startup(() => {
-    ReactDOM.render(<Root />, document.getElementById('render-root'));
+    render(<Root />, document.getElementById('render-root'));
 });

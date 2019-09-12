@@ -89,6 +89,9 @@ const useStyles = makeStyles(theme => ({
             display: 'none',
         },
     },
+    appBar: {
+        background: '#ffffff'
+    }
 }));
 
 export default function PrimarySearchAppBar() {
@@ -136,7 +139,7 @@ export default function PrimarySearchAppBar() {
 
     return (
         <div className={classes.grow}>
-            <AppBar position="static" color="default">
+            <AppBar position="static" className={classes.appBar} color="default">
                 <Toolbar>
                     <Brand />
                     {/*<IconButton*/}
@@ -164,7 +167,7 @@ export default function PrimarySearchAppBar() {
                         {/*/>*/}
                     {/*</div>*/}
                     <div className={classes.grow} />
-                    <Typography className={classes.topTexts} noWrap>
+                    <Typography className={classes.topTexts} noWrap style={{borderLeft: '0.1em solid #eaecef'}}>
                         <span style={{color: '#aab5c0'}}>102</span> ACTIVITIES
                     </Typography>
                     <Typography className={classes.topTexts} noWrap>
