@@ -5,14 +5,7 @@ import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 
 import ReactDOM from 'react-dom';
 import Button from '@material-ui/core/Button';
-
-function App() {
-    return (
-        <Button variant="contained" color="primary">
-            Hello World
-        </Button>
-    );
-}
+import App from '/imports/ui/components/App/App';
 
 Meteor.startup(() => {
     ReactDOM.render(<App />, document.getElementById('render-root'));
