@@ -4,12 +4,14 @@ import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
 import Card from '@material-ui/core/Card';
+import Button from '@material-ui/core/Button';
+// import { Link } from '@material-ui/core';
 
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
-import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import { FormControl } from '@material-ui/core';
+import { FormControl, Input, InputLabel, FormHelperText } from '@material-ui/core';
+import { BrowserRouter as Router, Route, Link, RouterLink } from "react-router-dom";
 
 const useStyles1 = makeStyles(theme => ({
     root: {
@@ -27,6 +29,9 @@ const useStyles1 = makeStyles(theme => ({
 
 
 const useStyles = makeStyles({
+    root: {
+        justifyContent: 'center'
+    },
     card: {
         minWidth: 275,
     },
@@ -41,6 +46,9 @@ const useStyles = makeStyles({
     pos: {
         marginBottom: 12,
     },
+    button: {
+        textAlign: 'center',
+    },
 });
 
 const SimpleCard = () => {
@@ -48,31 +56,28 @@ const SimpleCard = () => {
     const bull = <span className={classes.bullet}>•</span>;
 
     return (
-        <Card className={classes.card}>
+        <Card className={classes.card} style={{padding: '12px'}}>
             <CardContent>
-                <FormControl>
+                <FormControl fullWidth>
                     <InputLabel htmlFor="my-input">Email address</InputLabel>
-                    <Input id="my-input" aria-describedby="my-helper-text" />
-                    <FormHelperText id="my-helper-text">We'll never share your email.</FormHelperText>
+                    <Input id="my-input" aria-describedby="my-helper-text" placeholder="Enter Email"/>
+                    {/*<FormHelperText id="my-helper-text">We'll never share your email.</FormHelperText>*/}
                 </FormControl>
-                <Typography variant="h5" component="h2">
-                    be
-                    {bull}
-                    nev
-                    {bull}o{bull}
-                    lent
-                </Typography>
-                <Typography className={classes.pos} color="textSecondary">
-                    adjective
-                </Typography>
-                <Typography variant="body2" component="p">
-                    well meaning and kindly.
+                <br/>
+                <br/>
+                <FormControl fullWidth>
+                    <InputLabel htmlFor="my-input">Password</InputLabel>
+                    <Input id="my-password" aria-describedby="my-helper-text" placeholder="Enter Password"/>
+                </FormControl>
+                <Typography variant="body2" component="p" align='left'>
                     <br />
-                    {'"a benevolent smile"'}
+                    Forgot Your Password?
                 </Typography>
             </CardContent>
-            <CardActions>
-                <Button size="small">Learn More</Button>
+            <CardActions style={{justifyContent: 'center'}}>
+                <Button variant="contained" color="primary">
+                    Login
+                </Button>
             </CardActions>
         </Card>
     );
@@ -92,14 +97,11 @@ const SampleGrid = () => {
             <Grid item xs={12}>
                 <SimpleCard/>
             </Grid>
-            <Grid item xs={3}>
-                <Paper className={classes.paper}>xs=3</Paper>
-            </Grid>
-            <Grid item xs={3}>
-                <Paper className={classes.paper}>xs=3</Paper>
-            </Grid>
-            <Grid item xs={3}>
-                <Paper className={classes.paper}>xs=3</Paper>
+            <Grid item xs={12} classes={classes.root}>
+                <Typography variant="body2" component="p">
+                    <br />
+                    Don't have Account! <Link to='/login1'> Sign up </Link>
+                </Typography>
             </Grid>
         </Grid>
     </div>
