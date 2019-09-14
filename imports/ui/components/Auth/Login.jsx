@@ -1,16 +1,8 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
-import Grid from '@material-ui/core/Grid';
-import Container from '@material-ui/core/Container';
-import Card from '@material-ui/core/Card';
-import Button from '@material-ui/core/Button';
-// import { Link } from '@material-ui/core';
-
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
-import { FormControl, Input, InputLabel, FormHelperText } from '@material-ui/core';
+import { withTracker } from 'meteor/react-meteor-data';
+import { Grid, Container, Card, Button, CardActions, CardContent, Typography,
+    FormControl, Input, InputLabel, FormHelperText} from '@material-ui/core';
 import { BrowserRouter as Router, Route, Link, RouterLink } from "react-router-dom";
 
 const useStyles1 = makeStyles(theme => ({
@@ -81,12 +73,23 @@ const SimpleCard = () => {
             </CardActions>
         </Card>
     );
-}
+};
 
-
-const SampleGrid = () => {
+function Login (props) {
+    console.log(props);
     const classes = useStyles();
-    return <div className={classes.root}>
+    const styles = {
+        container: {
+            marginTop: '70px',
+            textAlign: 'center'
+        },
+    }
+
+    useEffect(() => {
+        console.log(props);
+    });
+    return <Container maxWidth="sm" style={styles.container}>
+        <div className={classes.root}>
         <Grid container spacing={3}>
             <Grid item xs={12}>
                 <img src={`/branding/logo-long.png`}/>
@@ -97,7 +100,7 @@ const SampleGrid = () => {
             <Grid item xs={12}>
                 <SimpleCard/>
             </Grid>
-            <Grid item xs={12} classes={classes.root}>
+            <Grid item xs={12} className={classes.root}>
                 <Typography variant="body2" component="p">
                     <br />
                     Don't have Account! <Link to='/login1'> Sign up </Link>
@@ -105,28 +108,31 @@ const SampleGrid = () => {
             </Grid>
         </Grid>
     </div>
+    </Container>
 }
 
+const LoginPage = withTracker(props => {
+    // Do all your reactive data access in this method.
+    // Note that this subscription will get cleaned up when your component is unmounted
+    // const handle = Meteor.subscribe('todoList', props.id);
 
-class Login extends Component {
-    constructor(props){
-        super(props)
-    }
+    return {
+        user: testFunction()
+    };
+})(Login);
 
-    render(){
-        const styles = {
-            container: {
-                marginTop: '70px',
-                textAlign: 'center'
-            },
-        }
-        return (
-            <Container maxWidth="sm" style={styles.container}>
-                <SampleGrid/>
-            </Container>
+export default LoginPage
 
-        );
-    }
+var testFunction =  async function() {
+    const result = await x();
+    return result
 }
 
-export default Login
+function x() {
+    var promise = new Promise(function(resolve, reject) {
+        window.setTimeout(function() {
+            resolve('done!');
+        }, 5000);
+    });
+    return promise;
+}
