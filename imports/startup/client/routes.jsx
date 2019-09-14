@@ -6,12 +6,11 @@ import ReactDOM from 'react-dom';
 import Button from '@material-ui/core/Button';
 import App from '/imports/ui/components/App/App';
 import Login from '/imports/ui/components/Auth/Login';
-import Login1 from '/imports/ui/components/Auth/Login1';
 import Signup from '/imports/ui/components/Auth/Signup';
 
 
 
-import { BrowserRouter as Router, Route, Link, Redirect } from "react-router-dom";
+import { BrowserRouter as Router, Route, Link, Redirect, Switch } from "react-router-dom";
 
 
 class AuthRequiredRoute extends Route {
@@ -20,8 +19,7 @@ class AuthRequiredRoute extends Route {
      */
     render(props) {
         // call some method/function that will validate if user is logged in
-        // if (!Meteor.userId()) {
-        if (false) {
+        if (!Meteor.userId()) {
             return <Redirect to="/login"></Redirect>
         } else {
             return <this.props.component />
@@ -36,9 +34,8 @@ class Routes extends Component {
     render() {
         return (
             <Router>
-                <Route exact path="/" component={App}/>
+                <AuthRequiredRoute exact path="/" component={App}/>
                 <Route exact path="/login" component={Login}/>
-                <Route exact path="/login1" component={Login1}/>
                 <Route exact path="/signup" component={Signup}/>
             </Router>
         );

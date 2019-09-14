@@ -3,7 +3,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Grid, Container, Card, Button, CardActions, CardContent, Typography,
     FormControl, Input, InputLabel, FormHelperText} from '@material-ui/core';
-import { BrowserRouter as Router, Route, Link, RouterLink } from "react-router-dom";
+import { BrowserRouter as Router, Route, Link, RouterLink, Redirect } from "react-router-dom";
+
 
 const useStyles1 = makeStyles(theme => ({
 
@@ -49,13 +50,12 @@ function Login (props) {
     const classes = useStyles();
     const styles = {
         container: {
-            marginTop: '70px',
+            marginTop: '57px',
             textAlign: 'center'
         },
     };
 
     const onSubmit = (event) => {
-        console.log("submit running");
         event.preventDefault();
         setError('');
         if(password && password.length < 7){
@@ -67,7 +67,6 @@ function Login (props) {
                 setError(err.reason);
                 console.log(err)
             }else{
-                console.log('login successfully')
             }
         });
     };
@@ -79,8 +78,8 @@ function Login (props) {
         setPassword(e.target.value);
     };
 
-    useEffect(() => {
-        console.log(error);
+    useEffect((props) => {
+        if (props && props.user) return <Redirect to={'/'} />;
     });
     return <Container maxWidth="sm" style={styles.container}>
         <div className={classes.root}>
@@ -96,7 +95,7 @@ function Login (props) {
                     <Card className={classes.card} style={{padding: '12px'}}>
                         <CardContent>
                             <FormControl fullWidth>
-                                <InputLabel htmlFor="my-input">Email address</InputLabel>
+                                <InputLabel htmlFor="my-password">Email address</InputLabel>
                                 <Input id="my-input" aria-describedby="my-helper-text" name="email" placeholder="Enter Email" onChange={handleEmailInput} value={email} type="email" required/>
                                 {/*<FormHelperText id="my-helper-text">We'll never share your email.</FormHelperText>*/}
                             </FormControl>
@@ -129,7 +128,7 @@ function Login (props) {
             <Grid item xs={12} className={classes.root}>
                 <Typography variant="body2" component="p">
                     <br />
-                    Don't have Account! <Link to='/signup'> Sign up </Link>
+                    Don't have Account? <Link to='/signup'> Sign up </Link>
                 </Typography>
             </Grid>
         </Grid>
@@ -137,28 +136,14 @@ function Login (props) {
     </Container>
 }
 
-// const LoginPage = withTracker(props => {
-//     // Do all your reactive data access in this method.
-//     // Note that this subscription will get cleaned up when your component is unmounted
-//     // const handle = Meteor.subscribe('todoList', props.id);
-//
-//     return {
-//         user: testFunction()
-//     };
-// })(Login);
+const LoginPage = withTracker(props => {
+    // Do all your reactive data access in this method.
+    // Note that this subscription will get cleaned up when your component is unmounted
+    // const handle = Meteor.subscribe('todoList', props.id);
 
-export default Login
+    return {
+        user: Meteor.user()
+    };
+})(Login);
 
-var testFunction =  async function() {
-    const result = await x();
-    return result
-};
-
-function x() {
-    var promise = new Promise(function(resolve, reject) {
-        window.setTimeout(function() {
-            resolve('done!');
-        }, 5000);
-    });
-    return promise;
-}
+export default LoginPage

@@ -113,6 +113,7 @@ export default function PrimarySearchAppBar() {
     function handleMenuClose() {
         setAnchorEl(null);
         handleMobileMenuClose();
+        Meteor.logout()
     }
 
     function handleMobileMenuOpen(event) {
