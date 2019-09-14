@@ -13,9 +13,7 @@ import ResetPassword from '/imports/ui/components/Auth/ResetPassword';
 
 const Authenticated = ({ loggingIn, authenticated, component, ...rest }) => (
     <Route {...rest} render={(props) => {
-        console.log("loggingIn", loggingIn)
-        console.log("authenticated", authenticated)
-        if (loggingIn) return <div></div>;
+        // if (loggingIn) return <div></div>;
         return authenticated ?
             (React.createElement(component, { ...props, loggingIn, authenticated })) :
             (<Redirect to="/login" />);
@@ -24,7 +22,7 @@ const Authenticated = ({ loggingIn, authenticated, component, ...rest }) => (
 
 const Public = ({ loggingIn, authenticated, component, ...rest }) => (
     <Route {...rest} render={(props) => {
-        if (loggingIn) return <div></div>;
+        // if (loggingIn) return <div></div>;
         return !authenticated ?
             (React.createElement(component, { ...props, loggingIn, authenticated })) :
             (<Redirect to="/" />);

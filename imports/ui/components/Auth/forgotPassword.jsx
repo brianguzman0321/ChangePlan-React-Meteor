@@ -57,7 +57,6 @@ function ForgotPassword (props) {
     const onSubmit = (event) => {
         event.preventDefault();
         setError('');
-        console.log("running")
         Accounts.forgotPassword({ email }, (err) => {
             if(err){
                 setError(err.reason);

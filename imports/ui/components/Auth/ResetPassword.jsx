@@ -63,8 +63,6 @@ function ResetPassword (props) {
             setError('7 character minimum password.');
             return false;
         }
-        console.log("token", token)
-        console.log("token", password)
         Accounts.resetPassword(isToken, password, (err) => {
             if(err){
                 setError(err.reason);
@@ -88,21 +86,21 @@ function ResetPassword (props) {
                 <img src={`/branding/logo-long.png`}/>
             </Grid>
             <Grid item xs={12}>
-                <h1 className={classes.topText}>Login to Change Plan</h1>
+                <h1 className={classes.topText}>Reset Password</h1>
             </Grid>
             <Grid item xs={12}>
                 <form onSubmit={onSubmit}>
                     <Card className={classes.card} style={{padding: '12px'}}>
                         <CardContent>
                             <FormControl fullWidth>
-                                <InputLabel htmlFor="my-input">Password</InputLabel>
-                                <Input id="my-password" aria-describedby="my-helper-text" name="password" placeholder="Enter Password" onChange={handlePasswordInput} value={password} type="password" minLength={7} required/>
+                                <InputLabel htmlFor="my-input">New Password</InputLabel>
+                                <Input id="my-password" aria-describedby="my-helper-text" name="password" placeholder="Enter New Password" onChange={handlePasswordInput} value={password} type="password" minLength={7} required/>
                             </FormControl>
                             <br/>
                         </CardContent>
                         <CardActions style={{justifyContent: 'center'}}>
                             <Button variant="contained" color="primary" type="submit">
-                                Reset Your Password
+                                Update Password
                             </Button>
                         </CardActions>
                         {error ?
