@@ -66,7 +66,9 @@ function Login (props) {
             if(err){
                 setError(err.reason);
                 console.log(err)
+                return false
             }else{
+                return false;
             }
         });
     };
@@ -107,7 +109,8 @@ function Login (props) {
                             </FormControl>
                             <Typography variant="body1" component="p" align='left'>
                                 <br />
-                                Forgot Your Password?
+                                <Link to='/forgot-password'>Forgot Your Password?</Link>
+
                             </Typography>
                         </CardContent>
                         <CardActions style={{justifyContent: 'center'}}>

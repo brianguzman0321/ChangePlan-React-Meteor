@@ -7,6 +7,8 @@ import Button from '@material-ui/core/Button';
 import App from '/imports/ui/components/App/App';
 import Login from '/imports/ui/components/Auth/Login';
 import Signup from '/imports/ui/components/Auth/Signup';
+import ForgotPassword from '/imports/ui/components/Auth/forgotPassword';
+import ResetPassword from '/imports/ui/components/Auth/ResetPassword';
 
 
 const Authenticated = ({ loggingIn, authenticated, component, ...rest }) => (
@@ -36,6 +38,8 @@ const Routes = appProps => (
                     <Authenticated exact path="/" component={App} {...appProps}/>
                     <Public path="/signup" component={Signup} {...appProps}/>
                     <Public path="/login" component={Login} {...appProps}/>
+                    <Public path="/forgot-password" component={ForgotPassword} {...appProps}/>
+                    <Public path="/reset-password/:id" component={ResetPassword} {...appProps}/>
                 </Switch>
         </div>
     </Router>

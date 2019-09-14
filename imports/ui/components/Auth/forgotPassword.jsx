@@ -4,9 +4,7 @@ import { withTracker } from 'meteor/react-meteor-data';
 import { Grid, Container, Card, Button, CardActions, CardContent, Typography,
     FormControl, Input, InputLabel, FormHelperText} from '@material-ui/core';
 import { BrowserRouter as Router, Route, Link, RouterLink, Redirect } from "react-router-dom";
-
 import { Accounts } from 'meteor/accounts-base'
-import {Meteor} from "meteor/meteor";
 
 const useStyles1 = makeStyles(theme => ({
 
@@ -44,12 +42,9 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-function Signup (props) {
+function ForgotPassword (props) {
 
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const classes = useStyles();
     const styles = {
@@ -62,44 +57,24 @@ function Signup (props) {
     const onSubmit = (event) => {
         event.preventDefault();
         setError('');
-        if(password && password.length < 7){
-            setError('7 character minimum password.');
-            return false;
-        }
-        Accounts.createUser({firstName, lastName, email, password}, (err) => {
+        console.log("running")
+        Accounts.forgotPassword({ email }, (err) => {
             if(err){
                 setError(err.reason);
                 console.log(err)
+                retrun
             }else{
-                Meteor.call("sendVerificationLink", (error, response) => {
-                    if (error) {
-                        console.log(error.reason);
-                    } else {
-                        let email = Meteor.user().emails[0].address;
-                        console.log(`Verification sent to ${email}!`, "success");
-                    }
-                });
+                setError("Password Reset Email sent Successfully");
             }
         });
-    };
-
-    const handleFirstName = e => {
-        setFirstName(e.target.value);
-    };
-
-    const handleLastName = e => {
-        setLastName(e.target.value);
     };
 
     const handleEmailInput = e => {
         setEmail(e.target.value);
     };
 
-    const handlePasswordInput = e => {
-        setPassword(e.target.value);
-    };
-
-    useEffect(() => {
+    useEffect((props) => {
+        if (props && props.user) return <Redirect to={'/'} />;
     });
     return <Container maxWidth="sm" style={styles.container}>
         <div className={classes.root}>
@@ -108,43 +83,23 @@ function Signup (props) {
                 <img src={`/branding/logo-long.png`}/>
             </Grid>
             <Grid item xs={12}>
-                <h1 className={classes.topText}>Get Started!</h1>
-                <h3 className={classes.topText}>Free trial, no credit card required</h3>
+                <h1 className={classes.topText}>Forgot Password</h1>
             </Grid>
             <Grid item xs={12}>
                 <form onSubmit={onSubmit}>
                     <Card className={classes.card} style={{padding: '12px'}}>
                         <CardContent>
                             <FormControl fullWidth>
-                                <InputLabel htmlFor="first-name">First Name</InputLabel>
-                                <Input id="first-name" aria-describedby="my-helper-text" name="firstName" placeholder="Enter first name" onChange={handleFirstName} value={firstName} required/>
+                                <InputLabel htmlFor="my-password">Email address</InputLabel>
+                                <Input id="my-input" aria-describedby="my-helper-text" name="email" placeholder="Enter Email" onChange={handleEmailInput} value={email} type="email" required/>
+                                {/*<FormHelperText id="my-helper-text">We'll never share your email.</FormHelperText>*/}
                             </FormControl>
                             <br/>
                             <br/>
-                            <FormControl fullWidth>
-                                <InputLabel htmlFor="last-name">Last Name</InputLabel>
-                                <Input id="last-name" aria-describedby="my-helper-text" name="lastName" placeholder="Enter last name" onChange={handleLastName} value={lastName} required/>
-                            </FormControl>
-                            <br/>
-                            <br/>
-                            <FormControl fullWidth>
-                                <InputLabel htmlFor="email-name">Email address</InputLabel>
-                                <Input id="email-name" aria-describedby="my-helper-text" name="email" placeholder="Enter Email" onChange={handleEmailInput} value={email} type="email" required/>
-                            </FormControl>
-                            <br/>
-                            <br/>
-                            <FormControl fullWidth>
-                                <InputLabel htmlFor="my-password">Password</InputLabel>
-                                <Input id="my-password" aria-describedby="my-helper-text" name="password" placeholder="Enter Password" onChange={handlePasswordInput} value={password} type="password" minLength="7" required/>
-                            </FormControl>
-                            <Typography variant="body1" component="p" align='left'>
-                                <br />
-                                <Link to='/forgot-password'>Forgot Your Password?</Link>
-                            </Typography>
                         </CardContent>
                         <CardActions style={{justifyContent: 'center'}}>
                             <Button variant="contained" color="primary" type="submit">
-                                Start My Free Trial
+                                Reset Your Password
                             </Button>
                         </CardActions>
                         {error ?
@@ -160,7 +115,7 @@ function Signup (props) {
             <Grid item xs={12} className={classes.root}>
                 <Typography variant="body2" component="p">
                     <br />
-                    Existing User <Link to='/login'> Login here </Link>
+                    Don't have Account? <Link to='/signup'> Sign up </Link>
                 </Typography>
             </Grid>
         </Grid>
@@ -168,7 +123,7 @@ function Signup (props) {
     </Container>
 }
 
-const signUpPage = withTracker(props => {
+const ForgotPasswordPage = withTracker(props => {
     // Do all your reactive data access in this method.
     // Note that this subscription will get cleaned up when your component is unmounted
     // const handle = Meteor.subscribe('todoList', props.id);
@@ -176,6 +131,6 @@ const signUpPage = withTracker(props => {
     return {
         user: Meteor.user()
     };
-})(Signup);
+})(ForgotPassword);
 
-export default signUpPage
+export default ForgotPasswordPage
