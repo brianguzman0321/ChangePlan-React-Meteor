@@ -6,6 +6,7 @@ import { Grid, Container, Card, Button, CardActions, CardContent, Typography,
 import { BrowserRouter as Router, Route, Link, RouterLink, Redirect } from "react-router-dom";
 
 import { Accounts } from 'meteor/accounts-base'
+import {Meteor} from "meteor/meteor";
 
 const useStyles1 = makeStyles(theme => ({
 
@@ -70,6 +71,14 @@ function Signup (props) {
                 setError(err.reason);
                 console.log(err)
             }else{
+                Meteor.call("sendVerificationLink", (error, response) => {
+                    if (error) {
+                        console.log(error.reason);
+                    } else {
+                        let email = Meteor.user().emails[0].address;
+                        console.log(`Verification sent to ${email}!`, "success");
+                    }
+                });
             }
         });
     };
