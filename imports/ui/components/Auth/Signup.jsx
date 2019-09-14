@@ -129,7 +129,7 @@ function Login (props) {
             <Grid item xs={12} className={classes.root}>
                 <Typography variant="body2" component="p">
                     <br />
-                    Don't have Account! <Link to='/signup'> Sign up </Link>
+                    Don't have Account! <Link to='/login1'> Sign up </Link>
                 </Typography>
             </Grid>
         </Grid>
@@ -152,7 +152,7 @@ export default Login
 var testFunction =  async function() {
     const result = await x();
     return result
-};
+}
 
 function x() {
     var promise = new Promise(function(resolve, reject) {
