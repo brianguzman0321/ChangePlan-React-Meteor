@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React, { PropTypes } from 'react';
 import { render } from 'react-dom';
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import { withTracker } from 'meteor/react-meteor-data';
-
 import ReactDOM from 'react-dom';
 import Button from '@material-ui/core/Button';
 import App from '/imports/ui/components/App/App';
@@ -9,47 +9,49 @@ import Login from '/imports/ui/components/Auth/Login';
 import Signup from '/imports/ui/components/Auth/Signup';
 
 
+const Authenticated = ({ loggingIn, authenticated, component, ...rest }) => (
+    <Route {...rest} render={(props) => {
+        console.log("loggingIn", loggingIn)
+        console.log("authenticated", authenticated)
+        if (loggingIn) return <div></div>;
+        return authenticated ?
+            (React.createElement(component, { ...props, loggingIn, authenticated })) :
+            (<Redirect to="/login" />);
+    }} />
+);
 
-import { BrowserRouter as Router, Route, Link, Redirect, Switch } from "react-router-dom";
+const Public = ({ loggingIn, authenticated, component, ...rest }) => (
+    <Route {...rest} render={(props) => {
+        if (loggingIn) return <div></div>;
+        return !authenticated ?
+            (React.createElement(component, { ...props, loggingIn, authenticated })) :
+            (<Redirect to="/" />);
+    }} />
+);
+
+const Routes = appProps => (
+    <Router>
+        <div className="App">
+                <Switch>
+                    <Authenticated exact path="/" component={App} {...appProps}/>
+                    <Public path="/signup" component={Signup} {...appProps}/>
+                    <Public path="/login" component={Login} {...appProps}/>
+                </Switch>
+        </div>
+    </Router>
+);
 
 
-class AuthRequiredRoute extends Route {
-    /**
-     * @example <AuthRequiredRoute path="/" component={Products}>
-     */
-    render(props) {
-        // call some method/function that will validate if user is logged in
-        if (!Meteor.userId()) {
-            return <Redirect to="/login"></Redirect>
-        } else {
-            return <this.props.component />
-        }
-    }
-}
-
-class Routes extends Component {
-    constructor(props) {
-        super(props);
-    }
-    render() {
-        return (
-            <Router>
-                <AuthRequiredRoute exact path="/" component={App}/>
-                <Route exact path="/login" component={Login}/>
-                <Route exact path="/signup" component={Signup}/>
-            </Router>
-        );
-    }
-
-}
 
 const Root = withTracker(props => {
     // Do all your reactive data access in this method.
     // Note that this subscription will get cleaned up when your component is unmounted
     // const handle = Meteor.subscribe('todoList', props.id);
-
+    const loggingIn = Meteor.loggingIn();
     return {
-        user: Meteor.user()
+        user: Meteor.user(),
+        loggingIn,
+        authenticated: !loggingIn && !!Meteor.userId(),
     };
 })(Routes);
 
