@@ -1,23 +1,37 @@
-// definition of the Demos collection
+// definition of the Companies collection
 
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
 
-class DemosCollection extends Mongo.Collection {}
+class CompaniesCollection extends Mongo.Collection {}
 
-export const Demos = new DemosCollection('demos');
+export const Companies = new CompaniesCollection('companies');
 
 // Deny all client-side updates since we will be using methods to manage this collection
-Demos.deny({
+Companies.deny({
     insert() { return true; },
     update() { return true; },
     remove() { return true; }
 });
 
-Demos.schema = new SimpleSchema({
+Companies.schema = new SimpleSchema({
+    name: {
+        type: String,
+        label: 'company name'
+    },
     owner: {
         type: String,
-        label: 'Owner'
+        label: 'Owner of company'
+    },
+    peoples: {
+        type: [String],
+        label: 'company Projects',
+        defaultValue: []
+    },
+    projects: {
+        type: [String],
+        label: 'company Peoples',
+        defaultValue: []
     },
     createdAt: {
         type: Date,
@@ -46,11 +60,11 @@ Demos.schema = new SimpleSchema({
     }
 });
 
-Demos.attachSchema(Demos.schema);
+Companies.attachSchema(Companies.schema);
 
 // This represents the keys from Lists objects that should be published
 // to the client. If we add secret properties to List objects, don't list
 // them here to keep them private to the server.
-Demos.publicFields = {
+Companies.publicFields = {
     name: 1
 };
