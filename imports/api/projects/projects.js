@@ -19,6 +19,46 @@ Projects.schema = new SimpleSchema({
         type: String,
         label: 'Owner'
     },
+    companyId: {
+        type: String,
+        label: 'compan ID'
+    },
+    stakeHolders: {
+        type: Array,
+        defaultValue: [],
+        label: 'project StakeHolders',
+    },
+    'stakeHolders.$': {
+        type: String
+    },
+    admins: {
+        type: Array,
+        defaultValue: [],
+        label: 'project admins',
+    },
+    'admins.$': {
+        type: String
+    },
+    managers: {
+        type: Array,
+        defaultValue: [],
+        label: 'project managers',
+    },
+    'managers.$': {
+        type: String
+    },
+    startingDate: {
+        type: Date,
+        label: 'Starting Date',
+    },
+    peopleCount: {
+        type: Number,
+        label: 'People Count',
+    },
+    endingDate: {
+        type: Date,
+        label: 'End Date',
+    },
     createdAt: {
         type: Date,
         label: 'Created At Company',
