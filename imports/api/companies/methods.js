@@ -58,6 +58,9 @@ export const update = new ValidatedMethod({
         'company.name': {
             type: String
         },
+        'company.owner': {
+            type: String
+        },
         'company.peoples': {
             type: Array
         },

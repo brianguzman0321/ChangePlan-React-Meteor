@@ -20,11 +20,21 @@ export const insert = new ValidatedMethod({
         'people': {
             type: Object
         },
-        'people.country': {
-            type: String
-        },
-        'people.owner': {
+        'people.name': {
             type: String,
+        },
+        'people.email': {
+            type: String,
+        },
+        'people.role': {
+            type: String,
+        },
+        'people.supportLevel': {
+            type: Number,
+            optional: true
+        },
+        'people.influenceLevel': {
+            type: Number,
             optional: true
         },
     }).validator(),
@@ -47,11 +57,21 @@ export const update = new ValidatedMethod({
         'people': {
             type: Object
         },
-        'people.country': {
-            type: String
-        },
-        'people.owner': {
+        'people.name': {
             type: String,
+        },
+        'people.email': {
+            type: String,
+        },
+        'people.role': {
+            type: String,
+        },
+        'people.supportLevel': {
+            type: Number,
+            optional: true
+        },
+        'people.influenceLevel': {
+            type: Number,
             optional: true
         },
     }).validator(),

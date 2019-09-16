@@ -17,11 +17,27 @@ Peoples.deny({
 Peoples.schema = new SimpleSchema({
     name: {
         type: String,
-        label: 'stack holder name'
+        label: 'stake holder name'
     },
     email: {
         type: String,
-        label: 'stack holder email'
+        label: 'stake holder email'
+    },
+    role: {
+        type: String,
+        label: 'stake holder role'
+    },
+    supportLevel: {
+        type: Number,
+        label: 'stake holder support Level'
+    },
+    influenceLevel: {
+        type: Number,
+        label: 'stake holder Influence Level'
+    },
+    company: {
+        type: String,
+        label: 'stake holder company'
     },
     createdAt: {
         type: Date,
