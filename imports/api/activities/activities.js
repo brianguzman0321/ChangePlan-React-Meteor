@@ -19,6 +19,39 @@ Activities.schema = new SimpleSchema({
         type: String,
         label: 'Owner'
     },
+    type: {
+        type: String,
+        label: 'activity Type'
+    },
+    name: {
+        type: String,
+        label: 'activity Name'
+    },
+    description: {
+        type: String,
+        label: 'activity Description'
+    },
+    projectId: {
+        type: String,
+        label: 'project ID'
+    },
+    stakeHolders: {
+        type: Array,
+        defaultValue: [],
+        label: 'activity StakeHolders',
+    },
+    'stakeHolders.$': {
+        type: String
+    },
+    responsiblePerson: {
+        type: Object,
+        defaultValue: Object,
+        label: 'activity responsible Person',
+    },
+    completedAt: {
+        type: Date,
+        label: 'activity completion Date',
+    },
     createdAt: {
         type: Date,
         label: 'Created At Company',

@@ -21,7 +21,7 @@ Projects.schema = new SimpleSchema({
     },
     companyId: {
         type: String,
-        label: 'compan ID'
+        label: 'company ID'
     },
     stakeHolders: {
         type: Array,
