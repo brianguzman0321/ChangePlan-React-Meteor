@@ -20,12 +20,38 @@ export const insert = new ValidatedMethod({
         'project': {
             type: Object
         },
-        'project.country': {
-            type: String
-        },
         'project.owner': {
             type: String,
-            optional: true
+        },
+        'project.companyId': {
+            type: String,
+        },
+        'project.stakeHolders': {
+            type: Array,
+        },
+        'project.stakeHolders.$': {
+            type: String
+        },
+        'project.admins': {
+            type: Array,
+        },
+        'project.admins.$': {
+            type: String
+        },
+        'project.managers': {
+            type: Array,
+        },
+        'project.managers.$': {
+            type: String
+        },
+        'project.startingDate': {
+            type: Date,
+        },
+        'project.peopleCount': {
+            type: Number,
+        },
+        'project.endingDate': {
+            type: Date,
         },
     }).validator(),
     run({ project }) {
@@ -47,12 +73,38 @@ export const update = new ValidatedMethod({
         'project': {
             type: Object
         },
-        'project.country': {
-            type: String
-        },
         'project.owner': {
             type: String,
-            optional: true
+        },
+        'project.companyId': {
+            type: String,
+        },
+        'project.stakeHolders': {
+            type: Array,
+        },
+        'project.stakeHolders.$': {
+            type: String
+        },
+        'project.admins': {
+            type: Array,
+        },
+        'project.admins.$': {
+            type: String
+        },
+        'project.managers': {
+            type: Array,
+        },
+        'project.managers.$': {
+            type: String
+        },
+        'project.startingDate': {
+            type: Date,
+        },
+        'project.peopleCount': {
+            type: Number,
+        },
+        'project.endingDate': {
+            type: Date,
         },
     }).validator(),
     run({ project }) {

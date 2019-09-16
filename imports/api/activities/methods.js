@@ -20,12 +20,34 @@ export const insert = new ValidatedMethod({
         'activity': {
             type: Object
         },
-        'activity.country': {
-            type: String
-        },
         'activity.owner': {
             type: String,
-            optional: true
+        },
+        'activity.type': {
+            type: String,
+        },
+        'activity.name': {
+            type: String,
+        },
+        'activity.description': {
+            type: String,
+        },
+        'activity.projectId': {
+            type: String,
+        },
+        'activity.stakeHolders': {
+            type: Array,
+            defaultValue: [],
+        },
+        'activity.stakeHolders.$': {
+            type: String
+        },
+        'activity.responsiblePerson': {
+            type: Object,
+            defaultValue: Object,
+        },
+        'activity.completedAt': {
+            type: Date,
         },
     }).validator(),
     run({ activity }) {
@@ -47,12 +69,34 @@ export const update = new ValidatedMethod({
         'activity': {
             type: Object
         },
-        'activity.country': {
-            type: String
-        },
         'activity.owner': {
             type: String,
-            optional: true
+        },
+        'activity.type': {
+            type: String,
+        },
+        'activity.name': {
+            type: String,
+        },
+        'activity.description': {
+            type: String,
+        },
+        'activity.projectId': {
+            type: String,
+        },
+        'activity.stakeHolders': {
+            type: Array,
+            defaultValue: [],
+        },
+        'activity.stakeHolders.$': {
+            type: String
+        },
+        'activity.responsiblePerson': {
+            type: Object,
+            defaultValue: Object,
+        },
+        'activity.completedAt': {
+            type: Date,
         },
     }).validator(),
     run({ activity }) {
