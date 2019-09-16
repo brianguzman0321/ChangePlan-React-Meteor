@@ -7,37 +7,29 @@ import SimpleSchema from 'simpl-schema';
 import { DDPRateLimiter } from 'meteor/ddp-rate-limiter';
 import { LoggedInMixin } from 'meteor/tunifight:loggedin-mixin';
 
-import { Companies } from './companies.js';
+import { Peoples } from './peoples.js';
 
 export const insert = new ValidatedMethod({
-    name: 'companies.insert',
+    name: 'peoples.insert',
     mixins : [LoggedInMixin],
     checkLoggedInError: {
         error: 'notLogged',
-        message: 'You need to be logged in to create company'
+        message: 'You need to be logged in to create people'
     },
     validate: new SimpleSchema({
-        'company': {
+        'people': {
             type: Object
         },
-        'company.name': {
+        'people.country': {
             type: String
         },
-        'company.peoples': {
-            type: Array
-        },
-        'company.peoples.$': {
-            type: String
-        },
-        'company.projects': {
-            type: Array
-        },
-        'company.projects.$': {
-            type: String
+        'people.owner': {
+            type: String,
+            optional: true
         },
     }).validator(),
-    run({ company }) {
-        return Companies.insert(company);
+    run({ people }) {
+        return Peoples.insert(people);
     }
 });
 
@@ -45,62 +37,54 @@ export const insert = new ValidatedMethod({
 
 
 export const update = new ValidatedMethod({
-    name: 'companies.update',
+    name: 'peoples.update',
     mixins: [LoggedInMixin],
     checkLoggedInError: {
         error: 'notLogged',
-        message: 'You need to be logged in to update company'
+        message: 'You need to be logged in to update people'
     },
     validate: new SimpleSchema({
-        'company': {
+        'people': {
             type: Object
         },
-        'company.name': {
+        'people.country': {
             type: String
         },
-        'company.peoples': {
-            type: Array
-        },
-        'company.peoples.$': {
-            type: String
-        },
-        'company.projects': {
-            type: Array
-        },
-        'company.projects.$': {
-            type: String
+        'people.owner': {
+            type: String,
+            optional: true
         },
     }).validator(),
-    run({ company }) {
-        return Companies.update(_id, {$set: company});
+    run({ people }) {
+        return Peoples.update(_id, {$set: people});
     }
 });
 
 
 
 export const remove = new ValidatedMethod({
-    name: 'companies.remove',
+    name: 'peoples.remove',
     mixins : [LoggedInMixin],
     checkLoggedInError: {
         error: 'notLogged',
-        message: 'You need to be logged in to remove company'
+        message: 'You need to be logged in to remove people'
     },
     validate: new SimpleSchema({
-        'company': {
+        'people': {
             type: Object
         },
-        'company._id': {
+        'people._id': {
             type: String
         }
     }).validator(),
-    run({ company }) {
-        const {_id} = company;
-        return Companies.remove(_id);
+    run({ people }) {
+        const {_id} = people;
+        return Peoples.remove(_id);
     }
 });
 
 // Get list of all method names on Companies
-const COMPANIES_METHODS = _.pluck([
+const PEOPLES_METHODS = _.pluck([
     insert,
     update,
     remove
@@ -109,7 +93,7 @@ const COMPANIES_METHODS = _.pluck([
 if (Meteor.isServer) {
     DDPRateLimiter.addRule({
         name(name) {
-            return _.contains(COMPANIES_METHODS, name);
+            return _.contains(PEOPLES_METHODS, name);
         },
 
         // Rate limit per connection ID

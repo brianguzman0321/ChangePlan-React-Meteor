@@ -22,7 +22,6 @@ Demos.schema = new SimpleSchema({
     createdAt: {
         type: Date,
         label: 'Created At Company',
-        denyUpdate: true,
         autoValue: function() {
             if (this.isInsert) {
                 return new Date();
@@ -41,7 +40,6 @@ Demos.schema = new SimpleSchema({
                 return new Date();
             }
         },
-        denyInsert: true,
         optional: true
     }
 });
