@@ -51,6 +51,7 @@ Activities.schema = new SimpleSchema({
     completedAt: {
         type: Date,
         label: 'activity completion Date',
+        optional: true
     },
     createdAt: {
         type: Date,

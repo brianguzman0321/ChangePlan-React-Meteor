@@ -54,6 +54,7 @@ Projects.schema = new SimpleSchema({
     peopleCount: {
         type: Number,
         label: 'People Count',
+        defaultValue: 0,
     },
     endingDate: {
         type: Date,
