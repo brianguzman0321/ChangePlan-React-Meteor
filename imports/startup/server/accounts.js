@@ -5,6 +5,7 @@ Accounts.onCreateUser(function(options, user) {
   // set user custom fields
   user.profile = options.profile || {};
   user.organization = options.organization || {};
+  user.suspended = false;
   user.roles = {};
   return user;
 });

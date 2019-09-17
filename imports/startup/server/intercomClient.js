@@ -31,4 +31,8 @@ Meteor.publish("userData", function() {
   }
 });
 
+Meteor.publish(null, function (){
+    return Meteor.roles.find({})
+});
+
 // TODO possibly delete

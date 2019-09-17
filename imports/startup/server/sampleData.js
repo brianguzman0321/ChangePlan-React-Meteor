@@ -2,12 +2,18 @@ import { Companies } from '/imports/api/companies/companies'
 import { Peoples } from '/imports/api/peoples/peoples'
 import { Activities } from '/imports/api/activities/activities'
 import { Projects } from '/imports/api/projects/projects'
+import { Roles } from 'meteor/alanning:roles'
 
 let companyId, projectId, stackHolderId;
 
 let superAdmin = Meteor.users.findOne({
     'emails.address': 'raza2022@gmail.com'
 });
+
+//
+if(superAdmin && superAdmin._id) {
+    Roles.addUsersToRoles(superAdmin._id, 'superAdmin', Roles.GLOBAL_GROUP)
+}
 
 if(!Companies.findOne()){
     console.log("No Companies Exists");

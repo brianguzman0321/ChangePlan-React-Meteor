@@ -39,12 +39,28 @@ Projects.schema = new SimpleSchema({
     'admins.$': {
         type: String
     },
+    changeManagers: {
+        type: Array,
+        defaultValue: [],
+        label: 'project change managers',
+    },
+    'changeManagers.$': {
+        type: String
+    },
     managers: {
         type: Array,
         defaultValue: [],
         label: 'project managers',
     },
     'managers.$': {
+        type: String
+    },
+    activityOwners: {
+        type: Array,
+        defaultValue: [],
+        label: 'project Activity Owners',
+    },
+    'activityOwners.$': {
         type: String
     },
     startingDate: {
