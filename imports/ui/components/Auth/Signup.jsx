@@ -66,7 +66,11 @@ function Signup (props) {
             setError('7 character minimum password.');
             return false;
         }
-        Accounts.createUser({firstName, lastName, email, password}, (err) => {
+        let profile = {
+            firstName,
+            lastName
+        }
+        Accounts.createUser({profile, email, password}, (err) => {
             if(err){
                 setError(err.reason);
                 console.log(err)

@@ -24,3 +24,6 @@ import '/imports/api/activities/methods.js';
 import '/imports/api/projects/projects';
 import '/imports/api/projects/server/publications.js';
 import '/imports/api/projects/methods.js';
+
+//admin methods
+import '/imports/api/admin/methods'

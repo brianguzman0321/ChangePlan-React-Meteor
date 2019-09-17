@@ -13,45 +13,45 @@ let superAdmin = Meteor.users.findOne({
 //
 if(superAdmin && superAdmin._id) {
     Roles.addUsersToRoles(superAdmin._id, 'superAdmin', Roles.GLOBAL_GROUP)
-}
 
-if(!Companies.findOne()){
-    console.log("No Companies Exists");
-    companyId = Companies.insert({
-        owner: superAdmin._id,
-        name: "AppBakerZ"
-    })
-}
-if(!Projects.findOne()){
-    console.log("No Projects Exists");
-    projectId = Projects.insert({
-        owner: superAdmin._id,
-        companyId: companyId,
-        startingDate: new Date(),
-        endingDate: new Date()
-    })
-}
+    if(!Companies.findOne()){
+        console.log("No Companies Exists");
+        companyId = Companies.insert({
+            owner: superAdmin._id,
+            name: "AppBakerZ"
+        })
+    }
+    if(!Projects.findOne()){
+        console.log("No Projects Exists");
+        projectId = Projects.insert({
+            owner: superAdmin._id,
+            companyId: companyId,
+            startingDate: new Date(),
+            endingDate: new Date()
+        })
+    }
 
-if(!Activities.findOne()){
-    console.log("No Activities Exists");
-    projectId = Activities.insert({
-        owner: superAdmin._id,
-        startingDate: new Date(),
-        endingDate: new Date(),
-        name: 'email',
-        type: 'email',
-        description: 'email',
-        projectId: projectId,
-    })
-}
-if(!Peoples.findOne()){
-    console.log("No StackHolders Exists");
-    stackHolderId = Peoples.insert({
-        company: companyId,
-        name: "Abdul Hameed",
-        role: 'Project Manager',
-        email: 'raza2022@gmail.com',
-        supportLevel: 5,
-        influenceLevel: 3
-    })
+    if(!Activities.findOne()){
+        console.log("No Activities Exists");
+        projectId = Activities.insert({
+            owner: superAdmin._id,
+            startingDate: new Date(),
+            endingDate: new Date(),
+            name: 'email',
+            type: 'email',
+            description: 'email',
+            projectId: projectId,
+        })
+    }
+    if(!Peoples.findOne()){
+        console.log("No StackHolders Exists");
+        stackHolderId = Peoples.insert({
+            company: companyId,
+            name: "Abdul Hameed",
+            role: 'Project Manager',
+            email: 'raza2022@gmail.com',
+            supportLevel: 5,
+            influenceLevel: 3
+        })
+    }
 }
