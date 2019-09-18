@@ -12,7 +12,7 @@ let superAdmin = Meteor.users.findOne({
 
 //
 if(superAdmin && superAdmin._id) {
-    Roles.addUsersToRoles(superAdmin._id, 'superAdmin', Roles.GLOBAL_GROUP)
+    Roles.addUsersToRoles(superAdmin._id, 'superAdmin', Roles.GLOBAL_GROUP);
 
     if(!Companies.findOne()){
         console.log("No Companies Exists");
@@ -47,6 +47,7 @@ if(superAdmin && superAdmin._id) {
         console.log("No StackHolders Exists");
         stackHolderId = Peoples.insert({
             company: companyId,
+            businessUnit: 'Development Department',
             name: "Abdul Hameed",
             role: 'Project Manager',
             email: 'raza2022@gmail.com',

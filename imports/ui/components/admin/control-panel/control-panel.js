@@ -1,18 +1,19 @@
 import React, {useEffect} from 'react';
 import MaterialTable from 'material-table';
 
-export default function MaterialTableDemo() {
+export default function ProjectsControlPanel() {
     const [state, setState] = React.useState({
         columns: [
             { title: 'FirstName', field: 'firstName', editable: 'onAdd' },
-            { title: 'LastName', field: 'lastName'},
+            { title: 'LastName', field: 'lastName', editable: 'onAdd'},
+            { title: 'Email', field: 'email', editable: 'onAdd'},
             {
                 title: 'Role',
                 field: 'role',
                 lookup: {
                     admin: 'Admin',
                     manager: 'Manager',
-                    changeManager: 'Change Manger',
+                    changeManager: 'Change Manager',
                     activityOwner: 'Activity Owner',
                 },
             },
@@ -24,13 +25,14 @@ export default function MaterialTableDemo() {
     useEffect((props) => {
         if(!state.data.length){
             Meteor.call('users.getAllusers', (err, res) => {
-                console.log(err)
+                console.log(err);
                 if(res){
                     let data = [...state.data];
                     data = res.map(user => {
                         return {
                             firstName: user.profile.firstName,
                             lastName: user.profile.lastName,
+                            email: user.emails[0].address,
                             role: 'manager'
                         }
 
@@ -47,7 +49,9 @@ export default function MaterialTableDemo() {
         <MaterialTable
             title="Control Panel"
             columns={state.columns}
-            options={{toolbarButtonAlignment:'right'}}
+            options={{
+                actionsColumnIndex: -1
+            }}
             data={state.data}
             editable={{
                 onRowAdd: newData =>

@@ -29,6 +29,12 @@ export const insert = new ValidatedMethod({
         'people.role': {
             type: String,
         },
+        'people.company': {
+            type: String,
+        },
+        'people.businessUnit': {
+            type: String,
+        },
         'people.supportLevel': {
             type: Number,
             optional: true
@@ -64,6 +70,12 @@ export const update = new ValidatedMethod({
             type: String,
         },
         'people.role': {
+            type: String,
+        },
+        'people.company': {
+            type: String,
+        },
+        'people.businessUnit': {
             type: String,
         },
         'people.supportLevel': {
