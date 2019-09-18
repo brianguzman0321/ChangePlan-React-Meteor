@@ -9,15 +9,15 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 
 import { Companies } from "/imports/api/companies/companies";
-
+import { Projects } from "/imports/api/projects/projects";
 
 import MaterialTable from 'material-table';
-import {createContainer, withTracker} from "meteor/react-meteor-data";
+import { withTracker } from "meteor/react-meteor-data";
 import {Meteor} from "meteor/meteor";
+
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
-
     return (
         <Typography
             component="div"
@@ -89,10 +89,10 @@ function FullWidthTabs(props) {
                 onChangeIndex={handleChangeIndex}
             >
                 <TabPanel value={value} index={0} dir={theme.direction}>
-                    <ProjectsControlPanel {...props}/>
+                    <CompaniesControlPanel {...props}/>
                 </TabPanel>
                 <TabPanel value={value} index={1} dir={theme.direction}>
-                    Projects
+                    <ProjectsControlPanel {...props}/>
                 </TabPanel>
             </SwipeableViews>
         </div>
@@ -101,22 +101,21 @@ function FullWidthTabs(props) {
 
 //
 function ProjectsControlPanel(props) {
-    const [companies, setCompanies] = React.useState({});
+    const [projects, setProjects] = React.useState({});
     const [state, setState] = React.useState({
         columns: [
             { title: 'FirstName', field: 'firstName', editable: 'onAdd' },
             { title: 'LastName', field: 'lastName', editable: 'onAdd'},
             { title: 'Email', field: 'email', editable: 'onAdd'},
             {
-                title: 'Company',
-                field: 'company',
+                title: 'Project',
+                field: 'project',
                 lookup: {},
             },
             {
                 title: 'Role',
                 field: 'role',
                 lookup: {
-                    admin: 'Admin',
                     manager: 'Manager',
                     changeManager: 'Change Manager',
                     activityOwner: 'Activity Owner',
@@ -137,6 +136,117 @@ function ProjectsControlPanel(props) {
                         lastName: user.profile.lastName,
                         email: user.emails[0].address,
                         role: 'manager',
+                        project: 'PTXYQkJd6qwJdRYYD'
+                    }
+
+                });
+                setState({ ...state, data });
+            }
+        })
+    };
+
+    const updateColumns = (projects) => {
+        setProjects(projects);
+        let columns = [...state.columns];
+        if(!Object.keys(columns[columns.length - 2].lookup).length){
+            columns[columns.length - 2].lookup = projects;
+            setState({...state, columns});
+        }
+
+    };
+
+    useEffect(() => {
+        if(!state.data.length){
+            getUsers();
+            if(!Object.keys(projects).length){
+                if(props.projects && props.projects.length){
+                    let projects1 = props.projects.reduce(function(acc, cur, i) {
+                        acc[cur._id] = cur.name;
+                        return acc;
+                    }, {});
+                    updateColumns(projects1);
+                }
+            }
+        }
+    });
+
+
+    return (
+        <MaterialTable
+            title="Control Panel"
+            columns={state.columns}
+            options={{
+                actionsColumnIndex: -1
+            }}
+            data={state.data}
+            editable={{
+                onRowAdd: newData =>
+                    new Promise(resolve => {
+                        setTimeout(() => {
+                            resolve();
+                            const data = [...state.data];
+                            data.push(newData);
+                            setState({ ...state, data });
+                        }, 600);
+                    }),
+                onRowUpdate: (newData, oldData) =>
+                    new Promise(resolve => {
+                        setTimeout(() => {
+                            resolve();
+                            const data = [...state.data];
+                            data[data.indexOf(oldData)] = newData;
+                            setState({ ...state, data });
+                        }, 600);
+                    }),
+                onRowDelete: oldData =>
+                    new Promise(resolve => {
+                        setTimeout(() => {
+                            resolve();
+                            const data = [...state.data];
+                            data.splice(data.indexOf(oldData), 1);
+                            setState({ ...state, data });
+                        }, 600);
+                    }),
+            }}
+        />
+    );
+}
+
+function CompaniesControlPanel(props) {
+    const [companies, setCompanies] = React.useState({});
+    const [state, setState] = React.useState({
+        columns: [
+            { title: 'FirstName', field: 'firstName', editable: 'onAdd' },
+            { title: 'LastName', field: 'lastName', editable: 'onAdd'},
+            { title: 'Email', field: 'email', editable: 'onAdd'},
+            {
+                title: 'Company',
+                field: 'company',
+                lookup: {},
+            },
+            {
+                title: 'Role',
+                field: 'role',
+                lookup: {
+                    admin: 'Admin',
+                    remove: 'Remove Admin',
+                },
+            },
+        ],
+        data: [],
+    });
+
+
+    const getUsers = () => {
+        Meteor.call('users.getAllusers', (err, res) => {
+            if(res){
+                let data = [...state.data];
+                data = res.map(user => {
+                    return {
+                        firstName: user.profile.firstName,
+                        lastName: user.profile.lastName,
+                        email: user.emails[0].address,
+                        role: 'admin',
                         company: 'PTXYQkJd6qwJdRYYD'
                     }
 
@@ -157,7 +267,6 @@ function ProjectsControlPanel(props) {
     };
 
     useEffect(() => {
-
         if(!state.data.length){
             getUsers();
             if(!Object.keys(companies).length){
@@ -171,10 +280,6 @@ function ProjectsControlPanel(props) {
 
             }
         }
-
-
-
-
     });
 
 
@@ -224,9 +329,11 @@ const ControlPanelPage = withTracker(props => {
     // Note that this subscription will get cleaned up when your component is unmounted
     // const handle = Meteor.subscribe('todoList', props.id);
     Meteor.subscribe('companies');
+    Meteor.subscribe('projects');
 
     return {
-        companies: Companies.find({}).fetch()
+        companies: Companies.find({}).fetch(),
+        projects: Projects.find({}).fetch()
     };
 })(FullWidthTabs);
 

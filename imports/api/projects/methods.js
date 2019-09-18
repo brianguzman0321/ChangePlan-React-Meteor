@@ -23,6 +23,9 @@ export const insert = new ValidatedMethod({
         'project.owner': {
             type: String,
         },
+        'project.name': {
+            type: String,
+        },
         'project.companyId': {
             type: String,
         },
@@ -86,6 +89,9 @@ export const update = new ValidatedMethod({
             type: Object
         },
         'project.owner': {
+            type: String,
+        },
+        'project.name': {
             type: String,
         },
         'project.companyId': {

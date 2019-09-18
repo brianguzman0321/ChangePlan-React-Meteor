@@ -19,6 +19,10 @@ Projects.schema = new SimpleSchema({
         type: String,
         label: 'Owner'
     },
+    name: {
+        type: String,
+        label: 'Project Name'
+    },
     companyId: {
         type: String,
         label: 'company ID'

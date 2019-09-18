@@ -25,6 +25,7 @@ if(superAdmin && superAdmin._id) {
         console.log("No Projects Exists");
         projectId = Projects.insert({
             owner: superAdmin._id,
+            name: 'Change Plan Development',
             companyId: companyId,
             startingDate: new Date(),
             endingDate: new Date()
