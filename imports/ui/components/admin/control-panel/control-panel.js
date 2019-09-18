@@ -108,6 +108,11 @@ function ProjectsControlPanel(props) {
             { title: 'LastName', field: 'lastName', editable: 'onAdd'},
             { title: 'Email', field: 'email', editable: 'onAdd'},
             {
+                title: 'Company',
+                field: 'company',
+                lookup: {},
+            },
+            {
                 title: 'Role',
                 field: 'role',
                 lookup: {
@@ -116,14 +121,6 @@ function ProjectsControlPanel(props) {
                     changeManager: 'Change Manager',
                     activityOwner: 'Activity Owner',
                 },
-            },
-            {
-                title: 'Company',
-                field: 'company',
-                lookup: {},
-                // lookup: {
-                //     PTXYQkJd6qwJdRYYD: 'Bakerz'
-                // },
             },
         ],
         data: [],
@@ -147,14 +144,13 @@ function ProjectsControlPanel(props) {
                 setState({ ...state, data });
             }
         })
-    }
+    };
 
     const updateColumns = (companies) => {
         setCompanies(companies);
         let columns = [...state.columns];
-        if(!Object.keys(columns[columns.length - 1].lookup).length){
-            columns[columns.length - 1].lookup = companies;
-            console.log("I am just running ", columns[columns.length - 1]);
+        if(!Object.keys(columns[columns.length - 2].lookup).length){
+            columns[columns.length - 2].lookup = companies;
             setState({...state, columns});
         }
 
@@ -164,7 +160,6 @@ function ProjectsControlPanel(props) {
 
         if(!state.data.length){
             getUsers();
-            console.log("companies", companies);
             if(!Object.keys(companies).length){
                 if(props.companies && props.companies.length){
                     let companies1 = props.companies.reduce(function(acc, cur, i) {
