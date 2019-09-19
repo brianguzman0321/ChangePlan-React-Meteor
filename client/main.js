@@ -9,7 +9,11 @@ import '/imports/startup/client';
 LocalCollection = new Meteor.Collection(null);
 
 LocalCollection.insert({
+    name: 'localProjects',
+});
 
+LocalCollection.insert({
+    name: 'localCompanies',
 });
 
 updateFilter = function (name, key, value){

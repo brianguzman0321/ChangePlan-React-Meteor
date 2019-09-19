@@ -123,7 +123,7 @@ const ControlPanelPage = withTracker(props => {
 
     return {
         companies: Companies.find({}).fetch(),
-        projects: Projects.find({}).fetch(),
+        projects: Projects.find({}).fetch()
         // categories,
         // local
     };

@@ -20,13 +20,13 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function ControlledOpenSelect(props) {
-    console.log("I am props in controlled", props)
     const classes = useStyles();
     const [age, setAge] = React.useState('');
     const [open, setOpen] = React.useState(false);
 
     function handleChange(event) {
         setAge(event.target.value);
+        updateFilter('localCompanies', 'id', event.target.value);
     }
 
     function handleClose() {

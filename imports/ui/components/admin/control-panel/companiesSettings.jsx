@@ -1,8 +1,14 @@
 import React, {useEffect} from "react";
 import {Meteor} from "meteor/meteor";
 import MaterialTable from "material-table";
+import {withTracker} from "meteor/react-meteor-data";
+import {Companies} from "../../../../api/companies/companies";
+import {Projects} from "../../../../api/projects/projects";
 
-export default function CompaniesControlPanel(props) {
+function CompaniesControlPanel(props) {
+    if (!props.currentCompany){
+        return <div></div>
+    }
     const [companies, setCompanies] = React.useState({});
     const [state, setState] = React.useState({
         columns: [
@@ -113,3 +119,28 @@ export default function CompaniesControlPanel(props) {
         />
     );
 }
+
+
+const CompaniesControlPanelPage = withTracker(props => {
+    // Do all your reactive data access in this method.
+    // Note that this subscription will get cleaned up when your component is unmounted
+    // const handle = Meteor.subscribe('todoList', props.id);
+    Meteor.subscribe('companies');
+    Meteor.subscribe('projects');
+    // let { parentProps } = props;
+    let local = LocalCollection.findOne({
+        name: 'localCompanies'
+    });
+    //get dynamic type based of selected transactions types
+    let categoriesType = local.type === 'expenses' ? 'expense' : 'income';
+
+    const currentCompany = Companies.findOne({_id: local.id});
+
+    return {
+        companies: Companies.find({}).fetch(),
+        projects: Projects.find({}).fetch(),
+        currentCompany,
+    };
+})(CompaniesControlPanel);
+
+export default CompaniesControlPanelPage
