@@ -4,6 +4,7 @@ import MaterialTable from "material-table";
 import {withTracker} from "meteor/react-meteor-data";
 import {Companies} from "../../../../api/companies/companies";
 import {Projects} from "../../../../api/projects/projects";
+import {Accounts} from "meteor/accounts-base";
 
 function CompaniesControlPanel(props) {
     if (!props.currentCompany){
@@ -88,15 +89,33 @@ function CompaniesControlPanel(props) {
             }}
             data={state.data}
             editable={{
-                onRowAdd: newData =>
-                    new Promise(resolve => {
-                        setTimeout(() => {
+                // onRowAdd: newData =>
+                //     new Promise(resolve => {
+                //         setTimeout(() => {
+                //             resolve();
+                //             const data = [...state.data];
+                //             data.push(newData);
+                //             setState({ ...state, data });
+                //         }, 600);
+                //     }),
+                onRowAdd: newData => {
+                    return new Promise((resolve, reject) => {
+                        let profile = {
+                            firstName: newData.firstName,
+                            lastName: newData.lastName
+                        }
+                        Meteor.call('users.inviteNewUser', {profile, email: newData.email}, (err, res) => {
+                            if(err){
+                                reject(err.reason)
+                            }
                             resolve();
                             const data = [...state.data];
                             data.push(newData);
-                            setState({ ...state, data });
-                        }, 600);
-                    }),
+                            setState({...state, data});
+                        })
+                    })
+                },
+
                 onRowUpdate: (newData, oldData) =>
                     new Promise(resolve => {
                         setTimeout(() => {
@@ -131,8 +150,6 @@ const CompaniesControlPanelPage = withTracker(props => {
     let local = LocalCollection.findOne({
         name: 'localCompanies'
     });
-    //get dynamic type based of selected transactions types
-    let categoriesType = local.type === 'expenses' ? 'expense' : 'income';
 
     const currentCompany = Companies.findOne({_id: local.id});
 

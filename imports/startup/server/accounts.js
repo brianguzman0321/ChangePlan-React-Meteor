@@ -58,3 +58,7 @@ Accounts.emailTemplates.resetPassword = {
 Accounts.urls.resetPassword = function(token) {
     return Meteor.absoluteUrl('reset-password/' + token);
 };
+
+Accounts.urls.enrollAccount = function(token) {
+    return Meteor.absoluteUrl('enroll-account/' + token);
+};

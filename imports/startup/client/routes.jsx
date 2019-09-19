@@ -10,6 +10,7 @@ import Login from '/imports/ui/components/Auth/Login';
 import Signup from '/imports/ui/components/Auth/Signup';
 import ForgotPassword from '/imports/ui/components/Auth/forgotPassword';
 import ResetPassword from '/imports/ui/components/Auth/ResetPassword';
+import EnrollAccountPage from '/imports/ui/components/Auth/EnrollAccount';
 import MaterialTableDemo from '/imports/ui/components/admin/control-panel/control-panel';
 
 //list of Public Routes
@@ -54,6 +55,7 @@ const Routes = appProps => (
                     <Public path="/login" component={Login} {...appProps}/>
                     <Public path="/forgot-password" component={ForgotPassword} {...appProps}/>
                     <Public path="/reset-password/:id" component={ResetPassword} {...appProps}/>
+                    <Public path="/enroll-account/:id" component={EnrollAccountPage} {...appProps}/>
                 </Switch>
         </div>
     </Router>

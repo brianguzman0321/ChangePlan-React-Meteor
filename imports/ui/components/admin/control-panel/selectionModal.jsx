@@ -55,9 +55,9 @@ export default function ControlledOpenSelect(props) {
                         id: 'demo-controlled-open-select',
                     }}
                 >
-                    <MenuItem value="">
-                        <em>None</em>
-                    </MenuItem>
+                    {/*<MenuItem value="">*/}
+                        {/*<em>Select Company</em>*/}
+                    {/*</MenuItem>*/}
                     {props.companies && props.companies.map((company) => {
                         return <MenuItem value={company._id}>{company.name}</MenuItem>
                     })

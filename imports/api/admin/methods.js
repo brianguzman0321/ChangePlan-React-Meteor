@@ -6,6 +6,7 @@ import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import SimpleSchema from 'simpl-schema';
 import { DDPRateLimiter } from 'meteor/ddp-rate-limiter';
 import { LoggedInMixin } from 'meteor/tunifight:loggedin-mixin';
+import {Accounts} from "meteor/accounts-base";
 
 
 export const getAllusers = new ValidatedMethod({
@@ -25,4 +26,19 @@ export const getAllusers = new ValidatedMethod({
             fields: { services: 0 }
         }).fetch()
     }
+});
+
+export const InviteNewUser = new ValidatedMethod({
+    name: 'users.inviteNewUser',
+    mixins : [LoggedInMixin],
+    checkLoggedInError: {
+        error: 'notLogged',
+        message: 'You need to be logged in to create activity'
+    },
+    validate: null,
+    run({profile, email}) {
+            const newUserID = Accounts.createUser({profile, email});
+            Accounts.sendEnrollmentEmail(newUserID);
+            return newUserID;
+        }
 });
