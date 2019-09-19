@@ -106,12 +106,16 @@ function CompaniesControlPanel(props) {
                         }
                         Meteor.call('users.inviteNewUser', {profile, email: newData.email}, (err, res) => {
                             if(err){
-                                reject(err.reason)
+                                reject("Email already exists");
+                                return false;
                             }
-                            resolve();
-                            const data = [...state.data];
-                            data.push(newData);
-                            setState({...state, data});
+                            else{
+                                resolve();
+                                const data = [...state.data];
+                                data.push(newData);
+                                setState({...state, data});
+                            }
+
                         })
                     })
                 },
