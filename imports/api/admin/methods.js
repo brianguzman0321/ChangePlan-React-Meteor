@@ -1,10 +1,7 @@
 // methods related to user Settings
 
 import { Meteor } from 'meteor/meteor';
-import { _ } from 'meteor/underscore';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
-import SimpleSchema from 'simpl-schema';
-import { DDPRateLimiter } from 'meteor/ddp-rate-limiter';
 import { LoggedInMixin } from 'meteor/tunifight:loggedin-mixin';
 import {Accounts} from "meteor/accounts-base";
 import { Companies } from "/imports/api/companies/companies";
@@ -58,6 +55,27 @@ export const updateRole = new ValidatedMethod({
 
             })
         }
+    }
+});
+
+export const removeCompany = new ValidatedMethod({
+    name: 'users.removeCompany',
+    mixins : [LoggedInMixin],
+    checkLoggedInError: {
+        error: 'notLogged',
+        message: 'You need to be logged in to create activity'
+    },
+    validate: null,
+    run({companyId, userId}) {
+        Companies.update({
+            _id: companyId
+        }, {
+            $pull:  {
+                admins: userId,
+                peoples: userId
+            }
+
+        })
     }
 });
 
