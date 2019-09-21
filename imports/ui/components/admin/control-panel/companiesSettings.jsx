@@ -103,7 +103,7 @@ function CompaniesControlPanel(props) {
                         let profile = {
                             firstName: newData.firstName,
                             lastName: newData.lastName
-                        }
+                        };
                         Meteor.call('users.inviteNewUser', {profile, email: newData.email}, (err, res) => {
                             if(err){
                                 reject("Email already exists");
@@ -148,7 +148,7 @@ const CompaniesControlPanelPage = withTracker(props => {
     // Do all your reactive data access in this method.
     // Note that this subscription will get cleaned up when your component is unmounted
     // const handle = Meteor.subscribe('todoList', props.id);
-    Meteor.subscribe('companies');
+    Meteor.subscribe('compoundCompanies');
     Meteor.subscribe('projects');
     // let { parentProps } = props;
     let local = LocalCollection.findOne({

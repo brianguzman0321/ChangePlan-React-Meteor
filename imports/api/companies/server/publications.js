@@ -7,6 +7,26 @@ Meteor.publish('companies', function () {
     }, {sort: {}});
 });
 
+Meteor.publishTransformed('compoundCompanies', function () {
+    return Companies.find({
+
+    }).serverTransform({
+        'peoplesDetails': function (doc) {
+            console.log("running")
+            let peoples = [];
+            _(doc.peoples).each(function (PeopleId) {
+                peoples.push(Meteor.users.findOne({_id: PeopleId}, {
+                    fields: {
+                        services: 0, roles: 0
+                    }
+                }));
+            });
+
+            return peoples;
+        }
+    });
+});
+
 Meteor.publish('companies.single', function (id) {
     return Companies.find({
         owner: this.userId,
