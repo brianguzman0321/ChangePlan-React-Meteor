@@ -54,11 +54,18 @@ function CompaniesControlPanel(props) {
             editable={{
                 onRowAdd: newData => {
                     return new Promise((resolve, reject) => {
+                        let company ={
+                            _id : props.currentCompany._id
+                        };
+                        newData.role === 'admin' && (company.role = 'admin');
                         let profile = {
                             firstName: newData.firstName,
                             lastName: newData.lastName
                         };
-                        Meteor.call('users.inviteNewUser', {profile, email: newData.email}, (err, res) => {
+                        Meteor.call('users.inviteNewUser', {
+                            profile, email: newData.email,
+                            company
+                        }, (err, res) => {
                             if(err){
                                 reject("Email already exists");
                                 return false;
@@ -66,6 +73,7 @@ function CompaniesControlPanel(props) {
                             else{
                                 resolve();
                                 const data = [...state.data];
+                                newData.currentRole = newData.role;
                                 data.push(newData);
                                 setState({...state, data});
                             }

@@ -12,7 +12,6 @@ Meteor.publishTransformed('compoundCompanies', function () {
 
     }).serverTransform({
         'peoplesDetails': function (doc) {
-            console.log("running")
             let peoples = [];
             _(doc.peoples).each(function (PeopleId) {
                 peoples.push(Meteor.users.findOne({_id: PeopleId}, {

@@ -87,9 +87,22 @@ export const InviteNewUser = new ValidatedMethod({
         message: 'You need to be logged in to create activity'
     },
     validate: null,
-    run({profile, email}) {
+    run({profile, email, company}) {
             const newUserID = Accounts.createUser({profile, email});
             Accounts.sendEnrollmentEmail(newUserID);
+            if(company){
+                let update= {
+                    $addToSet: {
+                        peoples: newUserID
+                    }
+                };
+                if(company.role){
+                    update.$addToSet.admins = newUserID
+                }
+                Companies.update({
+                    _id: company._id
+                }, update)
+            }
             return newUserID;
         }
 });
