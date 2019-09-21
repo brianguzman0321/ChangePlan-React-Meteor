@@ -35,14 +35,6 @@ Projects.schema = new SimpleSchema({
     'stakeHolders.$': {
         type: String
     },
-    admins: {
-        type: Array,
-        defaultValue: [],
-        label: 'project admins',
-    },
-    'admins.$': {
-        type: String
-    },
     changeManagers: {
         type: Array,
         defaultValue: [],

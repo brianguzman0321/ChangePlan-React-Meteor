@@ -1,4 +1,4 @@
-// methods related to companies
+// methods related to user Settings
 
 import { Meteor } from 'meteor/meteor';
 import { _ } from 'meteor/underscore';
@@ -7,6 +7,7 @@ import SimpleSchema from 'simpl-schema';
 import { DDPRateLimiter } from 'meteor/ddp-rate-limiter';
 import { LoggedInMixin } from 'meteor/tunifight:loggedin-mixin';
 import {Accounts} from "meteor/accounts-base";
+import { Companies } from "/imports/api/companies/companies";
 
 
 export const getAllusers = new ValidatedMethod({
@@ -25,6 +26,38 @@ export const getAllusers = new ValidatedMethod({
         }, {
             fields: { services: 0 }
         }).fetch()
+    }
+});
+
+export const updateRole = new ValidatedMethod({
+    name: 'users.updateRole',
+    mixins : [LoggedInMixin],
+    checkLoggedInError: {
+        error: 'notLogged',
+        message: 'You need to be logged in to create activity'
+    },
+    validate: null,
+    run({companyId, userId, role}) {
+        if(role === 'noRole'){
+            Companies.update({
+                _id: companyId
+            }, {
+                $pull:  {
+                    admins: userId
+                }
+
+            })
+        }
+        else if(role === 'admin'){
+            Companies.update({
+                _id: companyId
+            }, {
+                $addToSet:  {
+                    admins: userId
+                }
+
+            })
+        }
     }
 });
 

@@ -13,45 +13,50 @@ function CompaniesControlPanel(props) {
     const [companies, setCompanies] = React.useState({});
     const [state, setState] = React.useState({
         columns: [
-            { title: 'FirstName', field: 'firstName', editable: 'onAdd' },
-            { title: 'LastName', field: 'lastName', editable: 'onAdd'},
-            { title: 'Email', field: 'email', editable: 'onAdd'},
-            {
-                title: 'Company',
-                field: 'company',
-                lookup: {},
-            },
+            {title: 'FirstName', field: 'firstName', editable: 'onAdd'},
+            {title: 'LastName', field: 'lastName', editable: 'onAdd'},
+            {title: 'Email', field: 'email', editable: 'onAdd'},
+            {title: 'CurrentRole', field: 'currentRole', editable: 'never'},
             {
                 title: 'Role',
                 field: 'role',
                 lookup: {
                     admin: 'Admin',
-                    remove: 'Remove Admin',
+                    noRole: 'No Role',
                 },
             },
         ],
-        data: [],
+        data: props.currentCompany.peoplesDetails.map(user => {
+            return {
+                _id: user._id,
+                firstName: user.profile.firstName,
+                lastName: user.profile.lastName,
+                email: user.emails[0].address,
+                role: props.currentCompany.admins.includes(user._id) ? 'admin' :  'noRole',
+                currentRole: props.currentCompany.admins.includes(user._id) ? 'admin' :  'noRole'
+            }
+        })
     });
 
 
-    const getUsers = () => {
-        Meteor.call('users.getAllusers', (err, res) => {
-            if(res){
-                let data = [...state.data];
-                data = res.map(user => {
-                    return {
-                        firstName: user.profile.firstName,
-                        lastName: user.profile.lastName,
-                        email: user.emails[0].address,
-                        role: 'admin',
-                        company: 'PTXYQkJd6qwJdRYYD'
-                    }
-
-                });
-                setState({ ...state, data });
-            }
-        })
-    };
+    // const getUsers = () => {
+    //     Meteor.call('users.getAllusers', (err, res) => {
+    //         if(res){
+    //             let data = [...state.data];
+    //             data = res.map(user => {
+    //                 return {
+    //                     firstName: user.profile.firstName,
+    //                     lastName: user.profile.lastName,
+    //                     email: user.emails[0].address,
+    //                     role: 'admin',
+    //                     company: 'PTXYQkJd6qwJdRYYD'
+    //                 }
+    //
+    //             });
+    //             setState({ ...state, data });
+    //         }
+    //     })
+    // };
 
     const updateColumns = (companies) => {
         setCompanies(companies);
@@ -65,7 +70,6 @@ function CompaniesControlPanel(props) {
 
     useEffect(() => {
         if(!state.data.length){
-            getUsers();
             if(!Object.keys(companies).length){
                 if(props.companies && props.companies.length){
                     let companies1 = props.companies.reduce(function(acc, cur, i) {
@@ -120,15 +124,28 @@ function CompaniesControlPanel(props) {
                     })
                 },
 
-                onRowUpdate: (newData, oldData) =>
-                    new Promise(resolve => {
-                        setTimeout(() => {
-                            resolve();
-                            const data = [...state.data];
-                            data[data.indexOf(oldData)] = newData;
-                            setState({ ...state, data });
-                        }, 600);
-                    }),
+                onRowUpdate: (newData, oldData) => {
+                    return new Promise((resolve, reject) => {
+                        let params = {
+                            companyId: props.currentCompany._id,
+                            userId: newData._id,
+                            role: newData.role
+                        }
+                        Meteor.call('users.updateRole', params, (err, res) => {
+                            if (err) {
+                                reject("Email already exists");
+                                return false;
+                            }
+                            else {
+                                resolve();
+                                const data = [...state.data];
+                                data[data.indexOf(oldData)] = newData;
+                                setState({...state, data});
+                            }
+
+                        })
+                    })
+                },
                 onRowDelete: oldData =>
                     new Promise(resolve => {
                         setTimeout(() => {
@@ -145,6 +162,7 @@ function CompaniesControlPanel(props) {
 
 
 const CompaniesControlPanelPage = withTracker(props => {
+    console.log(props.companies, "in companies")
     // Do all your reactive data access in this method.
     // Note that this subscription will get cleaned up when your component is unmounted
     // const handle = Meteor.subscribe('todoList', props.id);

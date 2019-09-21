@@ -23,10 +23,18 @@ Companies.schema = new SimpleSchema({
         type: String,
         label: 'Owner of company'
     },
+    admins: {
+        type: Array,
+        defaultValue: [],
+        label: 'company admins',
+    },
+    'admins.$': {
+        type: String
+    },
     peoples: {
         type: Array,
         defaultValue: [],
-        label: 'company Projects',
+        label: 'company Peoples',
     },
     'peoples.$': {
         type: String,

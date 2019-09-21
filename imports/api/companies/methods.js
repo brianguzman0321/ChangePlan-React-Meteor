@@ -29,6 +29,12 @@ export const insert = new ValidatedMethod({
         'company.peoples.$': {
             type: String
         },
+        'company.admins': {
+            type: Array,
+        },
+        'company.admins.$': {
+            type: String
+        },
         'company.projects': {
             type: Array
         },
@@ -65,6 +71,12 @@ export const update = new ValidatedMethod({
             type: Array
         },
         'company.peoples.$': {
+            type: String
+        },
+        'company.admins': {
+            type: Array,
+        },
+        'company.admins.$': {
             type: String
         },
         'company.projects': {

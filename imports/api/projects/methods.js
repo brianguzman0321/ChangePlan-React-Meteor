@@ -35,12 +35,6 @@ export const insert = new ValidatedMethod({
         'project.stakeHolders.$': {
             type: String
         },
-        'project.admins': {
-            type: Array,
-        },
-        'project.admins.$': {
-            type: String
-        },
         'project.managers': {
             type: Array,
         },
@@ -101,12 +95,6 @@ export const update = new ValidatedMethod({
             type: Array,
         },
         'project.stakeHolders.$': {
-            type: String
-        },
-        'project.admins': {
-            type: Array,
-        },
-        'project.admins.$': {
             type: String
         },
         'project.managers': {
