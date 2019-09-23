@@ -36,18 +36,6 @@ Meteor.publishTransformed('compoundProjects', function () {
 
             return changeManagers;
         },
-        'activityOwnersDetails': function (doc) {
-            let activityOwners = [];
-            _(doc.activityOwners).each(function (PeopleId) {
-                activityOwners.push(Meteor.users.findOne({_id: PeopleId}, {
-                    fields: {
-                        services: 0, roles: 0
-                    }
-                }));
-            });
-
-            return activityOwners;
-        }
     });
 });
 

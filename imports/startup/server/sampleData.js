@@ -36,6 +36,7 @@ if(superAdmin && superAdmin._id) {
         console.log("No Activities Exists");
         projectId = Activities.insert({
             owner: superAdmin._id,
+            activityOwner: superAdmin._id,
             startingDate: new Date(),
             endingDate: new Date(),
             name: 'email',

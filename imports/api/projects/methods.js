@@ -47,12 +47,6 @@ export const insert = new ValidatedMethod({
         'project.changeManagers.$': {
             type: String
         },
-        'project.activityOwners': {
-            type: Array,
-        },
-        'project.activityOwners.$': {
-            type: String
-        },
         'project.startingDate': {
             type: Date,
         },
@@ -107,12 +101,6 @@ export const update = new ValidatedMethod({
             type: Array,
         },
         'project.changeManagers.$': {
-            type: String
-        },
-        'project.activityOwners': {
-            type: Array,
-        },
-        'project.activityOwners.$': {
             type: String
         },
         'project.startingDate': {

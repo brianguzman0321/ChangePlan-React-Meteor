@@ -19,6 +19,10 @@ Activities.schema = new SimpleSchema({
         type: String,
         label: 'Owner'
     },
+    activityOwner: {
+        type: String,
+        label: 'activity Owner'
+    },
     type: {
         type: String,
         label: 'activity Type'

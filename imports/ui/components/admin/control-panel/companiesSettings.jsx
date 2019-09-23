@@ -74,6 +74,7 @@ function CompaniesControlPanel(props) {
                                 resolve();
                                 const data = [...state.data];
                                 newData.currentRole = newData.role;
+                                newData._id = res;
                                 data.push(newData);
                                 setState({...state, data});
                             }
