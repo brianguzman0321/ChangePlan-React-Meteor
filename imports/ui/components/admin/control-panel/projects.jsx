@@ -19,7 +19,8 @@ function ProjectsSettings(props) {
                 title: 'Assign Role',
                 field: 'role',
                 lookup: {
-                    admin: 'Admin',
+                    changeManager: 'Change Manager',
+                    manager: 'Manager',
                     noRole: 'No Role',
                 },
             },
@@ -30,8 +31,8 @@ function ProjectsSettings(props) {
                 firstName: user.profile.firstName,
                 lastName: user.profile.lastName,
                 email: user.emails[0].address,
-                role: props.currentProject.managers.includes(user._id) ? 'manager' :  'noRole',
-                currentRole: props.currentProject.managers.includes(user._id) ? 'manager' :  'noRole'
+                role: getRole(props.currentProject, user._id),
+                currentRole: getRole(props.currentProject, user._id)
             }
         })
     });
@@ -59,12 +60,13 @@ function ProjectsSettings(props) {
                                     let project = {
                                         _id : props.currentProject._id
                                     };
-                                    newData.role === 'admin' && (company.role = 'admin');
+                                    newData.role === 'changeManager' && (project.role = 'changeManager');
+                                    newData.role === 'manager' && (project.role = 'manager');
                                     let profile = {
                                         firstName: newData.firstName,
                                         lastName: newData.lastName
                                     };
-                                    Meteor.call('users.inviteNewUser', {
+                                    Meteor.call('users.inviteNewProjectUser', {
                                         profile, email: newData.email,
                                         company, project
                                     }, (err, res) => {
@@ -92,7 +94,7 @@ function ProjectsSettings(props) {
                                         userId: newData._id,
                                         role: newData.role
                                     };
-                                    Meteor.call('users.updateRole', params, (err, res) => {
+                                    Meteor.call('users.updateProjectRole', params, (err, res) => {
                                         if (err) {
                                             reject("Email already exists");
                                             return false;
@@ -133,6 +135,16 @@ function ProjectsSettings(props) {
                     /> : ''
             }
         </div>)
+}
+
+function getRole(project, userId){
+    if(project.changeManagers.includes(userId)){
+        return 'changeManager'
+    }
+    else if(project.managers.includes(userId)){
+        return 'manager'
+    }
+    return 'noRole'
 }
 
 
