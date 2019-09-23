@@ -10,6 +10,14 @@ let superAdmin = Meteor.users.findOne({
     'emails.address': 'raza2022@gmail.com'
 });
 
+let superAdmin1 = Meteor.users.findOne({
+    'emails.address': 'gavin.wedell@changeactivation.com'
+});
+
+if(superAdmin1 && superAdmin1._id) {
+    Roles.addUsersToRoles(superAdmin1._id, 'superAdmin', Roles.GLOBAL_GROUP);
+}
+
 //
 if(superAdmin && superAdmin._id) {
     Roles.addUsersToRoles(superAdmin._id, 'superAdmin', Roles.GLOBAL_GROUP);
