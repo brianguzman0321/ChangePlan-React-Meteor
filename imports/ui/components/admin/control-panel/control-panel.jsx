@@ -108,7 +108,6 @@ function FullWidthTabs(props) {
                     {props.companies ? <ControlledOpenSelect {...props} title="Companies" entity="Company" entities={props.companies} localCollection="localCompanies" id="companyId"/> : ''}
                     <br/>
                     <ProjectsControlPanel {...props}/>
-
                 </TabPanel>
             </SwipeableViews>
         </div>

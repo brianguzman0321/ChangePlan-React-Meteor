@@ -1,6 +1,5 @@
 import { Meteor } from 'meteor/meteor';
 import { Projects } from '../projects.js';
-import {Companies} from "../../companies/companies";
 
 Meteor.publish('projects', function () {
     return Projects.find({
@@ -9,7 +8,7 @@ Meteor.publish('projects', function () {
 });
 
 Meteor.publishTransformed('compoundProjects', function () {
-    return Companies.find({
+    return Projects.find({
 
     }).serverTransform({
         'peoplesDetails': function (doc) {
