@@ -27,6 +27,14 @@ Projects.schema = new SimpleSchema({
         type: String,
         label: 'company ID'
     },
+    peoples: {
+        type: Array,
+        defaultValue: [],
+        label: 'company Peoples',
+    },
+    'peoples.$': {
+        type: String,
+    },
     stakeHolders: {
         type: Array,
         defaultValue: [],

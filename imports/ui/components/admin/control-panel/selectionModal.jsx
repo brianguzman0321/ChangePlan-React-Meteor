@@ -23,10 +23,11 @@ export default function ControlledOpenSelect(props) {
     const classes = useStyles();
     const [age, setAge] = React.useState('');
     const [open, setOpen] = React.useState(false);
+    let { title, entity } = props;
 
     function handleChange(event) {
         setAge(event.target.value);
-        updateFilter('localCompanies', 'id', event.target.value);
+        updateFilter(props.localCollection, props.id, event.target.value);
     }
 
     function handleClose() {
@@ -40,10 +41,10 @@ export default function ControlledOpenSelect(props) {
     return (
         <form autoComplete="off">
             <Typography variant="body2" component="p">
-                Select Company
+                Select {entity}
             </Typography>
             <FormControl className={classes.formControl} fullWidth>
-                <InputLabel htmlFor="demo-controlled-open-select">Company</InputLabel>
+                <InputLabel htmlFor="demo-controlled-open-select">{title}</InputLabel>
                 <Select
                     open={open}
                     onClose={handleClose}
@@ -58,8 +59,9 @@ export default function ControlledOpenSelect(props) {
                     {/*<MenuItem value="">*/}
                         {/*<em>Select Company</em>*/}
                     {/*</MenuItem>*/}
-                    {props.companies && props.companies.map((company) => {
-                        return <MenuItem value={company._id}>{company.name}</MenuItem>
+                    {/*entities comes from props i.e companies, projects etc*/}
+                    {props.entities && props.entities.map((entity) => {
+                        return <MenuItem key={entity._id} value={entity._id}>{entity.name}</MenuItem>
                     })
                     }
                     {/*<MenuItem value={10}>Ten</MenuItem>*/}

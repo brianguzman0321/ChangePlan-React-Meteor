@@ -73,7 +73,7 @@ function CompaniesControlPanel(props) {
                             else{
                                 resolve();
                                 const data = [...state.data];
-                                newData.currentRole = newData.role;
+                                newData.currentRole = newData.role || 'noRole';
                                 newData._id = res;
                                 data.push(newData);
                                 setState({...state, data});
@@ -144,7 +144,7 @@ const CompaniesControlPanelPage = withTracker(props => {
         name: 'localCompanies'
     });
 
-    const currentCompany = Companies.findOne({_id: local.id});
+    const currentCompany = Companies.findOne({_id: local.companyId});
 
     return {
         companies: Companies.find({}).fetch(),

@@ -93,12 +93,22 @@ function FullWidthTabs(props) {
             >
                 <TabPanel value={value} index={0} dir={theme.direction}>
                     <br/>
-                    {props.companies ? <ControlledOpenSelect {...props}/> : ''}
+                    {props.companies ? <ControlledOpenSelect {...props}
+                                                             title="Companies"
+                                                             entity="Company"
+                                                             entities={props.companies}
+                                                             localCollection="localCompanies"
+                                                             id="companyId"
+                    /> : ''}
                     <br/>
                     <CompaniesControlPanel {...props} parentProps="localCompanies"/>
                 </TabPanel>
-                <TabPanel value={value} index={1} dir={theme.direction} parentProps="localProjects">
+                <TabPanel value={value} index={1} dir={theme.direction}>
+                    <br/>
+                    {props.companies ? <ControlledOpenSelect {...props} title="Companies" entity="Company" entities={props.companies} localCollection="localCompanies" id="companyId"/> : ''}
+                    <br/>
                     <ProjectsControlPanel {...props}/>
+
                 </TabPanel>
             </SwipeableViews>
         </div>

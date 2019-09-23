@@ -12,9 +12,9 @@ Meteor.publishTransformed('compoundProjects', function () {
     return Companies.find({
 
     }).serverTransform({
-        'managersDetails': function (doc) {
-            let managers = [];
-            _(doc.managers).each(function (PeopleId) {
+        'peoplesDetails': function (doc) {
+            let peoples = [];
+            _(doc.peoples).each(function (PeopleId) {
                 peoples.push(Meteor.users.findOne({_id: PeopleId}, {
                     fields: {
                         services: 0, roles: 0
@@ -22,20 +22,32 @@ Meteor.publishTransformed('compoundProjects', function () {
                 }));
             });
 
-            return managers;
+            return peoples;
         },
-        'changeManagersDetails': function (doc) {
-            let changeManagers = [];
-            _(doc.changeManagers).each(function (PeopleId) {
-                changeManagers.push(Meteor.users.findOne({_id: PeopleId}, {
-                    fields: {
-                        services: 0, roles: 0
-                    }
-                }));
-            });
-
-            return changeManagers;
-        },
+        // 'managersDetails': function (doc) {
+        //     let managers = [];
+        //     _(doc.managers).each(function (PeopleId) {
+        //         peoples.push(Meteor.users.findOne({_id: PeopleId}, {
+        //             fields: {
+        //                 services: 0, roles: 0
+        //             }
+        //         }));
+        //     });
+        //
+        //     return managers;
+        // },
+        // 'changeManagersDetails': function (doc) {
+        //     let changeManagers = [];
+        //     _(doc.changeManagers).each(function (PeopleId) {
+        //         changeManagers.push(Meteor.users.findOne({_id: PeopleId}, {
+        //             fields: {
+        //                 services: 0, roles: 0
+        //             }
+        //         }));
+        //     });
+        //
+        //     return changeManagers;
+        // },
     });
 });
 

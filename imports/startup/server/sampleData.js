@@ -18,7 +18,8 @@ if(superAdmin && superAdmin._id) {
         console.log("No Companies Exists");
         companyId = Companies.insert({
             owner: superAdmin._id,
-            name: "AppBakerZ"
+            name: "AppBakerZ",
+            peoples: [superAdmin._id]
         })
     }
     if(!Projects.findOne()){
@@ -27,6 +28,7 @@ if(superAdmin && superAdmin._id) {
             owner: superAdmin._id,
             name: 'Change Plan Development',
             companyId: companyId,
+            peoples: [superAdmin._id],
             startingDate: new Date(),
             endingDate: new Date()
         })

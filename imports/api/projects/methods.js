@@ -29,6 +29,12 @@ export const insert = new ValidatedMethod({
         'project.companyId': {
             type: String,
         },
+        'project.peoples': {
+            type: Array,
+        },
+        'project.peoples.$': {
+            type: String
+        },
         'project.stakeHolders': {
             type: Array,
         },
@@ -84,6 +90,12 @@ export const update = new ValidatedMethod({
         },
         'project.companyId': {
             type: String,
+        },
+        'project.peoples': {
+            type: Array,
+        },
+        'project.peoples.$': {
+            type: String
         },
         'project.stakeHolders': {
             type: Array,
