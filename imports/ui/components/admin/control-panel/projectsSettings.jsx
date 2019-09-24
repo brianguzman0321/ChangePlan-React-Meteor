@@ -8,41 +8,6 @@ import ControlledOpenSelect from './selectionModal'
 import ProjectsSettingsPage from './projects'
 
 function ProjectsControlPanel(props) {
-    // if (!props.currentCompany){
-    //     return <div></div>
-    // }
-    // else if(props.currentCompany && props.currentProject){
-    //     const [companies, setCompanies] = React.useState({});
-    //     const [state, setState] = React.useState({
-    //         columns: [
-    //             {title: 'FirstName', field: 'firstName', editable: 'onAdd'},
-    //             {title: 'LastName', field: 'lastName', editable: 'onAdd'},
-    //             {title: 'Email', field: 'email', editable: 'onAdd'},
-    //             {title: 'CurrentRole', field: 'currentRole', editable: 'never'},
-    //             {
-    //                 title: 'Assign Role',
-    //                 field: 'role',
-    //                 lookup: {
-    //                     admin: 'Admin',
-    //                     noRole: 'No Role',
-    //                 },
-    //             },
-    //         ],
-    //         data: props.currentProject.peoplesDetails.map(user => {
-    //             return {
-    //                 _id: user._id,
-    //                 firstName: user.profile.firstName,
-    //                 lastName: user.profile.lastName,
-    //                 email: user.emails[0].address,
-    //                 role: props.currentProject.admins.includes(user._id) ? 'admin' :  'noRole',
-    //                 currentRole: props.currentProject.admins.includes(user._id) ? 'admin' :  'noRole'
-    //             }
-    //         })
-    //     });
-    //
-    // }
-
-
     useEffect(() => {
     });
 

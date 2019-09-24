@@ -3,6 +3,7 @@ import {Meteor} from "meteor/meteor";
 import MaterialTable from "material-table";
 import {withTracker} from "meteor/react-meteor-data";
 import { Projects } from "../../../../api/projects/projects";
+import { withSnackbar } from 'notistack';
 
 function ProjectsSettings(props) {
     if (!props.currentProject){
@@ -88,7 +89,8 @@ function ProjectsSettings(props) {
                                         company, project
                                     }, (err, res) => {
                                         if(err){
-                                            reject("Email already exists");
+                                            props.enqueueSnackbar(err.reason, {variant: 'error'});
+                                            reject();
                                             return false;
                                         }
                                         else{
@@ -98,6 +100,7 @@ function ProjectsSettings(props) {
                                             newData._id = res;
                                             data.push(newData);
                                             setState({...state, data});
+                                            props.enqueueSnackbar('New User Added Successfully.', {variant: 'success'})
                                         }
 
                                     })
@@ -113,7 +116,8 @@ function ProjectsSettings(props) {
                                     };
                                     Meteor.call('users.updateProjectRole', params, (err, res) => {
                                         if (err) {
-                                            reject("Email already exists");
+                                            props.enqueueSnackbar(err.reason, {variant: 'error'});
+                                            reject();
                                             return false;
                                         }
                                         else {
@@ -122,6 +126,7 @@ function ProjectsSettings(props) {
                                             newData.currentRole = newData.role;
                                             data[data.indexOf(oldData)] = newData;
                                             setState({...state, data});
+                                            props.enqueueSnackbar('User Role Updated Successfully.', {variant: 'success'})
                                         }
 
                                     })
@@ -135,7 +140,8 @@ function ProjectsSettings(props) {
                                     };
                                     Meteor.call('users.removeProject', params, (err, res) => {
                                         if (err) {
-                                            reject("No User Found");
+                                            props.enqueueSnackbar(err.reason, {variant: 'error'});
+                                            reject();
                                             return false;
                                         }
                                         else {
@@ -143,6 +149,7 @@ function ProjectsSettings(props) {
                                             const data = [...state.data];
                                             data.splice(data.indexOf(oldData), 1);
                                             setState({ ...state, data });
+                                            props.enqueueSnackbar('User Removed From Project Successfully.', {variant: 'success'})
                                         }
 
                                     })
@@ -179,4 +186,4 @@ const ProjectsSettingsPage = withTracker(props => {
     };
 })(ProjectsSettings);
 
-export default ProjectsSettingsPage
+export default withSnackbar(ProjectsSettingsPage)

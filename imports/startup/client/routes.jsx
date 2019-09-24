@@ -12,6 +12,7 @@ import ForgotPassword from '/imports/ui/components/Auth/forgotPassword';
 import ResetPassword from '/imports/ui/components/Auth/ResetPassword';
 import EnrollAccountPage from '/imports/ui/components/Auth/EnrollAccount';
 import MaterialTableDemo from '/imports/ui/components/admin/control-panel/control-panel';
+import { SnackbarProvider } from 'notistack';
 
 //list of Public Routes
 const listOfPages = ['login', 'signup', 'forgot-password', 'reset-password'];
@@ -77,5 +78,10 @@ const Root = withTracker(props => {
 
 
 Meteor.startup(() => {
-    render(<Root />, document.getElementById('render-root'));
+    render(
+        <SnackbarProvider maxSnack={3}
+            anchorOrigin={{vertical : 'top', horizontal:"right"}}>
+            <Root />
+        </SnackbarProvider>,
+        document.getElementById('render-root'));
 });

@@ -4,6 +4,7 @@ import MaterialTable from "material-table";
 import {withTracker} from "meteor/react-meteor-data";
 import {Companies} from "../../../../api/companies/companies";
 import {Projects} from "../../../../api/projects/projects";
+import { withSnackbar } from 'notistack';
 
 function CompaniesControlPanel(props) {
     if (!props.currentCompany){
@@ -67,7 +68,8 @@ function CompaniesControlPanel(props) {
                             company
                         }, (err, res) => {
                             if(err){
-                                reject("Email already exists");
+                                props.enqueueSnackbar(err.reason, {variant: 'error'});
+                                reject();
                                 return false;
                             }
                             else{
@@ -77,6 +79,7 @@ function CompaniesControlPanel(props) {
                                 newData._id = res;
                                 data.push(newData);
                                 setState({...state, data});
+                                props.enqueueSnackbar('New User Added Successfully.', {variant: 'success'})
                             }
 
                         })
@@ -92,7 +95,8 @@ function CompaniesControlPanel(props) {
                         };
                         Meteor.call('users.updateRole', params, (err, res) => {
                             if (err) {
-                                reject("Email already exists");
+                                props.enqueueSnackbar(err.reason, {variant: 'error'});
+                                reject();
                                 return false;
                             }
                             else {
@@ -101,6 +105,7 @@ function CompaniesControlPanel(props) {
                                 newData.currentRole = newData.role;
                                 data[data.indexOf(oldData)] = newData;
                                 setState({...state, data});
+                                props.enqueueSnackbar('User Role Updated Successfully.', {variant: 'success'})
                             }
 
                         })
@@ -114,7 +119,8 @@ function CompaniesControlPanel(props) {
                         };
                         Meteor.call('users.removeCompany', params, (err, res) => {
                             if (err) {
-                                reject("No User Found");
+                                props.enqueueSnackbar(err.reason, {variant: 'error'});
+                                reject();
                                 return false;
                             }
                             else {
@@ -122,6 +128,7 @@ function CompaniesControlPanel(props) {
                                 const data = [...state.data];
                                 data.splice(data.indexOf(oldData), 1);
                                 setState({ ...state, data });
+                                props.enqueueSnackbar('User Removed From Company Successfully.', {variant: 'success'})
                             }
 
                         })
@@ -152,5 +159,4 @@ const CompaniesControlPanelPage = withTracker(props => {
         currentCompany,
     };
 })(CompaniesControlPanel);
-
-export default CompaniesControlPanelPage
+export default withSnackbar(CompaniesControlPanelPage);
