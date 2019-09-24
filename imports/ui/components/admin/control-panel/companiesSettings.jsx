@@ -5,6 +5,7 @@ import {withTracker} from "meteor/react-meteor-data";
 import {Companies} from "../../../../api/companies/companies";
 import {Projects} from "../../../../api/projects/projects";
 import { withSnackbar } from 'notistack';
+import UserSelectionModal from '/imports/ui/components/utilityComponents/userSelectionModal'
 
 function CompaniesControlPanel(props) {
     if (!props.currentCompany){
@@ -45,97 +46,110 @@ function CompaniesControlPanel(props) {
 
 
     return (
-        <MaterialTable
-            title="Control Panel"
-            columns={state.columns}
-            options={{
-                actionsColumnIndex: -1
-            }}
-            data={state.data}
-            editable={{
-                onRowAdd: newData => {
-                    return new Promise((resolve, reject) => {
-                        let company ={
-                            _id : props.currentCompany._id
-                        };
-                        newData.role === 'admin' && (company.role = 'admin');
-                        let profile = {
-                            firstName: newData.firstName,
-                            lastName: newData.lastName
-                        };
-                        Meteor.call('users.inviteNewUser', {
-                            profile, email: newData.email,
-                            company
-                        }, (err, res) => {
-                            if(err){
-                                props.enqueueSnackbar(err.reason, {variant: 'error'});
-                                reject();
-                                return false;
-                            }
-                            else{
-                                resolve();
-                                const data = [...state.data];
-                                newData.currentRole = newData.role || 'noRole';
-                                newData._id = res;
-                                data.push(newData);
-                                setState({...state, data});
-                                props.enqueueSnackbar('New User Added Successfully.', {variant: 'success'})
-                            }
+        <div>
+            <UserSelectionModal />
+            <br/>
+            <MaterialTable
+                title="Control Panel"
+                columns={state.columns}
+                options={{
+                    actionsColumnIndex: -1
+                }}
 
+                // actions={[
+                //     {
+                //         icon: 'save',
+                //         tooltip: 'Save User',
+                //         onClick: (event, rowData) => alert("You saved " + rowData.role),
+                //         actionsColumnIndex: 0
+                //     }
+                // ]}
+                data={state.data}
+                editable={{
+                    onRowAdd: newData => {
+                        return new Promise((resolve, reject) => {
+                            let company ={
+                                _id : props.currentCompany._id
+                            };
+                            newData.role === 'admin' && (company.role = 'admin');
+                            let profile = {
+                                firstName: newData.firstName,
+                                lastName: newData.lastName
+                            };
+                            Meteor.call('users.inviteNewUser', {
+                                profile, email: newData.email,
+                                company
+                            }, (err, res) => {
+                                if(err){
+                                    props.enqueueSnackbar(err.reason, {variant: 'error'});
+                                    reject();
+                                    return false;
+                                }
+                                else{
+                                    resolve();
+                                    const data = [...state.data];
+                                    newData.currentRole = newData.role || 'noRole';
+                                    newData._id = res;
+                                    data.push(newData);
+                                    setState({...state, data});
+                                    props.enqueueSnackbar('New User Added Successfully.', {variant: 'success'})
+                                }
+
+                            })
                         })
-                    })
-                },
+                    },
 
-                onRowUpdate: (newData, oldData) => {
-                    return new Promise((resolve, reject) => {
-                        let params = {
-                            companyId: props.currentCompany._id,
-                            userId: newData._id,
-                            role: newData.role
-                        };
-                        Meteor.call('users.updateRole', params, (err, res) => {
-                            if (err) {
-                                props.enqueueSnackbar(err.reason, {variant: 'error'});
-                                reject();
-                                return false;
-                            }
-                            else {
-                                resolve();
-                                const data = [...state.data];
-                                newData.currentRole = newData.role;
-                                data[data.indexOf(oldData)] = newData;
-                                setState({...state, data});
-                                props.enqueueSnackbar('User Role Updated Successfully.', {variant: 'success'})
-                            }
+                    onRowUpdate: (newData, oldData) => {
+                        return new Promise((resolve, reject) => {
+                            let params = {
+                                companyId: props.currentCompany._id,
+                                userId: newData._id,
+                                role: newData.role
+                            };
+                            Meteor.call('users.updateRole', params, (err, res) => {
+                                if (err) {
+                                    props.enqueueSnackbar(err.reason, {variant: 'error'});
+                                    reject();
+                                    return false;
+                                }
+                                else {
+                                    resolve();
+                                    const data = [...state.data];
+                                    newData.currentRole = newData.role;
+                                    data[data.indexOf(oldData)] = newData;
+                                    setState({...state, data});
+                                    props.enqueueSnackbar('User Role Updated Successfully.', {variant: 'success'})
+                                }
 
+                            })
                         })
-                    })
-                },
-                onRowDelete: oldData => {
-                    return new Promise((resolve, reject) => {
-                        let params = {
-                            companyId: props.currentCompany._id,
-                            userId: oldData._id,
-                        };
-                        Meteor.call('users.removeCompany', params, (err, res) => {
-                            if (err) {
-                                props.enqueueSnackbar(err.reason, {variant: 'error'});
-                                reject();
-                                return false;
-                            }
-                            else {
-                                resolve();
-                                const data = [...state.data];
-                                data.splice(data.indexOf(oldData), 1);
-                                setState({ ...state, data });
-                                props.enqueueSnackbar('User Removed From Company Successfully.', {variant: 'success'})
-                            }
+                    },
+                    onRowDelete: oldData => {
+                        return new Promise((resolve, reject) => {
+                            let params = {
+                                companyId: props.currentCompany._id,
+                                userId: oldData._id,
+                            };
+                            Meteor.call('users.removeCompany', params, (err, res) => {
+                                if (err) {
+                                    props.enqueueSnackbar(err.reason, {variant: 'error'});
+                                    reject();
+                                    return false;
+                                }
+                                else {
+                                    resolve();
+                                    const data = [...state.data];
+                                    data.splice(data.indexOf(oldData), 1);
+                                    setState({ ...state, data });
+                                    props.enqueueSnackbar('User Removed From Company Successfully.', {variant: 'success'})
+                                }
 
+                            })
                         })
-                    })
-                }
-            }}
-        />
+                    }
+                }}
+            />
+        </div>
     );
 }
 

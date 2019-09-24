@@ -12,6 +12,8 @@ import ForgotPassword from '/imports/ui/components/Auth/forgotPassword';
 import ResetPassword from '/imports/ui/components/Auth/ResetPassword';
 import EnrollAccountPage from '/imports/ui/components/Auth/EnrollAccount';
 import MaterialTableDemo from '/imports/ui/components/admin/control-panel/control-panel';
+import ControlPanel from '/imports/ui/components/ControlPanel/ControlPanel.jsx';
+import Home from '/imports/ui/components/Home/Home';
 import { SnackbarProvider } from 'notistack';
 
 //list of Public Routes
@@ -51,6 +53,8 @@ const Routes = appProps => (
         <div className="App">
                 <Switch>
                     <Authenticated exact path="/" component={App} {...appProps}/>
+                    <Authenticated exact path="/home" component={Home} {...appProps}/>
+                    <Authenticated exact path="/control-panel" component={ControlPanel} {...appProps}/>
                     <AdminRoute exact path="/admin/control-panel" component={MaterialTableDemo} {...appProps}/>
                     <Public path="/signup" component={Signup} {...appProps}/>
                     <Public path="/login" component={Login} {...appProps}/>
