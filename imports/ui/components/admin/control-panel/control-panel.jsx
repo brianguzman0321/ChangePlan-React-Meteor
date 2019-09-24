@@ -119,8 +119,8 @@ const ControlPanelPage = withTracker(props => {
     // Do all your reactive data access in this method.
     // Note that this subscription will get cleaned up when your component is unmounted
     // const handle = Meteor.subscribe('todoList', props.id);
-    Meteor.subscribe('companies');
-    Meteor.subscribe('projects');
+    // Meteor.subscribe('companies');
+    // Meteor.subscribe('projects');
     // let { parentProps } = props;
     // let local = LocalCollection.findOne({
     //     name: parentProps.collection

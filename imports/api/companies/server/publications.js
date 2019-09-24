@@ -2,15 +2,35 @@ import { Meteor } from 'meteor/meteor';
 import { Companies } from '../companies.js';
 
 Meteor.publish('companies', function () {
+    if(Roles.userIsInRole(this.userId, 'superAdmin')){
+        return Companies.find({})
+    }
     return Companies.find({
-        owner: this.userId
-    }, {sort: {}});
+        $or: [{
+            owner: this.userId
+        }, {
+            admins:{
+                $in: [this.userId]
+            }
+        }]
+    });
 });
 
 Meteor.publishTransformed('compoundCompanies', function () {
-    return Companies.find({
-
-    }).serverTransform({
+    let query = {};
+    if(!Roles.userIsInRole(this.userId, 'superAdmin')){
+        //if user Not Super Admin then return only if owner or admin
+        query = {
+            $or: [{
+                owner: this.userId
+            }, {
+                admins:{
+                    $in: [this.userId]
+                }
+            }]
+        }
+    }
+    return Companies.find(query).serverTransform({
         'peoplesDetails': function (doc) {
             let peoples = [];
             _(doc.peoples).each(function (PeopleId) {

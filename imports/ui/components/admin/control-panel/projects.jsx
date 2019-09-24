@@ -8,7 +8,7 @@ function ProjectsSettings(props) {
     if (!props.currentProject){
         return <div></div>
     }
-    const [projects, setProjects] = React.useState({});
+    const [project, setProject] = React.useState({});
     const [state, setState] = React.useState({
         columns: [
             {title: 'FirstName', field: 'firstName', editable: 'onAdd'},
@@ -37,6 +37,23 @@ function ProjectsSettings(props) {
         })
     });
     useEffect(() => {
+        if(props.currentProject._id !== project._id){
+            setProject(props.currentProject)
+            let data = [...state.data];
+            data = props.currentProject.peoplesDetails.map(user => {
+                return {
+                    _id: user._id,
+                    firstName: user.profile.firstName,
+                    lastName: user.profile.lastName,
+                    email: user.emails[0].address,
+                    role: getRole(props.currentProject, user._id),
+                    currentRole: getRole(props.currentProject, user._id)
+                }
+            })
+            setState({...state, data});
+        }
+
+
     });
 
 
@@ -116,7 +133,7 @@ function ProjectsSettings(props) {
                                         projectId: props.currentProject._id,
                                         userId: oldData._id,
                                     };
-                                    Meteor.call('users.removeCompany', params, (err, res) => {
+                                    Meteor.call('users.removeProject', params, (err, res) => {
                                         if (err) {
                                             reject("No User Found");
                                             return false;
@@ -150,10 +167,7 @@ function getRole(project, userId){
 
 
 const ProjectsSettingsPage = withTracker(props => {
-    // Do all your reactive data access in this method.
-    // Note that this subscription will get cleaned up when your component is unmounted
-    // const handle = Meteor.subscribe('todoList', props.id);
-    Meteor.subscribe('compoundProjects');
+    Meteor.subscribe('compoundProjects', props.currentCompany && props.currentCompany._id);
     let local1 = LocalCollection.findOne({
         name: 'localProjects'
     });

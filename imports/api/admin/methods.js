@@ -121,6 +121,28 @@ export const removeCompany = new ValidatedMethod({
     }
 });
 
+export const removeProject = new ValidatedMethod({
+    name: 'users.removeProject',
+    mixins : [LoggedInMixin],
+    checkLoggedInError: {
+        error: 'notLogged',
+        message: 'You need to be logged in to create activity'
+    },
+    validate: null,
+    run({projectId, userId}) {
+        Projects.update({
+            _id: projectId
+        }, {
+            $pull:  {
+                managers: userId,
+                changeManagers: userId,
+                peoples: userId
+            }
+
+        });
+    }
+});
+
 export const InviteNewUser = new ValidatedMethod({
     name: 'users.inviteNewUser',
     mixins : [LoggedInMixin],
