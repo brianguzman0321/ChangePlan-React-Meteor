@@ -12,6 +12,7 @@ function CompaniesControlPanel(props) {
         return <div></div>
     }
     const [companies, setCompanies] = React.useState({});
+    const [users, setUsers] = React.useState([]);
     const [state, setState] = React.useState({
         columns: [
             {title: 'FirstName', field: 'firstName', editable: 'onAdd'},
@@ -42,12 +43,25 @@ function CompaniesControlPanel(props) {
 
 
     useEffect(() => {
-    });
+        Meteor.call(`users.getUsers`, {company: props.currentCompany}, (err, res) => {
+            if(err){
+                props.enqueueSnackbar(err.reason, {variant: 'error'});
+            }
+            if(res && res.length){
+                setUsers(res.map(user => {
+                   return {
+                       label: `${user.profile.firstName} ${user.profile.lastName}`,
+                       value: user._id
+                   }
+                }))
+            }
+        })
+    }, []);
 
 
     return (
         <div>
-            <UserSelectionModal />
+            <UserSelectionModal options={users} {...props} />
             <br/>
             <MaterialTable
                 title="Control Panel"

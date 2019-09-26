@@ -143,6 +143,60 @@ export const removeProject = new ValidatedMethod({
     }
 });
 
+export const getUsers = new ValidatedMethod({
+    name: 'users.getUsers',
+    mixins : [LoggedInMixin],
+    checkLoggedInError: {
+        error: 'notLogged',
+        message: 'You need to be logged in to create activity'
+    },
+    validate: null,
+    run({company, project}) {
+        return Meteor.users.find({
+            _id: {
+                $ne: Meteor.userId(),
+                $nin: company.peoples
+            }
+        }, {
+            fields: { services: 0 }
+        }).fetch()
+    }
+});
+
+export const updateList = new ValidatedMethod({
+    name: 'users.updateList',
+    mixins : [LoggedInMixin],
+    checkLoggedInError: {
+        error: 'notLogged',
+        message: 'You need to be logged in to create activity'
+    },
+    validate: null,
+    run({userIds, company, project}) {
+        if(project){
+            Projects.update({
+                _id: project._id
+            }, {
+                $addToSet: {
+                    peoples: {
+                        $each: userIds
+                    }
+                }
+            })
+        }
+        if(company){
+            return Companies.update({
+                _id: company._id
+            }, {
+                $addToSet: {
+                    peoples: {
+                        $each: userIds
+                    }
+                }
+            })
+        }
+    }
+});
+
 export const InviteNewUser = new ValidatedMethod({
     name: 'users.inviteNewUser',
     mixins : [LoggedInMixin],
