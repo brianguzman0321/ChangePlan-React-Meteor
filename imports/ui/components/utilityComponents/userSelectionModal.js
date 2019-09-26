@@ -13,6 +13,7 @@ import IntegrationReactSelect from './AutoComplete'
 import {Meteor} from "meteor/meteor";
 
 function UserSelectionModal(props) {
+    let { title } = props;
     // const useStyles = makeStyles(theme => ({
     //     root: {
     //         flexGrow: 1,
@@ -67,7 +68,10 @@ function UserSelectionModal(props) {
     const saveUsers = () => {
         if(users && users.length){
             const userIds = users.map(user =>  user.value);
-            Meteor.call('users.updateList', {userIds, company: props.currentCompany},(err, res) => {
+            Meteor.call('users.updateList', {
+                userIds, company: props.currentCompany,
+                project: props.currentProject
+            },(err, res) => {
                 if(err){
                     props.enqueueSnackbar(err.reason, {variant: 'error'});
                 }
@@ -101,13 +105,13 @@ function UserSelectionModal(props) {
     return (
         <div>
         <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-        Add Users to Company
+        Add Users to {title}
     </Button>
     <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" maxWidth="md">
         <DialogTitle id="form-dialog-title">Add Users</DialogTitle>
         <DialogContent>
         <DialogContentText>
-        This Feature is meant to add existing application user to specific Company if you want to invite new Users then you should invite with right bottom add(+) button.
+        This Feature is meant to add existing application user to specific Company if you want to invite new Users then you can invite them with right bottom add(+) button.
     </DialogContentText>
     <IntegrationReactSelect updateUsers={updateUsers} data={props.options}/>
     {/*<TextField*/}

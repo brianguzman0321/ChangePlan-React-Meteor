@@ -4,6 +4,7 @@ import MaterialTable from "material-table";
 import {withTracker} from "meteor/react-meteor-data";
 import { Projects } from "../../../../api/projects/projects";
 import { withSnackbar } from 'notistack';
+import UserSelectionModal from "../../utilityComponents/userSelectionModal";
 
 function ProjectsSettings(props) {
     if (!props.currentProject){
@@ -37,9 +38,35 @@ function ProjectsSettings(props) {
             }
         })
     });
+    const [users, setUsers] = React.useState([]);
+
+    const updateUsersList = () => {
+        if(props.currentCompany && props.currentProject){
+            Meteor.call(`users.getUsers`, {
+                company: props.currentCompany,
+                project: props.currentProject
+            }, (err, res) => {
+                if(err){
+                    props.enqueueSnackbar(err.reason, {variant: 'error'});
+                }
+                if(res && res.length){
+                    setUsers(res.map(user => {
+                        return {
+                            label: `${user.profile.firstName} ${user.profile.lastName}`,
+                            value: user._id
+                        }
+                    }))
+                }
+                else {
+                    setUsers([])
+                }
+            })
+        }
+    };
     useEffect(() => {
-        if(props.currentProject._id !== project._id){
-            setProject(props.currentProject)
+        updateUsersList();
+        // if(props.currentProject._id !== project._id){
+            setProject(props.currentProject);
             let data = [...state.data];
             data = props.currentProject.peoplesDetails.map(user => {
                 return {
@@ -50,16 +77,18 @@ function ProjectsSettings(props) {
                     role: getRole(props.currentProject, user._id),
                     currentRole: getRole(props.currentProject, user._id)
                 }
-            })
+            });
             setState({...state, data});
-        }
+        // }
 
 
-    });
+    }, [props.currentCompany, props.currentProject]);
 
 
     return (
         <div>
+            <UserSelectionModal options={users} {...props} updateUsersList={updateUsersList} title="Project"/>
+            <br />
             {
                 props.currentProject ?
                     <MaterialTable

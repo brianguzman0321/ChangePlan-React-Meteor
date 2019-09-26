@@ -59,8 +59,6 @@ function CompaniesControlPanel(props) {
         })
     };
 
-
-
     useEffect(() => {
         updateUsersList();
         let data = [...state.data];
@@ -80,7 +78,7 @@ function CompaniesControlPanel(props) {
 
     return (
         <div>
-            <UserSelectionModal options={users} {...props} updateUsersList={updateUsersList}/>
+            <UserSelectionModal options={users} {...props} updateUsersList={updateUsersList} title="Company"/>
             <br/>
             <MaterialTable
                 title="Control Panel"

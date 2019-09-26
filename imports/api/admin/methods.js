@@ -152,6 +152,17 @@ export const getUsers = new ValidatedMethod({
     },
     validate: null,
     run({company, project}) {
+        if(project){
+            return Meteor.users.find({
+                _id: {
+                    $ne: Meteor.userId(),
+                    $in: company.peoples,
+                    $nin: project.peoples
+                }
+            }, {
+                fields: { services: 0 }
+            }).fetch()
+        }
         return Meteor.users.find({
             _id: {
                 $ne: Meteor.userId(),
