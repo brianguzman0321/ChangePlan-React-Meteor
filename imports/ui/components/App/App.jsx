@@ -14,6 +14,7 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
+import {Link} from "react-router-dom";
 
 const Brand = () => (
     <img style={{ width: "200px" }} src={`/branding/logo-long.png`} />
@@ -94,7 +95,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export default function TopNavBar() {
+export default function TopNavBar(props) {
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
@@ -115,9 +116,19 @@ export default function TopNavBar() {
         handleMobileMenuClose();
         Meteor.logout()
     }
+    function changeRoute(route) {
+        props.history.push(makeRoute())
+    }
 
     function handleMobileMenuOpen(event) {
         setMobileMoreAnchorEl(event.currentTarget);
+    }
+
+    function makeRoute(){
+        if(Roles.userIsInRole(Meteor.userId(), 'superAdmin')){
+            return '/admin/control-panel'
+        }
+        return 'control-panel'
     }
 
     const menuId = 'primary-search-account-menu';
@@ -131,6 +142,7 @@ export default function TopNavBar() {
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
+            <MenuItem onClick={changeRoute} >Control Panel</MenuItem>
             <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
         </Menu>
     );
