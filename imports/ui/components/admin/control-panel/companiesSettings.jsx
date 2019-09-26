@@ -40,28 +40,47 @@ function CompaniesControlPanel(props) {
         })
     });
 
-
-
-    useEffect(() => {
+    const updateUsersList = () => {
         Meteor.call(`users.getUsers`, {company: props.currentCompany}, (err, res) => {
             if(err){
                 props.enqueueSnackbar(err.reason, {variant: 'error'});
             }
             if(res && res.length){
                 setUsers(res.map(user => {
-                   return {
-                       label: `${user.profile.firstName} ${user.profile.lastName}`,
-                       value: user._id
-                   }
+                    return {
+                        label: `${user.profile.firstName} ${user.profile.lastName}`,
+                        value: user._id
+                    }
                 }))
             }
+            else {
+                setUsers([])
+            }
         })
-    }, []);
+    };
+
+
+
+    useEffect(() => {
+        updateUsersList();
+        let data = [...state.data];
+        data = props.currentCompany.peoplesDetails.map(user => {
+            return {
+                _id: user._id,
+                firstName: user.profile.firstName,
+                lastName: user.profile.lastName,
+                email: user.emails[0].address,
+                role: props.currentCompany.admins.includes(user._id) ? 'admin' :  'noRole',
+                currentRole: props.currentCompany.admins.includes(user._id) ? 'admin' :  'noRole'
+            }
+        });
+        setState({...state, data});
+    }, [props.currentCompany]);
 
 
     return (
         <div>
-            <UserSelectionModal options={users} {...props} />
+            <UserSelectionModal options={users} {...props} updateUsersList={updateUsersList}/>
             <br/>
             <MaterialTable
                 title="Control Panel"
@@ -106,7 +125,8 @@ function CompaniesControlPanel(props) {
                                     newData._id = res;
                                     data.push(newData);
                                     setState({...state, data});
-                                    props.enqueueSnackbar('New User Added Successfully.', {variant: 'success'})
+                                    props.enqueueSnackbar('New User Added Successfully.', {variant: 'success'});
+                                    updateUsersList();
                                 }
 
                             })
@@ -155,7 +175,8 @@ function CompaniesControlPanel(props) {
                                     const data = [...state.data];
                                     data.splice(data.indexOf(oldData), 1);
                                     setState({ ...state, data });
-                                    props.enqueueSnackbar('User Removed From Company Successfully.', {variant: 'success'})
+                                    props.enqueueSnackbar('User Removed From Company Successfully.', {variant: 'success'});
+                                    updateUsersList();
                                 }
 
                             })

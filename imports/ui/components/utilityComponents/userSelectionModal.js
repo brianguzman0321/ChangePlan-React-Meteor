@@ -60,6 +60,7 @@ function UserSelectionModal(props) {
     };
 
     const handleClose = () => {
+        setUsers([]);
         setOpen(false);
     };
 
@@ -73,6 +74,7 @@ function UserSelectionModal(props) {
                 else{
                     props.enqueueSnackbar('New Users Added Successfully.', {variant: 'success'})
                 }
+                props.updateUsersList();
                 setOpen(false);
             })
         }
