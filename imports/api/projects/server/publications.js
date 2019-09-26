@@ -1,28 +1,32 @@
 import { Meteor } from 'meteor/meteor';
 import { Projects } from '../projects.js';
 
-Meteor.publish('projects', function () {
+Meteor.publish('projects', function (company) {
     if(Roles.userIsInRole(this.userId, 'superAdmin')){
         return Projects.find({})
     }
     return Projects.find({
-        peoples:{
-            $in: [this.userId]
-        }
+        $or: [{
+            owner: this.userId
+        }, {
+            peoples:{
+                $in: [this.userId]
+            }
+        }]
     });
 });
 
 Meteor.publishTransformed('compoundProjects', function (companyId) {
     let query = {};
-    companyId && (query.companyId = companyId)
-    if(!Roles.userIsInRole(this.userId, 'superAdmin')){
+    companyId && (query.companyId = companyId);
+    // if(!Roles.userIsInRole(this.userId, 'superAdmin')){
         //if user Not Super Admin then return only own projects
-        query = {
-            peoples:{
-                $in: [this.userId]
-            }
-        }
-    }
+        // query = {
+        //     peoples:{
+        //         $in: [this.userId]
+        //     }
+        // }
+    // }
     return Projects.find(query).serverTransform({
         'peoplesDetails': function (doc) {
             let peoples = [];

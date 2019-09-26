@@ -9,7 +9,7 @@ Meteor.publish('companies', function () {
         $or: [{
             owner: this.userId
         }, {
-            admins:{
+            peoples:{
                 $in: [this.userId]
             }
         }]

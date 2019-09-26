@@ -10,6 +10,12 @@ function ProjectsSettings(props) {
     if (!props.currentProject){
         return <div></div>
     }
+    let lookup = {};
+    if(props.currentCompany && props.currentCompany.admins.includes(Meteor.userId())){
+        lookup.changeManager = 'Change Manager'
+    }
+    lookup.manager = 'Manager';
+    lookup.noRole = 'No Role';
     const [project, setProject] = React.useState({});
     const [state, setState] = React.useState({
         columns: [
@@ -20,11 +26,7 @@ function ProjectsSettings(props) {
             {
                 title: 'Assign Role',
                 field: 'role',
-                lookup: {
-                    changeManager: 'Change Manager',
-                    manager: 'Manager',
-                    noRole: 'No Role',
-                },
+                lookup,
             },
         ],
         data: props.currentProject.peoplesDetails.map(user => {

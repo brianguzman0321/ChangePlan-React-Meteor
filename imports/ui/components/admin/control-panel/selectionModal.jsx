@@ -56,9 +56,12 @@ export default function ControlledOpenSelect(props) {
                         id: 'demo-controlled-open-select',
                     }}
                 >
-                    {/*<MenuItem value="">*/}
-                        {/*<em>Select Company</em>*/}
-                    {/*</MenuItem>*/}
+                    {!props.entities || (props.entities && !props.entities.length) ?
+                        <MenuItem value="">
+                            <em>No {title}</em>
+                        </MenuItem> : ''
+                    }
+
                     {/*entities comes from props i.e companies, projects etc*/}
                     {props.entities && props.entities.map((entity) => {
                         return <MenuItem key={entity._id} value={entity._id}>{entity.name}</MenuItem>
