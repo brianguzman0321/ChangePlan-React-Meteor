@@ -64,8 +64,10 @@ function Login (props) {
         }
         Meteor.loginWithPassword(email, password, (err) => {
             if(err){
+                if(err.reason === 'User has no password set'){
+                    err.reason = 'User has no password set. Please check your email for your invitation.';
+                }
                 setError(err.reason);
-                console.log(err)
                 return false
             }else{
                 return false;

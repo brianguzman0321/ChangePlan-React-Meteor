@@ -7,11 +7,26 @@ import { withSnackbar } from 'notistack';
 import UserSelectionModal from "../../utilityComponents/userSelectionModal";
 
 function ProjectsSettings(props) {
+    let userId = Meteor.userId();
+    let filterIds = [userId];
     if (!props.currentProject){
         return <div></div>
     }
+    if(props.currentCompany && props.currentProject){
+        let admins = props.currentCompany.admins;
+        let changeManagers = props.currentProject.changeManagers;
+        if(admins.includes(userId)){
+            filterIds = admins.concat(filterIds)
+        }
+        else if(changeManagers.includes(userId)){
+            filterIds = admins.concat(changeManagers).concat(filterIds)
+        }
+    }
     let lookup = {};
-    if(props.currentCompany && props.currentCompany.admins.includes(Meteor.userId())){
+    if(Roles.userIsInRole(Meteor.userId(), 'superAdmin')){
+        lookup.changeManager = 'Change Manager'
+    }
+    else if(props.currentCompany && props.currentCompany.admins.includes(Meteor.userId())){
         lookup.changeManager = 'Change Manager'
     }
     lookup.manager = 'Manager';
@@ -29,7 +44,7 @@ function ProjectsSettings(props) {
                 lookup,
             },
         ],
-        data: props.currentProject.peoplesDetails.map(user => {
+        data: removeCurrentUserRoles(props.currentProject.peoplesDetails, filterIds).map(user => {
             return {
                 _id: user._id,
                 firstName: user.profile.firstName,
@@ -70,7 +85,7 @@ function ProjectsSettings(props) {
         // if(props.currentProject._id !== project._id){
             setProject(props.currentProject);
             let data = [...state.data];
-            data = props.currentProject.peoplesDetails.map(user => {
+            data = removeCurrentUserRoles(props.currentProject.peoplesDetails, filterIds).map(user => {
                 return {
                     _id: user._id,
                     firstName: user.profile.firstName,
@@ -131,7 +146,7 @@ function ProjectsSettings(props) {
                                             newData._id = res;
                                             data.push(newData);
                                             setState({...state, data});
-                                            props.enqueueSnackbar('New User Added Successfully.', {variant: 'success'})
+                                            props.enqueueSnackbar('New User Added Successfully. User will be notified by email.', {variant: 'success'})
                                         }
 
                                     })
@@ -192,6 +207,10 @@ function ProjectsSettings(props) {
         </div>)
 }
 
+
+function removeCurrentUserRoles(users, filteredIds){
+    return users.filter(user => !filteredIds.includes(user._id))
+}
 function getRole(project, userId){
     if(project.changeManagers.includes(userId)){
         return 'changeManager'

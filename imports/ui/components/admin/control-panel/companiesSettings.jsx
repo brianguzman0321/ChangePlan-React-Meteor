@@ -8,6 +8,7 @@ import { withSnackbar } from 'notistack';
 import UserSelectionModal from '/imports/ui/components/utilityComponents/userSelectionModal'
 
 function CompaniesControlPanel(props) {
+    let userId = Meteor.userId();
     if (!props.currentCompany){
         return <div></div>
     }
@@ -37,6 +38,8 @@ function CompaniesControlPanel(props) {
                 role: props.currentCompany.admins.includes(user._id) ? 'admin' :  'noRole',
                 currentRole: props.currentCompany.admins.includes(user._id) ? 'admin' :  'noRole'
             }
+        }).filter(user => {
+            return user._id !== userId
         })
     });
 
@@ -71,6 +74,8 @@ function CompaniesControlPanel(props) {
                 role: props.currentCompany.admins.includes(user._id) ? 'admin' :  'noRole',
                 currentRole: props.currentCompany.admins.includes(user._id) ? 'admin' :  'noRole'
             }
+        }).filter(user => {
+            return user._id !== userId
         });
         setState({...state, data});
     }, [props.currentCompany]);
@@ -123,7 +128,7 @@ function CompaniesControlPanel(props) {
                                     newData._id = res;
                                     data.push(newData);
                                     setState({...state, data});
-                                    props.enqueueSnackbar('New User Added Successfully.', {variant: 'success'});
+                                    props.enqueueSnackbar('New User Added Successfully. User will be notified by email.', {variant: 'success'});
                                     updateUsersList();
                                 }
 

@@ -14,18 +14,9 @@ let superAdmin1 = Meteor.users.findOne({
     'emails.address': 'gavin.wedell@changeactivation.com'
 });
 
-let superAdmin2 = Meteor.users.findOne({
-    'emails.address': 'a@a.com'
-});
-
 if(superAdmin1 && superAdmin1._id) {
     Roles.addUsersToRoles(superAdmin1._id, 'superAdmin', Roles.GLOBAL_GROUP);
 }
-
-if(superAdmin2 && superAdmin2._id) {
-    Roles.addUsersToRoles(superAdmin2._id, 'superAdmin', Roles.GLOBAL_GROUP);
-}
-
 //
 if(superAdmin && superAdmin._id) {
     Roles.addUsersToRoles(superAdmin._id, 'superAdmin', Roles.GLOBAL_GROUP);
@@ -122,6 +113,6 @@ createSampleUsers = () => {
     })
 };
 
-if(!(superAdmin2 && superAdmin2._id)){
-    createSampleUsers()
-}
+// if(!(superAdmin2 && superAdmin2._id)){
+//     createSampleUsers()
+// }
