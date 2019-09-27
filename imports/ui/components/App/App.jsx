@@ -142,7 +142,7 @@ export default function TopNavBar(props) {
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
-            <MenuItem onClick={changeRoute} >Control Panel</MenuItem>
+            <MenuItem onClick={changeRoute} >Settings</MenuItem>
             <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
         </Menu>
     );

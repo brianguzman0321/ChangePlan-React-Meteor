@@ -94,7 +94,7 @@ function ProjectsSettings(props) {
             {
                 props.currentProject ?
                     <MaterialTable
-                        title="Control Panel"
+                        title="Users"
                         columns={state.columns}
                         options={{
                             actionsColumnIndex: -1

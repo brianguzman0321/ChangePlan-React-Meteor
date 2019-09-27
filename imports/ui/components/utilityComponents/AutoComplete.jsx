@@ -341,7 +341,7 @@ export default function IntegrationReactSelect(props) {
                     styles={selectStyles}
                     inputId="react-select-multiple"
                     TextFieldProps={{
-                        label: 'Countries',
+                        label: 'Users',
                         InputLabelProps: {
                             htmlFor: 'react-select-multiple',
                             shrink: true,

@@ -81,7 +81,7 @@ function CompaniesControlPanel(props) {
             <UserSelectionModal options={users} {...props} updateUsersList={updateUsersList} title="Company"/>
             <br/>
             <MaterialTable
-                title="Control Panel"
+                title="Users"
                 columns={state.columns}
                 options={{
                     actionsColumnIndex: -1

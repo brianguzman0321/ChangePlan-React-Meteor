@@ -56,6 +56,18 @@ function UserSelectionModal(props) {
         setOpen(true);
     };
 
+    function modalMessage(){
+        if(Roles.userIsInRole(Meteor.userId(), 'superAdmin')){
+            return 'Assign an existing user to this Company. To add new users, click on the the (+) Add button on the bottom right corner.'
+        }
+        else if(props.currentCompany && props.currentCompany.admins.includes(Meteor.userId())){
+            return 'This Feature is meant to add existing application user to specific Company if you want to invite new Users then you can invite them with right bottom add(+) button.'
+        }
+        else if(props.currentCompany && props.currentCompany.changeManagers.includes(Meteor.userId())){
+            return 'Assign an existing user to this Project. To add new users, click on the the (+) Add button on the bottom right corner.'
+        }
+    }
+
     const updateUsers = (value) => {
         setUsers(value)
     };
@@ -105,13 +117,13 @@ function UserSelectionModal(props) {
     return (
         <div>
         <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-        Add Users to {title}
+            ASSIGN EXISTING USER TO {title}
     </Button>
     <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" maxWidth="md">
-        <DialogTitle id="form-dialog-title">Add Users</DialogTitle>
+        <DialogTitle id="form-dialog-title">Assign Users</DialogTitle>
         <DialogContent>
         <DialogContentText>
-        This Feature is meant to add existing application user to specific Company if you want to invite new Users then you can invite them with right bottom add(+) button.
+            {modalMessage()}
     </DialogContentText>
     <IntegrationReactSelect updateUsers={updateUsers} data={props.options}/>
     {/*<TextField*/}
