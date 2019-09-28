@@ -224,7 +224,7 @@ function getRole(project, userId){
 
 
 const ProjectsSettingsPage = withTracker(props => {
-    Meteor.subscribe('compoundProjects', props.currentCompany && props.currentCompany._id);
+    Meteor.subscribe('compoundProjects', props.currentCompany);
     let local1 = LocalCollection.findOne({
         name: 'localProjects'
     });

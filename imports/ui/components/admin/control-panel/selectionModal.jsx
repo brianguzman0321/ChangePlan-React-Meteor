@@ -42,7 +42,7 @@ export default function ControlledOpenSelect(props) {
     useEffect(() => {
         if(itemIndex !== props.index){
             updateFilter('localCompanies', 'companyId', '');
-            updateFilter('localProject', 'projectId', '');
+            updateFilter('localProjects', 'projectId', '');
             setIndex(props.index)
         }
 

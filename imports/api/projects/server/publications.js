@@ -21,10 +21,13 @@ Meteor.publish('projects', function (company) {
     });
 });
 
-Meteor.publishTransformed('compoundProjects', function (companyId) {
+Meteor.publishTransformed('compoundProjects', function (company) {
     let query = {};
-    companyId && (query.companyId = companyId);
-    if(!Roles.userIsInRole(this.userId, 'superAdmin')){
+    company && (query.companyId = company._id);
+    if(company && company.admins.includes(this.userId)){
+        // query.companyId = company._id
+    }
+    else if(!Roles.userIsInRole(this.userId, 'superAdmin')){
         // if user Not Super Admin then return only own projects
         query = {
             changeManagers:{

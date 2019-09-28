@@ -61,7 +61,7 @@ function UserSelectionModal(props) {
             return 'Assign an existing user to this Company. To add new users, click on the the (+) Add button on the bottom right corner.'
         }
         else if(props.currentCompany && props.currentCompany.admins.includes(Meteor.userId())){
-            return 'This Feature is meant to add existing application user to specific Company if you want to invite new Users then you can invite them with right bottom add(+) button.'
+            return 'Assign an existing user to this Project. To add new users, click on the the (+) Add button on the bottom right corner.'
         }
         else if(props.currentProject && props.currentProject.changeManagers.includes(Meteor.userId())){
             return 'Assign an existing user to this Project. To add new users, click on the the (+) Add button on the bottom right corner.'
