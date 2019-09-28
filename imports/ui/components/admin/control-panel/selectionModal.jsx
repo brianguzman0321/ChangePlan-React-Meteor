@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -22,8 +22,9 @@ const useStyles = makeStyles(theme => ({
 export default function ControlledOpenSelect(props) {
     const classes = useStyles();
     const [age, setAge] = React.useState('');
+    const [itemIndex, setIndex] = React.useState(props.index);
     const [open, setOpen] = React.useState(false);
-    let { title, entity } = props;
+    let { title, entity, index } = props;
 
     function handleChange(event) {
         setAge(event.target.value);
@@ -37,6 +38,19 @@ export default function ControlledOpenSelect(props) {
     function handleOpen() {
         setOpen(true);
     }
+
+    useEffect(() => {
+        if(itemIndex !== props.index){
+            updateFilter('localCompanies', 'companyId', '');
+            updateFilter('localProject', 'projectId', '');
+            setIndex(props.index)
+        }
+
+        return () => {
+            setAge('')
+        }
+
+    }, [props.index]);
 
     return (
         <form autoComplete="off">

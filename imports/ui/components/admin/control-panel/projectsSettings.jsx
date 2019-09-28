@@ -8,6 +8,9 @@ import ControlledOpenSelect from './selectionModal'
 import ProjectsSettingsPage from './projects'
 
 function ProjectsControlPanel(props) {
+    if (!props.currentCompany){
+        return <div></div>
+    }
     useEffect(() => {
     });
 

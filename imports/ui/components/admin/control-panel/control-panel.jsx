@@ -56,6 +56,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function FullWidthTabs(props) {
+    const [companies, setCompanies] = React.useState([]);
     const classes = useStyles();
     const theme = useTheme();
     const [value, setValue] = React.useState(0);
@@ -93,21 +94,22 @@ function FullWidthTabs(props) {
             >
                 <TabPanel value={value} index={0} dir={theme.direction}>
                     <br/>
-                    {props.companies ? <ControlledOpenSelect {...props}
-                                                             title="Companies"
-                                                             entity="Company"
-                                                             entities={props.companies}
-                                                             localCollection="localCompanies"
-                                                             id="companyId"
-                    /> : ''}
+                    <ControlledOpenSelect {...props}
+                                          title="Companies"
+                                          entity="Company"
+                                          entities={props.companies}
+                                          localCollection="localCompanies"
+                                          id="companyId"
+                                          index={value}
+                    />
                     <br/>
                     <CompaniesControlPanel {...props} parentProps="localCompanies"/>
                 </TabPanel>
                 <TabPanel value={value} index={1} dir={theme.direction}>
                     <br/>
-                    {props.companies ? <ControlledOpenSelect {...props} title="Companies" entity="Company" entities={props.companies} localCollection="localCompanies" id="companyId"/> : ''}
+                    <ControlledOpenSelect {...props} title="Companies" entity="Company" entities={props.companies} localCollection="localCompanies" id="companyId" index={value}/>
                     <br/>
-                    <ProjectsControlPanel {...props}/>
+                    <ProjectsControlPanel {...props} parentProps="localProjects"/>
                 </TabPanel>
             </SwipeableViews>
         </div>
@@ -116,20 +118,6 @@ function FullWidthTabs(props) {
 
 
 const ControlPanelPage = withTracker(props => {
-    // Do all your reactive data access in this method.
-    // Note that this subscription will get cleaned up when your component is unmounted
-    // const handle = Meteor.subscribe('todoList', props.id);
-    // Meteor.subscribe('companies');
-    // Meteor.subscribe('projects');
-    // let { parentProps } = props;
-    // let local = LocalCollection.findOne({
-    //     name: parentProps.collection
-    // });
-    // //get dynamic type based of selected transactions types
-    // let categoriesType = local.type === 'expenses' ? 'expense' : 'income';
-    //
-    // const categories = Categories.find({type: categoriesType}).fetch();
-
     return {
         companies: Companies.find({}).fetch(),
         projects: Projects.find({}).fetch()
