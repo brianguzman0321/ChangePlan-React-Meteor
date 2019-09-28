@@ -7,21 +7,11 @@ import { withSnackbar } from 'notistack';
 import UserSelectionModal from "../../utilityComponents/userSelectionModal";
 
 function ProjectsSettings(props) {
-    let userId = Meteor.userId();
-    let filterIds = [userId];
     if (!props.currentProject){
         return <div></div>
     }
-    if(props.currentCompany && props.currentProject){
-        let admins = props.currentCompany.admins;
-        let changeManagers = props.currentProject.changeManagers;
-        if(admins.includes(userId)){
-            filterIds = admins.concat(filterIds)
-        }
-        else if(changeManagers.includes(userId)){
-            filterIds = admins.concat(changeManagers).concat(filterIds)
-        }
-    }
+    let userId = Meteor.userId();
+    let filterIds = [userId];
     let lookup = {};
     if(Roles.userIsInRole(Meteor.userId(), 'superAdmin')){
         lookup.changeManager = 'Change Manager'
@@ -32,30 +22,30 @@ function ProjectsSettings(props) {
     lookup.manager = 'Manager';
     lookup.noRole = 'No Role';
     const [project, setProject] = React.useState({});
+    const [users, setUsers] = React.useState([]);
     const [state, setState] = React.useState({
         columns: [
             {title: 'FirstName', field: 'firstName', editable: 'onAdd'},
             {title: 'LastName', field: 'lastName', editable: 'onAdd'},
             {title: 'Email', field: 'email', editable: 'onAdd'},
-            {title: 'CurrentRole', field: 'currentRole', editable: 'never'},
             {
-                title: 'Assign Role',
+                title: 'Role',
                 field: 'role',
                 lookup,
             },
         ],
-        data: removeCurrentUserRoles(props.currentProject.peoplesDetails, filterIds).map(user => {
-            return {
-                _id: user._id,
-                firstName: user.profile.firstName,
-                lastName: user.profile.lastName,
-                email: user.emails[0].address,
-                role: getRole(props.currentProject, user._id),
-                currentRole: getRole(props.currentProject, user._id)
-            }
-        })
+        data: []
     });
-    const [users, setUsers] = React.useState([]);
+    if(props.currentCompany && props.currentProject){
+        let admins = props.currentCompany.admins;
+        let changeManagers = props.currentProject.changeManagers;
+        if(admins.includes(userId)){
+            filterIds = admins.concat(filterIds)
+        }
+        else if(changeManagers.includes(userId)){
+            filterIds = admins.concat(changeManagers).concat(filterIds)
+        }
+    }
 
     const updateUsersList = () => {
         if(props.currentCompany && props.currentProject){
@@ -92,13 +82,9 @@ function ProjectsSettings(props) {
                     lastName: user.profile.lastName,
                     email: user.emails[0].address,
                     role: getRole(props.currentProject, user._id),
-                    currentRole: getRole(props.currentProject, user._id)
                 }
             });
             setState({...state, data});
-        // }
-
-
     }, [props.currentCompany, props.currentProject]);
 
 
@@ -142,7 +128,6 @@ function ProjectsSettings(props) {
                                         else{
                                             resolve();
                                             const data = [...state.data];
-                                            newData.currentRole = newData.role;
                                             newData._id = res;
                                             data.push(newData);
                                             setState({...state, data});
@@ -169,7 +154,6 @@ function ProjectsSettings(props) {
                                         else {
                                             resolve();
                                             const data = [...state.data];
-                                            newData.currentRole = newData.role;
                                             data[data.indexOf(oldData)] = newData;
                                             setState({...state, data});
                                             props.enqueueSnackbar('User Role Updated Successfully.', {variant: 'success'})

@@ -19,28 +19,16 @@ function CompaniesControlPanel(props) {
             {title: 'FirstName', field: 'firstName', editable: 'onAdd'},
             {title: 'LastName', field: 'lastName', editable: 'onAdd'},
             {title: 'Email', field: 'email', editable: 'onAdd'},
-            {title: 'CurrentRole', field: 'currentRole', editable: 'never'},
             {
-                title: 'Assign Role',
+                title: 'Admin',
                 field: 'role',
                 lookup: {
-                    admin: 'Admin',
-                    noRole: 'No Role',
+                    yes: 'Yes',
+                    no: 'No',
                 },
             },
         ],
-        data: props.currentCompany.peoplesDetails.map(user => {
-            return {
-                _id: user._id,
-                firstName: user.profile.firstName,
-                lastName: user.profile.lastName,
-                email: user.emails[0].address,
-                role: props.currentCompany.admins.includes(user._id) ? 'admin' :  'noRole',
-                currentRole: props.currentCompany.admins.includes(user._id) ? 'admin' :  'noRole'
-            }
-        }).filter(user => {
-            return user._id !== userId
-        })
+        data: []
     });
 
     const updateUsersList = () => {
@@ -71,8 +59,7 @@ function CompaniesControlPanel(props) {
                 firstName: user.profile.firstName,
                 lastName: user.profile.lastName,
                 email: user.emails[0].address,
-                role: props.currentCompany.admins.includes(user._id) ? 'admin' :  'noRole',
-                currentRole: props.currentCompany.admins.includes(user._id) ? 'admin' :  'noRole'
+                role: props.currentCompany.admins.includes(user._id) ? 'yes' :  'no',
             }
         }).filter(user => {
             return user._id !== userId
@@ -91,15 +78,6 @@ function CompaniesControlPanel(props) {
                 options={{
                     actionsColumnIndex: -1
                 }}
-
-                // actions={[
-                //     {
-                //         icon: 'save',
-                //         tooltip: 'Save User',
-                //         onClick: (event, rowData) => alert("You saved " + rowData.role),
-                //         actionsColumnIndex: 0
-                //     }
-                // ]}
                 data={state.data}
                 editable={{
                     onRowAdd: newData => {
@@ -107,7 +85,7 @@ function CompaniesControlPanel(props) {
                             let company ={
                                 _id : props.currentCompany._id
                             };
-                            newData.role === 'admin' && (company.role = 'admin');
+                            newData.role === 'yes' && (company.role = 'yes');
                             let profile = {
                                 firstName: newData.firstName,
                                 lastName: newData.lastName
@@ -124,7 +102,6 @@ function CompaniesControlPanel(props) {
                                 else{
                                     resolve();
                                     const data = [...state.data];
-                                    newData.currentRole = newData.role || 'noRole';
                                     newData._id = res;
                                     data.push(newData);
                                     setState({...state, data});
@@ -152,7 +129,6 @@ function CompaniesControlPanel(props) {
                                 else {
                                     resolve();
                                     const data = [...state.data];
-                                    newData.currentRole = newData.role;
                                     data[data.indexOf(oldData)] = newData;
                                     setState({...state, data});
                                     props.enqueueSnackbar('User Role Updated Successfully.', {variant: 'success'})
