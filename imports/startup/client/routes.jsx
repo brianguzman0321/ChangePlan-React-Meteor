@@ -30,10 +30,9 @@ const Authenticated = ({ loggingIn, authenticated, component, ...rest }) => (
 
 const AdminRoute = ({ loggingIn, authenticated, user, component, ...rest }) => (
     <Route {...rest} render={(props) => {
-        if (loggingIn || !user) return <div></div>;
+        if (loggingIn) return <div></div>;
         if (user && !user.roles) return <div></div>;
-
-        return authenticated && Roles.userIsInRole(user._id, 'superAdmin') ?
+        return authenticated && user && Roles.userIsInRole(user._id, 'superAdmin') ?
         (React.createElement(component, { ...props, loggingIn, authenticated })) :
         (<Redirect to="/" />);
 
