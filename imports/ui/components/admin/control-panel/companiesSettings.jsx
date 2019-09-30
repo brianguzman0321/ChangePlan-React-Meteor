@@ -6,6 +6,9 @@ import {Companies} from "../../../../api/companies/companies";
 import {Projects} from "../../../../api/projects/projects";
 import { withSnackbar } from 'notistack';
 import UserSelectionModal from '/imports/ui/components/utilityComponents/userSelectionModal'
+import AddEntityDialog from '/imports/ui/components/utilityComponents/addEntityDialog'
+import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
 
 function CompaniesControlPanel(props) {
     let userId = Meteor.userId();
@@ -54,15 +57,18 @@ function CompaniesControlPanel(props) {
         updateUsersList();
         let data = [...state.data];
         data = props.currentCompany.peoplesDetails.map(user => {
-            return {
-                _id: user._id,
-                firstName: user.profile.firstName,
-                lastName: user.profile.lastName,
-                email: user.emails[0].address,
-                role: props.currentCompany.admins.includes(user._id) ? 'yes' :  'no',
+            if(user){
+                return {
+                    _id: user._id,
+                    firstName: user.profile.firstName,
+                    lastName: user.profile.lastName,
+                    email: user.emails[0].address,
+                    role: props.currentCompany.admins.includes(user._id) ? 'yes' :  'no',
+                }
             }
+
         }).filter(user => {
-            return user._id !== userId
+            return user && user._id !== userId
         });
         setState({...state, data});
     }, [props.currentCompany]);
@@ -70,8 +76,22 @@ function CompaniesControlPanel(props) {
 
     return (
         <div>
-            <UserSelectionModal options={users} {...props} updateUsersList={updateUsersList} title="Company"/>
-            <br/>
+            <Grid
+                container
+                direction="row"
+                justify="space-between"
+                alignItems="baseline"
+            >
+                <Grid>
+                    <UserSelectionModal options={users} {...props} updateUsersList={updateUsersList} title="Company"/>
+                    <br/>
+                </Grid>
+                <Grid>
+                    <AddEntityDialog entity="Company"/>
+                    <br/>
+                </Grid>
+
+            </Grid>
             <MaterialTable
                 title="Users"
                 columns={state.columns}
@@ -118,8 +138,9 @@ function CompaniesControlPanel(props) {
                             let params = {
                                 companyId: props.currentCompany._id,
                                 userId: newData._id,
-                                role: newData.role
+                                role: newData.role === 'yes' ? 'admin' : 'noRole'
                             };
+
                             Meteor.call('users.updateRole', params, (err, res) => {
                                 if (err) {
                                     props.enqueueSnackbar(err.reason, {variant: 'error'});

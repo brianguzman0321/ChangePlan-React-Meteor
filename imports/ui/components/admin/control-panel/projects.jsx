@@ -76,13 +76,16 @@ function ProjectsSettings(props) {
             setProject(props.currentProject);
             let data = [...state.data];
             data = removeCurrentUserRoles(props.currentProject.peoplesDetails, filterIds).map(user => {
-                return {
-                    _id: user._id,
-                    firstName: user.profile.firstName,
-                    lastName: user.profile.lastName,
-                    email: user.emails[0].address,
-                    role: getRole(props.currentProject, user._id),
+                if(user){
+                    return {
+                        _id: user._id,
+                        firstName: user.profile.firstName,
+                        lastName: user.profile.lastName,
+                        email: user.emails[0].address,
+                        role: getRole(props.currentProject, user._id),
+                    }
                 }
+                return user
             });
             setState({...state, data});
     }, [props.currentCompany, props.currentProject]);
@@ -193,16 +196,27 @@ function ProjectsSettings(props) {
 
 
 function removeCurrentUserRoles(users, filteredIds){
-    return users.filter(user => !filteredIds.includes(user._id))
+    if(Array.isArray(users) && Array.isArray(filteredIds)){
+        return users.filter(user => {
+            if(user){
+                return !filteredIds.includes(user._id)
+            }
+            return user;
+        })
+    }
+    return users;
+
 }
 function getRole(project, userId){
-    if(project.changeManagers.includes(userId)){
-        return 'changeManager'
+    if(project && project.managers) {
+        if(project.changeManagers.includes(userId)){
+            return 'changeManager'
+        }
+        else if(project.managers.includes(userId)){
+            return 'manager'
+        }
+        return 'noRole'
     }
-    else if(project.managers.includes(userId)){
-        return 'manager'
-    }
-    return 'noRole'
 }
 
 

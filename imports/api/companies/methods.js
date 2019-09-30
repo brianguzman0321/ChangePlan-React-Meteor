@@ -24,25 +24,32 @@ export const insert = new ValidatedMethod({
             type: String
         },
         'company.peoples': {
-            type: Array
+            type: Array,
+            optional: true
         },
         'company.peoples.$': {
-            type: String
+            type: String,
+            optional: true
         },
         'company.admins': {
             type: Array,
+            optional: true
         },
         'company.admins.$': {
-            type: String
+            type: String,
+            optional: true
         },
         'company.projects': {
-            type: Array
+            type: Array,
+            optional: true
         },
         'company.projects.$': {
-            type: String
+            type: String,
+            optional: true
         },
     }).validator(),
     run({ company }) {
+        company.owner = this.userId
         return Companies.insert(company);
     }
 });
