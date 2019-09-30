@@ -96,6 +96,21 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function TopNavBar(props) {
+    let { menus } = props;
+    //if not supply menus hide by default
+    if(!menus){
+        menus = {
+            activities: {
+                show: false
+            },
+            stakeHolders: {
+                show: false
+            },
+            reports: {
+                show: false
+            }
+        }
+    }
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
@@ -114,7 +129,11 @@ export default function TopNavBar(props) {
     function handleMenuClose() {
         setAnchorEl(null);
         handleMobileMenuClose();
-        Meteor.logout()
+    }
+    function logOut() {
+        Meteor.logout(() => {
+            props.history.push('/login')
+        });
     }
     function changeRoute(route) {
         props.history.push(makeRoute())
@@ -143,7 +162,7 @@ export default function TopNavBar(props) {
             onClose={handleMenuClose}
         >
             <MenuItem onClick={changeRoute} >Settings</MenuItem>
-            <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+            <MenuItem onClick={logOut}>Logout</MenuItem>
         </Menu>
     );
 
@@ -179,15 +198,20 @@ export default function TopNavBar(props) {
                         {/*/>*/}
                     {/*</div>*/}
                     <div className={classes.grow} />
-                    <Typography className={classes.topTexts} noWrap style={{borderLeft: '0.1em solid #eaecef'}}>
+                    {menus.activities.show && <Typography className={classes.topTexts} noWrap style={{borderLeft: '0.1em solid #eaecef'}}>
                         <span style={{color: '#aab5c0'}}>102</span> ACTIVITIES
-                    </Typography>
-                    <Typography className={classes.topTexts} noWrap>
-                        <span style={{color: '#aab5c0'}}>3270</span> STAKEHOLDERS
-                    </Typography>
-                    <Typography className={classes.topTexts} noWrap>
-                        REPORTS
-                    </Typography>
+                    </Typography>}
+                    {
+                        menus.stakeHolders.show && <Typography className={classes.topTexts} noWrap>
+                            <span style={{color: '#aab5c0'}}>3270</span> STAKEHOLDERS
+                        </Typography>
+                    }
+                    {
+                        menus.reports.show && <Typography className={classes.topTexts} noWrap>
+                            REPORTS
+                        </Typography>
+                    }
+
                     <div className={classes.sectionDesktop}>
                         <IconButton
                             edge="end"

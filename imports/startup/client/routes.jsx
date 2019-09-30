@@ -30,8 +30,9 @@ const Authenticated = ({ loggingIn, authenticated, component, ...rest }) => (
 
 const AdminRoute = ({ loggingIn, authenticated, user, component, ...rest }) => (
     <Route {...rest} render={(props) => {
-        if (loggingIn) return <div></div>;
+        if (loggingIn || !user) return <div></div>;
         if (user && !user.roles) return <div></div>;
+
         return authenticated && Roles.userIsInRole(user._id, 'superAdmin') ?
         (React.createElement(component, { ...props, loggingIn, authenticated })) :
         (<Redirect to="/" />);
@@ -52,8 +53,7 @@ const Routes = appProps => (
     <Router>
         <div className="App">
                 <Switch>
-                    <Authenticated exact path="/" component={App} {...appProps}/>
-                    <Authenticated exact path="/home" component={Home} {...appProps}/>
+                    <Authenticated exact path="/" component={Home} {...appProps}/>
                     <Authenticated exact path="/control-panel" component={ControlPanel} {...appProps}/>
                     <AdminRoute exact path="/admin/control-panel" component={MaterialTableDemo} {...appProps}/>
                     <Public path="/signup" component={Signup} {...appProps}/>

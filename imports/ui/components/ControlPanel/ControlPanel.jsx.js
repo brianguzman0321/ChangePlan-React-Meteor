@@ -7,6 +7,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
+import Divider from '@material-ui/core/Divider';
 
 import { Companies } from "/imports/api/companies/companies";
 import { Projects } from "/imports/api/projects/projects";
@@ -17,6 +18,7 @@ import {Meteor} from "meteor/meteor";
 import ControlledOpenSelect from '/imports/ui/components/admin/control-panel/selectionModal'
 import CompaniesControlPanel from '/imports/ui/components/admin/control-panel/companiesSettings'
 import ProjectsControlPanel from '/imports/ui/components/admin/control-panel/projectsSettings'
+import TopNavBar from '/imports/ui/components/App/App'
 
 
 function TabPanel(props) {
@@ -73,6 +75,8 @@ function FullWidthTabs(props) {
 
     return (
         <div className={classes.root}>
+            <TopNavBar {...props}/>
+            <Divider />
             <AppBar position="static" color="default">
                 <Tabs
                     value={0}
