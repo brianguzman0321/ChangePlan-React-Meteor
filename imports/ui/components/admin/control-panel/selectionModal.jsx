@@ -22,10 +22,9 @@ const useStyles = makeStyles(theme => ({
 export default function ControlledOpenSelect(props) {
     const classes = useStyles();
     const [age, setAge] = React.useState('');
-    const [test, setTest] = React.useState(true);
     const [itemIndex, setIndex] = React.useState(props.index);
     const [open, setOpen] = React.useState(false);
-    let { title, entity, index, currentCompany } = props;
+    let { title, entity, index } = props;
 
     function handleChange(event) {
         setAge(event.target.value);
@@ -41,19 +40,19 @@ export default function ControlledOpenSelect(props) {
     }
 
     useEffect(() => {
-        if(itemIndex !== index){
+        if(itemIndex !== props.index){
             updateFilter('localCompanies', 'companyId', '');
             updateFilter('localProjects', 'projectId', '');
-            setIndex(index)
-        }
-        if( currentCompany ){
-            setAge(currentCompany._id);
-        }
-        return () => {
-            setAge('')
+            setIndex(props.index)
         }
 
-    }, [index, currentCompany]);
+        return () => {
+            setAge('')
+            updateFilter('localCompanies', 'companyId', '');
+            updateFilter('localProjects', 'projectId', '');
+        }
+
+    }, [props.index]);
 
     return (
         <form autoComplete="off">
