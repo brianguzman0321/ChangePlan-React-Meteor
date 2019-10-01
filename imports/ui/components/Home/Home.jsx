@@ -1,22 +1,25 @@
 import React from 'react';
 import TopNavBar from '/imports/ui/components/App/App'
+import SingleProject from '/imports/ui/components/Projects/singleProject'
+import ProjectCard from '/imports/ui/components/Projects/Project'
 
 export default function Home(props){
     let menus = {
         activities: {
-            show: false
+            show: true
         },
         stakeHolders: {
-            show: false
+            show: true
         },
         reports: {
-            show: false
+            show: true
         }
     }
     return (
-        <>
+        <div>
             <TopNavBar menus={menus} {...props} />
-            <h1>Projects Component Render Here</h1>
-        </>
+            {/*<SingleProject />*/}
+            <ProjectCard />
+        </div>
     )
 }

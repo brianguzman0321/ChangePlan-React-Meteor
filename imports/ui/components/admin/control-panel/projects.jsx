@@ -6,6 +6,7 @@ import { Projects } from "../../../../api/projects/projects";
 import { withSnackbar } from 'notistack';
 import UserSelectionModal from "../../utilityComponents/userSelectionModal";
 
+
 function ProjectsSettings(props) {
     if (!props.currentProject){
         return <div></div>
