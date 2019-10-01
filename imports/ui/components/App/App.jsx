@@ -15,6 +15,9 @@ import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import {Link} from "react-router-dom";
+import {withTracker} from "meteor/react-meteor-data";
+import { Companies } from "../../../api/companies/companies";
+import {Projects} from "../../../api/projects/projects";
 
 const Brand = () => (
     <img style={{ width: "200px" }} src={`/branding/logo-long.png`} />
@@ -95,8 +98,8 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export default function TopNavBar(props) {
-    let { menus } = props;
+function TopNavBar(props) {
+    let { menus, projectExists } = props;
     //if not supply menus hide by default
     if(!menus){
         menus = {
@@ -161,7 +164,9 @@ export default function TopNavBar(props) {
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
-            <MenuItem onClick={changeRoute} >Settings</MenuItem>
+            {
+                projectExists && <MenuItem onClick={changeRoute} >Settings</MenuItem>
+            }
             <MenuItem onClick={logOut}>Logout</MenuItem>
         </Menu>
     );
@@ -241,3 +246,12 @@ export default function TopNavBar(props) {
         </div>
     );
 }
+
+const TopNavBarPage = withTracker(props => {
+    Meteor.subscribe('projectExists');
+    return {
+        projectExists: Projects.findOne()
+    }
+})(TopNavBar);
+
+export default TopNavBarPage

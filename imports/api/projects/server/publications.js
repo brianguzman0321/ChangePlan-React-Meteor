@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Projects } from '../projects.js';
+import {Companies} from "../../companies/companies";
 
 Meteor.publish('projects', function (company) {
     if(Roles.userIsInRole(this.userId, 'superAdmin')){
@@ -10,6 +11,34 @@ Meteor.publish('projects', function (company) {
             companyId: company._id
         })
     }
+    return Projects.find({
+        $or: [{
+            owner: this.userId
+        }, {
+            changeManagers:{
+                $in: [this.userId]
+            }
+        }]
+    });
+});
+
+Meteor.publish('projectExists', function () {
+    //superAdmin
+    if(Roles.userIsInRole(this.userId, 'superAdmin')){
+        return Projects.find({})
+    }
+    let company = Companies.findOne({
+        admins:{
+            $in: [this.userId]
+        }
+    });
+    //admin
+    if(company && company._id){
+        return Projects.find({
+            companyId: company._id
+        })
+    }
+    //owner or changeManager
     return Projects.find({
         $or: [{
             owner: this.userId

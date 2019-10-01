@@ -35,8 +35,9 @@ function AddEntityDialog(props) {
                 props.enqueueSnackbar(err.reason, {variant: 'error'});
             }
             else{
-                setName('')
+                setName('');
                 setOpen(false);
+                updateFilter('localCompanies', 'companyId', res);
                 props.enqueueSnackbar("Company Created Successfully.", {variant: 'success'});
             }
         });
