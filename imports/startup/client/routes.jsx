@@ -11,6 +11,7 @@ import Signup from '/imports/ui/components/Auth/Signup';
 import ForgotPassword from '/imports/ui/components/Auth/forgotPassword';
 import ResetPassword from '/imports/ui/components/Auth/ResetPassword';
 import EnrollAccountPage from '/imports/ui/components/Auth/EnrollAccount';
+import CompaniesListPage from '/imports/ui/components/admin/companies/CompaniesList';
 import MaterialTableDemo from '/imports/ui/components/admin/control-panel/control-panel';
 import ControlPanel from '/imports/ui/components/ControlPanel/ControlPanel.jsx';
 import Home from '/imports/ui/components/Home/Home';
@@ -55,6 +56,7 @@ const Routes = appProps => (
                     <Authenticated exact path="/" component={Home} {...appProps}/>
                     <Authenticated exact path="/control-panel" component={ControlPanel} {...appProps}/>
                     <AdminRoute exact path="/admin/control-panel" component={MaterialTableDemo} {...appProps}/>
+                    <AdminRoute exact path="/admin/companies" component={CompaniesListPage} {...appProps}/>
                     <Public path="/signup" component={Signup} {...appProps}/>
                     <Public path="/login" component={Login} {...appProps}/>
                     <Public path="/forgot-password" component={ForgotPassword} {...appProps}/>

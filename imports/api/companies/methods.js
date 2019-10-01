@@ -49,7 +49,7 @@ export const insert = new ValidatedMethod({
         },
     }).validator(),
     run({ company }) {
-        company.owner = this.userId
+        company.owner = this.userId;
         return Companies.insert(company);
     }
 });
@@ -71,29 +71,41 @@ export const update = new ValidatedMethod({
         'company.name': {
             type: String
         },
-        'company.owner': {
+        'company._id': {
             type: String
+        },
+        'company.owner': {
+            type: String,
+            optional: true
         },
         'company.peoples': {
-            type: Array
+            type: Array,
+            optional: true
         },
         'company.peoples.$': {
-            type: String
+            type: String,
+            optional: true
         },
         'company.admins': {
             type: Array,
+            optional: true
         },
         'company.admins.$': {
-            type: String
+            type: String,
+            optional: true
         },
         'company.projects': {
-            type: Array
+            type: Array,
+            optional: true
         },
         'company.projects.$': {
-            type: String
+            type: String,
+            optional: true
         },
     }).validator(),
     run({ company }) {
+        const { _id } = company;
+        delete company._id;
         return Companies.update(_id, {$set: company});
     }
 });

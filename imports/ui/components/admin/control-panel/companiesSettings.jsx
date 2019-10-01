@@ -9,6 +9,7 @@ import UserSelectionModal from '/imports/ui/components/utilityComponents/userSel
 import AddEntityDialog from '/imports/ui/components/utilityComponents/addEntityDialog'
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
+import Button from "@material-ui/core/Button/Button";
 
 function CompaniesControlPanel(props) {
     let userId = Meteor.userId();
@@ -34,6 +35,10 @@ function CompaniesControlPanel(props) {
         data: []
     });
 
+    const CompaniesList  = () => {
+        props.history.push('/admin/companies')
+    };
+
     const updateUsersList = () => {
         Meteor.call(`users.getUsers`, {company: props.currentCompany}, (err, res) => {
             if(err){
@@ -55,22 +60,25 @@ function CompaniesControlPanel(props) {
 
     useEffect(() => {
         updateUsersList();
-        let data = [...state.data];
-        data = props.currentCompany.peoplesDetails.map(user => {
-            if(user){
-                return {
-                    _id: user._id,
-                    firstName: user.profile.firstName,
-                    lastName: user.profile.lastName,
-                    email: user.emails[0].address,
-                    role: props.currentCompany.admins.includes(user._id) ? 'yes' :  'no',
+        if(props.currentCompany.peoplesDetails){
+            let data = [...state.data];
+            data = props.currentCompany.peoplesDetails.map(user => {
+                if(user){
+                    return {
+                        _id: user._id,
+                        firstName: user.profile.firstName,
+                        lastName: user.profile.lastName,
+                        email: user.emails[0].address,
+                        role: props.currentCompany.admins.includes(user._id) ? 'yes' :  'no',
+                    }
                 }
-            }
 
-        }).filter(user => {
-            return user && user._id !== userId
-        });
-        setState({...state, data});
+            }).filter(user => {
+                return user && user._id !== userId
+            });
+            setState({...state, data});
+        }
+
     }, [props.currentCompany]);
 
 
@@ -87,7 +95,10 @@ function CompaniesControlPanel(props) {
                     <br/>
                 </Grid>
                 <Grid>
-                    <AddEntityDialog entity="Company"/>
+                    <Button variant="outlined" color="primary" onClick={CompaniesList}>
+                        Companies Settings
+                    </Button>
+                    {/*<AddEntityDialog entity="Company"/>*/}
                     <br/>
                 </Grid>
 
