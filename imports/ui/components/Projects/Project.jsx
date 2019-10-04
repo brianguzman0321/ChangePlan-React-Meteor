@@ -17,6 +17,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import AddIcon from '@material-ui/icons/Add';
 
 
 const useStyles = makeStyles(theme => ({
@@ -29,6 +30,19 @@ const useStyles = makeStyles(theme => ({
         marginRight: '0 !important',
         // color: theme.primary,
         color: '#465563'
+    },
+    newProject: {
+        minHeight: 182,
+        minWidth: 300,
+        maxWidth: 300,
+        marginTop: 23,
+        marginLeft: 15,
+        marginRight: '0 !important',
+        // color: theme.primary,
+        color: '#465563',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     progress:{
         color: '#4294db'
@@ -149,55 +163,72 @@ export default function ProjectCard() {
                     </FormControl>
                 </Grid>
             </Grid>
-            {[1,2,3,4,5,6,7,8].map(elem => (
+            {[0,1,2,3,4,5,6,7,8].map(elem => (
                 <Grid item xs={12} sm={6} md={3} key={elem}>
-                    <Card className={classes.card}>
-                        <LinearProgress variant="determinate" value={elem * 10} color="primary"/>
-                        <CardHeader
-                            titleTypographyProps={{variant:'h6'}}
-                            className={classes.cardTitle}
-                            action={
-                                <IconButton aria-label="settings">
-                                    <MoreVertIcon />
-                                </IconButton>
-                            }
-                            title={`Change Plan ${elem}`}
-                        />
-                        <CardContent>
+                    {
+                        elem === 0 ?
+                            <Card className={classes.newProject}>
+                        <CardContent style={{ display:'flex', justifyContent:'center' }}>
                             <Grid container>
-                                <Grid item xs={4}>
-                                    <Typography className={classes.title} color="textSecondary" gutterBottom>
-                                        STAKEHOLDERS
-                                    </Typography>
-                                    <Typography className={classes.pos} color="textSecondary">
-                                        1410
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs={4}>
-                                    <Typography className={classes.title} color="textSecondary" gutterBottom>
-                                        ACTIVITIES
-                                    </Typography>
-                                    <Typography className={classes.pos} color="textSecondary">
-                                        17
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs={4}>
-                                    <Typography className={classes.title} color="textSecondary" gutterBottom>
-                                        DUE
-                                    </Typography>
-                                    <Typography className={classes.pos} color="textSecondary">
-                                        16-Jul-19
-                                    </Typography>
-                                </Grid>
-
+                                <Button
+                                    variant="contained"
+                                    // color="secondary"
+                                    className={classes.button}
+                                    startIcon={<AddIcon />}
+                                >
+                                    Create New Project
+                                </Button>
                             </Grid>
-                            <Typography variant="body2" component="p" className={classes.bottomText}>
-                                Change Manager
-                                <br />
-                                Gavin Wedell
-                            </Typography>
                         </CardContent>
-                    </Card>
+                    </Card> :
+                        <Card className={classes.card}>
+                            <LinearProgress variant="determinate" value={elem * 10} color="primary"/>
+                            <CardHeader
+                                titleTypographyProps={{variant: 'h6'}}
+                                className={classes.cardTitle}
+                                action={
+                                    <IconButton aria-label="settings">
+                                        <MoreVertIcon />
+                                    </IconButton>
+                                }
+                                title={`Change Plan ${elem}`}
+                            />
+                            <CardContent>
+                                <Grid container>
+                                    <Grid item xs={4}>
+                                        <Typography className={classes.title} color="textSecondary" gutterBottom>
+                                            STAKEHOLDERS
+                                        </Typography>
+                                        <Typography className={classes.pos} color="textSecondary">
+                                            1410
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <Typography className={classes.title} color="textSecondary" gutterBottom>
+                                            ACTIVITIES
+                                        </Typography>
+                                        <Typography className={classes.pos} color="textSecondary">
+                                            17
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <Typography className={classes.title} color="textSecondary" gutterBottom>
+                                            DUE
+                                        </Typography>
+                                        <Typography className={classes.pos} color="textSecondary">
+                                            16-Jul-19
+                                        </Typography>
+                                    </Grid>
+
+                                </Grid>
+                                <Typography variant="body2" component="p" className={classes.bottomText}>
+                                    Change Manager
+                                    <br />
+                                    Gavin Wedell
+                                </Typography>
+                            </CardContent>
+                        </Card>
+                    }
                 </Grid>
             ))}
         </Grid>
