@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
@@ -18,11 +19,14 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import AddIcon from '@material-ui/icons/Add';
+import {withTracker} from "meteor/react-meteor-data";
+import { Companies } from "/imports/api/companies/companies";
+import { Projects } from "/imports/api/projects/projects";
 
 
 const useStyles = makeStyles(theme => ({
     card: {
-        minHeight: 182,
+        minHeight: 211,
         minWidth: 300,
         maxWidth: 300,
         marginTop: 23,
@@ -32,7 +36,7 @@ const useStyles = makeStyles(theme => ({
         color: '#465563'
     },
     newProject: {
-        minHeight: 182,
+        minHeight: 211,
         minWidth: 300,
         maxWidth: 300,
         marginTop: 23,
@@ -97,10 +101,21 @@ const useStyles = makeStyles(theme => ({
     selectEmpty: {
         border: '1px solid #c5c6c7',
         paddingLeft: 5
+    },
+    activities: {
+        paddingLeft: 12
+    },
+    cardContent: {
+        // paddingTop: 0
     }
 }));
 
-export default function ProjectCard() {
+function ProjectCard(props) {
+    let { projects } = props;
+    //unShift empty Item for create Project Block
+    if(!(projects[0] && projects[0].name === 'New Project')){
+        projects.unshift({name: 'New Project'});
+    }
     const classes = useStyles();
     const bull = <span className={classes.bullet}>•</span>;
     const [age, setAge] = React.useState(10);
@@ -163,10 +178,10 @@ export default function ProjectCard() {
                     </FormControl>
                 </Grid>
             </Grid>
-            {[0,1,2,3,4,5,6,7,8].map(elem => (
-                <Grid item xs={12} sm={6} md={3} key={elem}>
+            {projects.map((project, index) => (
+                <Grid item xs={12} sm={6} md={3} key={index}>
                     {
-                        elem === 0 ?
+                        index === 0 ?
                             <Card className={classes.newProject}>
                         <CardContent style={{ display:'flex', justifyContent:'center' }}>
                             <Grid container>
@@ -174,7 +189,6 @@ export default function ProjectCard() {
                                     variant="contained"
                                     // color="secondary"
                                     className={classes.button}
-                                    startIcon={<AddIcon />}
                                 >
                                     Create New Project
                                 </Button>
@@ -182,7 +196,7 @@ export default function ProjectCard() {
                         </CardContent>
                     </Card> :
                         <Card className={classes.card}>
-                            <LinearProgress variant="determinate" value={elem * 10} color="primary"/>
+                            <LinearProgress variant="determinate" value={index * 10} color="primary"/>
                             <CardHeader
                                 titleTypographyProps={{variant: 'h6'}}
                                 className={classes.cardTitle}
@@ -191,24 +205,24 @@ export default function ProjectCard() {
                                         <MoreVertIcon />
                                     </IconButton>
                                 }
-                                title={`Change Plan ${elem}`}
+                                title={projectName(project.name)}
                             />
-                            <CardContent>
+                            <CardContent className={classes.cardContent}>
                                 <Grid container>
                                     <Grid item xs={4}>
                                         <Typography className={classes.title} color="textSecondary" gutterBottom>
                                             STAKEHOLDERS
                                         </Typography>
                                         <Typography className={classes.pos} color="textSecondary">
-                                            1410
+                                            {project.stakeHolders.length}
                                         </Typography>
                                     </Grid>
-                                    <Grid item xs={4}>
+                                    <Grid item xs={4} className={classes.activities}>
                                         <Typography className={classes.title} color="textSecondary" gutterBottom>
                                             ACTIVITIES
                                         </Typography>
                                         <Typography className={classes.pos} color="textSecondary">
-                                            17
+                                            {project.totalActivities}
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={4}>
@@ -216,7 +230,7 @@ export default function ProjectCard() {
                                             DUE
                                         </Typography>
                                         <Typography className={classes.pos} color="textSecondary">
-                                            16-Jul-19
+                                            {moment(project.endingDate).format('DD-MMM-YY')}
                                         </Typography>
                                     </Grid>
 
@@ -224,7 +238,7 @@ export default function ProjectCard() {
                                 <Typography variant="body2" component="p" className={classes.bottomText}>
                                     Change Manager
                                     <br />
-                                    Gavin Wedell
+                                    {ChangeManagersNames(project)}
                                 </Typography>
                             </CardContent>
                         </Card>
@@ -234,3 +248,28 @@ export default function ProjectCard() {
         </Grid>
     );
 }
+
+function projectName(name){
+    if(typeof name === 'string') {
+        return name.length < 22 ? name : `${name.slice(0, 19)}...`
+    }
+    return name
+}
+
+function ChangeManagersNames(project) {
+    if(project.changeManagerDetails)
+        return project.changeManagerDetails.map(changeManager => {
+            return `${changeManager.profile.firstName} ${changeManager.profile.lastName}`
+        });
+}
+
+
+const ProjectsPage = withTracker(props => {
+    Meteor.subscribe('myProjects');
+    return {
+        companies: Companies.findOne(),
+        projects: Projects.find({}).fetch(),
+    };
+})(ProjectCard);
+
+export default ProjectsPage

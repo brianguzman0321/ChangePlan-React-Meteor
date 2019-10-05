@@ -2,8 +2,8 @@ import React, {useEffect} from "react";
 import {Meteor} from "meteor/meteor";
 import MaterialTable from "material-table";
 import {withTracker} from "meteor/react-meteor-data";
-import {Companies} from "../../../../api/companies/companies";
-import {Projects} from "../../../../api/projects/projects";
+import { Companies } from "/imports/api/companies/companies";
+import { Projects } from "/imports/api/projects/projects";
 import ControlledOpenSelect from './selectionModal'
 import ProjectsSettingsPage from './projects'
 
