@@ -118,11 +118,12 @@ function ProjectCard(props) {
     }
     const classes = useStyles();
     const bull = <span className={classes.bullet}>•</span>;
-    const [age, setAge] = React.useState(10);
+    const [age, setAge] = React.useState('createdAt');
     const [open, setOpen] = React.useState(false);
 
     const handleChange = event => {
         setAge(event.target.value);
+        updateFilter('localProjects', 'sort', event.target.value);
     };
 
     const handleClose = () => {
@@ -170,9 +171,9 @@ function ProjectCard(props) {
                             name="age"
                             className={classes.selectEmpty}
                         >
-                            <MenuItem value={10}>Date Added</MenuItem>
-                            <MenuItem value={20}>Date Due</MenuItem>
-                            <MenuItem value={30}>Project Name</MenuItem>
+                            <MenuItem value="createdAt">Date Added</MenuItem>
+                            <MenuItem value="endingDate">Date Due</MenuItem>
+                            <MenuItem value="name">Project Name</MenuItem>
                         </Select>
                         {/*<FormHelperText>Without label</FormHelperText>*/}
                     </FormControl>
@@ -265,7 +266,12 @@ function ChangeManagersNames(project) {
 
 
 const ProjectsPage = withTracker(props => {
-    Meteor.subscribe('myProjects');
+    let local = LocalCollection.findOne({
+        name: 'localProjects'
+    });
+    Meteor.subscribe('myProjects', null, {
+        sort: local.sort || {}
+    } );
     return {
         companies: Companies.findOne(),
         projects: Projects.find({}).fetch(),
