@@ -22,6 +22,7 @@ export const insert = new ValidatedMethod({
         },
         'project.owner': {
             type: String,
+            optional: true
         },
         'project.name': {
             type: String,
@@ -31,39 +32,51 @@ export const insert = new ValidatedMethod({
         },
         'project.peoples': {
             type: Array,
+            optional: true
         },
         'project.peoples.$': {
-            type: String
+            type: String,
+            optional: true
         },
         'project.stakeHolders': {
             type: Array,
+            optional: true
         },
         'project.stakeHolders.$': {
-            type: String
+            type: String,
+            optional: true
         },
         'project.managers': {
             type: Array,
+            optional: true
         },
         'project.managers.$': {
-            type: String
+            type: String,
+            optional: true
         },
         'project.changeManagers': {
             type: Array,
+            optional: true
         },
         'project.changeManagers.$': {
-            type: String
+            type: String,
+            optional: true
         },
         'project.startingDate': {
             type: Date,
         },
         'project.peopleCount': {
             type: Number,
+            optional: true
         },
         'project.endingDate': {
             type: Date,
         },
     }).validator(),
     run({ project }) {
+        if(!project.owner){
+            project.owner = this.userId
+        }
         return Projects.insert(project);
     }
 });

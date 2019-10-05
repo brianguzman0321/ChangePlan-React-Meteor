@@ -22,6 +22,7 @@ import AddIcon from '@material-ui/icons/Add';
 import {withTracker} from "meteor/react-meteor-data";
 import { Companies } from "/imports/api/companies/companies";
 import { Projects } from "/imports/api/projects/projects";
+import CustomizedDialogs from './NewProject';
 
 
 const useStyles = makeStyles(theme => ({
@@ -186,13 +187,7 @@ function ProjectCard(props) {
                             <Card className={classes.newProject}>
                         <CardContent style={{ display:'flex', justifyContent:'center' }}>
                             <Grid container>
-                                <Button
-                                    variant="contained"
-                                    // color="secondary"
-                                    className={classes.button}
-                                >
-                                    Create New Project
-                                </Button>
+                                <CustomizedDialogs {...props} />
                             </Grid>
                         </CardContent>
                     </Card> :
@@ -223,7 +218,8 @@ function ProjectCard(props) {
                                             ACTIVITIES
                                         </Typography>
                                         <Typography className={classes.pos} color="textSecondary">
-                                            {project.totalActivities}
+                                            {/*{project.totalActivities}*/}
+                                            0
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={4}>
@@ -269,11 +265,12 @@ const ProjectsPage = withTracker(props => {
     let local = LocalCollection.findOne({
         name: 'localProjects'
     });
+    Meteor.subscribe('companies.single');
     Meteor.subscribe('myProjects', null, {
         sort: local.sort || {}
     } );
     return {
-        companies: Companies.findOne(),
+        company: Companies.findOne(),
         projects: Projects.find({}).fetch(),
     };
 })(ProjectCard);

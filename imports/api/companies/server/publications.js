@@ -47,8 +47,15 @@ Meteor.publishTransformed('compoundCompanies', function () {
 });
 
 Meteor.publish('companies.single', function (id) {
+    if(id){
+        return Companies.find({
+            owner: this.userId,
+            _id: id
+        });
+    }
     return Companies.find({
-        owner: this.userId,
-        _id: id
-    });
+        peoples:{
+            $in: [this.userId]
+        }
+    })
 });
