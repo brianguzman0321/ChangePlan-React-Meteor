@@ -254,10 +254,12 @@ function projectName(name){
 }
 
 function ChangeManagersNames(project) {
-    if(project.changeManagerDetails)
-        return project.changeManagerDetails.map(changeManager => {
+    if(project.changeManagerDetails) {
+        let changeManagers = project.changeManagerDetails.map(changeManager => {
             return `${changeManager.profile.firstName} ${changeManager.profile.lastName}`
         });
+        return changeManagers.join(", ")
+    }
 }
 
 

@@ -140,6 +140,8 @@ export default function CustomizedDialogs(props) {
                                 }}
                             />
                             <KeyboardDatePicker
+                                disableToolbar
+                                variant="inline"
                                 margin="normal"
                                 id="date-picker-dialog"
                                 label="Due Date"

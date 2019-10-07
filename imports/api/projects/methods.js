@@ -75,7 +75,10 @@ export const insert = new ValidatedMethod({
     }).validator(),
     run({ project }) {
         if(!project.owner){
-            project.owner = this.userId
+            project.owner = this.userId;
+            project.changeManagers = [this.userId];
+            //TODO append if peoples already supplying from admin panel
+            project.peoples = [this.userId]
         }
         return Projects.insert(project);
     }
