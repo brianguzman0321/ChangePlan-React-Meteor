@@ -106,17 +106,18 @@ const useStyles = makeStyles(theme => ({
     activities: {
         paddingLeft: 12
     },
-    cardContent: {
-        // paddingTop: 0
+    secondTab: {
+        display: 'flex'
+    },
+    createNewProject : {
+        flex: 1,
+        marginTop: 2,
+        marginLeft: 15
     }
 }));
 
 function ProjectCard(props) {
     let { projects } = props;
-    //unShift empty Item for create Project Block
-    if(!(projects[0] && projects[0].name === 'New Project')){
-        projects.unshift({name: 'New Project'});
-    }
     const classes = useStyles();
     const bull = <span className={classes.bullet}>•</span>;
     const [age, setAge] = React.useState('createdAt');
@@ -158,7 +159,8 @@ function ProjectCard(props) {
                         <SearchIcon />
                     </IconButton>
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={4} className={classes.secondTab}>
+                    <CustomizedDialogs {...props} className={classes.createNewProject} />
                     <Typography color="textSecondary" variant="title" className={classes.sortBy}>
                         Sort by
                     </Typography>
@@ -182,64 +184,54 @@ function ProjectCard(props) {
             </Grid>
             {projects.map((project, index) => (
                 <Grid item xs={12} sm={6} md={3} key={index}>
-                    {
-                        index === 0 ?
-                            <Card className={classes.newProject}>
-                        <CardContent style={{ display:'flex', justifyContent:'center' }}>
+                    <Card className={classes.card}>
+                        <LinearProgress variant="determinate" value={index * 10} color="primary"/>
+                        <CardHeader
+                            titleTypographyProps={{variant: 'h6'}}
+                            className={classes.cardTitle}
+                            action={
+                                <IconButton aria-label="settings">
+                                    <MoreVertIcon />
+                                </IconButton>
+                            }
+                            title={projectName(project.name)}
+                        />
+                        <CardContent className={classes.cardContent}>
                             <Grid container>
-                                <CustomizedDialogs {...props} />
-                            </Grid>
-                        </CardContent>
-                    </Card> :
-                        <Card className={classes.card}>
-                            <LinearProgress variant="determinate" value={index * 10} color="primary"/>
-                            <CardHeader
-                                titleTypographyProps={{variant: 'h6'}}
-                                className={classes.cardTitle}
-                                action={
-                                    <IconButton aria-label="settings">
-                                        <MoreVertIcon />
-                                    </IconButton>
-                                }
-                                title={projectName(project.name)}
-                            />
-                            <CardContent className={classes.cardContent}>
-                                <Grid container>
-                                    <Grid item xs={4}>
-                                        <Typography className={classes.title} color="textSecondary" gutterBottom>
-                                            STAKEHOLDERS
-                                        </Typography>
-                                        <Typography className={classes.pos} color="textSecondary">
-                                            {project.stakeHolders.length}
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={4} className={classes.activities}>
-                                        <Typography className={classes.title} color="textSecondary" gutterBottom>
-                                            ACTIVITIES
-                                        </Typography>
-                                        <Typography className={classes.pos} color="textSecondary">
-                                            {/*{project.totalActivities}*/}
-                                            0
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={4}>
-                                        <Typography className={classes.title} color="textSecondary" gutterBottom>
-                                            DUE
-                                        </Typography>
-                                        <Typography className={classes.pos} color="textSecondary">
-                                            {moment(project.endingDate).format('DD-MMM-YY')}
-                                        </Typography>
-                                    </Grid>
-
+                                <Grid item xs={4}>
+                                    <Typography className={classes.title} color="textSecondary" gutterBottom>
+                                        STAKEHOLDERS
+                                    </Typography>
+                                    <Typography className={classes.pos} color="textSecondary">
+                                        {project.stakeHolders.length}
+                                    </Typography>
                                 </Grid>
-                                <Typography variant="body2" component="p" className={classes.bottomText}>
-                                    Change Manager
-                                    <br />
-                                    {ChangeManagersNames(project)}
-                                </Typography>
-                            </CardContent>
-                        </Card>
-                    }
+                                <Grid item xs={4} className={classes.activities}>
+                                    <Typography className={classes.title} color="textSecondary" gutterBottom>
+                                        ACTIVITIES
+                                    </Typography>
+                                    <Typography className={classes.pos} color="textSecondary">
+                                        {/*{project.totalActivities}*/}
+                                        0
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={4}>
+                                    <Typography className={classes.title} color="textSecondary" gutterBottom>
+                                        DUE
+                                    </Typography>
+                                    <Typography className={classes.pos} color="textSecondary">
+                                        {moment(project.endingDate).format('DD-MMM-YY')}
+                                    </Typography>
+                                </Grid>
+
+                            </Grid>
+                            <Typography variant="body2" component="p" className={classes.bottomText}>
+                                {project.changeManagers.length > 1 ? "Change Managers" : "Change Manager"}
+                                <br />
+                                {ChangeManagersNames(project)}
+                            </Typography>
+                        </CardContent>
+                    </Card>
                 </Grid>
             ))}
         </Grid>

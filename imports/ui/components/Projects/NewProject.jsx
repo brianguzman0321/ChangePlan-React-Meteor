@@ -1,5 +1,5 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
@@ -32,6 +32,14 @@ const styles = theme => ({
     },
 });
 
+const useStyles = makeStyles(theme => ({
+    createNewProject: {
+        flex: 1,
+        marginTop: 2,
+        marginLeft: 15
+    }
+}));
+
 const DialogTitle = withStyles(styles)(props => {
     const { children, classes, onClose } = props;
     return (
@@ -49,7 +57,7 @@ const DialogTitle = withStyles(styles)(props => {
 const DialogContent = withStyles(theme => ({
     root: {
         padding: theme.spacing(2),
-    },
+    }
 }))(MuiDialogContent);
 
 const DialogActions = withStyles(theme => ({
@@ -65,6 +73,7 @@ export default function CustomizedDialogs(props) {
     const [startingDate, setStartingDate] = React.useState(new Date());
     const [endingDate, setEndingDate] = React.useState(new Date());
     let { company } = props;
+    const classes = useStyles();
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -101,13 +110,10 @@ export default function CustomizedDialogs(props) {
     };
 
     return (
-        <div>
-            <Button variant="contained" onClick={handleClickOpen}>
+        <div className={classes.createNewProject}>
+            <Button variant="outlined" color="primary" onClick={handleClickOpen}>
                 Create New Project
             </Button>
-            {/*<Button variant="outlined" color="secondary" >*/}
-                {/*Open dialog*/}
-            {/*</Button>*/}
             <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} fullWidth="md">
                 <DialogTitle id="customized-dialog-title" onClose={handleClose}>
                     Create New Project
