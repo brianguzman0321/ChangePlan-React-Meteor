@@ -27,7 +27,7 @@ import CustomizedDialogs from './NewProject';
 
 const useStyles = makeStyles(theme => ({
     card: {
-        minHeight: 211,
+        minHeight: 215,
         minWidth: 300,
         maxWidth: 300,
         marginTop: 23,
@@ -37,7 +37,7 @@ const useStyles = makeStyles(theme => ({
         color: '#465563'
     },
     newProject: {
-        minHeight: 211,
+        minHeight: 215,
         minWidth: 300,
         maxWidth: 300,
         marginTop: 23,
@@ -58,7 +58,7 @@ const useStyles = makeStyles(theme => ({
         transform: 'scale(0.8)',
     },
     cardTitle: {
-        fontSize: 11,
+        fontWeight: '500 !important'
     },
     title: {
         fontSize: 11,
@@ -113,12 +113,22 @@ const useStyles = makeStyles(theme => ({
         flex: 1,
         marginTop: 2,
         marginLeft: 15
+    },
+    gridContainer: {
+        marginBottom: 15
     }
 }));
 
 function ProjectCard(props) {
+    const useStyles1 = makeStyles(theme => ({
+        title: {
+            fontWeight: 1000,
+            fontSize: 16
+        }
+    }));
     let { projects } = props;
     const classes = useStyles();
+    const classes1 = useStyles1();
     const bull = <span className={classes.bullet}>•</span>;
     const [age, setAge] = React.useState('createdAt');
     const [open, setOpen] = React.useState(false);
@@ -142,6 +152,7 @@ function ProjectCard(props) {
             direction="row"
             justify="flex-start"
             alignItems="flex-start"
+            className={classes.gridContainer}
         >
             <Grid container className={classes.searchContainer}>
                 <Grid item xs={2}>
@@ -187,13 +198,12 @@ function ProjectCard(props) {
                     <Card className={classes.card}>
                         <LinearProgress variant="determinate" value={index * 10} color="primary"/>
                         <CardHeader
-                            titleTypographyProps={{variant: 'h6'}}
-                            className={classes.cardTitle}
                             action={
                                 <IconButton aria-label="settings">
                                     <MoreVertIcon />
                                 </IconButton>
                             }
+                            classes={classes1}
                             title={projectName(project.name)}
                         />
                         <CardContent className={classes.cardContent}>
@@ -240,7 +250,7 @@ function ProjectCard(props) {
 
 function projectName(name){
     if(typeof name === 'string') {
-        return name.length < 22 ? name : `${name.slice(0, 19)}...`
+        return name.length < 53 ? name : `${name.slice(0, 50)}...`
     }
     return name
 }
