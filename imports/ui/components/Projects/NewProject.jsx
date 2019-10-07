@@ -80,6 +80,7 @@ export default function CustomizedDialogs(props) {
     };
     const handleClose = () => {
         setOpen(false);
+        setName('');
     };
     const createProject = () => {
         let params = {
@@ -93,6 +94,7 @@ export default function CustomizedDialogs(props) {
         };
         Meteor.call('projects.insert', params, (err, res) => {
             setOpen(false);
+            setName('');
         })
 
     };
