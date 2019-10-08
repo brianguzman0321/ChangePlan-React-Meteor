@@ -71,7 +71,8 @@ const useStyles = makeStyles(theme => ({
         color: '##455564'
     },
     searchContainer: {
-        marginTop: 13
+        marginTop: 13,
+        overflow: 'hidden'
     },
     topHeading: {
         color: '#465563',
@@ -116,6 +117,7 @@ const useStyles = makeStyles(theme => ({
     },
     gridContainer: {
         marginBottom: 15,
+        overFlow: 'hidden'
     },
     grid: {
         margin: '-5px !important'
