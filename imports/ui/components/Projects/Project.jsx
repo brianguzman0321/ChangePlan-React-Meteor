@@ -27,21 +27,19 @@ import CustomizedDialogs from './NewProject';
 
 const useStyles = makeStyles(theme => ({
     card: {
-        minHeight: 215,
+        minHeight: 192,
         minWidth: 300,
-        maxWidth: 300,
+        maxWidth: 295,
         marginTop: 23,
-        marginLeft: 15,
-        marginRight: '0 !important',
-        // color: theme.primary,
-        color: '#465563'
+        marginLeft: 11,
+        color: '#465563',
     },
     newProject: {
-        minHeight: 215,
+        minHeight: 192,
         minWidth: 300,
-        maxWidth: 300,
+        maxWidth: 295,
         marginTop: 23,
-        marginLeft: 15,
+        marginLeft: 23,
         marginRight: '0 !important',
         // color: theme.primary,
         color: '#465563',
@@ -62,13 +60,15 @@ const useStyles = makeStyles(theme => ({
     },
     title: {
         fontSize: 11,
-        color: '#51616e'
+        color: '##455564'
     },
     pos: {
         fontWeight: 'Bold',
     },
     bottomText: {
         marginTop: 12,
+        fontSize: 11,
+        color: '##455564'
     },
     searchContainer: {
         marginTop: 13
@@ -112,10 +112,20 @@ const useStyles = makeStyles(theme => ({
     createNewProject : {
         flex: 1,
         marginTop: 2,
-        marginLeft: 15
+        marginLeft: 23
     },
     gridContainer: {
-        marginBottom: 15
+        marginBottom: 15,
+    },
+    grid: {
+        margin: '-5px !important'
+        // maxWidth: '24%'
+    },
+    cardContent: {
+        paddingTop: 0,
+        "&:last-child": {
+            paddingBottom: 0
+        }
     }
 }));
 
@@ -150,9 +160,10 @@ function ProjectCard(props) {
         <Grid
             container
             direction="row"
-            justify="flex-start"
-            alignItems="flex-start"
+            justify="center"
+            alignItems="center"
             className={classes.gridContainer}
+            spacing={0}
         >
             <Grid container className={classes.searchContainer}>
                 <Grid item xs={2}>
@@ -194,7 +205,7 @@ function ProjectCard(props) {
                 </Grid>
             </Grid>
             {projects.map((project, index) => (
-                <Grid item xs={12} sm={6} md={3} key={index}>
+                <Grid item xs={12} sm={6} md={3} key={index} className={classes.grid}>
                     <Card className={classes.card}>
                         <LinearProgress variant="determinate" value={index * 10} color="primary"/>
                         <CardHeader
@@ -209,7 +220,7 @@ function ProjectCard(props) {
                         <CardContent className={classes.cardContent}>
                             <Grid container>
                                 <Grid item xs={4}>
-                                    <Typography className={classes.title} color="textSecondary" gutterBottom>
+                                    <Typography className={classes.title}  gutterBottom>
                                         STAKEHOLDERS
                                     </Typography>
                                     <Typography className={classes.pos} color="textSecondary">
@@ -217,7 +228,7 @@ function ProjectCard(props) {
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={4} className={classes.activities}>
-                                    <Typography className={classes.title} color="textSecondary" gutterBottom>
+                                    <Typography className={classes.title} gutterBottom>
                                         ACTIVITIES
                                     </Typography>
                                     <Typography className={classes.pos} color="textSecondary">
@@ -226,7 +237,7 @@ function ProjectCard(props) {
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={4}>
-                                    <Typography className={classes.title} color="textSecondary" gutterBottom>
+                                    <Typography className={classes.title} gutterBottom>
                                         DUE
                                     </Typography>
                                     <Typography className={classes.pos} color="textSecondary">
@@ -236,7 +247,7 @@ function ProjectCard(props) {
 
                             </Grid>
                             <Typography variant="body2" component="p" className={classes.bottomText}>
-                                {project.changeManagers.length > 1 ? "Change Managers" : "Change Manager"}
+                                {project.changeManagers.length > 1 ? "CHANGE MANAGERS" : "CHANGE MANAGER"}
                                 <br />
                                 {ChangeManagersNames(project)}
                             </Typography>
