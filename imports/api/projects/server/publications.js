@@ -24,31 +24,33 @@ Meteor.publish('projects', function (company) {
 });
 
 Meteor.publish('projectExists', function () {
-    //superAdmin
-    if(Roles.userIsInRole(this.userId, 'superAdmin')){
-        return Projects.find({})
-    }
-    let company = Companies.findOne({
-        admins:{
-            $in: [this.userId]
-        }
-    });
-    //admin
-    if(company && company._id){
-        return Projects.find({
-            companyId: company._id
-        })
-    }
-    //owner or changeManager
-    return Projects.find({
-        $or: [{
-            owner: this.userId
-        }, {
-            changeManagers:{
-                $in: [this.userId]
-            }
-        }]
-    });
+    // console.log("WHy  I projectExists")
+    // //superAdmin
+    // if(Roles.userIsInRole(this.userId, 'superAdmin')){
+    //     return Projects.find({})
+    // }
+    // let company = Companies.findOne({
+    //     admins:{
+    //         $in: [this.userId]
+    //     }
+    // });
+    // //admin
+    // if(company && company._id){
+    //     return Projects.find({
+    //         companyId: company._id
+    //     })
+    // }
+    // //owner or changeManager
+    // return Projects.find({
+    //     $or: [{
+    //         owner: this.userId
+    //     }, {
+    //         changeManagers:{
+    //             $in: [this.userId]
+    //         }
+    //     }]
+    // });
+    return true
 });
 
 Meteor.publishTransformed('compoundProjects', function (company) {
@@ -107,19 +109,27 @@ Meteor.publishTransformed('myProjects', function (company, parameters) {
         })
     }
     let query = {};
+    //add Search By Project Name
+    if(parameters.name){
+        query.name = {
+            $regex: parameters.name,
+            $options : 'i'
+        }
+    }
     company && (query.companyId = company._id);
     if(company && company.admins.includes(this.userId)){
         // query.companyId = company._id
     }
     else if(!Roles.userIsInRole(this.userId, 'superAdmin')){
         // if user Not Super Admin then return only own projects
-        query = {
+        query = Object.assign(query, {
             peoples:{
                 $in: [this.userId]
             }
-        }
+        })
     }
-    return Projects.find(query, {sort: {name: 1}}).serverTransform({
+
+    return Projects.find(query).serverTransform({
         'changeManagerDetails': function (doc) {
             let peoples = [];
             _(doc.changeManagers).each(function (PeopleId) {

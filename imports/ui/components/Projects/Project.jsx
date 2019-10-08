@@ -143,11 +143,17 @@ function ProjectCard(props) {
     const classes1 = useStyles1();
     const bull = <span className={classes.bullet}>•</span>;
     const [age, setAge] = React.useState('endingDate');
+    const [search, setSearch] = React.useState('');
     const [open, setOpen] = React.useState(false);
 
     const handleChange = event => {
         setAge(event.target.value);
         updateFilter('localProjects', 'sort', event.target.value);
+    };
+
+    const searchFilter = event => {
+        setSearch(event.target.value);
+        updateFilter('localProjects', 'search', event.target.value);
     };
 
     const handleClose = () => {
@@ -178,6 +184,8 @@ function ProjectCard(props) {
                         className={classes.input}
                         placeholder="Search By Project Name"
                         inputProps={{ 'aria-label': 'search by project name' }}
+                        onChange={searchFilter}
+                        value={search}
                     />
                     <IconButton className={classes.iconButton} aria-label="search">
                         <SearchIcon />
@@ -308,7 +316,8 @@ const ProjectsPage = withTracker(props => {
     });
     Meteor.subscribe('companies.single');
     Meteor.subscribe('myProjects', null, {
-        sort: local.sort || {}
+        sort: local.sort || {},
+        name: local.search
     } );
     return {
         company: Companies.findOne(),
