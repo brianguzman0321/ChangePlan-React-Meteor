@@ -10,6 +10,7 @@ LocalCollection = new Meteor.Collection(null);
 
 LocalCollection.insert({
     name: 'localProjects',
+    sort: 'endingDate'
 });
 
 LocalCollection.insert({

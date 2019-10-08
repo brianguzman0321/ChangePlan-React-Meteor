@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
         minWidth: 300,
         maxWidth: 295,
         marginTop: 23,
-        marginLeft: 11,
+        marginLeft: 30,
         color: '#465563',
     },
     newProject: {
@@ -140,7 +140,7 @@ function ProjectCard(props) {
     const classes = useStyles();
     const classes1 = useStyles1();
     const bull = <span className={classes.bullet}>•</span>;
-    const [age, setAge] = React.useState('createdAt');
+    const [age, setAge] = React.useState('endingDate');
     const [open, setOpen] = React.useState(false);
 
     const handleChange = event => {
@@ -160,7 +160,7 @@ function ProjectCard(props) {
         <Grid
             container
             direction="row"
-            justify="center"
+            justify="flex-start"
             alignItems="center"
             className={classes.gridContainer}
             spacing={0}
@@ -199,6 +199,7 @@ function ProjectCard(props) {
                             <MenuItem value="createdAt">Date Added</MenuItem>
                             <MenuItem value="endingDate">Date Due</MenuItem>
                             <MenuItem value="name">Project Name</MenuItem>
+                            <MenuItem value="stakeHolder">Stakeholder Number</MenuItem>
                         </Select>
                         {/*<FormHelperText>Without label</FormHelperText>*/}
                     </FormControl>
@@ -275,6 +276,29 @@ function ChangeManagersNames(project) {
     }
 }
 
+function sortingFunc(projects, local) {
+    switch (local.sort){
+        case 'endingDate':{
+            projects = projects.sort((a, b) => new Date(a.endingDate) -  new Date(b.endingDate));
+            break;
+        }
+        case 'createdAt':{
+            projects = projects.sort((a, b) => new Date(a.createdAt) -  new Date(b.createdAt));
+            break;
+        }
+        case 'name': {
+            projects = projects.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+            break;
+        }
+        case 'stakeHolders': {
+            projects = projects.sort((a, b) => a.stakeHolders.length - a.stakeHolders.length);
+            break;
+        }
+
+    }
+    return projects
+}
+
 
 const ProjectsPage = withTracker(props => {
     let local = LocalCollection.findOne({
@@ -286,7 +310,7 @@ const ProjectsPage = withTracker(props => {
     } );
     return {
         company: Companies.findOne(),
-        projects: Projects.find({}).fetch(),
+        projects: sortingFunc(Projects.find({}).fetch(), local),
     };
 })(ProjectCard);
 

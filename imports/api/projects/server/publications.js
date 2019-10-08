@@ -91,11 +91,14 @@ Meteor.publish('projects.single', function (id) {
 
 Meteor.publishTransformed('myProjects', function (company, parameters) {
     let options = {
-        sort: 'createdAt'
+        sort: {
+            name: -1
+        }
     };
-    if(parameters.sort){
-        options.sort = 1
-    }
+    // if(parameters.sort){
+    //     options.sort = {};
+    //     options.sort[parameters.sort] = 1
+    // }
     if(!(company && company._id)){
         company = Companies.findOne({
             peoples:{
@@ -116,7 +119,7 @@ Meteor.publishTransformed('myProjects', function (company, parameters) {
             }
         }
     }
-    return Projects.find(query, {options}).serverTransform({
+    return Projects.find(query, {sort: {name: 1}}).serverTransform({
         'changeManagerDetails': function (doc) {
             let peoples = [];
             _(doc.changeManagers).each(function (PeopleId) {
