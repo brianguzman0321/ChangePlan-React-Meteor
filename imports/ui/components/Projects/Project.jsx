@@ -138,7 +138,11 @@ function ProjectCard(props) {
             fontSize: 16
         }
     }));
-    let { projects } = props;
+    let { projects, company } = props;
+    let isAdmin = false;
+    if(company && company.admins.includes(Meteor.userId())){
+        isAdmin = true;
+    }
     const classes = useStyles();
     const classes1 = useStyles1();
     const bull = <span className={classes.bullet}>•</span>;
@@ -191,8 +195,8 @@ function ProjectCard(props) {
                         <SearchIcon />
                     </IconButton>
                 </Grid>
-                <Grid item xs={4} className={classes.secondTab}>
-                    <CustomizedDialogs {...props} className={classes.createNewProject} />
+                <Grid item xs={4} className={isAdmin && classes.secondTab}>
+                    { isAdmin && <CustomizedDialogs {...props} className={classes.createNewProject} /> }
                     <Typography color="textSecondary" variant="title" className={classes.sortBy}>
                         Sort by
                     </Typography>
