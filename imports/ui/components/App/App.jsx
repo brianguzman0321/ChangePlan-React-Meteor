@@ -20,7 +20,10 @@ import { Companies } from "../../../api/companies/companies";
 import {Projects} from "../../../api/projects/projects";
 
 const Brand = () => (
-    <img style={{ width: "200px" }} src={`/branding/logo-long.png`} />
+    <Link to='/'>
+        <img style={{ width: "200px" }} src={`/branding/logo-long.png`} />
+    </Link>
+
 );
 
 const useStyles = makeStyles(theme => ({
@@ -249,8 +252,10 @@ function TopNavBar(props) {
 
 const TopNavBarPage = withTracker(props => {
     Meteor.subscribe('projectExists');
+    const projectExists = Counter.get('projectExists');
+    console.log(projectExists)
     return {
-        projectExists: Projects.findOne()
+        projectExists
     }
 })(TopNavBar);
 

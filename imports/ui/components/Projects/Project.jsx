@@ -120,8 +120,8 @@ const useStyles = makeStyles(theme => ({
         overFlow: 'hidden'
     },
     grid: {
-        margin: '-5px !important'
-        // maxWidth: '24%'
+        margin: -5,
+        marginTop: 5
     },
     cardContent: {
         paddingTop: 0,

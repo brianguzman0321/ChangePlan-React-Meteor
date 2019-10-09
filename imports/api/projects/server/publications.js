@@ -25,32 +25,31 @@ Meteor.publish('projects', function (company) {
 
 Meteor.publish('projectExists', function () {
     // console.log("WHy  I projectExists")
-    // //superAdmin
-    // if(Roles.userIsInRole(this.userId, 'superAdmin')){
-    //     return Projects.find({})
-    // }
-    // let company = Companies.findOne({
-    //     admins:{
-    //         $in: [this.userId]
-    //     }
-    // });
+    //superAdmin
+    if(Roles.userIsInRole(this.userId, 'superAdmin')){
+        return new Counter('projectExists', Projects.find({}))
+    }
+    let company = Companies.findOne({
+        admins:{
+            $in: [this.userId]
+        }
+    });
     // //admin
-    // if(company && company._id){
-    //     return Projects.find({
-    //         companyId: company._id
-    //     })
-    // }
-    // //owner or changeManager
-    // return Projects.find({
-    //     $or: [{
-    //         owner: this.userId
-    //     }, {
-    //         changeManagers:{
-    //             $in: [this.userId]
-    //         }
-    //     }]
-    // });
-    return true
+    if(company && company._id){
+        new Counter('projectExists', Projects.find({
+            companyId: company._id
+        }))
+    }
+    //owner or changeManager
+    new Counter('projectExists', Projects.find({
+        $or: [{
+            owner: this.userId
+        }, {
+            changeManagers:{
+                $in: [this.userId]
+            }
+        }]
+    }));
 });
 
 Meteor.publishTransformed('compoundProjects', function (company) {
