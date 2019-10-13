@@ -10,6 +10,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import TextField from '@material-ui/core/TextField';
+import { withSnackbar } from 'notistack';
 import 'date-fns';
 import Grid from '@material-ui/core/Grid';
 import DateFnsUtils from '@date-io/date-fns';
@@ -67,7 +68,7 @@ const DialogActions = withStyles(theme => ({
     },
 }))(MuiDialogActions);
 
-export default function CustomizedDialogs(props) {
+function CustomizedDialogs(props) {
     const [open, setOpen] = React.useState(false);
     const [name, setName] = React.useState('');
     const [startingDate, setStartingDate] = React.useState(new Date());
@@ -83,6 +84,14 @@ export default function CustomizedDialogs(props) {
         setName('');
     };
     const createProject = () => {
+        if(!(name && startingDate && endingDate)){
+            props.enqueueSnackbar('Please fill all required Fields', {variant: 'error'});
+            return false;
+        }
+        else if(endingDate < startingDate){
+            props.enqueueSnackbar('Please fix the date error', {variant: 'error'});
+            return false;
+        }
         let params = {
             project: {
                 name,
@@ -93,8 +102,15 @@ export default function CustomizedDialogs(props) {
             }
         };
         Meteor.call('projects.insert', params, (err, res) => {
-            setOpen(false);
-            setName('');
+            if(err){
+                props.enqueueSnackbar(err.reason, {variant: 'error'})
+            }
+            else{
+                setOpen(false);
+                setName('');
+                props.enqueueSnackbar('New Project Created Successfully.', {variant: 'success'})
+            }
+
         })
 
     };
@@ -150,11 +166,13 @@ export default function CustomizedDialogs(props) {
                             <KeyboardDatePicker
                                 disableToolbar
                                 variant="inline"
+                                // open={true}
                                 margin="normal"
                                 id="date-picker-dialog"
                                 label="Due Date"
                                 format="MM/dd/yyyy"
                                 value={endingDate}
+                                minDate={startingDate}
                                 onChange={handleEndingDate}
                                 KeyboardButtonProps={{
                                     'aria-label': 'change date',
@@ -186,3 +204,5 @@ export default function CustomizedDialogs(props) {
         </div>
     );
 }
+
+export default withSnackbar(CustomizedDialogs)

@@ -140,7 +140,10 @@ function ProjectCard(props) {
     }));
     let { projects, company } = props;
     let isAdmin = false;
-    if(company && company.admins.includes(Meteor.userId())){
+    if (Roles.userIsInRole(Meteor.userId(), 'superAdmin')) {
+        isAdmin = true;
+    }
+    else if(company && company.admins.includes(Meteor.userId())){
         isAdmin = true;
     }
     const classes = useStyles();
@@ -195,8 +198,8 @@ function ProjectCard(props) {
                         <SearchIcon />
                     </IconButton>
                 </Grid>
-                <Grid item xs={4} className={isAdmin && classes.secondTab}>
-                    { isAdmin && <CustomizedDialogs {...props} className={classes.createNewProject} /> }
+                <Grid item xs={4} className={isAdmin && company && classes.secondTab}>
+                    { isAdmin && company && <CustomizedDialogs {...props} className={classes.createNewProject} /> }
                     <Typography color="textSecondary" variant="title" className={classes.sortBy}>
                         Sort by
                     </Typography>
