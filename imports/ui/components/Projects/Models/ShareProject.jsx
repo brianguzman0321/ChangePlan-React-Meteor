@@ -15,6 +15,8 @@ import 'date-fns';
 import Grid from "@material-ui/core/Grid/Grid";
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
 
 const styles = theme => ({
     root: {
@@ -38,12 +40,12 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const DialogTitle = withStyles(styles)(props => {
-    const { children, classes, handleModalClose } = props;
+    const { children, classes, onClose } = props;
     return (
         <MuiDialogTitle disableTypography className={classes.root}>
             <Typography variant="h6">{children}</Typography>
-            {handleModalClose ? (
-                <IconButton aria-label="close" className={classes.closeButton} onClick={handleModalClose}>
+            {onClose ? (
+                <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
                     <CloseIcon />
                 </IconButton>
             ) : null}
@@ -66,7 +68,10 @@ const DialogActions = withStyles(theme => ({
 
 function ShareProject(props) {
     const [name, setName] = React.useState('');
-    const [age, setAge] = React.useState('');
+    const [email, setEmail] = React.useState('');
+    const [role, setRole] = React.useState('changeManager');
+    const [selectOpen, setSelectOpen] = React.useState(false);
+
     let { company, open, handleModalClose, project } = props;
     const classes = useStyles();
     const modalName = 'share';
@@ -76,31 +81,34 @@ function ShareProject(props) {
         setName('');
     };
     const createProject = () => {
-        if(!(name && startingDate && endingDate)){
+        if(!(name && email && role)){
             props.enqueueSnackbar('Please fill all required Fields', {variant: 'error'});
             return false;
         }
-        else if(endingDate < startingDate){
-            props.enqueueSnackbar('Please fix the date error', {variant: 'error'});
-            return false;
+        else{
+            if(!(/^\S+@\S+$/.test(email))){
+                props.enqueueSnackbar('Please Enter Valid Email Address', {variant: 'error'});
+                return false;
+            }
         }
         let params = {
             project: {
                 name,
-                startingDate,
-                endingDate,
-                companyId: company._id
+                email,
+                role,
+                project
 
             }
         };
-        Meteor.call('projects.insert', params, (err, res) => {
+        Meteor.call('roles.assignRole', params, (err, res) => {
             if(err){
                 props.enqueueSnackbar(err.reason, {variant: 'error'})
             }
             else{
-                setOpen(false);
+                handleClose();
                 setName('');
-                props.enqueueSnackbar('New Project Created Successfully.', {variant: 'success'})
+                setEmail('');
+                props.enqueueSnackbar('Project Shared Successfully.', {variant: 'success'})
             }
 
         })
@@ -118,9 +126,24 @@ function ShareProject(props) {
     const handleChange = (e) => {
         setName(e.target.value)
     };
-    const handleAgeChange = (e) => {
-        setAge(e.target.value)
+    const handleEmailChange = (e) => {
+        setEmail(e.target.value)
     };
+    const handleAgeChange = (e) => {
+        setRole(e.target.value)
+    };
+
+    function handleSelectChange(event) {
+        setRole(event.target.value);
+    }
+
+    function handleSelectClose() {
+        setSelectOpen(false);
+    }
+
+    function handleSelectOpen() {
+        setSelectOpen(true);
+    }
 
     return (
         <div className={classes.createNewProject}>
@@ -145,16 +168,41 @@ function ShareProject(props) {
                         </Grid>
                         <Grid item xs={6}>
                         <TextField
-                            autoFocus
                             // margin="dense"
                             id="email"
                             label="Email"
-                            value={name}
-                            onChange={handleChange}
+                            value={email}
+                            onChange={handleEmailChange}
                             required={true}
-                            type="text"
+                            type="email"
                             fullWidth={true}
                         />
+                        </Grid>
+                        <Grid item xs={12}>
+                        <br/>
+                            <FormControl className={classes.formControl} fullWidth={true}>
+                                <InputLabel htmlFor="demo-controlled-open-select">Role</InputLabel>
+                                <Select
+                                    id="role"
+                                    label="role"
+                                    fullWidth={true}
+                                    open={selectOpen}
+                                    onClose={handleSelectClose}
+                                    onOpen={handleSelectOpen}
+                                    value={role}
+                                    onChange={handleSelectChange}
+                                    inputProps={{
+                                        name: 'role',
+                                        id: 'demo-controlled-open-select',
+                                    }}
+                                >
+                                    <MenuItem value='changeManager'>Change Manager (view and edit)</MenuItem>
+                                    <MenuItem value='manager'>Manager (view only)</MenuItem>
+                                </Select>
+                            </FormControl>
+                            <br/>
+                            <br/>
+                            <br/>
                         </Grid>
                     </Grid>
                 </DialogContent>

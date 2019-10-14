@@ -27,3 +27,4 @@ import '/imports/api/projects/methods.js';
 
 //admin methods
 import '/imports/api/admin/methods'
+import '/imports/api/admin/roles'

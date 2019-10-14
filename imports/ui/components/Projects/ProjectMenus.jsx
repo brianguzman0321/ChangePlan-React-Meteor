@@ -46,10 +46,10 @@ export default function SimpleMenu(props) {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
             >
-                {/*<MenuItem onClick={handleClose}>Edit</MenuItem>*/}
                 <MenuItem onClick={handleClose.bind(null, 'share')}>Share</MenuItem>
+                <MenuItem onClick={handleClose} disabled={true}>Edit</MenuItem>
                 {/*<MenuItem onClick={handleClose}>Duplicate</MenuItem>*/}
-                {/*<MenuItem onClick={handleClose}>Delete</MenuItem>*/}
+                <MenuItem onClick={handleClose} disabled={true}>Delete</MenuItem>
             </Menu>
             <ShareProject open={modals.share} handleModalClose={handleModalClose} project={project}/>
         </div>
