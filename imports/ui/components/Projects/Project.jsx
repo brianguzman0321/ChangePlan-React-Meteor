@@ -23,6 +23,8 @@ import {withTracker} from "meteor/react-meteor-data";
 import { Companies } from "/imports/api/companies/companies";
 import { Projects } from "/imports/api/projects/projects";
 import CustomizedDialogs from './NewProject';
+import ProjectMenus from './ProjectMenus'
+import ShareProject from './Models/ShareProject'
 
 
 const useStyles = makeStyles(theme => ({
@@ -227,11 +229,7 @@ function ProjectCard(props) {
                     <Card className={classes.card}>
                         <LinearProgress variant="determinate" value={index * 10} color="primary"/>
                         <CardHeader
-                            action={
-                                <IconButton aria-label="settings">
-                                    <MoreVertIcon />
-                                </IconButton>
-                            }
+                            action=<ProjectMenus project={project}/>
                             classes={classes1}
                             title={projectName(project.name)}
                         />
