@@ -72,7 +72,9 @@ function CustomizedDialogs(props) {
     const [open, setOpen] = React.useState(false);
     const [name, setName] = React.useState('');
     const [startingDate, setStartingDate] = React.useState(new Date());
+    const [startingDateOpen, setStartingDateOpen] = React.useState(false);
     const [endingDate, setEndingDate] = React.useState(new Date());
+    const [endingDateOpen, setEndingDateOpen] = React.useState(false);
     let { company } = props;
     const classes = useStyles();
 
@@ -117,10 +119,23 @@ function CustomizedDialogs(props) {
 
     const handleStartingDate = date => {
         setStartingDate(date);
+        setStartingDateOpen(false)
     };
 
     const handleEndingDate = date => {
+        if(!(endingDate < startingDate)){
+            setEndingDateOpen(false)
+        }
         setEndingDate(date);
+
+    };
+
+    const openStarting = (e) => {
+        setStartingDateOpen(true)
+    };
+
+    const openEnding = (e) => {
+        setEndingDateOpen(true)
     };
 
     const handleChange = (e) => {
@@ -158,6 +173,8 @@ function CustomizedDialogs(props) {
                                 id="date-picker-inline"
                                 label="Start Date"
                                 value={startingDate}
+                                open={startingDateOpen}
+                                onOpen={openStarting}
                                 onChange={handleStartingDate}
                                 KeyboardButtonProps={{
                                     'aria-label': 'change date',
@@ -173,6 +190,8 @@ function CustomizedDialogs(props) {
                                 format="MM/dd/yyyy"
                                 value={endingDate}
                                 minDate={startingDate}
+                                open={endingDateOpen}
+                                onOpen={openEnding}
                                 onChange={handleEndingDate}
                                 KeyboardButtonProps={{
                                     'aria-label': 'change date',
