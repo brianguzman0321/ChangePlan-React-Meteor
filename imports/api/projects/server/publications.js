@@ -68,7 +68,6 @@ Meteor.publishTransformed('compoundProjects', function (company) {
             }
         }
     }
-    console.log("query", query);
     return Projects.find(query).serverTransform({
         'peoplesDetails': function (doc) {
             let peoples = [];
