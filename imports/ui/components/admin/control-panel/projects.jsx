@@ -73,7 +73,6 @@ function ProjectsSettings(props) {
     };
     useEffect(() => {
         updateUsersList();
-        // if(props.currentProject._id !== project._id){
             setProject(props.currentProject);
             if(props.currentProject.peoplesDetails){
                 let data = [...state.data];

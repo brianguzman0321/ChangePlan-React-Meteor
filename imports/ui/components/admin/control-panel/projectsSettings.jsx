@@ -1,7 +1,5 @@
 import React, {useEffect} from "react";
-import {Meteor} from "meteor/meteor";
-import MaterialTable from "material-table";
-import {withTracker} from "meteor/react-meteor-data";
+import { withTracker } from "meteor/react-meteor-data";
 import { Companies } from "/imports/api/companies/companies";
 import { Projects } from "/imports/api/projects/projects";
 import ControlledOpenSelect from './selectionModal'

@@ -1,16 +1,14 @@
 import React, {useEffect} from "react";
 import {Meteor} from "meteor/meteor";
 import MaterialTable from "material-table";
-import {withTracker} from "meteor/react-meteor-data";
+import { withTracker } from "meteor/react-meteor-data";
 import { withSnackbar } from 'notistack';
-import {Companies} from "../../../../api/companies/companies";
-import TopNavBar from '/imports/ui/components/App/App'
+import { Companies } from "../../../../api/companies/companies";
+import TopNavBar from '/imports/ui/components/App/App';
 import Divider from "@material-ui/core/Divider/Divider";
 
 function CompaniesList(props) {
     let { companies } = props;
-    let userId = Meteor.userId();
-    let filterIds = [userId];
     let lookup = {};
     if (!Roles.userIsInRole(Meteor.userId(), 'superAdmin')) {
         props.history.push('/')
@@ -18,7 +16,6 @@ function CompaniesList(props) {
 
     lookup.manager = 'Manager';
     lookup.noRole = 'No Role';
-    // const [companies, setCompanies] = React.useState([]);
     const [state, setState] = React.useState({
         columns: [
             {title: 'Company Name', field: 'name'},
@@ -30,7 +27,6 @@ function CompaniesList(props) {
     });
 
     useEffect(() => {
-        // setCompanies(props.companies);
         if(props.companies){
             let data = [...state.data];
             data = companies.map(company => {

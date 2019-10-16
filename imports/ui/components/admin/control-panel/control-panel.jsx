@@ -11,9 +11,7 @@ import Divider from '@material-ui/core/Divider';
 import { Companies } from "/imports/api/companies/companies";
 import { Projects } from "/imports/api/projects/projects";
 
-import MaterialTable from 'material-table';
 import { withTracker } from "meteor/react-meteor-data";
-import {Meteor} from "meteor/meteor";
 import ControlledOpenSelect from './selectionModal'
 import CompaniesControlPanel from './companiesSettings'
 import ProjectsControlPanel from './projectsSettings'
@@ -124,8 +122,6 @@ const ControlPanelPage = withTracker(props => {
     return {
         companies: Companies.find({}).fetch(),
         projects: Projects.find({}).fetch()
-        // categories,
-        // local
     };
 })(FullWidthTabs);
 

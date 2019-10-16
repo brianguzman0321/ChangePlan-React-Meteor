@@ -8,7 +8,6 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import TextField from '@material-ui/core/TextField';
 import { withSnackbar } from 'notistack';
 import 'date-fns';
@@ -197,22 +196,8 @@ function CustomizedDialogs(props) {
                                     'aria-label': 'change date',
                                 }}
                             />
-                            {/*<KeyboardTimePicker*/}
-                                {/*margin="normal"*/}
-                                {/*id="time-picker"*/}
-                                {/*label="Time picker"*/}
-                                {/*value={selectedDate}*/}
-                                {/*onChange={handleDateChange}*/}
-                                {/*KeyboardButtonProps={{*/}
-                                    {/*'aria-label': 'change time',*/}
-                                {/*}}*/}
-                            {/*/>*/}
                         </Grid>
                     </MuiPickersUtilsProvider>
-                    {/*<Typography gutterBottom>*/}
-                        {/*Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis*/}
-                        {/*in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.*/}
-                    {/*</Typography>*/}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={createProject} color="primary">

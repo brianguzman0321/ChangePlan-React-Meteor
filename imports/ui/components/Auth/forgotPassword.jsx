@@ -6,11 +6,6 @@ import { Grid, Container, Card, Button, CardActions, CardContent, Typography,
 import { BrowserRouter as Router, Route, Link, RouterLink, Redirect } from "react-router-dom";
 import { Accounts } from 'meteor/accounts-base'
 
-const useStyles1 = makeStyles(theme => ({
-
-}));
-
-
 const useStyles = makeStyles(theme => ({
     card: {
         minWidth: 275,
@@ -60,8 +55,7 @@ function ForgotPassword (props) {
         Accounts.forgotPassword({ email }, (err) => {
             if(err){
                 setError(err.reason);
-                console.log(err)
-                retrun
+                console.log(err);
             }else{
                 setError("Password Reset Email sent Successfully");
             }
@@ -123,10 +117,6 @@ function ForgotPassword (props) {
 }
 
 const ForgotPasswordPage = withTracker(props => {
-    // Do all your reactive data access in this method.
-    // Note that this subscription will get cleaned up when your component is unmounted
-    // const handle = Meteor.subscribe('todoList', props.id);
-
     return {
         user: Meteor.user()
     };

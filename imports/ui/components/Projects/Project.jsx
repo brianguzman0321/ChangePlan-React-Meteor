@@ -2,29 +2,22 @@ import React from 'react';
 import moment from 'moment';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
-import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import Avatar from "@material-ui/core/Avatar/Avatar";
 import IconButton from "@material-ui/core/IconButton/IconButton";
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 import CardHeader from "@material-ui/core/CardHeader/CardHeader";
 import Grid from '@material-ui/core/Grid';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { InputBase } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
-import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import AddIcon from '@material-ui/icons/Add';
 import {withTracker} from "meteor/react-meteor-data";
 import { Companies } from "/imports/api/companies/companies";
 import { Projects } from "/imports/api/projects/projects";
 import CustomizedDialogs from './NewProject';
 import ProjectMenus from './ProjectMenus'
-import ShareProject from './Models/ShareProject'
 
 
 const useStyles = makeStyles(theme => ({
@@ -163,14 +156,6 @@ function ProjectCard(props) {
     const searchFilter = event => {
         setSearch(event.target.value);
         updateFilter('localProjects', 'search', event.target.value);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-    };
-
-    const handleOpen = () => {
-        setOpen(true);
     };
 
     return (

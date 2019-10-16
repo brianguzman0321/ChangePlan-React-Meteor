@@ -4,8 +4,6 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import Button from '@material-ui/core/Button';
-import {Link} from "react-router-dom";
 import {Typography} from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
@@ -47,7 +45,7 @@ export default function ControlledOpenSelect(props) {
         }
 
         return () => {
-            setAge('')
+            setAge('');
             updateFilter('localCompanies', 'companyId', '');
             updateFilter('localProjects', 'projectId', '');
         }
@@ -78,14 +76,10 @@ export default function ControlledOpenSelect(props) {
                         </MenuItem> : ''
                     }
 
-                    {/*entities comes from props i.e companies, projects etc*/}
                     {props.entities && props.entities.map((entity) => {
                         return <MenuItem key={entity._id} value={entity._id}>{entity.name}</MenuItem>
                     })
                     }
-                    {/*<MenuItem value={10}>Ten</MenuItem>*/}
-                    {/*<MenuItem value={20}>Twenty</MenuItem>*/}
-                    {/*<MenuItem value={30}>Thirty</MenuItem>*/}
                 </Select>
             </FormControl>
         </form>

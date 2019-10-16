@@ -8,11 +8,6 @@ import { BrowserRouter as Router, Route, Link, RouterLink, Redirect } from "reac
 import { Accounts } from 'meteor/accounts-base'
 import {Meteor} from "meteor/meteor";
 
-const useStyles1 = makeStyles(theme => ({
-
-}));
-
-
 const useStyles = makeStyles(theme => ({
     card: {
         minWidth: 275,
@@ -69,7 +64,7 @@ function Signup (props) {
         let profile = {
             firstName,
             lastName
-        }
+        };
         Accounts.createUser({profile, email, password}, (err) => {
             if(err){
                 setError(err.reason);
@@ -173,10 +168,6 @@ function Signup (props) {
 }
 
 const signUpPage = withTracker(props => {
-    // Do all your reactive data access in this method.
-    // Note that this subscription will get cleaned up when your component is unmounted
-    // const handle = Meteor.subscribe('todoList', props.id);
-
     return {
         user: Meteor.user()
     };

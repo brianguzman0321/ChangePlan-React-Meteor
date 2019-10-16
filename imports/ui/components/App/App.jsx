@@ -5,21 +5,12 @@ import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
-import InputBase from '@material-ui/core/InputBase';
-import Badge from '@material-ui/core/Badge';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import MenuIcon from '@material-ui/icons/Menu';
-import SearchIcon from '@material-ui/icons/Search';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import MailIcon from '@material-ui/icons/Mail';
-import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import {Link} from "react-router-dom";
 import {withTracker} from "meteor/react-meteor-data";
-import { Companies } from "../../../api/companies/companies";
-import {Projects} from "../../../api/projects/projects";
 
 const Brand = () => (
     <Link to='/'>
@@ -205,37 +196,12 @@ function TopNavBar(props) {
             <AppBar position="static" className={classes.appBar} color="default">
                 <Toolbar className={classes.toolbar}>
                     <Brand />
-                    {/*<IconButton*/}
-                        {/*edge="start"*/}
-                        {/*className={classes.menuButton}*/}
-                        {/*color="inherit"*/}
-                        {/*aria-label="open drawer"*/}
-                    {/*>*/}
-                        {/*<MenuIcon />*/}
-                    {/*</IconButton>*/}
-                    {/*<Typography className={classes.title} variant="h6" noWrap>*/}
-                        {/*Material-UI*/}
-                    {/*</Typography>*/}
-                    {/*<div className={classes.search}>*/}
-                        {/*<div className={classes.searchIcon}>*/}
-                            {/*<SearchIcon />*/}
-                        {/*</div>*/}
-                        {/*<InputBase*/}
-                            {/*placeholder="Search…"*/}
-                            {/*classes={{*/}
-                                {/*root: classes.inputRoot,*/}
-                                {/*input: classes.inputInput,*/}
-                            {/*}}*/}
-                            {/*inputProps={{ 'aria-label': 'search' }}*/}
-                        {/*/>*/}
-                    {/*</div>*/}
                     <div className={classes.grow} />
                     {displayMenus.length ? <Tabs
                         value={value}
                         onChange={handleChange1}
                         centered
                         indicatorColor="primary"
-                        // style={navStyle}
                     >
                         {displayMenus.map((item, index) => {
                             return <Tab label={item.name.toUpperCase()} className={classes.topTexts} value={index}/>

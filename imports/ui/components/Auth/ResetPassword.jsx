@@ -43,9 +43,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function ResetPassword (props) {
-    const isToken = props.match.params.id
+    const isToken = props.match.params.id;
 
-    const [token, setToken] = useState(isToken);
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const classes = useStyles();
@@ -125,10 +124,6 @@ function ResetPassword (props) {
 }
 
 const ResetPasswordPage = withTracker(props => {
-    // Do all your reactive data access in this method.
-    // Note that this subscription will get cleaned up when your component is unmounted
-    // const handle = Meteor.subscribe('todoList', props.id);
-
     return {
         user: Meteor.user()
     };

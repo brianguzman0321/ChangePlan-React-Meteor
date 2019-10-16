@@ -16,7 +16,6 @@ import MaterialTable from 'material-table';
 import { withTracker } from "meteor/react-meteor-data";
 import {Meteor} from "meteor/meteor";
 import ControlledOpenSelect from '/imports/ui/components/admin/control-panel/selectionModal'
-import CompaniesControlPanel from '/imports/ui/components/admin/control-panel/companiesSettings'
 import ProjectsControlPanel from '/imports/ui/components/admin/control-panel/projectsSettings'
 import TopNavBar from '/imports/ui/components/App/App'
 
@@ -107,25 +106,13 @@ function FullWidthTabs(props) {
 
 
 const ControlPanelPage = withTracker(props => {
-    // Do all your reactive data access in this method.
-    // Note that this subscription will get cleaned up when your component is unmounted
     // const handle = Meteor.subscribe('todoList', props.id);
     Meteor.subscribe('companies');
     Meteor.subscribe('projects');
-    // let { parentProps } = props;
-    // let local = LocalCollection.findOne({
-    //     name: parentProps.collection
-    // });
-    // //get dynamic type based of selected transactions types
-    // let categoriesType = local.type === 'expenses' ? 'expense' : 'income';
-    //
-    // const categories = Categories.find({type: categoriesType}).fetch();
 
     return {
         companies: Companies.find({}).fetch(),
         projects: Projects.find({}).fetch()
-        // categories,
-        // local
     };
 })(FullWidthTabs);
 

@@ -115,22 +115,11 @@ function ShareProject(props) {
 
     };
 
-    const handleStartingDate = date => {
-        setStartingDate(date);
-    };
-
-    const handleEndingDate = date => {
-        setEndingDate(date);
-    };
-
     const handleChange = (e) => {
         setName(e.target.value)
     };
     const handleEmailChange = (e) => {
         setEmail(e.target.value)
-    };
-    const handleAgeChange = (e) => {
-        setRole(e.target.value)
     };
 
     function handleSelectChange(event) {

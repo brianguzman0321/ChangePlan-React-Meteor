@@ -7,48 +7,12 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { withSnackbar } from 'notistack';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
 
 import IntegrationReactSelect from './AutoComplete'
 import {Meteor} from "meteor/meteor";
 
 function UserSelectionModal(props) {
     let { title } = props;
-    // const useStyles = makeStyles(theme => ({
-    //     root: {
-    //         flexGrow: 1,
-    //         height: 250
-    //     },
-    //     input: {
-    //         display: 'flex',
-    //         padding: 0
-    //     },
-    //     valueContainer: {
-    //         display: 'flex',
-    //         flexWrap: 'wrap',
-    //         flex: 1,
-    //         alignItems: 'center',
-    //         overflow: 'hidden'
-    //     },
-    //     noOptionsMessage: {
-    //         padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`
-    //     },
-    //     singleValue: {
-    //         fontSize: 16
-    //     },
-    //     placeholder: {
-    //         position: 'absolute',
-    //         left: 2,
-    //         fontSize: 16
-    //     },
-    //     paper: {
-    //         position: 'absolute',
-    //         zIndex: 1,
-    //         marginTop: theme.spacing(1),
-    //         left: 0,
-    //         right: 0
-    //     }
-    // }));
     const [open, setOpen] = React.useState(false);
     const [users, setUsers] = React.useState([]);
 
@@ -124,14 +88,6 @@ function UserSelectionModal(props) {
             {modalMessage()}
     </DialogContentText>
     <IntegrationReactSelect updateUsers={updateUsers} data={props.options}/>
-    {/*<TextField*/}
-    {/*autoFocus*/}
-    {/*margin="dense"*/}
-    {/*id="name"*/}
-    {/*label="Email Address"*/}
-    {/*type="email"*/}
-    {/*fullWidth*/}
-    {/*/>*/}
     </DialogContent>
     <DialogActions>
     <Button onClick={handleClose} color="primary">

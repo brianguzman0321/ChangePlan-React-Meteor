@@ -6,8 +6,6 @@ import {Companies} from "../../../../api/companies/companies";
 import {Projects} from "../../../../api/projects/projects";
 import { withSnackbar } from 'notistack';
 import UserSelectionModal from '/imports/ui/components/utilityComponents/userSelectionModal'
-import AddEntityDialog from '/imports/ui/components/utilityComponents/addEntityDialog'
-import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Button from "@material-ui/core/Button/Button";
 
@@ -98,7 +96,6 @@ function CompaniesControlPanel(props) {
                     <Button variant="outlined" color="primary" onClick={CompaniesList}>
                         Companies Settings
                     </Button>
-                    {/*<AddEntityDialog entity="Company"/>*/}
                     <br/>
                 </Grid>
 
@@ -201,12 +198,7 @@ function CompaniesControlPanel(props) {
 
 
 const CompaniesControlPanelPage = withTracker(props => {
-    // Do all your reactive data access in this method.
-    // Note that this subscription will get cleaned up when your component is unmounted
-    // const handle = Meteor.subscribe('todoList', props.id);
     Meteor.subscribe('compoundCompanies');
-    // Meteor.subscribe('projects');
-    // let { parentProps } = props;
     let local = LocalCollection.findOne({
         name: 'localCompanies'
     });
