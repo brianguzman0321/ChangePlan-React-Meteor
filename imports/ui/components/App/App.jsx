@@ -3,6 +3,8 @@ import { fade, makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import InputBase from '@material-ui/core/InputBase';
 import Badge from '@material-ui/core/Badge';
@@ -21,7 +23,7 @@ import {Projects} from "../../../api/projects/projects";
 
 const Brand = () => (
     <Link to='/'>
-        <img style={{ width: "200px" }} src={`/branding/logo-long.png`} />
+        <img style={{ width: 200, marginTop: 8 }} src={`/branding/logo-long.png`} />
     </Link>
 
 );
@@ -30,6 +32,9 @@ const useStyles = makeStyles(theme => ({
     grow: {
         flexGrow: 1,
     },
+    toolbar: {
+        minHeight: 48
+    },
     menuButton: {
         marginRight: theme.spacing(2),
         marginLeft: theme.spacing(2),
@@ -37,10 +42,19 @@ const useStyles = makeStyles(theme => ({
     topTexts: {
         paddingRight: theme.spacing(4),
         paddingLeft: theme.spacing(4),
-        color : '#92a1af',
+        color : '#465563',
+        fontWeight: 700,
         borderRight: '0.1em solid #eaecef',
         padding: '1em',
-        cursor: 'pointer'
+        cursor: 'pointer',
+        '&:selected': {
+            color: '#1890ff',
+            fontWeight: theme.typography.fontWeightMedium,
+        },
+        '&:first-child': {
+            borderLeft: '0.1em solid #eaecef'
+        }
+
     },
     title: {
         display: 'none',
@@ -97,7 +111,8 @@ const useStyles = makeStyles(theme => ({
         },
     },
     appBar: {
-        background: '#ffffff'
+        background: '#ffffff',
+        minHeight: 48
     }
 }));
 
@@ -105,21 +120,26 @@ function TopNavBar(props) {
     let { menus, projectExists } = props;
     //if not supply menus hide by default
     if(!menus){
-        menus = {
-            activities: {
-                show: false
+        menus = [
+            {
+                show: false,
+                name: 'activities'
             },
-            stakeHolders: {
-                show: false
+            {
+                show: false,
+                name: 'stake Holders',
             },
-            reports: {
-                show: false
+            {
+                show: false,
+                name: 'reports'
             }
-        }
+        ];
     }
+    let displayMenus = menus.filter(item => item.show);
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+    const [value, setValue] = React.useState(0);
 
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -143,6 +163,10 @@ function TopNavBar(props) {
     }
     function changeRoute(route) {
         props.history.push(makeRoute())
+    }
+
+    function handleChange1 (event, value) {
+        setValue(value)
     }
 
     function handleMobileMenuOpen(event) {
@@ -179,7 +203,7 @@ function TopNavBar(props) {
     return (
         <div className={classes.grow}>
             <AppBar position="static" className={classes.appBar} color="default">
-                <Toolbar>
+                <Toolbar className={classes.toolbar}>
                     <Brand />
                     {/*<IconButton*/}
                         {/*edge="start"*/}
@@ -206,19 +230,32 @@ function TopNavBar(props) {
                         {/*/>*/}
                     {/*</div>*/}
                     <div className={classes.grow} />
-                    {menus.activities.show && <Typography className={classes.topTexts} noWrap style={{borderLeft: '0.1em solid #eaecef'}}>
-                        <span style={{color: '#aab5c0'}}>102</span> ACTIVITIES
-                    </Typography>}
-                    {
-                        menus.stakeHolders.show && <Typography className={classes.topTexts} noWrap>
-                            <span style={{color: '#aab5c0'}}>3270</span> STAKEHOLDERS
-                        </Typography>
+                    {displayMenus.length ? <Tabs
+                        value={value}
+                        onChange={handleChange1}
+                        centered
+                        indicatorColor="primary"
+                        // style={navStyle}
+                    >
+                        {displayMenus.map((item, index) => {
+                            return <Tab label={item.name.toUpperCase()} className={classes.topTexts} value={index}/>
+                        })}
+                    </Tabs> : ''
                     }
-                    {
-                        menus.reports.show && <Typography className={classes.topTexts} noWrap>
-                            REPORTS
-                        </Typography>
-                    }
+
+                    {/*{menus.activities.show && <Typography className={classes.topTexts} noWrap style={{borderLeft: '0.1em solid #eaecef'}}>*/}
+                        {/*<span style={{color: '#aab5c0'}}>102</span> ACTIVITIES*/}
+                    {/*</Typography>}*/}
+                    {/*{*/}
+                        {/*menus.stakeHolders.show && <Typography className={classes.topTexts} noWrap>*/}
+                            {/*<span style={{color: '#aab5c0'}}>3270</span> STAKEHOLDERS*/}
+                        {/*</Typography>*/}
+                    {/*}*/}
+                    {/*{*/}
+                        {/*menus.reports.show && <Typography className={classes.topTexts} noWrap>*/}
+                            {/*REPORTS*/}
+                        {/*</Typography>*/}
+                    {/*}*/}
 
                     <div className={classes.sectionDesktop}>
                         <IconButton
@@ -253,7 +290,6 @@ function TopNavBar(props) {
 const TopNavBarPage = withTracker(props => {
     Meteor.subscribe('projectExists');
     const projectExists = Counter.get('projectExists');
-    console.log(projectExists)
     return {
         projectExists
     }

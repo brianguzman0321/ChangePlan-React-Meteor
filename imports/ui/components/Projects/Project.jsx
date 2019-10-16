@@ -229,7 +229,7 @@ function ProjectCard(props) {
                     <Card className={classes.card}>
                         <LinearProgress variant="determinate" value={index * 10} color="primary"/>
                         <CardHeader
-                            action=<ProjectMenus project={project}/>
+                            action={<ProjectMenus project={project}/>}
                             classes={classes1}
                             title={projectName(project.name)}
                         />

@@ -4,17 +4,21 @@ import SingleProject from '/imports/ui/components/Projects/singleProject'
 import ProjectCard from '/imports/ui/components/Projects/Project'
 
 export default function Home(props){
-    let menus = {
-        activities: {
-            show: true
+    let menus = [
+        {
+            show: true,
+            name: 'activities',
+            count: 14
         },
-        stakeHolders: {
-            show: true
+        {
+            show: true,
+            name: 'stake Holders',
+            count: 122
         },
-        reports: {
+        {
+            name: 'reports',
             show: true
-        }
-    }
+    }];
     return (
         <div>
             <TopNavBar menus={menus} {...props} />
