@@ -92,13 +92,11 @@ function ShareProject(props) {
             }
         }
         let params = {
-            project: {
-                name,
-                email,
-                role,
-                project
+            name,
+            email,
+            role,
+            project
 
-            }
         };
         Meteor.call('roles.assignRole', params, (err, res) => {
             if(err){

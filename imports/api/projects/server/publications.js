@@ -54,7 +54,10 @@ Meteor.publish('projectExists', function () {
 Meteor.publishTransformed('compoundProjects', function (company) {
     let query = {};
     company && (query.companyId = company._id);
-    if(company && company.admins.includes(this.userId)){
+    if(Roles.userIsInRole(this.userId, 'superAdmin')){
+
+    }
+    else if(company && company.admins.includes(this.userId)){
         // query.companyId = company._id
     }
     else if(!Roles.userIsInRole(this.userId, 'superAdmin')){
@@ -65,6 +68,7 @@ Meteor.publishTransformed('compoundProjects', function (company) {
             }
         }
     }
+    console.log("query", query);
     return Projects.find(query).serverTransform({
         'peoplesDetails': function (doc) {
             let peoples = [];

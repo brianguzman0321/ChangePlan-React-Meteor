@@ -38,14 +38,17 @@ function ProjectsSettings(props) {
         data: []
     });
     if(props.currentCompany && props.currentProject){
-        let admins = props.currentCompany.admins;
-        let changeManagers = props.currentProject.changeManagers;
-        if(admins.includes(userId)){
-            filterIds = admins.concat(filterIds)
+        if(!Roles.userIsInRole(Meteor.userId(), 'superAdmin')){
+            let admins = props.currentCompany.admins;
+            let changeManagers = props.currentProject.changeManagers;
+            if(admins.includes(userId)){
+                filterIds = admins.concat(filterIds)
+            }
+            else if(changeManagers.includes(userId)){
+                filterIds = admins.concat(changeManagers).concat(filterIds)
+            }
         }
-        else if(changeManagers.includes(userId)){
-            filterIds = admins.concat(changeManagers).concat(filterIds)
-        }
+
     }
 
     const updateUsersList = () => {

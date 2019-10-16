@@ -35,7 +35,7 @@ export const AssignProjectRole = new ValidatedMethod({
         };
         Companies.update({
             _id: project.companyId
-        }, update)
+        }, update);
 
         if(project){
             let update= {
@@ -43,10 +43,10 @@ export const AssignProjectRole = new ValidatedMethod({
                     peoples: userId
                 }
             };
-            if(role === 'changeManager'){
+            if(role === 'changeManager') {
                 update.$addToSet.changeManagers = userId
             }
-            else if(role === 'manager'){
+            else if(role === 'manager') {
                 update.$addToSet.managers = userId
             }
             Projects.update({
