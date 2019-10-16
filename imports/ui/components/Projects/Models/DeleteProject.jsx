@@ -66,7 +66,7 @@ const DialogActions = withStyles(theme => ({
     },
 }))(MuiDialogActions);
 
-function ShareProject(props) {
+function DeleteProject(props) {
     const [name, setName] = React.useState('');
     const [email, setEmail] = React.useState('');
     const [role, setRole] = React.useState('changeManager');
@@ -74,33 +74,20 @@ function ShareProject(props) {
 
     let { company, open, handleModalClose, project } = props;
     const classes = useStyles();
-    const modalName = 'share';
+    const modalName = 'delete';
 
     const handleClose = () => {
         handleModalClose(modalName);
         setName('');
     };
-    const createProject = () => {
-        if(!(name && email && role)){
-            props.enqueueSnackbar('Please fill all required Fields', {variant: 'error'});
-            return false;
-        }
-        else{
-            if(!(/^\S+@\S+$/.test(email))){
-                props.enqueueSnackbar('Please Enter Valid Email Address', {variant: 'error'});
-                return false;
-            }
-        }
+    const removeProject = () => {
         let params = {
             project: {
-                name,
-                email,
-                role,
-                project
+                _id: project._id,
 
             }
         };
-        Meteor.call('roles.assignRole', params, (err, res) => {
+        Meteor.call('projects.remove', params, (err, res) => {
             if(err){
                 props.enqueueSnackbar(err.reason, {variant: 'error'})
             }
@@ -108,7 +95,7 @@ function ShareProject(props) {
                 handleClose();
                 setName('');
                 setEmail('');
-                props.enqueueSnackbar('Project Shared Successfully.', {variant: 'success'})
+                props.enqueueSnackbar('Project Removed Successfully.', {variant: 'success'})
             }
 
         })
@@ -138,66 +125,20 @@ function ShareProject(props) {
         <div className={classes.createNewProject}>
             <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="sm" fullWidth={true}>
                 <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-                    Share Project
+                    Remove Project
                 </DialogTitle>
                 <DialogContent dividers>
-                    <Grid container spacing={2}>
-                        <Grid item xs={6}>
-                        <TextField
-                            autoFocus
-                            // margin="dense"
-                            id="name"
-                            label="Name"
-                            value={name}
-                            onChange={handleChange}
-                            required={true}
-                            type="text"
-                            fullWidth={true}
-                        />
-                        </Grid>
-                        <Grid item xs={6}>
-                        <TextField
-                            // margin="dense"
-                            id="email"
-                            label="Email"
-                            value={email}
-                            onChange={handleEmailChange}
-                            required={true}
-                            type="email"
-                            fullWidth={true}
-                        />
-                        </Grid>
-                        <Grid item xs={12}>
-                        <br/>
-                            <FormControl className={classes.formControl} fullWidth={true}>
-                                <InputLabel htmlFor="demo-controlled-open-select">Role</InputLabel>
-                                <Select
-                                    id="role"
-                                    label="role"
-                                    fullWidth={true}
-                                    open={selectOpen}
-                                    onClose={handleSelectClose}
-                                    onOpen={handleSelectOpen}
-                                    value={role}
-                                    onChange={handleSelectChange}
-                                    inputProps={{
-                                        name: 'role',
-                                        id: 'demo-controlled-open-select',
-                                    }}
-                                >
-                                    <MenuItem value='changeManager'>Change Manager (view and edit)</MenuItem>
-                                    <MenuItem value='manager'>Manager (view only)</MenuItem>
-                                </Select>
-                            </FormControl>
-                            <br/>
-                            <br/>
-                            <br/>
-                        </Grid>
-                    </Grid>
+                    <DialogContentText>
+                        Are you sure? It's means to remove <strong>{project.name}</strong> and all related activities.
+                        this action can's be reversed.
+                    </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={createProject} color="primary">
-                        Share
+                    <Button onClick={handleClose} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={removeProject} color="secondary">
+                        Delete
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -205,4 +146,4 @@ function ShareProject(props) {
     );
 }
 
-export default withSnackbar(ShareProject)
+export default withSnackbar(DeleteProject)

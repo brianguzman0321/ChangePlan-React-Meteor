@@ -24,10 +24,9 @@ Meteor.publish('projects', function (company) {
 });
 
 Meteor.publish('projectExists', function () {
-    // console.log("WHy  I projectExists")
     //superAdmin
     if(Roles.userIsInRole(this.userId, 'superAdmin')){
-        return new Counter('projectExists', Projects.find({}))
+        return new Counter('projectExists', Meteor.users.find({}))
     }
     let company = Companies.findOne({
         admins:{
@@ -36,8 +35,8 @@ Meteor.publish('projectExists', function () {
     });
     // //admin
     if(company && company._id){
-        new Counter('projectExists', Projects.find({
-            companyId: company._id
+        return new Counter('projectExists', Companies.find({
+            _id: company._id
         }))
     }
     //owner or changeManager

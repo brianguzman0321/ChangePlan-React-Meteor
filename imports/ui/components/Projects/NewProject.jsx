@@ -146,7 +146,7 @@ function CustomizedDialogs(props) {
             <Button variant="outlined" color="primary" onClick={handleClickOpen}>
                 Create New Project
             </Button>
-            <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} fullWidth="md">
+            <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="sm" fullWidth={true}>
                 <DialogTitle id="customized-dialog-title" onClose={handleClose}>
                     Create New Project
                 </DialogTitle>

@@ -5,6 +5,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import IconButton from "@material-ui/core/IconButton/IconButton";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ShareProject from "./Models/ShareProject";
+import DeleteProject from "./Models/DeleteProject";
 
 export default function SimpleMenu(props) {
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -13,8 +14,8 @@ export default function SimpleMenu(props) {
         duplicate: false,
         delete: false
     });
-    let { project } = props;
-    const allowedValues = ['share'];
+    let { project, company } = props;
+    const allowedValues = ['share', 'delete', 'edit', 'duplicate'];
 
     const handleClick = event => {
         setAnchorEl(event.currentTarget);
@@ -36,7 +37,7 @@ export default function SimpleMenu(props) {
 
     return (
         <div>
-            <IconButton aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick} Style={{padding: 0}}>
+            <IconButton aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick} style={{padding: 0}}>
                 <MoreVertIcon />
             </IconButton>
             <Menu
@@ -46,12 +47,25 @@ export default function SimpleMenu(props) {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
             >
-                <MenuItem onClick={handleClose.bind(null, 'share')}>Share</MenuItem>
-                <MenuItem onClick={handleClose} disabled={true}>Edit</MenuItem>
+                <MenuItem onClick={handleClose.bind(null, 'share')} disabled={isAdminOrChangeManager(company, project)}>Share</MenuItem>
+                <MenuItem onClick={handleClose.bind(null, 'edit')} disabled={true}>Edit</MenuItem>
                 {/*<MenuItem onClick={handleClose}>Duplicate</MenuItem>*/}
-                <MenuItem onClick={handleClose} disabled={true}>Delete</MenuItem>
+                <MenuItem onClick={handleClose.bind(null, 'delete')} disabled={isAdminOrChangeManager(company, project)}>Delete</MenuItem>
             </Menu>
             <ShareProject open={modals.share} handleModalClose={handleModalClose} project={project}/>
+            <DeleteProject open={modals.delete} handleModalClose={handleModalClose} project={project}/>
         </div>
     );
+}
+
+function isAdminOrChangeManager(company, project){
+    let userId = Meteor.userId();
+    if ((company && company.admins.includes(userId))) {
+    }
+    else{
+        if(!project.changeManagers.includes(userId)){
+            return true
+        }
+    }
+
 }

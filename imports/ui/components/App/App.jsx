@@ -12,9 +12,9 @@ import MoreIcon from '@material-ui/icons/MoreVert';
 import {Link} from "react-router-dom";
 import {withTracker} from "meteor/react-meteor-data";
 
-const Brand = () => (
-    <Link to='/'>
-        <img style={{ width: 200, marginTop: 8 }} src={`/branding/logo-long.png`} />
+const Brand = (handleChange1) => (
+    <Link to='/' onClick={handleChange1.handleChange1}>
+        <img style={{ width: 170, marginTop: 8 }} src={`/branding/logo-long.png`} />
     </Link>
 
 );
@@ -110,6 +110,10 @@ const useStyles = makeStyles(theme => ({
 function TopNavBar(props) {
     let { menus, projectExists } = props;
     //if not supply menus hide by default
+    let isAdmin = false;
+    if (Roles.userIsInRole(Meteor.userId(), 'superAdmin')) {
+        isAdmin = true;
+    }
     if(!menus){
         menus = [
             {
@@ -130,7 +134,7 @@ function TopNavBar(props) {
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-    const [value, setValue] = React.useState(0);
+    const [value, setValue] = React.useState(null);
 
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -157,7 +161,7 @@ function TopNavBar(props) {
     }
 
     function handleChange1 (event, value) {
-        setValue(value)
+        setValue(value || null)
     }
 
     function handleMobileMenuOpen(event) {
@@ -183,7 +187,7 @@ function TopNavBar(props) {
             onClose={handleMenuClose}
         >
             {
-                projectExists && <MenuItem onClick={changeRoute} >Settings</MenuItem>
+                (projectExists || isAdmin ) && <MenuItem onClick={changeRoute} >Settings</MenuItem>
             }
             <MenuItem onClick={logOut}>Logout</MenuItem>
         </Menu>
@@ -195,7 +199,7 @@ function TopNavBar(props) {
         <div className={classes.grow}>
             <AppBar position="static" className={classes.appBar} color="default">
                 <Toolbar className={classes.toolbar}>
-                    <Brand />
+                    <Brand handleChange1={handleChange1} />
                     <div className={classes.grow} />
                     {displayMenus.length ? <Tabs
                         value={value}
@@ -204,7 +208,7 @@ function TopNavBar(props) {
                         indicatorColor="primary"
                     >
                         {displayMenus.map((item, index) => {
-                            return <Tab label={item.name.toUpperCase()} className={classes.topTexts} value={index}/>
+                            return <Tab label={item.name.toUpperCase()} className={classes.topTexts} value={index + 1} key={index}/>
                         })}
                     </Tabs> : ''
                     }

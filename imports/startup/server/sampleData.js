@@ -29,43 +29,43 @@ if(superAdmin && superAdmin._id) {
             peoples: [superAdmin._id]
         })
     }
-    if(!Projects.findOne()){
-        console.log("No Projects Exists");
-        projectId = Projects.insert({
-            owner: superAdmin._id,
-            name: 'Change Plan Development',
-            companyId: companyId,
-            peoples: [superAdmin._id],
-            startingDate: new Date(),
-            endingDate: new Date()
-        })
-    }
+    // if(!Projects.findOne()){
+    //     console.log("No Projects Exists");
+    //     projectId = Projects.insert({
+    //         owner: superAdmin._id,
+    //         name: 'Change Plan Development',
+    //         companyId: companyId,
+    //         peoples: [superAdmin._id],
+    //         startingDate: new Date(),
+    //         endingDate: new Date()
+    //     })
+    // }
 
-    if(!Activities.findOne()){
-        console.log("No Activities Exists");
-        projectId = Activities.insert({
-            owner: superAdmin._id,
-            activityOwner: superAdmin._id,
-            startingDate: new Date(),
-            endingDate: new Date(),
-            name: 'email',
-            type: 'email',
-            description: 'email',
-            projectId: projectId,
-        })
-    }
-    if(!Peoples.findOne()){
-        console.log("No StackHolders Exists");
-        stackHolderId = Peoples.insert({
-            company: companyId,
-            businessUnit: 'Development Department',
-            name: "Abdul Hameed",
-            role: 'Project Manager',
-            email: 'raza2022@gmail.com',
-            supportLevel: 5,
-            influenceLevel: 3
-        })
-    }
+    // if(!Activities.findOne()){
+    //     console.log("No Activities Exists");
+    //     projectId = Activities.insert({
+    //         owner: superAdmin._id,
+    //         activityOwner: superAdmin._id,
+    //         startingDate: new Date(),
+    //         endingDate: new Date(),
+    //         name: 'email',
+    //         type: 'email',
+    //         description: 'email',
+    //         projectId: projectId,
+    //     })
+    // }
+    // if(!Peoples.findOne()){
+    //     console.log("No StackHolders Exists");
+    //     stackHolderId = Peoples.insert({
+    //         company: companyId,
+    //         businessUnit: 'Development Department',
+    //         name: "Abdul Hameed",
+    //         role: 'Project Manager',
+    //         email: 'raza2022@gmail.com',
+    //         supportLevel: 5,
+    //         influenceLevel: 3
+    //     })
+    // }
 }
 
 createSampleUsers = () => {

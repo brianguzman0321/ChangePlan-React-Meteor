@@ -2,6 +2,7 @@ import React from 'react';
 import moment from 'moment';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
+import Paper from '@material-ui/core/Paper';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import IconButton from "@material-ui/core/IconButton/IconButton";
@@ -123,7 +124,19 @@ const useStyles = makeStyles(theme => ({
         "&:last-child": {
             paddingBottom: 0
         }
-    }
+    },
+    notFound: {
+
+    },
+    noData: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: theme.spacing(3, 2),
+        minHeight: 200,
+        margin: 23
+
+    },
 }));
 
 function ProjectCard(props) {
@@ -159,6 +172,7 @@ function ProjectCard(props) {
     };
 
     return (
+        <>
         <Grid
             container
             direction="row"
@@ -185,7 +199,7 @@ function ProjectCard(props) {
                         <SearchIcon />
                     </IconButton>
                 </Grid>
-                <Grid item xs={4} className={isAdmin && company && classes.secondTab}>
+                <Grid item xs={4} className={isAdmin && company ? classes.secondTab: ''}>
                     { isAdmin && company && <CustomizedDialogs {...props} className={classes.createNewProject} /> }
                     <Typography color="textSecondary" variant="title" className={classes.sortBy}>
                         Sort by
@@ -214,7 +228,7 @@ function ProjectCard(props) {
                     <Card className={classes.card}>
                         <LinearProgress variant="determinate" value={index * 10} color="primary"/>
                         <CardHeader
-                            action={<ProjectMenus project={project}/>}
+                            action={<ProjectMenus project={project} company={company} />}
                             classes={classes1}
                             title={projectName(project.name)}
                         />
@@ -257,6 +271,25 @@ function ProjectCard(props) {
                 </Grid>
             ))}
         </Grid>
+        {!projects.length &&
+        <Grid
+            container
+            direction="row"
+            justify="center"
+            alignItems="center"
+            justify-content="center"
+        >
+            <Grid item xs={12}>
+                <Paper className={classes.noData}>
+                    <Typography variant="h5" component="h5" align="center">
+                        No Data Found.
+                    </Typography>
+                </Paper>
+            </Grid>
+        </Grid>
+        }
+        </>
+
     );
 }
 
