@@ -15,6 +15,9 @@ import CompaniesListPage from '/imports/ui/components/admin/companies/CompaniesL
 import MaterialTableDemo from '/imports/ui/components/admin/control-panel/control-panel';
 import ControlPanel from '/imports/ui/components/ControlPanel/ControlPanel.jsx';
 import Home from '/imports/ui/components/Home/Home';
+import ActivitiesCard from '/imports/ui/components/Activities/Activities';
+import StakeHoldersCard from '/imports/ui/components/StakeHolders/StakeHolders'
+import ReportsCard from '/imports/ui/components/Reports/Reports'
 import { SnackbarProvider } from 'notistack';
 
 //list of Public Routes
@@ -55,6 +58,9 @@ const Routes = appProps => (
                 <Switch>
                     <Authenticated exact path="/" component={Home} {...appProps}/>
                     <Authenticated exact path="/control-panel" component={ControlPanel} {...appProps}/>
+                    <Authenticated exact path="/activities" component={ActivitiesCard} {...appProps}/>
+                    <Authenticated exact path="/stake-holders" component={StakeHoldersCard} {...appProps}/>
+                    <Authenticated exact path="/reports" component={ReportsCard} {...appProps}/>
                     <AdminRoute exact path="/admin/control-panel" component={MaterialTableDemo} {...appProps}/>
                     <AdminRoute exact path="/admin/companies" component={CompaniesListPage} {...appProps}/>
                     <Public path="/signup" component={Signup} {...appProps}/>

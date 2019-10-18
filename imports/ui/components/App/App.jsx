@@ -161,7 +161,16 @@ function TopNavBar(props) {
     }
 
     function handleChange1 (event, value) {
-        setValue(value || null)
+        if(value === 1){
+            props.history.push('/activities')
+        }
+        if(value === 2){
+            props.history.push('/stake-holders')
+        }
+        if(value === 3){
+            props.history.push('/reports')
+        }
+        setValue(value || 0)
     }
 
     function handleMobileMenuOpen(event) {
