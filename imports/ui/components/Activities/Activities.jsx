@@ -12,7 +12,9 @@ import ViewColumnIcon from '@material-ui/icons/ViewColumn';
 import ListIcon from '@material-ui/icons/List';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import ActivityCard from './ActivityCards'
+import AWARENESSCard from './step1'
+import Step2Card from './step2'
+import Step3Card from './step3'
 
 const useStyles = makeStyles({
     root: {
@@ -46,7 +48,7 @@ const useStyles = makeStyles({
         marginLeft: 24,
     },
     gridContainer: {
-        marginBottom: 15,
+        // marginBottom: 15,
         overFlow: 'hidden'
     },
     topBar: {
@@ -117,9 +119,16 @@ export default function Activities(props){
                 direction="row"
                 justify="flex-start"
                 alignItems="flex-start"
+                spacing={0}
             >
                 <Grid item xs={12} md={4}>
-                    <ActivityCard />
+                    <AWARENESSCard />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                    <Step2Card />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                    <Step3Card />
                 </Grid>
             </Grid>
 
