@@ -15,6 +15,7 @@ import Typography from '@material-ui/core/Typography';
 import AWARENESSCard from './step1'
 import Step2Card from './step2'
 import Step3Card from './step3'
+import config from '/imports/utils/config';
 
 const useStyles = makeStyles({
     root: {
@@ -62,21 +63,7 @@ export default function Activities(props){
     const handleChange = (event, newValue) => {
         setIndex(newValue);
     };
-    let menus = [
-        {
-            show: true,
-            name: 'activities',
-            count: 14
-        },
-        {
-            show: true,
-            name: 'stake Holders',
-            count: 122
-        },
-        {
-            name: 'reports',
-            show: true
-        }];
+    let menus = config.menus;
     return (
         <div>
             <TopNavBar menus={menus} {...props} />
@@ -101,7 +88,6 @@ export default function Activities(props){
                 </Grid>
                 <Grid item xs={6} md={3}>
                     <Tabs
-                        classes={classes.activityTabs}
                         value={value}
                         onChange={handleChange}
                         indicatorColor="primary"

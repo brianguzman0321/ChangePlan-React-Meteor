@@ -1,23 +1,10 @@
 import React from 'react';
 import { fade, makeStyles } from '@material-ui/core/styles';
-import TopNavBar from '/imports/ui/components/App/App'
+import TopNavBar from '/imports/ui/components/App/App';
+import config from '/imports/utils/config';
 
 export default function Reports(props){
-    let menus = [
-        {
-            show: true,
-            name: 'activities',
-            count: 14
-        },
-        {
-            show: true,
-            name: 'stake Holders',
-            count: 122
-        },
-        {
-            name: 'reports',
-            show: true
-        }];
+    let menus = config.menus;
     return (
         <div>
             <TopNavBar menus={menus} {...props} />

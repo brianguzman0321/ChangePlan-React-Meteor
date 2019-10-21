@@ -109,7 +109,10 @@ const useStyles = makeStyles(theme => ({
 
 function TopNavBar(props) {
     let { menus, projectExists, history } = props;
-    let currentNav = history.location.pathname.slice(1), selectedTab = null;
+    let currentNav = history.location.pathname.slice(1), selectedTab = 0;
+    if(currentNav === '/'){
+        selectedTab = 0;
+    }
     if(currentNav === 'activities'){
         selectedTab = 1;
     }
@@ -126,6 +129,10 @@ function TopNavBar(props) {
     }
     if(!menus){
         menus = [
+            {
+                show: false,
+                name: 'dashboard'
+            },
             {
                 show: false,
                 name: 'activities'
@@ -172,6 +179,9 @@ function TopNavBar(props) {
 
     function handleChange1 (event, value) {
         setValue(value || 0);
+        if(value === 0){
+            props.history.push('/')
+        }
         if(value === 1){
             props.history.push('/activities')
         }
@@ -227,7 +237,7 @@ function TopNavBar(props) {
                         indicatorColor="primary"
                     >
                         {displayMenus.map((item, index) => {
-                            return <Tab label={item.name.toUpperCase()} className={classes.topTexts} value={index + 1} key={index}/>
+                            return <Tab label={item.name.toUpperCase()} className={classes.topTexts} value={index} key={index}/>
                         })}
                     </Tabs> : ''
                     }

@@ -6,6 +6,11 @@ export default function Home(props){
     let menus = [
         {
             show: true,
+            name: 'dashboard',
+            count: 14
+        },
+        {
+            show: true,
             name: 'activities',
             count: 14
         },
