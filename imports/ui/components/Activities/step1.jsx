@@ -119,14 +119,12 @@ export default function AWARENESSCard() {
                             justify="space-between"
                             alignItems="center"
                         >
-                            <Grid item xs={9} md={9} justify="flex-start">
+                            <Grid item xs={9} md={9}>
                                 <Typography variant="body2" color="textSecondary" component="p">
                                     12 Nov
                                 </Typography>
                             </Grid>
-                            <Grid item xs={3} md={3} direction="row"
-                                  justify="flex-end"
-                                  alignItems="center">
+                            <Grid item xs={3} md={3}>
                                 <Typography variant="body2" color="textSecondary" component="p" >
                                     Jhon Smith
                                 </Typography>
@@ -172,14 +170,12 @@ export default function AWARENESSCard() {
                             justify="space-between"
                             alignItems="center"
                         >
-                            <Grid item xs={9} md={9} justify="flex-start">
+                            <Grid item xs={9} md={9}>
                                 <Typography variant="body2" color="textSecondary" component="p">
                                     12 Nov
                                 </Typography>
                             </Grid>
-                            <Grid item xs={3} md={3} direction="row"
-                                  justify="flex-end"
-                                  alignItems="center">
+                            <Grid item xs={3} md={3}>
                                 <Typography variant="body2" color="textSecondary" component="p" >
                                     Jhon Smith
                                 </Typography>
