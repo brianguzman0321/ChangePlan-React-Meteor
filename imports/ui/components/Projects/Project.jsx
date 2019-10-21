@@ -72,7 +72,7 @@ const useStyles = makeStyles(theme => ({
     },
     topHeading: {
         color: '#465563',
-        marginLeft: 74,
+        marginLeft: 24,
     },
     input: {
         marginLeft: theme.spacing(1),

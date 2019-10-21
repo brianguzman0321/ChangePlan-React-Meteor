@@ -108,7 +108,17 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function TopNavBar(props) {
-    let { menus, projectExists } = props;
+    let { menus, projectExists, history } = props;
+    let currentNav = history.location.pathname.slice(1), selectedTab = null;
+    if(currentNav === 'activities'){
+        selectedTab = 1;
+    }
+    else if(currentNav === 'stake-holders'){
+        selectedTab = 2
+    }
+    else if (currentNav === 'reports'){
+        selectedTab = 3
+    }
     //if not supply menus hide by default
     let isAdmin = false;
     if (Roles.userIsInRole(Meteor.userId(), 'superAdmin')) {
@@ -134,7 +144,7 @@ function TopNavBar(props) {
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-    const [value, setValue] = React.useState(null);
+    const [value, setValue] = React.useState(selectedTab);
 
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -161,6 +171,7 @@ function TopNavBar(props) {
     }
 
     function handleChange1 (event, value) {
+        setValue(value || 0);
         if(value === 1){
             props.history.push('/activities')
         }
@@ -170,7 +181,6 @@ function TopNavBar(props) {
         if(value === 3){
             props.history.push('/reports')
         }
-        setValue(value || 0)
     }
 
     function handleMobileMenuOpen(event) {

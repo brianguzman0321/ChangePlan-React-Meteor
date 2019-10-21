@@ -12,6 +12,7 @@ import ViewColumnIcon from '@material-ui/icons/ViewColumn';
 import ListIcon from '@material-ui/icons/List';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
+import ActivityCard from './ActivityCards'
 
 const useStyles = makeStyles({
     root: {
@@ -42,19 +43,22 @@ const useStyles = makeStyles({
     },
     topHeading: {
         color: '#465563',
-        marginLeft: 74,
+        marginLeft: 24,
     },
     gridContainer: {
         marginBottom: 15,
         overFlow: 'hidden'
     },
+    topBar: {
+        marginTop: 13,
+    }
 });
 export default function Activities(props){
     const classes = useStyles();
-    const [value, setValue] = React.useState(0);
+    const [value, setIndex] = React.useState(0);
 
     const handleChange = (event, newValue) => {
-        setValue(newValue);
+        setIndex(newValue);
     };
     let menus = [
         {
@@ -77,17 +81,23 @@ export default function Activities(props){
             <Grid
                 container
                 direction="row"
-                justify="flex-start"
+                justify="space-between"
                 alignItems="center"
                 className={classes.gridContainer}
                 spacing={0}
             >
-                <Grid item xs={2}>
+                <Grid
+                    container
+                    className={classes.topBar}
+                    direction="row"
+                    justify="space-between"
+                >
+                <Grid item xs={6} md={9}>
                     <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
                         Activities
                     </Typography>
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={6} md={3}>
                     <Tabs
                         classes={classes.activityTabs}
                         value={value}
@@ -99,6 +109,17 @@ export default function Activities(props){
                         <Tab className={classes.activityTab} label={<><div className={classes.iconTab}><ViewColumnIcon/>&nbsp; Board</div></>}/>
                         <Tab className={classes.activityTab} label={<><div className={classes.iconTab}><ListIcon/>&nbsp; List</div></>}/>
                     </Tabs>
+                </Grid>
+                </Grid>
+            </Grid>
+            <Grid
+                container
+                direction="row"
+                justify="flex-start"
+                alignItems="flex-start"
+            >
+                <Grid item xs={12} md={4}>
+                    <ActivityCard />
                 </Grid>
             </Grid>
 
