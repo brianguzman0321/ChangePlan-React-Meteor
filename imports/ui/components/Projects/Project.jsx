@@ -17,7 +17,7 @@ import Select from '@material-ui/core/Select';
 import {withTracker} from "meteor/react-meteor-data";
 import { Companies } from "/imports/api/companies/companies";
 import { Projects } from "/imports/api/projects/projects";
-import CustomizedDialogs from './NewProject';
+import NewProject from './NewProject';
 import ProjectMenus from './ProjectMenus'
 
 
@@ -200,7 +200,7 @@ function ProjectCard(props) {
                     </IconButton>
                 </Grid>
                 <Grid item xs={4} className={isAdmin && company ? classes.secondTab: ''}>
-                    { isAdmin && company && <CustomizedDialogs {...props} className={classes.createNewProject} /> }
+                    { isAdmin && company && <NewProject {...props} className={classes.createNewProject} /> }
                     <Typography color="textSecondary" variant="title" className={classes.sortBy}>
                         Sort by
                     </Typography>

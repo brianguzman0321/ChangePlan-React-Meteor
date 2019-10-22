@@ -11,6 +11,7 @@ import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
+import AddActivity from '/imports/ui/components/Activities/Modals/AddActivity'
 
 const useStyles = makeStyles(theme => ({
     card: {
@@ -185,9 +186,7 @@ export default function AWARENESSCard() {
                     </CardContent>
                 </Card>
                 <br/>
-                <Button variant="contained" className={classes.button} fullWidth={true}>
-                    Add Activity
-                </Button>
+                <AddActivity />
             </CardContent>
         </Card>
     );
