@@ -18,6 +18,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
 import FilterListIcon from '@material-ui/icons/FilterList';
 
 function createData(name, calories, fat, carbs, protein) {
@@ -76,6 +77,7 @@ const headCells = [
     { id: 'fat', numeric: true, disablePadding: false, label: 'BUSINESS UNIT' },
     { id: 'carbs', numeric: true, disablePadding: false, label: 'UPCOMING ACTIVITIES' },
     { id: 'protein', numeric: true, disablePadding: false, label: 'TIME AWAY FROM BAU' },
+    { id: 'action', numeric: true, disablePadding: false, label: 'Actions' },
 ];
 
 function EnhancedTableHead(props) {
@@ -101,7 +103,7 @@ function EnhancedTableHead(props) {
                     <TableCell style={{color: 'white'}}
                         key={headCell.id}
                         // align={headCell.numeric ? 'right' : 'left'}
-                        align={headCell.numeric ? 'right' : 'left'}
+                        align={headCell.numeric ? 'center' : 'center'}
                         padding={headCell.disablePadding ? 'none' : 'default'}
                         sortDirection={orderBy === headCell.id ? order : false}
                     >
@@ -286,6 +288,14 @@ export default function StakeHolderList() {
         setDense(event.target.checked);
     };
 
+    const deleteCell = (e, row) => {
+        e.preventDefault();
+        // e.stopImmediatePropagation();
+        e.stopPropagation()
+        console.log('e', e);
+        console.log('row', row)
+    };
+
     const isSelected = name => selected.indexOf(name) !== -1;
 
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
@@ -293,7 +303,7 @@ export default function StakeHolderList() {
     return (
         <div className={classes.root}>
             <Paper className={classes.paper}>
-                <EnhancedTableToolbar numSelected={selected.length} />
+                {selected.length ? <EnhancedTableToolbar numSelected={selected.length} /> : ''}
                 <div className={classes.tableWrapper}>
                     <Table
                         className={classes.table}
@@ -338,10 +348,18 @@ export default function StakeHolderList() {
                                             <TableCell component="th" id={labelId} scope="row" padding="none">
                                                 {row.name}
                                             </TableCell>
-                                            <TableCell align="right">{row.calories}</TableCell>
-                                            <TableCell align="right">{row.fat}</TableCell>
-                                            <TableCell align="right">{row.carbs}</TableCell>
-                                            <TableCell align="right">{row.protein}</TableCell>
+                                            <TableCell align="center">{row.calories}</TableCell>
+                                            <TableCell align="center">{row.fat}</TableCell>
+                                            <TableCell align="center">{row.carbs}</TableCell>
+                                            <TableCell align="center">{row.protein}</TableCell>
+                                            <TableCell align="center">
+                                                <IconButton aria-label="edit" onClick={(event) => {deleteCell(event, row)}}>
+                                                    <EditIcon />
+                                                </IconButton>
+                                                <IconButton aria-label="edit" onClick={(event) => {deleteCell(event, row)}}>
+                                                    <DeleteIcon />
+                                                </IconButton>
+                                            </TableCell>
                                         </TableRow>
                                     );
                                 })}
