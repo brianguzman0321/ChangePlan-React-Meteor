@@ -10,8 +10,12 @@ import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import { withSnackbar } from 'notistack';
+import MenuItem from '@material-ui/core/MenuItem';
 import 'date-fns';
 import Grid from '@material-ui/core/Grid';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import Select from '@material-ui/core/Select';
 import DateFnsUtils from '@date-io/date-fns';
 import {
     MuiPickersUtilsProvider,
@@ -82,6 +86,8 @@ function AddActivity(props) {
     const [startingDateOpen, setStartingDateOpen] = React.useState(false);
     const [endingDate, setEndingDate] = React.useState(new Date());
     const [endingDateOpen, setEndingDateOpen] = React.useState(false);
+    const [selectOpen, setSelectOpen] = React.useState(false);
+    const [role, setRole] = React.useState('changeManager');
     let { company } = props;
     const classes = useStyles();
 
@@ -151,6 +157,18 @@ function AddActivity(props) {
 
     const onSubmit = (event) => {}
 
+    function handleSelectChange(event) {
+        setRole(event.target.value);
+    }
+
+    function handleSelectClose() {
+        setSelectOpen(false);
+    }
+
+    function handleSelectOpen() {
+        setSelectOpen(true);
+    }
+
     return (
         <div className={classes.AddNewActivity}>
             <Button variant="contained" className={classes.button} fullWidth={true} onClick={handleClickOpen}>
@@ -162,6 +180,48 @@ function AddActivity(props) {
                 </DialogTitle>
                 <form onSubmit={onSubmit}>
                 <DialogContent dividers>
+                    <FormControl className={classes.formControl} fullWidth={true}>
+                        <InputLabel htmlFor="demo-controlled-open-select">Stake Holder targeted</InputLabel>
+                        <Select
+                            id="role"
+                            label="role"
+                            fullWidth={true}
+                            open={selectOpen}
+                            onClose={handleSelectClose}
+                            onOpen={handleSelectOpen}
+                            value={role}
+                            onChange={handleSelectChange}
+                            inputProps={{
+                                name: 'role',
+                                id: 'demo-controlled-open-select',
+                            }}
+                        >
+                            <MenuItem value='changeManager'>All Project StakeHolders</MenuItem>
+                            <MenuItem value='manager'>Customize</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <br/>
+                    <br/>
+                    <FormControl className={classes.formControl} fullWidth={true}>
+                        <InputLabel htmlFor="demo-controlled-open-select">Activity Type</InputLabel>
+                        <Select
+                            id="role"
+                            label="role"
+                            fullWidth={true}
+                            open={selectOpen}
+                            onClose={handleSelectClose}
+                            onOpen={handleSelectOpen}
+                            value={role}
+                            onChange={handleSelectChange}
+                            inputProps={{
+                                name: 'role',
+                                id: 'demo-controlled-open-select',
+                            }}
+                        >
+                            <MenuItem value='changeManager'>Select Activity Type</MenuItem>
+                            <MenuItem value='manager'>Customize</MenuItem>
+                        </Select>
+                    </FormControl>
                     <TextField
                         autoFocus
                         margin="dense"
