@@ -20,7 +20,10 @@ export const insert = new ValidatedMethod({
         'people': {
             type: Object
         },
-        'people.name': {
+        'people.firstName': {
+            type: String,
+        },
+        'people.lastName': {
             type: String,
         },
         'people.email': {
@@ -63,7 +66,10 @@ export const update = new ValidatedMethod({
         'people': {
             type: Object
         },
-        'people.name': {
+        'people.firstName': {
+            type: String,
+        },
+        'people.lastName': {
             type: String,
         },
         'people.email': {

@@ -17,10 +17,12 @@ import Select from '@material-ui/core/Select';
 import {withTracker} from "meteor/react-meteor-data";
 import { Companies } from "/imports/api/companies/companies";
 import { Projects } from "/imports/api/projects/projects";
+import { Peoples } from "/imports/api/peoples/peoples";
 import TopNavBar from '/imports/ui/components/App/App';
 import config from '/imports/utils/config';
 import Button from '@material-ui/core/Button';
 import StakeHolderList from './StakeHoldersList'
+import AddStakeHolder from './Modals/AddStakeHolder';
 
 
 const useStyles = makeStyles(theme => ({
@@ -64,7 +66,7 @@ const useStyles = makeStyles(theme => ({
         margin: theme.spacing(2)
     }
 }));
-export default function Reports(props){
+function Reports(props){
     let menus = config.menus;
     const [search, setSearch] = React.useState('');
     const classes = useStyles();
@@ -103,11 +105,12 @@ export default function Reports(props){
                             <SearchIcon />
                         </IconButton>
                     </Grid>
-                    {/*<Grid item xs={4} className={classes.secondTab}>*/}
+                    <Grid item xs={4} className={classes.secondTab}>
+                        <AddStakeHolder />
                         {/*<Button color="primary" className={classes.createNewProject}>*/}
                             {/*Add*/}
                         {/*</Button>*/}
-                    {/*</Grid>*/}
+                    </Grid>
                 </Grid>
                 <StakeHolderList className={classes.stakeHoldersList}/>
             </Grid>
@@ -115,3 +118,21 @@ export default function Reports(props){
         </div>
     )
 }
+
+const StakeHoldersPage = withTracker(props => {
+    Meteor.subscribe('companies');
+    Meteor.subscribe('peoples');
+    let company = Companies.findOne() || {};
+    console.log("old", company)
+    // Meteor.subscribe('myProjects', null, {
+    //     sort: local.sort || {},
+    //     name: local.search
+    // } );
+    return {
+        // company: Companies.findOne(),
+        // stakeHolders: Peoples.find(company._id || {})
+        // projects: sortingFunc(Projects.find({}).fetch(), local),
+    };
+})(Reports);
+
+export default StakeHoldersPage

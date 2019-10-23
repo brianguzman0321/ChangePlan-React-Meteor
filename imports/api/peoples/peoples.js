@@ -15,9 +15,13 @@ Peoples.deny({
 });
 
 Peoples.schema = new SimpleSchema({
-    name: {
+    firstName: {
         type: String,
-        label: 'stake holder name'
+        label: 'stake holder first name'
+    },
+    lastName: {
+        type: String,
+        label: 'stake holder first name'
     },
     email: {
         type: String,
