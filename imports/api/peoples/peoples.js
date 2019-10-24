@@ -25,6 +25,8 @@ Peoples.schema = new SimpleSchema({
     },
     email: {
         type: String,
+        index: false,
+        // unique: true,
         label: 'stake holder email'
     },
     role: {

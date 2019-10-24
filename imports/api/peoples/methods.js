@@ -48,6 +48,12 @@ export const insert = new ValidatedMethod({
         },
     }).validator(),
     run({ people }) {
+        let alreadyExist = Peoples.findOne({
+            email: people.email
+        });
+        if(alreadyExist){
+            throw new Meteor.Error(500, "A Stakeholder with this Email Already Exists");
+        }
         return Peoples.insert(people);
     }
 });

@@ -140,6 +140,10 @@ function AddStakeHolder(props) {
 
     const onSubmit = (e) => {
         event.preventDefault();
+        if(!(loI && loS)){
+            props.enqueueSnackbar('Please fill all required Fields', {variant: 'error'});
+            return false;
+        }
         let params = {
             people: {
                 firstName,
@@ -263,7 +267,7 @@ function AddStakeHolder(props) {
                         </Grid>
                         <Grid item xs={6} />
                         <Grid item xs={6}>
-                            <FormControl className={classes.formControl} fullWidth={true} required={true}>
+                            <FormControl className={classes.formControl} fullWidth={true} required>
                                 <InputLabel htmlFor="demo-controlled-open-select">Level Of Support</InputLabel>
                                 <Select
                                     id="role"
@@ -291,7 +295,7 @@ function AddStakeHolder(props) {
                             <br/>
                         </Grid>
                         <Grid item xs={6}>
-                            <FormControl className={classes.formControl} fullWidth={true} required={true}>
+                            <FormControl className={classes.formControl} fullWidth={true} required>
                                 <InputLabel htmlFor="demo-controlled-open-select">Level Of Influence</InputLabel>
                                 <Select
                                     id="role"
@@ -336,7 +340,7 @@ function AddStakeHolder(props) {
 
 const AddStakeHolderPage = withTracker(props => {
     return {
-        // company: Companies.findOne(),
+        company: Companies.findOne(),
         // projects: sortingFunc(Projects.find({}).fetch(), local),
     };
 })(AddStakeHolder);

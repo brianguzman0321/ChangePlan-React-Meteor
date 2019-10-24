@@ -121,16 +121,16 @@ function Reports(props){
 
 const StakeHoldersPage = withTracker(props => {
     Meteor.subscribe('companies');
-    Meteor.subscribe('peoples');
     let company = Companies.findOne() || {};
-    console.log("old", company)
+    let companyId = company._id || {};
+    Meteor.subscribe('peoples', companyId);
     // Meteor.subscribe('myProjects', null, {
     //     sort: local.sort || {},
     //     name: local.search
     // } );
     return {
-        // company: Companies.findOne(),
-        // stakeHolders: Peoples.find(company._id || {})
+        company: Companies.findOne(),
+        stakeHolders: Peoples.find().fetch()
         // projects: sortingFunc(Projects.find({}).fetch(), local),
     };
 })(Reports);

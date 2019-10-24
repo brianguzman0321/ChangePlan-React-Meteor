@@ -1,9 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import { Peoples } from '../peoples.js';
 
-Meteor.publish('peoples', function () {
+Meteor.publish('peoples', function (companyId) {
     return Peoples.find({
-        owner: this.userId
+        company: companyId
     }, {sort: {}});
 });
 
