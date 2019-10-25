@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from "react";
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -75,6 +75,7 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function AddStakeHolder(props) {
+    console.log("function running again")
     const [name, setName] = React.useState('');
     const [firstName, setFirstName] = React.useState('');
     const [lastName, setLastName] = React.useState('');
@@ -92,6 +93,14 @@ function AddStakeHolder(props) {
     const modalName = 'share';
 
     const handleClickOpen = () => {
+        setName('');
+        setFirstName('');
+        setLastName('');
+        setRole('');
+        setBusinessUnit('');
+        setEmail('');
+        setLos('');
+        setLoi('');
         setOpen(true);
     };
 
@@ -196,7 +205,7 @@ function AddStakeHolder(props) {
             </Button>
             <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="sm" fullWidth={true}>
                 <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-                    Share Project
+                    Add Stakeholder
                 </DialogTitle>
                 <form onSubmit={onSubmit}>
                 <DialogContent dividers>
@@ -216,7 +225,6 @@ function AddStakeHolder(props) {
                         </Grid>
                         <Grid item xs={6}>
                             <TextField
-                                autoFocus
                                 // margin="dense"
                                 id="lastName"
                                 label="Last Name"
@@ -229,7 +237,6 @@ function AddStakeHolder(props) {
                         </Grid>
                         <Grid item xs={6}>
                         <TextField
-                            autoFocus
                             // margin="dense"
                             id="role"
                             label="Role"
@@ -242,10 +249,9 @@ function AddStakeHolder(props) {
                         </Grid>
                         <Grid item xs={6}>
                             <TextField
-                                autoFocus
                                 // margin="dense"
                                 id="businessUnit"
-                                label="Bussiness Unit"
+                                label="Business Unit"
                                 value={businessUnit}
                                 onChange={(e)=> {setBusinessUnit(e.target.value)}}
                                 required={true}

@@ -66,10 +66,11 @@ const useStyles = makeStyles(theme => ({
         margin: theme.spacing(2)
     }
 }));
-function Reports(props){
+function StakeHolders(props){
     let menus = config.menus;
     const [search, setSearch] = React.useState('');
     const classes = useStyles();
+    let { stakeHolders } = props;
 
     const searchFilter = event => {
         setSearch(event.target.value);
@@ -112,7 +113,7 @@ function Reports(props){
                         {/*</Button>*/}
                     </Grid>
                 </Grid>
-                <StakeHolderList className={classes.stakeHoldersList}/>
+                <StakeHolderList className={classes.stakeHoldersList} rows={stakeHolders}/>
             </Grid>
 
         </div>
@@ -133,6 +134,6 @@ const StakeHoldersPage = withTracker(props => {
         stakeHolders: Peoples.find().fetch()
         // projects: sortingFunc(Projects.find({}).fetch(), local),
     };
-})(Reports);
+})(StakeHolders);
 
 export default StakeHoldersPage

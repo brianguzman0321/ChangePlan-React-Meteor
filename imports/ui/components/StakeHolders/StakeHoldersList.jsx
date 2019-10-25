@@ -25,21 +25,21 @@ function createData(name, calories, fat, carbs, protein) {
     return { name, calories, fat, carbs, protein };
 }
 
-const rows = [
-    createData('Cupcake', 305, 3.7, 67, 4.3),
-    createData('Donut', 452, 25.0, 51, 4.9),
-    createData('Eclair', 262, 16.0, 24, 6.0),
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-    createData('Honeycomb', 408, 3.2, 87, 6.5),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-    createData('Jelly Bean', 375, 0.0, 94, 0.0),
-    createData('KitKat', 518, 26.0, 65, 7.0),
-    createData('Lollipop', 392, 0.2, 98, 0.0),
-    createData('Marshmallow', 318, 0, 81, 2.0),
-    createData('Nougat', 360, 19.0, 9, 37.0),
-    createData('Oreo', 437, 18.0, 63, 4.0),
-];
+// const rows = [
+//     createData('Cupcake', 305, 3.7, 67, 4.3),
+//     createData('Donut', 452, 25.0, 51, 4.9),
+//     createData('Eclair', 262, 16.0, 24, 6.0),
+//     createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
+//     createData('Gingerbread', 356, 16.0, 49, 3.9),
+//     createData('Honeycomb', 408, 3.2, 87, 6.5),
+//     createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
+//     createData('Jelly Bean', 375, 0.0, 94, 0.0),
+//     createData('KitKat', 518, 26.0, 65, 7.0),
+//     createData('Lollipop', 392, 0.2, 98, 0.0),
+//     createData('Marshmallow', 318, 0, 81, 2.0),
+//     createData('Nougat', 360, 19.0, 9, 37.0),
+//     createData('Oreo', 437, 18.0, 63, 4.0),
+// ];
 
 const tableHeadStyle = makeStyles(theme => ({
     root: {
@@ -72,11 +72,11 @@ function getSorting(order, orderBy) {
 }
 
 const headCells = [
-    { id: 'name', numeric: false, disablePadding: true, label: 'NAME' },
-    { id: 'calories', numeric: true, disablePadding: false, label: 'ROLE' },
-    { id: 'fat', numeric: true, disablePadding: false, label: 'BUSINESS UNIT' },
-    { id: 'carbs', numeric: true, disablePadding: false, label: 'UPCOMING ACTIVITIES' },
-    { id: 'protein', numeric: true, disablePadding: false, label: 'TIME AWAY FROM BAU' },
+    { id: 'firstName', numeric: false, disablePadding: true, label: 'FirstName' },
+    { id: 'role', numeric: true, disablePadding: false, label: 'ROLE' },
+    { id: 'businessUnit', numeric: true, disablePadding: false, label: 'BUSINESS UNIT' },
+    { id: 'influenceLevel', numeric: true, disablePadding: false, label: 'UPCOMING ACTIVITIES' },
+    { id: 'supportLevel', numeric: true, disablePadding: false, label: 'TIME AWAY FROM BAU' },
     { id: 'action', numeric: true, disablePadding: false, label: 'Actions' },
 ];
 
@@ -103,8 +103,8 @@ function EnhancedTableHead(props) {
                     <TableCell style={{color: 'white'}}
                         key={headCell.id}
                         // align={headCell.numeric ? 'right' : 'left'}
-                        align={headCell.numeric ? 'center' : 'center'}
-                        padding={headCell.disablePadding ? 'none' : 'default'}
+                        align={'center'}
+                        // padding={headCell.disablePadding ? 'none' : 'default'}
                         sortDirection={orderBy === headCell.id ? order : false}
                     >
                         <TableSortLabel
@@ -231,7 +231,8 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-export default function StakeHolderList() {
+export default function StakeHolderList(props) {
+    console.log("props", props)
     const classes = useStyles();
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
@@ -239,6 +240,7 @@ export default function StakeHolderList() {
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    let { rows } = props;
 
     const handleRequestSort = (event, property) => {
         const isDesc = orderBy === property && order === 'desc';
@@ -248,7 +250,7 @@ export default function StakeHolderList() {
 
     const handleSelectAllClick = event => {
         if (event.target.checked) {
-            const newSelecteds = rows.map(n => n.name);
+            const newSelecteds = rows.map(n => n._id);
             setSelected(newSelecteds);
             return;
         }
@@ -272,6 +274,8 @@ export default function StakeHolderList() {
             );
         }
 
+        console.log("newSelected", newSelected)
+
         setSelected(newSelected);
     };
 
@@ -291,9 +295,7 @@ export default function StakeHolderList() {
     const deleteCell = (e, row) => {
         e.preventDefault();
         // e.stopImmediatePropagation();
-        e.stopPropagation()
-        console.log('e', e);
-        console.log('row', row)
+        e.stopPropagation();
     };
 
     const isSelected = name => selected.indexOf(name) !== -1;
@@ -320,22 +322,23 @@ export default function StakeHolderList() {
                             onSelectAllClick={handleSelectAllClick}
                             onRequestSort={handleRequestSort}
                             rowCount={rows.length}
+                            stakeHolders={props.stakeHolders}
                         />
                         <TableBody>
                             {stableSort(rows, getSorting(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row, index) => {
-                                    const isItemSelected = isSelected(row.name);
+                                    const isItemSelected = isSelected(row._id);
                                     const labelId = `enhanced-table-checkbox-${index}`;
 
                                     return (
                                         <TableRow
                                             hover
-                                            onClick={event => handleClick(event, row.name)}
+                                            onClick={event => handleClick(event, row._id)}
                                             role="checkbox"
                                             aria-checked={isItemSelected}
                                             tabIndex={-1}
-                                            key={row.name}
+                                            key={row._id}
                                             selected={isItemSelected}
                                         >
                                             <TableCell padding="checkbox">
@@ -345,13 +348,13 @@ export default function StakeHolderList() {
                                                     color="default"
                                                 />
                                             </TableCell>
-                                            <TableCell component="th" id={labelId} scope="row" padding="none">
-                                                {row.name}
+                                            <TableCell align="center" component="th" id={labelId} scope="row">
+                                                {row.firstName}
                                             </TableCell>
-                                            <TableCell align="center">{row.calories}</TableCell>
-                                            <TableCell align="center">{row.fat}</TableCell>
-                                            <TableCell align="center">{row.carbs}</TableCell>
-                                            <TableCell align="center">{row.protein}</TableCell>
+                                            <TableCell align="center">{row.role}</TableCell>
+                                            <TableCell align="center">{row.businessUnit}</TableCell>
+                                            <TableCell align="center">{row.influenceLevel}</TableCell>
+                                            <TableCell align="center">{row.supportLevel}</TableCell>
                                             <TableCell align="center">
                                                 <IconButton aria-label="edit" onClick={(event) => {deleteCell(event, row)}}>
                                                     <EditIcon />
