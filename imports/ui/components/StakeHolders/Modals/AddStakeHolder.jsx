@@ -75,7 +75,6 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function AddStakeHolder(props) {
-    console.log("function running again")
     const [name, setName] = React.useState('');
     const [firstName, setFirstName] = React.useState('');
     const [lastName, setLastName] = React.useState('');

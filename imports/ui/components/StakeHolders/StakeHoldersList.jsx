@@ -232,7 +232,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function StakeHolderList(props) {
-    console.log("props", props)
     const classes = useStyles();
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
@@ -274,7 +273,6 @@ export default function StakeHolderList(props) {
             );
         }
 
-        console.log("newSelected", newSelected)
 
         setSelected(newSelected);
     };
