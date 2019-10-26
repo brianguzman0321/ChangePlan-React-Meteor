@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
@@ -112,7 +113,9 @@ const DialogActions = withStyles(theme => ({
 function AddActivity(props) {
     const [open, setOpen] = React.useState(false);
     const [name, setName] = React.useState('');
+    const [person, setPerson] = React.useState('');
     const [startingDate, setStartingDate] = React.useState(new Date());
+    const [dueDate, setDueDate] = React.useState(new Date());
     const [startingDateOpen, setStartingDateOpen] = React.useState(false);
     const [endingDate, setEndingDate] = React.useState(new Date());
     const [endingDateOpen, setEndingDateOpen] = React.useState(false);
@@ -173,6 +176,10 @@ function AddActivity(props) {
         setStartingDateOpen(false)
     };
 
+    const handleDueDate = date => {
+        setDueDate(date)
+    };
+
     const handleEndingDate = date => {
         if(!(endingDate < startingDate)){
             setEndingDateOpen(false)
@@ -191,6 +198,10 @@ function AddActivity(props) {
 
     const handleChange = (e) => {
         setName(e.target.value)
+    };
+
+    const handleChangePerson = (e) => {
+        setPerson(e.target.value)
     };
 
     const onSubmit = (event) => {}
@@ -212,7 +223,7 @@ function AddActivity(props) {
             <Button variant="contained" className={classes.button} fullWidth={true} onClick={handleClickOpen}>
                 Add Activity
             </Button>
-            <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth={true}>
+            <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="sm" fullWidth={true}>
                 <DialogTitle id="customized-dialog-title" onClose={handleClose}>
                     Add Activity
                 </DialogTitle>
@@ -226,13 +237,51 @@ function AddActivity(props) {
                                 id="panel1bh-header"
                             >
                                 <Typography className={classes.heading}>Date</Typography>
-                                <Typography className={classes.secondaryHeading}>Due Date 26-08-20</Typography>
+                                <Typography className={classes.secondaryHeading}>Due Date: {moment(dueDate).format('DD-MMM-YY')}</Typography>
                             </ExpansionPanelSummary>
                             <ExpansionPanelDetails>
-                                <Typography>
-                                    Nulla facilisi. Phasellus sollicitudin nulla et quam mattis feugiat. Aliquam eget
-                                    maximus est, id dignissim quam.
-                                </Typography>
+                                <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                    <Grid container justify="space-between" spacing={4}>
+                                        <Grid item xs={6}>
+                                            <KeyboardDatePicker
+                                                fullWidth
+                                                disableToolbar
+                                                variant="inline"
+                                                format="MM/dd/yyyy"
+                                                margin="normal"
+                                                id="date-picker-inline"
+                                                label="Due Date"
+                                                value={dueDate}
+                                                autoOk={true}
+                                                onChange={handleDueDate}
+                                                KeyboardButtonProps={{
+                                                    'aria-label': 'change date',
+                                                }}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <KeyboardDatePicker
+                                                disableToolbar
+                                                fullWidth
+                                                variant="inline"
+                                                // open={true}
+                                                margin="normal"
+                                                id="date-picker-dialog"
+                                                label="Date Completed"
+                                                format="MM/dd/yyyy"
+                                                value={null}
+                                                // minDate={startingDate}
+                                                open={endingDateOpen}
+                                                onOpen={openEnding}
+                                                onChange={handleEndingDate}
+                                                disabled={true}
+                                                KeyboardButtonProps={{
+                                                    'aria-label': 'change date',
+                                                }}
+                                            />
+                                        </Grid>
+                                    </Grid>
+                                </MuiPickersUtilsProvider>
                             </ExpansionPanelDetails>
                         </ExpansionPanel>
                         <ExpansionPanel expanded={expanded === 'panel2'} onChange={handleChangePanel('panel2')}>
@@ -273,8 +322,7 @@ function AddActivity(props) {
                             </ExpansionPanelSummary>
                             <ExpansionPanelDetails>
                                 <Typography>
-                                    Nunc vitae orci ultricies, auctor nunc in, volutpat nisl. Integer sit amet egestas eros,
-                                    vitae egestas augue. Duis vel est augue.
+                                    So can I display here a button with stakeholders modals link.
                                 </Typography>
                             </ExpansionPanelDetails>
                         </ExpansionPanel>
@@ -288,9 +336,17 @@ function AddActivity(props) {
                                 <Typography className={classes.secondaryHeading}>Add Notes or Instructions for the person responsible</Typography>
                             </ExpansionPanelSummary>
                             <ExpansionPanelDetails>
-                                <Typography>
-                                    Add Notes or Instructions for the person responsible
-                                </Typography>
+                                <TextField
+                                    autoFocus
+                                    margin="dense"
+                                    id="name"
+                                    label="Description"
+                                    value={name}
+                                    onChange={handleChange}
+                                    required={true}
+                                    type="text"
+                                    fullWidth
+                                />
                             </ExpansionPanelDetails>
                         </ExpansionPanel>
                         <ExpansionPanel expanded={expanded === 'panal5'} onChange={handleChangePanel('panal5')}>
@@ -303,9 +359,17 @@ function AddActivity(props) {
                                 <Typography className={classes.secondaryHeading}>Assign Activity Owner</Typography>
                             </ExpansionPanelSummary>
                             <ExpansionPanelDetails>
-                                <Typography>
-                                    Assign Activity Owner
-                                </Typography>
+                                <TextField
+                                    autoFocus
+                                    margin="dense"
+                                    id="name"
+                                    label="Person Responsible"
+                                    value={person}
+                                    onChange={handleChangePerson}
+                                    required={true}
+                                    type="text"
+                                    fullWidth
+                                />
                             </ExpansionPanelDetails>
                         </ExpansionPanel>
                     </div>
