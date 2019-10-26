@@ -57,6 +57,11 @@ Activities.schema = new SimpleSchema({
         label: 'activity completion Date',
         optional: true
     },
+    dueDate: {
+        type: Date,
+        label: 'activity Due Date',
+        optional: true
+    },
     createdAt: {
         type: Date,
         label: 'Created At Company',

@@ -112,22 +112,13 @@ export default function AWARENESSCard() {
                         The Quick Brown Fox Jumps over a Lazy Dog.
                         </Typography>
                         <br/>
-                        <Grid
-                            container
-                            direction="row"
-                            justify="space-between"
-                            alignItems="center"
-                        >
-                            <Grid item xs={9} md={9}>
-                                <Typography variant="body2" color="textSecondary" component="p">
-                                    12 Nov
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={3} md={3}>
-                                <Typography variant="body2" color="textSecondary" component="p" >
-                                    Jhon Smith
-                                </Typography>
-                            </Grid>
+                        <Grid container justify="space-between">
+                            <Typography variant="body2" color="textSecondary" component="p">
+                                12 Nov
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary" component="p" >
+                                Jhon Smith
+                            </Typography>
                         </Grid>
                         <br/>
                     </CardContent>
@@ -163,22 +154,13 @@ export default function AWARENESSCard() {
                             The Quick Brown Fox Jumps over a Lazy Dog.
                         </Typography>
                         <br/>
-                        <Grid
-                            container
-                            direction="row"
-                            justify="space-between"
-                            alignItems="center"
-                        >
-                            <Grid item xs={9} md={9}>
-                                <Typography variant="body2" color="textSecondary" component="p">
-                                    12 Nov
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={3} md={3}>
-                                <Typography variant="body2" color="textSecondary" component="p" >
-                                    Jhon Smith
-                                </Typography>
-                            </Grid>
+                        <Grid container justify="space-between">
+                            <Typography variant="body2" color="textSecondary" component="p">
+                                12 Nov
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary" component="p" >
+                                Jhon Smith
+                            </Typography>
                         </Grid>
                         <br/>
                     </CardContent>

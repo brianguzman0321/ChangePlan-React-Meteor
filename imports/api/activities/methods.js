@@ -52,6 +52,9 @@ export const insert = new ValidatedMethod({
         'activity.completedAt': {
             type: Date,
         },
+        'activity.dueDate': {
+            type: Date,
+        },
     }).validator(),
     run({ activity }) {
         return Activities.insert(activity);
@@ -102,6 +105,9 @@ export const update = new ValidatedMethod({
             defaultValue: Object,
         },
         'activity.completedAt': {
+            type: Date,
+        },
+        'activity.dueDate': {
             type: Date,
         },
     }).validator(),

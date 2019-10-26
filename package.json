@@ -19,6 +19,7 @@
     "notistack": "^0.9.2",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
+    "react-inlinesvg": "^1.1.7",
     "react-router-dom": "^5.0.1",
     "react-select": "^3.0.5",
     "react-swipeable-views": "^0.13.3",
