@@ -118,12 +118,24 @@ export const remove = new ValidatedMethod({
             type: Object
         },
         'people._id': {
-            type: String
+            type: String,
+            optional: true
+        },
+        'people._ids': {
+            type: Array,
+            optional: true
+        },
+        'people._ids.$': {
+            type: String,
         }
     }).validator(),
     run({ people }) {
-        const {_id} = people;
-        return Peoples.remove(_id);
+        const {_id, _ids} = people;
+        return _ids ? Peoples.remove({
+            _id: {
+                $in: _ids
+            }
+        }) : Peoples.remove(_id)
     }
 });
 

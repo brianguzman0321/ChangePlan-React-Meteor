@@ -20,6 +20,7 @@ import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import FilterListIcon from '@material-ui/icons/FilterList';
+import DeleteStakeHolder from './Modals/DeleteStakeHolder';
 
 function createData(name, calories, fat, carbs, protein) {
     return { name, calories, fat, carbs, protein };
@@ -157,7 +158,7 @@ const useToolbarStyles = makeStyles(theme => ({
 
 const EnhancedTableToolbar = props => {
     const classes = useToolbarStyles();
-    const { numSelected } = props;
+    const { numSelected, selected } = props;
 
     return (
         <Toolbar
@@ -179,9 +180,7 @@ const EnhancedTableToolbar = props => {
 
             {numSelected > 0 ? (
                 <Tooltip title="Delete">
-                    <IconButton aria-label="delete" style={{color: 'white'}}>
-                        <DeleteIcon />
-                    </IconButton>
+                    <DeleteStakeHolder stakeholder={selected} multiple={true}/>
                 </Tooltip>
             ) : ''
                 /*(
@@ -303,7 +302,7 @@ export default function StakeHolderList(props) {
     return (
         <div className={classes.root}>
             <Paper className={classes.paper}>
-                {selected.length ? <EnhancedTableToolbar numSelected={selected.length} /> : ''}
+                {selected.length ? <EnhancedTableToolbar numSelected={selected.length} selected={selected} /> : ''}
                 <div className={classes.tableWrapper}>
                     <Table
                         className={classes.table}
@@ -353,13 +352,14 @@ export default function StakeHolderList(props) {
                                             <TableCell align="center">{row.businessUnit}</TableCell>
                                             <TableCell align="center">{row.influenceLevel}</TableCell>
                                             <TableCell align="center">{row.supportLevel}</TableCell>
-                                            <TableCell align="center">
+                                            <TableCell align="center" onClick={event => deleteCell(event, row)}>
                                                 <IconButton aria-label="edit" onClick={(event) => {deleteCell(event, row)}}>
                                                     <EditIcon />
                                                 </IconButton>
-                                                <IconButton aria-label="edit" onClick={(event) => {deleteCell(event, row)}}>
-                                                    <DeleteIcon />
-                                                </IconButton>
+                                                <DeleteStakeHolder stakeholder={row}/>
+                                                {/*<IconButton aria-label="edit" onClick={(event) => {deleteCell(event, row)}}>*/}
+                                                    {/*<DeleteIcon />*/}
+                                                {/*</IconButton>*/}
                                             </TableCell>
                                         </TableRow>
                                     );
