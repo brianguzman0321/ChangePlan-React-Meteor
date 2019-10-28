@@ -21,6 +21,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import DeleteStakeHolder from './Modals/DeleteStakeHolder';
+import EditStakeHolderPage from './Modals/EditStakeHolder';
 
 function createData(name, calories, fat, carbs, protein) {
     return { name, calories, fat, carbs, protein };
@@ -353,9 +354,10 @@ export default function StakeHolderList(props) {
                                             <TableCell align="center">{row.influenceLevel}</TableCell>
                                             <TableCell align="center">{row.supportLevel}</TableCell>
                                             <TableCell align="center" onClick={event => deleteCell(event, row)}>
-                                                <IconButton aria-label="edit" onClick={(event) => {deleteCell(event, row)}}>
-                                                    <EditIcon />
-                                                </IconButton>
+                                                <EditStakeHolderPage stakeholder={row} />
+                                                {/*<IconButton aria-label="edit" onClick={(event) => {deleteCell(event, row)}}>*/}
+                                                    {/*<EditIcon />*/}
+                                                {/*</IconButton>*/}
                                                 <DeleteStakeHolder stakeholder={row}/>
                                                 {/*<IconButton aria-label="edit" onClick={(event) => {deleteCell(event, row)}}>*/}
                                                     {/*<DeleteIcon />*/}

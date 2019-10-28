@@ -6,6 +6,7 @@ import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import MuiDialogContent from '@material-ui/core/DialogContent';
 import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
+import EditIcon from '@material-ui/icons/Edit';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import DialogContentText from '@material-ui/core/DialogContentText';
@@ -74,37 +75,73 @@ const DialogActions = withStyles(theme => ({
     },
 }))(MuiDialogActions);
 
-function AddStakeHolder(props) {
+function EditStakeHolder(props) {
+    let { company, handleModalClose, stakeholder } = props;
+
     const [name, setName] = React.useState('');
-    const [firstName, setFirstName] = React.useState('');
-    const [lastName, setLastName] = React.useState('');
-    const [role, setRole] = React.useState('');
-    const [businessUnit, setBusinessUnit] = React.useState('');
-    const [email, setEmail] = React.useState('');
-    const [loS, setLos] = React.useState('');
-    const [loI, setLoi] = React.useState('');
+    const [firstName, setFirstName] = React.useState(stakeholder.firstName);
+    const [lastName, setLastName] = React.useState(stakeholder.lastName);
+    const [role, setRole] = React.useState(stakeholder.role);
+    const [businessUnit, setBusinessUnit] = React.useState(stakeholder.businessUnit);
+    const [email, setEmail] = React.useState(stakeholder.email);
+    const [loS, setLos] = React.useState(stakeholder.influenceLevel);
+    const [loI, setLoi] = React.useState(stakeholder.supportLevel);
     const [selectOpen, setSelectOpen] = React.useState(false);
     const [selectOpen1, setSelectOpen1] = React.useState(false);
-    const [open, setOpen] = React.useState(false);
 
-    let { company, handleModalClose, project } = props;
+    const [open, setOpen] = React.useState(false);
+    console.log("StakeHolder", stakeholder)
     const classes = useStyles();
     const modalName = 'share';
 
     const handleClickOpen = () => {
         setName('');
-        setFirstName('');
-        setLastName('');
-        setRole('');
-        setBusinessUnit('');
-        setEmail('');
-        setLos('');
-        setLoi('');
+        setTimeout(() => {
+            setFirstName(stakeholder.firstName);
+            setLastName(stakeholder.lastName);
+            setRole(stakeholder.role);
+            setBusinessUnit(stakeholder.businessUnit);
+            setEmail(stakeholder.email);
+            setLos(stakeholder.supportLevel);
+            setLoi(stakeholder.influenceLevel);
+        }, 500);
         setOpen(true);
     };
 
     const handleClose = () => {
         setOpen(false);
+    };
+    const createProject = () => {
+        if(!(name && email && role)){
+            props.enqueueSnackbar('Please fill all required Fields', {variant: 'error'});
+            return false;
+        }
+        else{
+            if(!(/^\S+@\S+$/.test(email))){
+                props.enqueueSnackbar('Please Enter Valid Email Address', {variant: 'error'});
+                return false;
+            }
+        }
+        let params = {
+            name,
+            email,
+            role,
+            project
+
+        };
+        Meteor.call('roles.assignRole', params, (err, res) => {
+            if(err){
+                props.enqueueSnackbar(err.reason, {variant: 'error'})
+            }
+            else{
+                handleClose();
+                setName('');
+                setEmail('');
+                props.enqueueSnackbar('Project Shared Successfully.', {variant: 'success'})
+            }
+
+        })
+
     };
 
     const handleChange = (e) => {
@@ -115,6 +152,7 @@ function AddStakeHolder(props) {
     };
 
     const onSubmit = (e) => {
+        console.log("Why I am running");
         event.preventDefault();
         if(!(loI && loS)){
             props.enqueueSnackbar('Please fill all required Fields', {variant: 'error'});
@@ -166,15 +204,15 @@ function AddStakeHolder(props) {
     }
 
     return (
-        <div className={classes.createNewProject}>
-            <Button variant="contained" color="primary" onClick={handleClickOpen} className={classes.addStakeHolder}>
-                Add
-            </Button>
-            <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="sm" fullWidth={true}>
-                <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-                    Add Stakeholder
-                </DialogTitle>
-                <form onSubmit={onSubmit}>
+        <>
+        <IconButton aria-label="edit" onClick={handleClickOpen}>
+            <EditIcon />
+        </IconButton>
+        <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="sm" fullWidth={true}>
+            <DialogTitle id="customized-dialog-title" onClose={handleClose}>
+                Edit Stakeholder
+            </DialogTitle>
+            <form onSubmit={onSubmit}>
                 <DialogContent dividers>
                     <Grid container spacing={2}>
                         <Grid item xs={6}>
@@ -203,16 +241,16 @@ function AddStakeHolder(props) {
                             />
                         </Grid>
                         <Grid item xs={6}>
-                        <TextField
-                            // margin="dense"
-                            id="role"
-                            label="Role"
-                            value={role}
-                            onChange={(e)=> {setRole(e.target.value)}}
-                            required={true}
-                            type="text"
-                            fullWidth={true}
-                        />
+                            <TextField
+                                // margin="dense"
+                                id="role"
+                                label="Role"
+                                value={role}
+                                onChange={(e)=> {setRole(e.target.value)}}
+                                required={true}
+                                type="text"
+                                fullWidth={true}
+                            />
                         </Grid>
                         <Grid item xs={6}>
                             <TextField
@@ -227,16 +265,16 @@ function AddStakeHolder(props) {
                             />
                         </Grid>
                         <Grid item xs={6}>
-                        <TextField
-                            // margin="dense"
-                            id="email"
-                            label="Email"
-                            value={email}
-                            onChange={handleEmailChange}
-                            required={true}
-                            type="email"
-                            fullWidth={true}
-                        />
+                            <TextField
+                                // margin="dense"
+                                id="email"
+                                label="Email"
+                                value={email}
+                                onChange={handleEmailChange}
+                                required={true}
+                                type="email"
+                                fullWidth={true}
+                            />
                         </Grid>
                         <Grid item xs={6} />
                         <Grid item xs={6}>
@@ -302,20 +340,20 @@ function AddStakeHolder(props) {
                         Cancel
                     </Button>
                     <Button color="primary" type="submit">
-                        Save
+                        Update
                     </Button>
                 </DialogActions>
-                </form>
-            </Dialog>
-        </div>
+            </form>
+        </Dialog>
+        </>
     );
 }
 
-const AddStakeHolderPage = withTracker(props => {
+const EditStakeHolderPage = withTracker(props => {
     return {
         company: Companies.findOne(),
         // projects: sortingFunc(Projects.find({}).fetch(), local),
     };
-})(AddStakeHolder);
+})(EditStakeHolder);
 
-export default withSnackbar(AddStakeHolderPage)
+export default withSnackbar(EditStakeHolderPage)
