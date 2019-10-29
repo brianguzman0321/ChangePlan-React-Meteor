@@ -72,6 +72,9 @@ export const update = new ValidatedMethod({
         'people': {
             type: Object
         },
+        'people._id': {
+            type: String,
+        },
         'people.firstName': {
             type: String,
         },
@@ -86,6 +89,7 @@ export const update = new ValidatedMethod({
         },
         'people.company': {
             type: String,
+            optional: true
         },
         'people.businessUnit': {
             type: String,
@@ -100,6 +104,8 @@ export const update = new ValidatedMethod({
         },
     }).validator(),
     run({ people }) {
+        let { _id } = people;
+        delete people._id;
         return Peoples.update(_id, {$set: people});
     }
 });

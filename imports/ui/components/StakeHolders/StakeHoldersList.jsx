@@ -291,7 +291,7 @@ export default function StakeHolderList(props) {
     };
 
     const deleteCell = (e, row) => {
-        e.preventDefault();
+        // e.preventDefault();
         // e.stopImmediatePropagation();
         e.stopPropagation();
     };

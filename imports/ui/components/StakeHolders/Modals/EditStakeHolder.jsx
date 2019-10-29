@@ -90,7 +90,6 @@ function EditStakeHolder(props) {
     const [selectOpen1, setSelectOpen1] = React.useState(false);
 
     const [open, setOpen] = React.useState(false);
-    console.log("StakeHolder", stakeholder)
     const classes = useStyles();
     const modalName = 'share';
 
@@ -111,38 +110,6 @@ function EditStakeHolder(props) {
     const handleClose = () => {
         setOpen(false);
     };
-    const createProject = () => {
-        if(!(name && email && role)){
-            props.enqueueSnackbar('Please fill all required Fields', {variant: 'error'});
-            return false;
-        }
-        else{
-            if(!(/^\S+@\S+$/.test(email))){
-                props.enqueueSnackbar('Please Enter Valid Email Address', {variant: 'error'});
-                return false;
-            }
-        }
-        let params = {
-            name,
-            email,
-            role,
-            project
-
-        };
-        Meteor.call('roles.assignRole', params, (err, res) => {
-            if(err){
-                props.enqueueSnackbar(err.reason, {variant: 'error'})
-            }
-            else{
-                handleClose();
-                setName('');
-                setEmail('');
-                props.enqueueSnackbar('Project Shared Successfully.', {variant: 'success'})
-            }
-
-        })
-
-    };
 
     const handleChange = (e) => {
         setName(e.target.value)
@@ -152,7 +119,6 @@ function EditStakeHolder(props) {
     };
 
     const onSubmit = (e) => {
-        console.log("Why I am running");
         event.preventDefault();
         if(!(loI && loS)){
             props.enqueueSnackbar('Please fill all required Fields', {variant: 'error'});
@@ -160,6 +126,7 @@ function EditStakeHolder(props) {
         }
         let params = {
             people: {
+                _id: stakeholder._id,
                 firstName,
                 lastName,
                 role,
@@ -167,18 +134,17 @@ function EditStakeHolder(props) {
                 email,
                 influenceLevel: loI,
                 supportLevel: loS,
-                company: company._id
 
             }
         };
-        Meteor.call('peoples.insert', params, (err, res) => {
+        Meteor.call('peoples.update', params, (err, res) => {
             if(err){
                 props.enqueueSnackbar(err.reason, {variant: 'error'})
             }
             else{
                 setOpen(false);
                 setName('');
-                props.enqueueSnackbar('StakeHolder Added Successfully.', {variant: 'success'})
+                props.enqueueSnackbar('StakeHolder Updated Successfully.', {variant: 'success'})
             }
 
         })
