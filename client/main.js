@@ -17,6 +17,10 @@ LocalCollection.insert({
     name: 'localCompanies',
 });
 
+LocalCollection.insert({
+    name: 'localPeoples'
+});
+
 updateFilter = function (name, key, value){
     const records = LocalCollection.find({name}).fetch();
     if(records.length){

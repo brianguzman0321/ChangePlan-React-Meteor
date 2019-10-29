@@ -74,7 +74,7 @@ function StakeHolders(props){
 
     const searchFilter = event => {
         setSearch(event.target.value);
-        // updateFilter('localProjects', 'search', event.target.value);
+        updateFilter('localPeoples', 'search', event.target.value);
     };
 
     return (
@@ -121,14 +121,15 @@ function StakeHolders(props){
 }
 
 const StakeHoldersPage = withTracker(props => {
+    let local = LocalCollection.findOne({
+        name: 'localPeoples'
+    });
     Meteor.subscribe('companies');
     let company = Companies.findOne() || {};
     let companyId = company._id || {};
-    Meteor.subscribe('peoples', companyId);
-    // Meteor.subscribe('myProjects', null, {
-    //     sort: local.sort || {},
-    //     name: local.search
-    // } );
+    Meteor.subscribe('peoples', companyId, {
+        name: local.search
+    } );
     return {
         company: Companies.findOne(),
         stakeHolders: Peoples.find().fetch()

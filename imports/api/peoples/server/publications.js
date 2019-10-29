@@ -1,10 +1,18 @@
 import { Meteor } from 'meteor/meteor';
 import { Peoples } from '../peoples.js';
 
-Meteor.publish('peoples', function (companyId) {
-    return Peoples.find({
+Meteor.publish('peoples', function (companyId, params) {
+    let query = {
         company: companyId
-    }, {sort: {}});
+    };
+    params = params || {};
+    if(params.name){
+        query.firstName = {
+            $regex: params.name,
+            $options : 'i'
+        }
+    }
+    return Peoples.find(query, {sort: {}});
 });
 
 Meteor.publish('peoples.single', function (id) {
