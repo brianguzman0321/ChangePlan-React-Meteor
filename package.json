@@ -22,6 +22,7 @@
     "react-inlinesvg": "^1.1.7",
     "react-router-dom": "^5.0.1",
     "react-select": "^3.0.5",
+    "react-svg-inline": "^2.1.1",
     "react-swipeable-views": "^0.13.3",
     "simpl-schema": "^1.5.5"
   }

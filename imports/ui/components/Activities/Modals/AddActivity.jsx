@@ -14,6 +14,7 @@ import TextField from '@material-ui/core/TextField';
 import { withSnackbar } from 'notistack';
 import MenuItem from '@material-ui/core/MenuItem';
 import 'date-fns';
+import SVGInline from "react-svg-inline";
 import Grid from '@material-ui/core/Grid';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -45,6 +46,42 @@ const styles = theme => ({
     },
 });
 
+const gridStyles = makeStyles(theme => ({
+    root: {
+        cursor: 'pointer',
+        textAlign: 'center',
+        '&:hover': {
+            background: '#dae0e5;'
+        },
+        '&:selected': {
+            background: '#dae0e5;'
+        }
+        // background: 'black'
+    },
+    item: {
+        // background: '#dae0e5'
+    }
+}));
+const styles2 = {
+    root: {
+        cursor: 'pointer',
+        textAlign: 'center',
+        '&:hover': {
+            background: '#dae0e5;'
+        },
+        '&:selected': {
+            // background: '#dae0e5;'
+        }
+        // background: 'black'
+    },
+    item: {
+        // background: '#dae0e5'
+    }
+};
+
+const classes3 = withStyles(styles2);
+
+
 const useStyles = makeStyles(theme => ({
     AddNewActivity: {
         flex: 1,
@@ -66,6 +103,10 @@ const useStyles = makeStyles(theme => ({
     },
     secondaryHeading: {
         fontSize: theme.typography.pxToRem(15),
+        color: theme.palette.text.secondary,
+    },
+    gridText: {
+        fontSize: theme.typography.pxToRem(12),
         color: theme.palette.text.secondary,
     },
     avatar: {
@@ -113,7 +154,9 @@ const DialogActions = withStyles(theme => ({
 function AddActivity(props) {
     const [open, setOpen] = React.useState(false);
     const [name, setName] = React.useState('');
+    const [description, setDescription] = React.useState('');
     const [person, setPerson] = React.useState('');
+    const [activityType, setActivityType] = React.useState({});
     const [startingDate, setStartingDate] = React.useState(new Date());
     const [dueDate, setDueDate] = React.useState(new Date());
     const [startingDateOpen, setStartingDateOpen] = React.useState(false);
@@ -124,6 +167,7 @@ function AddActivity(props) {
     const [expanded, setExpanded] = React.useState('panel1');
     let { company } = props;
     const classes = useStyles();
+    const classes1 = gridStyles();
 
 
 
@@ -202,6 +246,9 @@ function AddActivity(props) {
 
     const handleChangePerson = (e) => {
         setPerson(e.target.value)
+    };
+    const handleDescriptionChange = (e) => {
+        setDescription(e.target.value)
     };
 
     const onSubmit = (event) => {}
@@ -292,21 +339,28 @@ function AddActivity(props) {
                             >
                                 <Typography className={classes.heading}>Activity Type</Typography>
                                 <Typography className={classes.secondaryHeading}>
-                                    Presentation
+                                    {activityType.buttonText || 'Select Activity type'}
                                 </Typography>
                             </ExpansionPanelSummary>
                             <ExpansionPanelDetails>
+                                <Grid container justify="space-between" spacing={4}>
                                 {
                                     data.map(item => {
-                                        return <SVG src={item.iconSVG} />;
-
+                                        return <Grid item={true} xs={3} classes={classes1} style={{background : activityType === item.name ? '#dae0e5' : '' }} onClick={(e) => { setActivityType(item); }}>
+                                        <SVGInline
+                                            width="35px"
+                                            height="35px"
+                                            fill='#f1753e'
+                                            svg={item.iconSVG}
+                                        />
+                                            <Typography className={classes.gridText}>
+                                                {item.buttonText}
+                                            </Typography>
+                                        </Grid>
 
                                     })
                                 }
-                                {/*<Typography>*/}
-                                    {/*Donec placerat, lectus sed mattis semper, neque lectus feugiat lectus, varius pulvinar*/}
-                                    {/*diam eros in elit. Pellentesque convallis laoreet laoreet.*/}
-                                {/*</Typography>*/}
+                                </Grid>
                             </ExpansionPanelDetails>
                         </ExpansionPanel>
                         <ExpansionPanel expanded={expanded === 'panel3'} onChange={handleChangePanel('panel3')}>
@@ -333,7 +387,9 @@ function AddActivity(props) {
                                 id="panel4bh-header"
                             >
                                 <Typography className={classes.heading}>Description</Typography>
-                                <Typography className={classes.secondaryHeading}>Add Notes or Instructions for the person responsible</Typography>
+                                <Typography className={classes.secondaryHeading}>{
+                                    description || 'Add Notes or Instructions for the person responsible'
+                                }</Typography>
                             </ExpansionPanelSummary>
                             <ExpansionPanelDetails>
                                 <TextField
@@ -341,8 +397,8 @@ function AddActivity(props) {
                                     margin="dense"
                                     id="name"
                                     label="Description"
-                                    value={name}
-                                    onChange={handleChange}
+                                    value={description}
+                                    onChange={handleDescriptionChange}
                                     required={true}
                                     type="text"
                                     fullWidth
