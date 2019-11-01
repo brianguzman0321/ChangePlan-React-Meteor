@@ -346,7 +346,7 @@ function AddActivity(props) {
                                 <Grid container justify="space-between" spacing={4}>
                                 {
                                     data.map(item => {
-                                        return <Grid item={true} xs={3} classes={classes1} style={{background : activityType === item.name ? '#dae0e5' : '' }} onClick={(e) => { setActivityType(item); }}>
+                                        return <Grid item={true} xs={3} classes={classes1} style={{background : activityType.name === item.name ? '#dae0e5' : '' }} onClick={(e) => { setActivityType(item); }}>
                                         <SVGInline
                                             width="35px"
                                             height="35px"
