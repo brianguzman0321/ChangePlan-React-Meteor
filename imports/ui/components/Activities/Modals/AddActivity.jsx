@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from "react";
 import moment from 'moment';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -20,6 +20,7 @@ import Grid from '@material-ui/core/Grid';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
+import {withTracker} from "meteor/react-meteor-data";
 import DateFnsUtils from '@date-io/date-fns';
 import {
     MuiPickersUtilsProvider,
@@ -34,6 +35,8 @@ import { data } from "/imports/activitiesContent.json";
 import SvgIcon from '@material-ui/core/SvgIcon';
 import SVG from 'react-inlinesvg';
 import SelectStakeHolders from './SelectStakeHolders';
+import { Peoples } from '/imports/api/peoples/peoples'
+import { Companies } from '/imports/api/companies/companies'
 
 const styles = theme => ({
     root: {
@@ -141,7 +144,7 @@ const DialogTitle = withStyles(styles)(props => {
 });
 
 function createData(name, calories, fat, carbs, protein) {
-    return { name, calories, fat, carbs, protein };
+    return { _id: name, calories, fat, carbs, protein };
 }
 
 const rows = [
@@ -176,6 +179,7 @@ const DialogActions = withStyles(theme => ({
 function AddActivity(props) {
     const [open, setOpen] = React.useState(false);
     const [name, setName] = React.useState('');
+    const [activitystakeHolders, setActivitystakeHolders] = React.useState([]);
     const [description, setDescription] = React.useState('');
     const [person, setPerson] = React.useState('');
     const [activityType, setActivityType] = React.useState({});
@@ -187,7 +191,7 @@ function AddActivity(props) {
     const [selectOpen, setSelectOpen] = React.useState(false);
     const [role, setRole] = React.useState('changeManager');
     const [expanded, setExpanded] = React.useState('panel1');
-    let { company } = props;
+    let { company, stakeHolders, local } = props;
     const classes = useStyles();
     const classes1 = gridStyles();
 
@@ -273,7 +277,7 @@ function AddActivity(props) {
         setDescription(e.target.value)
     };
 
-    const onSubmit = (event) => {}
+    const onSubmit = (event) => {};
 
     function handleSelectChange(event) {
         setRole(event.target.value);
@@ -286,6 +290,13 @@ function AddActivity(props) {
     function handleSelectOpen() {
         setSelectOpen(true);
     }
+
+    useEffect(() => {
+        if(props.stakeHolders){
+            data = stakeHolders.map(user => user._id);
+            setActivitystakeHolders(data)
+        }
+    }, []);
 
     return (
         <div className={classes.AddNewActivity}>
@@ -395,16 +406,13 @@ function AddActivity(props) {
                             >
                                 <Typography className={classes.heading}>Stakeholders</Typography>
                                 <Typography className={classes.secondaryHeading}>
-                                    67 of 67
+                                    {local.ids.length} of {stakeHolders.length}
                                 </Typography>
                             </ExpansionPanelSummary>
                             <ExpansionPanelDetails>
                                 <Grid container justify="center">
-                                    <SelectStakeHolders rows={rows}/>
+                                    <SelectStakeHolders rows={stakeHolders} local={local}/>
                                 </Grid>
-                                {/*<Typography>*/}
-                                    {/*SelectStakeHolders*/}
-                                {/*</Typography>*/}
                             </ExpansionPanelDetails>
                         </ExpansionPanel>
                         <ExpansionPanel expanded={expanded === 'panel4'} onChange={handleChangePanel('panel4')}>
@@ -471,4 +479,18 @@ function AddActivity(props) {
     );
 }
 
-export default withSnackbar(AddActivity)
+const AddActivityPage = withTracker(props => {
+    let local = LocalCollection.findOne({
+        name: 'localStakeHolders'
+    });
+    Meteor.subscribe('companies');
+    let company = Companies.findOne() || {};
+    let companyId = company._id || {};
+    Meteor.subscribe('peoples', companyId );
+    return {
+        stakeHolders: Peoples.find().fetch(),
+        local
+    };
+})(AddActivity);
+
+export default withSnackbar(AddActivityPage)

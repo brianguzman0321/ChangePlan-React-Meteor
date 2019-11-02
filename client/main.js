@@ -21,6 +21,11 @@ LocalCollection.insert({
     name: 'localPeoples'
 });
 
+LocalCollection.insert({
+    name: 'localStakeHolders',
+    ids: []
+});
+
 updateFilter = function (name, key, value){
     const records = LocalCollection.find({name}).fetch();
     if(records.length){

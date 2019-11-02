@@ -213,14 +213,14 @@ const useStyles1 = makeStyles(theme => ({
 }));
 
 function StakeHolderList(props) {
+    let { rows, selectUsers, local } = props;
     const classes = useStyles1();
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
-    const [selected, setSelected] = React.useState([]);
+    const [selected, setSelected] = React.useState(local.ids || []);
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
-    let { rows } = props;
 
     const handleRequestSort = (event, property) => {
         const isDesc = orderBy === property && order === 'desc';
@@ -232,9 +232,11 @@ function StakeHolderList(props) {
         if (event.target.checked) {
             const newSelecteds = rows.map(n => n._id);
             setSelected(newSelecteds);
+            selectUsers(newSelecteds);
             return;
         }
         setSelected([]);
+        selectUsers([]);
     };
 
     const handleClick = (event, name) => {
@@ -256,6 +258,7 @@ function StakeHolderList(props) {
 
 
         setSelected(newSelected);
+        selectUsers(newSelected);
     };
 
     const handleChangePage = (event, newPage) => {
@@ -325,8 +328,8 @@ function StakeHolderList(props) {
                                                     color="default"
                                                 />
                                             </TableCell>
-                                            <TableCell align="center">{row.role || 'Name here'}</TableCell>
-                                            <TableCell align="center">{row.businessUnit || 'Role here'}</TableCell>
+                                            <TableCell align="center">{`${row.firstName} ${row.lastName}`}</TableCell>
+                                            <TableCell align="center">{row.role}</TableCell>
                                         </TableRow>
                                     );
                                 })}
@@ -358,9 +361,10 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function SelectStakeHolders(props) {
-    let {rows} = props;
+    let { rows, local } = props;
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
+    const [stakeHolders, setStakeHolders] = React.useState([]);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -368,6 +372,15 @@ export default function SelectStakeHolders(props) {
 
     const handleClose = () => {
         setOpen(false);
+    };
+
+    const updateStakeHolders = () => {
+        updateFilter('localStakeHolders', 'ids', stakeHolders);
+        setOpen(false);
+    };
+
+    const selectStakeHolders = (ids) => {
+        setStakeHolders(ids);
     };
 
     return (
@@ -384,12 +397,12 @@ export default function SelectStakeHolders(props) {
                         <Typography variant="h6" className={classes.title}>
                             Select StakeHolders
                         </Typography>
-                        <Button autoFocus color="inherit" onClick={handleClose}>
+                        <Button autoFocus color="inherit" onClick={updateStakeHolders}>
                             save
                         </Button>
                     </Toolbar>
                 </AppBar>
-                <StakeHolderList rows={rows} />
+                <StakeHolderList rows={rows} selectUsers={selectStakeHolders} local={local} />
             </Dialog>
         </div>
     );
