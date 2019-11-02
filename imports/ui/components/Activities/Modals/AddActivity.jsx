@@ -37,6 +37,7 @@ import SVG from 'react-inlinesvg';
 import SelectStakeHolders from './SelectStakeHolders';
 import { Peoples } from '/imports/api/peoples/peoples'
 import { Companies } from '/imports/api/companies/companies'
+import { stringHelpers } from '/imports/helpers/stringHelpers';
 
 const styles = theme => ({
     root: {
@@ -179,7 +180,6 @@ const DialogActions = withStyles(theme => ({
 function AddActivity(props) {
     const [open, setOpen] = React.useState(false);
     const [name, setName] = React.useState('');
-    const [activitystakeHolders, setActivitystakeHolders] = React.useState([]);
     const [description, setDescription] = React.useState('');
     const [person, setPerson] = React.useState('');
     const [activityType, setActivityType] = React.useState({});
@@ -290,13 +290,6 @@ function AddActivity(props) {
     function handleSelectOpen() {
         setSelectOpen(true);
     }
-
-    useEffect(() => {
-        if(props.stakeHolders){
-            data = stakeHolders.map(user => user._id);
-            setActivitystakeHolders(data)
-        }
-    }, []);
 
     return (
         <div className={classes.AddNewActivity}>
@@ -423,7 +416,7 @@ function AddActivity(props) {
                             >
                                 <Typography className={classes.heading}>Description</Typography>
                                 <Typography className={classes.secondaryHeading}>{
-                                    description || 'Add Notes or Instructions for the person responsible'
+                                    stringHelpers.limitCharacters(description, 36) || 'Add Notes or Instructions for the person responsible'
                                 }</Typography>
                             </ExpansionPanelSummary>
                             <ExpansionPanelDetails>

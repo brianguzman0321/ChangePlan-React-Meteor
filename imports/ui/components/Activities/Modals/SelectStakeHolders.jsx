@@ -54,7 +54,7 @@ function createData(name, calories, fat, carbs, protein) {
 
 const tableHeadStyle = makeStyles(theme => ({
     root: {
-        background: '#92A1AF',
+        background: '#f5f5f5',
     },
 }));
 
@@ -83,7 +83,7 @@ function getSorting(order, orderBy) {
 }
 
 const headCells = [
-    { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
+    { id: 'name', numeric: true, disablePadding: true, label: 'Name' },
     { id: 'role', numeric: true, disablePadding: false, label: 'ROLE' }
 ];
 
@@ -107,7 +107,7 @@ function EnhancedTableHead(props) {
                     />
                 </TableCell>
                 {headCells.map(headCell => (
-                    <TableCell style={{color: 'white'}}
+                    <TableCell
                                key={headCell.id}
                         // align={headCell.numeric ? 'right' : 'left'}
                                align={'center'}
@@ -151,11 +151,11 @@ const useToolbarStyles = makeStyles(theme => ({
     highlight:
         theme.palette.type === 'light'
             ? {
-            color: 'white',
-            backgroundColor: '#465563',
+            // color: 'white',
+            // backgroundColor: '#f5f5f5',
         }
             : {
-            backgroundColor: '#465563',
+            // backgroundColor: '#f5f5f5',
         },
     title: {
         flex: '1 1 100%',
@@ -296,7 +296,7 @@ function StakeHolderList(props) {
                     >
                         <EnhancedTableHead
                             classes={classes}
-                            style={{color: 'white'}}
+                            // style={{color: 'white'}}
                             numSelected={selected.length}
                             order={order}
                             orderBy={orderBy}
