@@ -174,6 +174,25 @@ export const getUsers = new ValidatedMethod({
     }
 });
 
+export const getPersons = new ValidatedMethod({
+    name: 'users.getPersons',
+    mixins : [LoggedInMixin],
+    checkLoggedInError: {
+        error: 'notLogged',
+        message: 'You need to be logged in to create activity'
+    },
+    validate: null,
+    run({company, project}) {
+        return Meteor.users.find({
+            _id: {
+                $ne: Meteor.userId(),
+            }
+        }, {
+            fields: { services: 0 }
+        }).fetch()
+    }
+});
+
 export const updateList = new ValidatedMethod({
     name: 'users.updateList',
     mixins : [LoggedInMixin],

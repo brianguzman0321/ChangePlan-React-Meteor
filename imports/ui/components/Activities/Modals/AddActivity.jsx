@@ -38,6 +38,7 @@ import SelectStakeHolders from './SelectStakeHolders';
 import { Peoples } from '/imports/api/peoples/peoples'
 import { Companies } from '/imports/api/companies/companies'
 import { stringHelpers } from '/imports/helpers/stringHelpers';
+import  AutoComplete from '/imports/ui/components/utilityComponents/AutoCompleteInline'
 
 const styles = theme => ({
     root: {
@@ -179,6 +180,7 @@ const DialogActions = withStyles(theme => ({
 
 function AddActivity(props) {
     const [open, setOpen] = React.useState(false);
+    const [users, setUsers] = React.useState([]);
     const [name, setName] = React.useState('');
     const [description, setDescription] = React.useState('');
     const [person, setPerson] = React.useState('');
@@ -195,7 +197,29 @@ function AddActivity(props) {
     const classes = useStyles();
     const classes1 = gridStyles();
 
+    const updateUsersList = () => {
+        Meteor.call(`users.getPersons`, {company: company}, (err, res) => {
+            if(err){
+                props.enqueueSnackbar(err.reason, {variant: 'error'});
+            }
+            if(res && res.length){
+                setUsers(res.map(user => {
+                    return {
+                        label: `${user.profile.firstName} ${user.profile.lastName}`,
+                        value: user._id
+                    }
+                }))
+            }
+            else {
+                setUsers([])
+            }
+        })
+    };
 
+    useEffect(() => {
+        updateUsersList();
+
+    }, [props.company]);
 
     const handleChangePanel = panel => (event, isExpanded) => {
         setExpanded(isExpanded ? panel : false);
@@ -209,7 +233,8 @@ function AddActivity(props) {
         setOpen(false);
         setName('');
     };
-    const createProject = () => {
+    const createProject = (e) => {
+        e.preventDefault();
         if(!(name && startingDate && endingDate)){
             props.enqueueSnackbar('Please fill all required Fields', {variant: 'error'});
             return false;
@@ -273,11 +298,17 @@ function AddActivity(props) {
     const handleChangePerson = (e) => {
         setPerson(e.target.value)
     };
+
+    const updateUsers = (value) => {
+        setPerson(value)
+    };
     const handleDescriptionChange = (e) => {
         setDescription(e.target.value)
     };
 
-    const onSubmit = (event) => {};
+    const onSubmit = (event) => {
+        event.preventDefault()
+    };
 
     function handleSelectChange(event) {
         setRole(event.target.value);
@@ -291,6 +322,7 @@ function AddActivity(props) {
         setSelectOpen(true);
     }
 
+
     return (
         <div className={classes.AddNewActivity}>
             <Button variant="contained" className={classes.button} fullWidth={true} onClick={handleClickOpen}>
@@ -300,7 +332,7 @@ function AddActivity(props) {
                 <DialogTitle id="customized-dialog-title" onClose={handleClose}>
                     Add Activity
                 </DialogTitle>
-                <form onSubmit={onSubmit}>
+                <form onSubmit={createProject} noValidate>
                 <DialogContent dividers>
                     <div className={classes.root}>
                         <ExpansionPanel expanded={expanded === 'panel1'} onChange={handleChangePanel('panel1')}>
@@ -423,7 +455,7 @@ function AddActivity(props) {
                                 <TextField
                                     autoFocus
                                     margin="dense"
-                                    id="name"
+                                    id="description"
                                     label="Description"
                                     value={description}
                                     onChange={handleDescriptionChange}
@@ -443,17 +475,22 @@ function AddActivity(props) {
                                 <Typography className={classes.secondaryHeading}>Assign Activity Owner</Typography>
                             </ExpansionPanelSummary>
                             <ExpansionPanelDetails>
-                                <TextField
-                                    autoFocus
-                                    margin="dense"
-                                    id="name"
-                                    label="Person Responsible"
-                                    value={person}
-                                    onChange={handleChangePerson}
-                                    required={true}
-                                    type="text"
-                                    fullWidth
-                                />
+                                <Grid container justify="space-between">
+                                {/*<TextField*/}
+                                    {/*autoFocus*/}
+                                    {/*margin="dense"*/}
+                                    {/*id="name"*/}
+                                    {/*label="Person Responsible"*/}
+                                    {/*value={person}*/}
+                                    {/*onChange={handleChangePerson}*/}
+                                    {/*required={true}*/}
+                                    {/*type="text"*/}
+                                    {/*fullWidth*/}
+                                {/*/>*/}
+                                <Grid item={true} xs={6}>
+                                <AutoComplete updateUsers={updateUsers} data={users}/>
+                                </Grid>
+                                </Grid>
                             </ExpansionPanelDetails>
                         </ExpansionPanel>
                     </div>
@@ -482,7 +519,8 @@ const AddActivityPage = withTracker(props => {
     Meteor.subscribe('peoples', companyId );
     return {
         stakeHolders: Peoples.find().fetch(),
-        local
+        local,
+        company
     };
 })(AddActivity);
 
