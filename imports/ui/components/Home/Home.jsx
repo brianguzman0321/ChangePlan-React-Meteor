@@ -26,7 +26,7 @@ export default function Home(props){
     return (
         <div>
             <TopNavBar menus={menus} {...props} />
-            <ProjectCard />
+            <ProjectCard {...props}/>
         </div>
     )
 }

@@ -29,6 +29,7 @@ const useStyles = makeStyles(theme => ({
         marginTop: 23,
         marginLeft: 30,
         color: '#465563',
+        cursor: 'pointer'
     },
     newProject: {
         minHeight: 192,
@@ -165,6 +166,9 @@ function ProjectCard(props) {
         setAge(event.target.value);
         updateFilter('localProjects', 'sort', event.target.value);
     };
+    const selectProject = project => {
+        props.history.push(`/projects/${project._id}`)
+    };
 
     const searchFilter = event => {
         setSearch(event.target.value);
@@ -224,7 +228,7 @@ function ProjectCard(props) {
                 </Grid>
             </Grid>
             {projects.map((project, index) => (
-                <Grid item xs={12} sm={6} md={3} key={index} className={classes.grid}>
+                <Grid item xs={12} sm={6} md={3} key={index} className={classes.grid} onClick={(e) => selectProject(project)}>
                     <Card className={classes.card}>
                         <LinearProgress variant="determinate" value={index * 10} color="primary"/>
                         <CardHeader

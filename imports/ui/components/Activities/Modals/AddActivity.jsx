@@ -250,7 +250,6 @@ function AddActivity(props) {
                 stakeHolders: stakeHolders.map((user) => user._id)
             }
         };
-        console.log(params);
         if(!(description && person && dueDate)){
             props.enqueueSnackbar('Please fill all required Fields', {variant: 'error'});
             return false;

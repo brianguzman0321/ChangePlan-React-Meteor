@@ -57,6 +57,7 @@ const Routes = appProps => (
         <div className="App">
                 <Switch>
                     <Authenticated exact path="/" component={Home} {...appProps}/>
+                    <Authenticated exact path="/projects/:id" component={Home} {...appProps}/>
                     <Authenticated exact path="/control-panel" component={ControlPanel} {...appProps}/>
                     <Authenticated exact path="/activities" component={ActivitiesCard} {...appProps}/>
                     <Authenticated exact path="/stake-holders" component={StakeHoldersCard} {...appProps}/>
