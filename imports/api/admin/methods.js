@@ -186,6 +186,7 @@ export const getPersons = new ValidatedMethod({
         return Meteor.users.find({
             _id: {
                 $ne: Meteor.userId(),
+                $in: company.peoples
             }
         }, {
             fields: { services: 0 }

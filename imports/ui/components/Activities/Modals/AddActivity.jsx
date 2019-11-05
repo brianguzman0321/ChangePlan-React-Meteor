@@ -39,6 +39,7 @@ import { Peoples } from '/imports/api/peoples/peoples'
 import { Companies } from '/imports/api/companies/companies'
 import { stringHelpers } from '/imports/helpers/stringHelpers';
 import  AutoComplete from '/imports/ui/components/utilityComponents/AutoCompleteInline'
+import AddNewPerson from './AddNewPerson';
 
 const styles = theme => ({
     root: {
@@ -219,7 +220,7 @@ function AddActivity(props) {
     useEffect(() => {
         updateUsersList();
 
-    }, [props.company]);
+    }, [props.company, stakeHolders, company]);
 
     const handleChangePanel = panel => (event, isExpanded) => {
         setExpanded(isExpanded ? panel : false);
@@ -398,6 +399,14 @@ function AddActivity(props) {
                                 <Typography className={classes.heading}>Activity Type</Typography>
                                 <Typography className={classes.secondaryHeading}>
                                     {activityType.buttonText || 'Select Activity type'}
+                                    {activityType.iconSVG ? <SVGInline
+                                        style={{position: 'absolute', marginTop: -8}}
+                                        width="35px"
+                                        height="35px"
+                                        fill='#f1753e'
+                                        svg={activityType.iconSVG}
+                                    /> : ''
+                                    }
                                 </Typography>
                             </ExpansionPanelSummary>
                             <ExpansionPanelDetails>
@@ -475,7 +484,7 @@ function AddActivity(props) {
                                 <Typography className={classes.secondaryHeading}>Assign Activity Owner</Typography>
                             </ExpansionPanelSummary>
                             <ExpansionPanelDetails>
-                                <Grid container justify="space-between">
+                                <Grid container justify="space-between" spacing={2}>
                                 {/*<TextField*/}
                                     {/*autoFocus*/}
                                     {/*margin="dense"*/}
@@ -487,9 +496,12 @@ function AddActivity(props) {
                                     {/*type="text"*/}
                                     {/*fullWidth*/}
                                 {/*/>*/}
-                                <Grid item={true} xs={6}>
-                                <AutoComplete updateUsers={updateUsers} data={users}/>
-                                </Grid>
+                                    <Grid item={true} xs={7}>
+                                        <AutoComplete updateUsers={updateUsers} data={users}/>
+                                    </Grid>
+                                    <Grid item={true} xs={5}>
+                                        <AddNewPerson company={company}/>
+                                    </Grid>
                                 </Grid>
                             </ExpansionPanelDetails>
                         </ExpansionPanel>

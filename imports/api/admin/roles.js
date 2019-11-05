@@ -57,3 +57,41 @@ export const AssignProjectRole = new ValidatedMethod({
     }
 });
 
+export const AddNewPerson = new ValidatedMethod({
+    name: 'roles.addNewPerson',
+    mixins : [LoggedInMixin],
+    checkLoggedInError: {
+        error: 'notLogged',
+        message: 'You need to be logged in to create activity'
+    },
+    validate: null,
+    run({firstName, lastName, email, companyId}) {
+        let userId;
+        let user = Meteor.users.findOne({
+            'emails.address' : email
+        });
+        if(user && user._id){
+            throw new Meteor.Error(500, "A User with this Email Already Exists");
+        }
+        else{
+            let profile = {
+                firstName,
+                lastName
+            };
+            userId = Accounts.createUser({profile, email});
+            Accounts.sendEnrollmentEmail(userId);
+        }
+        //update Company
+        let update = {
+            $addToSet: {
+                peoples: userId
+            }
+        };
+        Companies.update({
+            _id: companyId
+        }, update);
+
+        return userId;
+    }
+});
+

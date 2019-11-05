@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from "react";
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import Select from 'react-select';
@@ -10,11 +10,12 @@ import Paper from '@material-ui/core/Paper';
 import Chip from '@material-ui/core/Chip';
 import MenuItem from '@material-ui/core/MenuItem';
 import CancelIcon from '@material-ui/icons/Cancel';
+import {withTracker} from "meteor/react-meteor-data";
 
 const useStyles = makeStyles(theme => ({
     root: {
         flexGrow: 1,
-        height: 100,
+        height: 250,
         minWidth: 290,
     },
     input: {
@@ -327,6 +328,10 @@ export default function IntegrationReactSelect(props) {
         }),
     };
 
+    useEffect(() => {
+    }, [props]);
+
+
     return (
         <div className={classes.root}>
             <NoSsr>
@@ -352,3 +357,10 @@ export default function IntegrationReactSelect(props) {
         </div>
     );
 }
+
+
+const IntegrationReactSelectPagePage = withTracker(props => {
+    return {
+
+    };
+})(IntegrationReactSelect);
