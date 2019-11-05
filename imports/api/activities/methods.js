@@ -23,9 +23,6 @@ export const insert = new ValidatedMethod({
         'activity.owner': {
             type: String,
         },
-        activityOwner: {
-            type: String,
-        },
         'activity.type': {
             type: String,
         },
@@ -45,12 +42,9 @@ export const insert = new ValidatedMethod({
         'activity.stakeHolders.$': {
             type: String
         },
-        'activity.responsiblePerson': {
-            type: Object,
-            defaultValue: Object,
-        },
         'activity.completedAt': {
             type: Date,
+            optional: true
         },
         'activity.dueDate': {
             type: Date,
@@ -78,9 +72,6 @@ export const update = new ValidatedMethod({
         'activity.owner': {
             type: String,
         },
-        activityOwner: {
-            type: String,
-        },
         'activity.type': {
             type: String,
         },
@@ -100,12 +91,9 @@ export const update = new ValidatedMethod({
         'activity.stakeHolders.$': {
             type: String
         },
-        'activity.responsiblePerson': {
-            type: Object,
-            defaultValue: Object,
-        },
         'activity.completedAt': {
             type: Date,
+            optional: true
         },
         'activity.dueDate': {
             type: Date,

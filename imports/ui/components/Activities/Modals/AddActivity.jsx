@@ -236,31 +236,36 @@ function AddActivity(props) {
     };
     const createProject = (e) => {
         e.preventDefault();
-        if(!(name && startingDate && endingDate)){
+        // else if(endingDate < startingDate){
+        //     props.enqueueSnackbar('Please fix the date error', {variant: 'error'});
+        //     return false;
+        // }
+        let params = {
+            activity: {
+                name: activityType.buttonText,
+                type: activityType.name,
+                description,
+                owner: person.value,
+                dueDate,
+                stakeHolders: stakeHolders.map((user) => user._id)
+            }
+        };
+        console.log(params);
+        if(!(description && person && dueDate)){
             props.enqueueSnackbar('Please fill all required Fields', {variant: 'error'});
             return false;
         }
-        else if(endingDate < startingDate){
-            props.enqueueSnackbar('Please fix the date error', {variant: 'error'});
+        else if(!(Object.keys(activityType) || Array.isArray(stakeHolders))){
+            props.enqueueSnackbar('Please fill all required Fields', {variant: 'error'});
             return false;
         }
-        let params = {
-            project: {
-                name,
-                startingDate,
-                endingDate,
-                companyId: company._id
-
-            }
-        };
-        Meteor.call('projects.insert', params, (err, res) => {
+        Meteor.call('activities.insert', params, (err, res) => {
             if(err){
                 props.enqueueSnackbar(err.reason, {variant: 'error'})
             }
             else{
                 setOpen(false);
-                setName('');
-                props.enqueueSnackbar('New Project Created Successfully.', {variant: 'success'})
+                props.enqueueSnackbar('Activity Added Successfully.', {variant: 'success'})
             }
 
         })

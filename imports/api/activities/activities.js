@@ -47,11 +47,11 @@ Activities.schema = new SimpleSchema({
     'stakeHolders.$': {
         type: String
     },
-    responsiblePerson: {
-        type: Object,
-        defaultValue: Object,
-        label: 'activity responsible Person',
-    },
+    // responsiblePerson: {
+    //     type: Object,
+    //     defaultValue: Object,
+    //     label: 'activity responsible Person',
+    // },
     completedAt: {
         type: Date,
         label: 'activity completion Date',
