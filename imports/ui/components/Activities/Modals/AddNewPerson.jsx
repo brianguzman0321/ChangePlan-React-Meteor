@@ -156,7 +156,7 @@ function AddNewPerson(props) {
             firstName,
             lastName,
             email,
-            company
+            companyId: company._id
 
         };
         Meteor.call('roles.addNewPerson', params, (err, res) => {
