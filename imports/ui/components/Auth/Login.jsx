@@ -90,9 +90,10 @@ function Login (props) {
         <Grid container spacing={3}>
             <Grid item xs={12}>
                 <img src={`/branding/logo-long.png`}/>
+
             </Grid>
             <Grid item xs={12}>
-                <h1 className={classes.topText}>Login to Change Plan</h1>
+                <h1 className={classes.topText}>Login to Change Abdul Hameed</h1>
             </Grid>
             <Grid item xs={12}>
                 <form onSubmit={onSubmit}>

@@ -40,6 +40,7 @@ import { Companies } from '/imports/api/companies/companies'
 import { stringHelpers } from '/imports/helpers/stringHelpers';
 import  AutoComplete from '/imports/ui/components/utilityComponents/AutoCompleteInline'
 import AddNewPerson from './AddNewPerson';
+import { withRouter } from 'react-router'
 
 const styles = theme => ({
     root: {
@@ -194,7 +195,8 @@ function AddActivity(props) {
     const [selectOpen, setSelectOpen] = React.useState(false);
     const [role, setRole] = React.useState('changeManager');
     const [expanded, setExpanded] = React.useState('panel1');
-    let { company, stakeHolders, local } = props;
+    let { company, stakeHolders, local, match } = props;
+    let { projectId } = match.params;
     const classes = useStyles();
     const classes1 = gridStyles();
 
@@ -247,7 +249,8 @@ function AddActivity(props) {
                 description,
                 owner: person.value,
                 dueDate,
-                stakeHolders: stakeHolders.map((user) => user._id)
+                stakeHolders: stakeHolders.map((user) => user._id),
+                projectId
             }
         };
         if(!(description && person && dueDate)){
@@ -538,6 +541,6 @@ const AddActivityPage = withTracker(props => {
         local,
         company
     };
-})(AddActivity);
+})(withRouter(AddActivity));
 
 export default withSnackbar(AddActivityPage)

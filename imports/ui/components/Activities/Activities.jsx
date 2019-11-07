@@ -16,6 +16,7 @@ import AWARENESSCard from './step1'
 import Step2Card from './step2'
 import Step3Card from './step3'
 import config from '/imports/utils/config';
+import { withRouter } from 'react-router'
 
 const useStyles = makeStyles({
     root: {
@@ -56,7 +57,7 @@ const useStyles = makeStyles({
         marginTop: 13,
     }
 });
-export default function Activities(props){
+function Activities(props){
     const classes = useStyles();
     const [value, setIndex] = React.useState(0);
 
@@ -121,6 +122,8 @@ export default function Activities(props){
         </div>
     )
 }
+
+export default withRouter(Activities)
 
 function ActivitiesCard(props) {
     const useStyles1 = makeStyles(theme => ({

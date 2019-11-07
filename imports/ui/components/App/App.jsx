@@ -108,7 +108,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function TopNavBar(props) {
-    let { menus, projectExists, history } = props;
+    let { menus, projectExists, history, match } = props;
+    let { projectId } = match.params;
     let currentNav = history.location.pathname.slice(1), selectedTab = 0;
     if(currentNav === '/'){
         selectedTab = 0;
@@ -183,13 +184,13 @@ function TopNavBar(props) {
             props.history.push('/')
         }
         if(value === 1){
-            props.history.push('/activities')
+            props.history.push(`/projects/${projectId}/activities`)
         }
         if(value === 2){
-            props.history.push('/stake-holders')
+            props.history.push(`/projects/${projectId}/stake-holders`)
         }
         if(value === 3){
-            props.history.push('/reports')
+            props.history.push(`/projects/${projectId}/reports`)
         }
     }
 
