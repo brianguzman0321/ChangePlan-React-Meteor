@@ -18,6 +18,8 @@ export default function SimpleMenu(props) {
     const allowedValues = ['share', 'delete', 'edit', 'duplicate'];
 
     const handleClick = event => {
+        event.stopPropagation();
+        event.preventDefault();
         setAnchorEl(event.currentTarget);
     };
 
@@ -37,7 +39,7 @@ export default function SimpleMenu(props) {
 
     return (
         <div>
-            <IconButton aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick} style={{padding: 0}}>
+            <IconButton aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick} style={{padding: 0}} onTouchEnd={e => e.preventDefault()}>
                 <MoreVertIcon />
             </IconButton>
             <Menu

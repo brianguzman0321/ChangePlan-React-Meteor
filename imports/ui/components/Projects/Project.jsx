@@ -166,7 +166,7 @@ function ProjectCard(props) {
         setAge(event.target.value);
         updateFilter('localProjects', 'sort', event.target.value);
     };
-    const selectProject = project => {
+    const selectProject = (project, e) => {
         props.history.push(`/projects/${project._id}`)
     };
 
@@ -228,10 +228,14 @@ function ProjectCard(props) {
                 </Grid>
             </Grid>
             {projects.map((project, index) => (
-                <Grid item xs={12} sm={6} md={3} key={index} className={classes.grid} onClick={(e) => selectProject(project)}>
+                <Grid item xs={12} sm={6} md={3} key={index} className={classes.grid} onClick={selectProject.bind(project)}>
                     <Card className={classes.card}>
                         <LinearProgress variant="determinate" value={index * 10} color="primary"/>
                         <CardHeader
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                e.preventDefault();
+                            }}
                             action={<ProjectMenus project={project} company={company} />}
                             classes={classes1}
                             title={projectName(project.name)}
