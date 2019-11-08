@@ -12,6 +12,8 @@ import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import AddActivity from '/imports/ui/components/Activities/Modals/AddActivity'
+import moment from 'moment'
+import { stringHelpers } from '/imports/helpers/stringHelpers'
 
 const useStyles = makeStyles(theme => ({
     card: {
@@ -44,6 +46,7 @@ const useStyles = makeStyles(theme => ({
     },
     innerCard: {
         borderTop: '2px solid #FF915F',
+        marginBottom: theme.spacing(2)
     },
     innerCardHeader: {
         paddingBottom: 5
@@ -60,9 +63,23 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export default function AWARENESSCard() {
+export default function AWARENESSCard(props) {
+    console.log("props AWARENESSCard", props)
+    let { activities } = props;
     const classes = useStyles();
     let switchBlock = false;
+
+    function completeActivity(activity){
+        activity.completed = !activity.completed;
+        delete activity.personResponsible;
+        let params = {
+            activity
+        };
+        Meteor.call('activities.update', params, (err, res) => {
+            console.log(err);
+            console.log(res);
+        })
+    }
 
     return (
         <Card className={classes.card}>
@@ -88,86 +105,51 @@ export default function AWARENESSCard() {
 
             <CardContent>
 
-                <Card className={classes.innerCard}>
-                    <CardHeader
-                        className={classes.innerCardHeader}
-                        avatar={
-                            <Avatar aria-label="recipe" className={classes.avatar}>
-                                1
-                            </Avatar>
-                        }
-                        action={
-                            <IconButton aria-label="settings" className={classes.info}>
-                                <CheckBoxIcon className={classes.checkBoxIcon} color="primary"/>
-                            </IconButton>
-                        }
-                        // title="AWARENESS"
-                        title={
-                            <Typography variant="subtitle1">
-                                Email
-                            </Typography>
-                        }
-                    />
+                {
+                    activities.map(activity => {
+                        return <Card className={classes.innerCard} key={activity._id}>
+                                <CardHeader
+                                    className={classes.innerCardHeader}
+                                    avatar={
+                                        <Avatar aria-label="recipe" className={classes.avatar}>
+                                            1
+                                        </Avatar>
+                                    }
+                                    action={
+                                        <IconButton aria-label="settings" className={classes.info} onClick={(e) => completeActivity(activity)}>
+                                            {
+                                                activity.completed ? <CheckBoxIcon className={classes.checkBoxIcon} color="primary"/> :
+                                                <CheckBoxOutlineBlankIcon className={classes.checkBoxIcon} color="primary"/>
+                                            }
+                                        </IconButton>
+                                    }
+                                    // title="AWARENESS"
+                                    title={
+                                        <Typography variant="subtitle1">
+                                            {activity.name}
+                                        </Typography>
+                                    }
+                                />
 
-                    <CardContent className={classes.innerCardContent}>
-                        <Typography variant="body2" color="textSecondary" component="p">
-                        The Quick Brown Fox Jumps over a Lazy Dog.
-                        </Typography>
-                        <br/>
-                        <Grid container justify="space-between">
-                                <Typography variant="body2" color="textSecondary" component="p">
-                                    12 Nov
-                                </Typography>
-                                <Typography variant="body2" color="textSecondary" component="p" >
-                                    Jhon Smith
-                                </Typography>
-                        </Grid>
-                        <br/>
-                    </CardContent>
-                </Card>
-                <br/>
-                <Card className={classes.innerCard}>
-                    <CardHeader
-                        className={classes.innerCardHeader}
-                        avatar={
-                            <Avatar aria-label="recipe" className={classes.avatar}>
-                                1
-                            </Avatar>
-                        }
-                        action={
-                            <IconButton aria-label="settings" className={classes.info}>
-                                <CheckBoxOutlineBlankIcon className={classes.checkBoxIcon} color="primary"/>
-                            </IconButton>
-                        }
-                        // title="AWARENESS"
-                        title={
-                            <Typography variant="subtitle1">
-                                Email
-                            </Typography>
-                        }
-                    />
+                                <CardContent className={classes.innerCardContent}>
+                                    <Typography variant="body2" color="textSecondary" component="p">
+                                        {stringHelpers.limitCharacters(activity.description, 50)}
+                                    </Typography>
+                                    <br/>
+                                    <Grid container justify="space-between">
+                                        <Typography variant="body2" color="textSecondary" component="p">
+                                            {moment(activity.dueDate).format('DD MMM')}
+                                        </Typography>
+                                        <Typography variant="body2" color="textSecondary" component="p" >
+                                            {`${activity.personResponsible.profile.firstName} ${activity.personResponsible.profile.lastName}`}
+                                        </Typography>
+                                    </Grid>
+                                    <br/>
+                                </CardContent>
+                            </Card>
+                })
+                }
 
-                    <CardContent className={classes.innerCardContent}>
-                        {switchBlock && <Button variant="contained" className={classes.button} fullWidth={true}>
-                            Add Activity
-                        </Button>
-                        }
-                        <Typography variant="body2" color="textSecondary" component="p">
-                            The Quick Brown Fox Jumps over a Lazy Dog.
-                        </Typography>
-                        <br/>
-                        <Grid container justify="space-between">
-                            <Typography variant="body2" color="textSecondary" component="p">
-                                12 Nov
-                            </Typography>
-                            <Typography variant="body2" color="textSecondary" component="p" >
-                                Jhon Smith
-                            </Typography>
-                        </Grid>
-                        <br/>
-                    </CardContent>
-                </Card>
-                <br/>
                 <AddActivity />
             </CardContent>
         </Card>

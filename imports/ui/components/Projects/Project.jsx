@@ -228,7 +228,7 @@ function ProjectCard(props) {
                 </Grid>
             </Grid>
             {projects.map((project, index) => (
-                <Grid item xs={12} sm={6} md={3} key={index} className={classes.grid} onClick={selectProject.bind(project)}>
+                <Grid item xs={12} sm={6} md={3} key={index} className={classes.grid} onClick={(e) =>selectProject(project)}>
                     <Card className={classes.card}>
                         <LinearProgress variant="determinate" value={index * 10} color="primary"/>
                         <CardHeader

@@ -250,7 +250,8 @@ function AddActivity(props) {
                 owner: person.value,
                 dueDate,
                 stakeHolders: stakeHolders.map((user) => user._id),
-                projectId
+                projectId,
+                step: 1
             }
         };
         if(!(description && person && dueDate)){

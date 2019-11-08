@@ -16,7 +16,9 @@ import AWARENESSCard from './step1'
 import Step2Card from './step2'
 import Step3Card from './step3'
 import config from '/imports/utils/config';
-import { withRouter } from 'react-router'
+import { withRouter } from 'react-router';
+import {withTracker} from "meteor/react-meteor-data";
+import { Activities } from '/imports/api/activities/activities'
 
 const useStyles = makeStyles({
     root: {
@@ -57,7 +59,7 @@ const useStyles = makeStyles({
         marginTop: 13,
     }
 });
-function Activities(props){
+function ActivitiesCard(props){
     const classes = useStyles();
     const [value, setIndex] = React.useState(0);
 
@@ -109,7 +111,7 @@ function Activities(props){
                 spacing={0}
             >
                 <Grid item xs={12} md={4}>
-                    <AWARENESSCard />
+                    <AWARENESSCard activities={props.activities.filter(activity => activity.step === 1)}/>
                 </Grid>
                 <Grid item xs={12} md={4}>
                     <Step2Card />
@@ -123,14 +125,15 @@ function Activities(props){
     )
 }
 
-export default withRouter(Activities)
 
-function ActivitiesCard(props) {
-    const useStyles1 = makeStyles(theme => ({
-        title: {
-            fontWeight: 1000,
-            fontSize: 16
-        }
-    }));
-    return <h1>Activities</h1>
-}
+
+const ActivitiesPage = withTracker(props => {
+    let { match } = props;
+    let { projectId } = match.params;
+    Meteor.subscribe('compoundActivities', projectId);
+    return {
+        activities : Activities.find().fetch()
+    };
+})(withRouter(ActivitiesCard));
+
+export default ActivitiesPage

@@ -23,6 +23,10 @@ Activities.schema = new SimpleSchema({
         type: String,
         label: 'activity Type'
     },
+    step: {
+        type: Number,
+        label: 'activity Step'
+    },
     name: {
         type: String,
         label: 'activity Name'
@@ -57,6 +61,11 @@ Activities.schema = new SimpleSchema({
         type: Date,
         label: 'activity Due Date',
         optional: true
+    },
+    completed: {
+        type: Boolean,
+        label: 'completed or not',
+        defaultValue: false
     },
     createdAt: {
         type: Date,

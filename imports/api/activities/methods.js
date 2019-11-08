@@ -26,6 +26,9 @@ export const insert = new ValidatedMethod({
         'activity.type': {
             type: String,
         },
+        'activity.step': {
+            type: Number,
+        },
         'activity.name': {
             type: String,
         },
@@ -69,11 +72,17 @@ export const update = new ValidatedMethod({
         'activity': {
             type: Object
         },
+        'activity._id': {
+            type: String,
+        },
         'activity.owner': {
             type: String,
         },
         'activity.type': {
             type: String,
+        },
+        'activity.step': {
+            type: Number,
         },
         'activity.name': {
             type: String,
@@ -98,8 +107,21 @@ export const update = new ValidatedMethod({
         'activity.dueDate': {
             type: Date,
         },
+        'activity.createdAt': {
+            type: Date,
+            optional: true
+        },
+        'activity.updatedAt': {
+            type: Date,
+            optional: true
+        },
+        'activity.completed': {
+            type: Boolean,
+            optional: true
+        },
     }).validator(),
     run({ activity }) {
+        let {_id} = activity;
         return Activities.update(_id, {$set: activity});
     }
 });
