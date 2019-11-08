@@ -64,7 +64,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function AWARENESSCard(props) {
-    console.log("props AWARENESSCard", props)
     let { activities } = props;
     const classes = useStyles();
     let switchBlock = false;
@@ -76,8 +75,6 @@ export default function AWARENESSCard(props) {
             activity
         };
         Meteor.call('activities.update', params, (err, res) => {
-            console.log(err);
-            console.log(res);
         })
     }
 

@@ -11,6 +11,7 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import {Link} from "react-router-dom";
 import {withTracker} from "meteor/react-meteor-data";
+import ProjectSelectMenu from '/imports/ui/components/utilityComponents/selectMenu'
 
 const Brand = (handleChange1) => (
     <Link to='/' onClick={handleChange1.handleChange1}>
@@ -231,6 +232,7 @@ function TopNavBar(props) {
                 <Toolbar className={classes.toolbar}>
                     <Brand handleChange1={handleChange1} />
                     <div className={classes.grow} />
+                    { projectId ? <ProjectSelectMenu title="Projects" entity="Project" entities={[]} localCollection="localProjects" id="projectId"/> : ''}
                     {displayMenus.length ? <Tabs
                         value={value}
                         onChange={handleChange1}
