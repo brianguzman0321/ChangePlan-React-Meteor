@@ -15,6 +15,8 @@ import AddActivity from '/imports/ui/components/Activities/Modals/AddActivity'
 import moment from 'moment'
 import { stringHelpers } from '/imports/helpers/stringHelpers'
 
+var sActivity = {};
+
 const useStyles = makeStyles(theme => ({
     card: {
         background: '#FDE8E0',
@@ -81,17 +83,18 @@ export default function AWARENESSCard(props) {
     }
 
     function editActivity(activity){
-        console.log("running", activity);
+        sActivity = activity;
         setEdit(false);
-        setSelectedActivity(selectedActivity);
         setTimeout(() => {
             setEdit(true)
-        }, 50)
+        })
+        // setSelectedActivity(selectedActivity);
+
     }
 
-    // useEffect(() => {
-    //
-    // }, [edit]);
+    useEffect(() => {
+
+    }, [edit]);
 
     return (
         <Card className={classes.card}>
@@ -165,7 +168,7 @@ export default function AWARENESSCard(props) {
                 })
                 }
 
-                <AddActivity edit={edit} activity={selectedActivity}/>
+                <AddActivity edit={edit} activity={sActivity}/>
             </CardContent>
         </Card>
     );

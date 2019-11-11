@@ -181,8 +181,7 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function AddActivity(props) {
-    let { company, stakeHolders, local, match, edit } = props;
-    console.log("eidt", edit)
+    let { company, stakeHolders, local, match, edit, activity } = props;
     const [open, setOpen] = React.useState(edit || false);
     const [users, setUsers] = React.useState([]);
     const [name, setName] = React.useState('');
@@ -201,6 +200,19 @@ function AddActivity(props) {
     let { projectId } = match.params;
     const classes = useStyles();
     const classes1 = gridStyles();
+
+    const updateValues = () => {
+        let selectedActivity = data.find(item => item.name === activity.type) || {};
+        setActivityType(selectedActivity)
+        setDueDate(activity.dueDate)
+        setDescription(activity.description)
+        let obj = {
+            label: `${activity.personResponsible.profile.firstName} ${activity.personResponsible.profile.lastName}`,
+            value: activity.personResponsible._id
+        };
+        setPerson(obj)
+        // activity.stakeHolders && (updateFilter('localStakeHolders', 'ids', activity.stakeHolders))
+    };
 
     const updateUsersList = () => {
         Meteor.call(`users.getPersons`, {company: company}, (err, res) => {
@@ -224,20 +236,25 @@ function AddActivity(props) {
     useEffect(() => {
         updateUsersList();
         setOpen(edit || open)
+        if(activity && activity.name){
+            updateValues();
+        }
 
-    }, [props.company, stakeHolders, company, props.edit]);
+
+    }, [props.company, stakeHolders, company, props.edit, props.activity]);
 
     const handleChangePanel = panel => (event, isExpanded) => {
         setExpanded(isExpanded ? panel : false);
     };
 
     const handleClickOpen = () => {
+        // updateFilter('localStakeHolders', 'ids', [])
         setExpanded('panel1');
         setOpen(true);
     };
     const handleClose = () => {
-        setOpen(false);
         setName('');
+        setOpen(false);
     };
     const createProject = (e) => {
         e.preventDefault();
@@ -270,6 +287,7 @@ function AddActivity(props) {
                 props.enqueueSnackbar(err.reason, {variant: 'error'})
             }
             else{
+                // updateFilter('localStakeHolders', 'ids', [])
                 setOpen(false);
                 props.enqueueSnackbar('Activity Added Successfully.', {variant: 'success'})
             }
@@ -342,7 +360,7 @@ function AddActivity(props) {
             </Button>
             <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="sm" fullWidth={true}>
                 <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-                    Add Activity
+                    { activity && activity.name ? 'Edit' : 'Add' } Activity
                 </DialogTitle>
                 <form onSubmit={createProject} noValidate>
                 <DialogContent dividers>
@@ -508,7 +526,7 @@ function AddActivity(props) {
                                     {/*fullWidth*/}
                                 {/*/>*/}
                                     <Grid item={true} xs={7}>
-                                        <AutoComplete updateUsers={updateUsers} data={users}/>
+                                        <AutoComplete updateUsers={updateUsers} data={users} selectedValue={person}/>
                                     </Grid>
                                     <Grid item={true} xs={5}>
                                         <AddNewPerson company={company}/>
