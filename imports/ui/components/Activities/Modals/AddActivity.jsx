@@ -236,7 +236,7 @@ function AddActivity(props) {
     useEffect(() => {
         updateUsersList();
         setOpen(edit || open)
-        if(activity && activity.name){
+        if(edit && activity && activity.name){
             updateValues();
         }
 
@@ -353,6 +353,7 @@ function AddActivity(props) {
     }
 
 
+
     return (
         <div className={classes.AddNewActivity}>
             <Button variant="contained" className={classes.button} fullWidth={true} onClick={handleClickOpen}>
@@ -360,7 +361,7 @@ function AddActivity(props) {
             </Button>
             <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="sm" fullWidth={true}>
                 <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-                    { activity && activity.name ? 'Edit' : 'Add' } Activity
+                    { edit ? 'Edit' : 'Add' } Activity
                 </DialogTitle>
                 <form onSubmit={createProject} noValidate>
                 <DialogContent dividers>
