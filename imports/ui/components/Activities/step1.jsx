@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -67,6 +67,8 @@ export default function AWARENESSCard(props) {
     let { activities } = props;
     const classes = useStyles();
     let switchBlock = false;
+    const [edit, setEdit] = React.useState(false);
+    const [selectedActivity, setSelectedActivity] = React.useState(false);
 
     function completeActivity(activity){
         activity.completed = !activity.completed;
@@ -77,6 +79,19 @@ export default function AWARENESSCard(props) {
         Meteor.call('activities.update', params, (err, res) => {
         })
     }
+
+    function editActivity(activity){
+        console.log("running", activity);
+        setEdit(false);
+        setSelectedActivity(selectedActivity);
+        setTimeout(() => {
+            setEdit(true)
+        }, 50)
+    }
+
+    // useEffect(() => {
+    //
+    // }, [edit]);
 
     return (
         <Card className={classes.card}>
@@ -104,7 +119,7 @@ export default function AWARENESSCard(props) {
 
                 {
                     activities.map(activity => {
-                        return <Card className={classes.innerCard} key={activity._id}>
+                        return <Card className={classes.innerCard} key={activity._id} onClick={(e) =>{editActivity(activity)}}>
                                 <CardHeader
                                     className={classes.innerCardHeader}
                                     avatar={
@@ -113,7 +128,10 @@ export default function AWARENESSCard(props) {
                                         </Avatar>
                                     }
                                     action={
-                                        <IconButton aria-label="settings" className={classes.info} onClick={(e) => completeActivity(activity)}>
+                                        <IconButton aria-label="settings" className={classes.info} onClick={(e) => {
+                                            e.stopPropagation();
+                                            completeActivity(activity)
+                                        }}>
                                             {
                                                 activity.completed ? <CheckBoxIcon className={classes.checkBoxIcon} color="primary"/> :
                                                 <CheckBoxOutlineBlankIcon className={classes.checkBoxIcon} color="primary"/>
@@ -147,7 +165,7 @@ export default function AWARENESSCard(props) {
                 })
                 }
 
-                <AddActivity />
+                <AddActivity edit={edit} activity={selectedActivity}/>
             </CardContent>
         </Card>
     );

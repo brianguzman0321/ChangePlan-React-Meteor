@@ -181,7 +181,9 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function AddActivity(props) {
-    const [open, setOpen] = React.useState(false);
+    let { company, stakeHolders, local, match, edit } = props;
+    console.log("eidt", edit)
+    const [open, setOpen] = React.useState(edit || false);
     const [users, setUsers] = React.useState([]);
     const [name, setName] = React.useState('');
     const [description, setDescription] = React.useState('');
@@ -195,7 +197,7 @@ function AddActivity(props) {
     const [selectOpen, setSelectOpen] = React.useState(false);
     const [role, setRole] = React.useState('changeManager');
     const [expanded, setExpanded] = React.useState('panel1');
-    let { company, stakeHolders, local, match } = props;
+
     let { projectId } = match.params;
     const classes = useStyles();
     const classes1 = gridStyles();
@@ -221,8 +223,9 @@ function AddActivity(props) {
 
     useEffect(() => {
         updateUsersList();
+        setOpen(edit || open)
 
-    }, [props.company, stakeHolders, company]);
+    }, [props.company, stakeHolders, company, props.edit]);
 
     const handleChangePanel = panel => (event, isExpanded) => {
         setExpanded(isExpanded ? panel : false);
