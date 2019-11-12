@@ -48,7 +48,8 @@ const useStyles = makeStyles(theme => ({
     },
     innerCard: {
         borderTop: '2px solid #FF915F',
-        marginBottom: theme.spacing(2)
+        marginBottom: theme.spacing(2),
+        cursor: 'pointer'
     },
     innerCardHeader: {
         paddingBottom: 5
@@ -168,7 +169,7 @@ export default function AWARENESSCard(props) {
                 })
                 }
 
-                <AddActivity edit={edit} activity={sActivity}/>
+                <AddActivity edit={edit} activity={sActivity} newActivity={() => setEdit(false)}/>
             </CardContent>
         </Card>
     );

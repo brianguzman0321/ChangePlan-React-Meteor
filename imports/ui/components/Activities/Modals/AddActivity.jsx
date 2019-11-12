@@ -183,6 +183,7 @@ const DialogActions = withStyles(theme => ({
 function AddActivity(props) {
     let { company, stakeHolders, local, match, edit, activity } = props;
     const [open, setOpen] = React.useState(edit || false);
+    const [isNew, setIsNew] = React.useState(false);
     const [users, setUsers] = React.useState([]);
     const [name, setName] = React.useState('');
     const [description, setDescription] = React.useState('');
@@ -202,10 +203,14 @@ function AddActivity(props) {
     const classes1 = gridStyles();
 
     const updateValues = () => {
+        if(isNew){
+            resetValues();
+            return false;
+        }
         let selectedActivity = data.find(item => item.name === activity.type) || {};
-        setActivityType(selectedActivity)
-        setDueDate(activity.dueDate)
-        setDescription(activity.description)
+        setActivityType(selectedActivity);
+        setDueDate(activity.dueDate);
+        setDescription(activity.description);
         let obj = {
             label: `${activity.personResponsible.profile.firstName} ${activity.personResponsible.profile.lastName}`,
             value: activity.personResponsible._id
@@ -213,6 +218,14 @@ function AddActivity(props) {
         setPerson(obj)
         // activity.stakeHolders && (updateFilter('localStakeHolders', 'ids', activity.stakeHolders))
     };
+
+    const resetValues = () => {
+        let selectedActivity = data.find(item => item.name === activity.type) || {};
+        setActivityType({})
+        setDueDate(new Date())
+        setDescription('')
+        setPerson(null)
+    }
 
     const updateUsersList = () => {
         Meteor.call(`users.getPersons`, {company: company}, (err, res) => {
@@ -234,20 +247,21 @@ function AddActivity(props) {
     };
 
     useEffect(() => {
+        setOpen(edit || open);
         updateUsersList();
-        setOpen(edit || open)
         if(edit && activity && activity.name){
             updateValues();
         }
 
 
-    }, [props.company, stakeHolders, company, props.edit, props.activity]);
+    }, [props.company, stakeHolders, company, props.edit, props.activity, isNew]);
 
     const handleChangePanel = panel => (event, isExpanded) => {
         setExpanded(isExpanded ? panel : false);
     };
 
     const handleClickOpen = () => {
+        setIsNew(true)
         // updateFilter('localStakeHolders', 'ids', [])
         setExpanded('panel1');
         setOpen(true);
@@ -255,6 +269,9 @@ function AddActivity(props) {
     const handleClose = () => {
         setName('');
         setOpen(false);
+        setIsNew(false);
+        props.newActivity();
+        resetValues()
     };
     const createProject = (e) => {
         e.preventDefault();
@@ -262,6 +279,14 @@ function AddActivity(props) {
         //     props.enqueueSnackbar('Please fix the date error', {variant: 'error'});
         //     return false;
         // }
+        if(!(description && person && dueDate)){
+            props.enqueueSnackbar('Please fill all required Fields', {variant: 'error'});
+            return false;
+        }
+        else if(!(Object.keys(activityType) || Array.isArray(stakeHolders))){
+            props.enqueueSnackbar('Please fill all required Fields', {variant: 'error'});
+            return false;
+        }
         let params = {
             activity: {
                 name: activityType.buttonText,
@@ -274,14 +299,7 @@ function AddActivity(props) {
                 step: 1
             }
         };
-        if(!(description && person && dueDate)){
-            props.enqueueSnackbar('Please fill all required Fields', {variant: 'error'});
-            return false;
-        }
-        else if(!(Object.keys(activityType) || Array.isArray(stakeHolders))){
-            props.enqueueSnackbar('Please fill all required Fields', {variant: 'error'});
-            return false;
-        }
+
         Meteor.call('activities.insert', params, (err, res) => {
             if(err){
                 props.enqueueSnackbar(err.reason, {variant: 'error'})
@@ -361,7 +379,7 @@ function AddActivity(props) {
             </Button>
             <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="sm" fullWidth={true}>
                 <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-                    { edit ? 'Edit' : 'Add' } Activity
+                    { isNew ? 'Add' : 'Edit' } Activity
                 </DialogTitle>
                 <form onSubmit={createProject} noValidate>
                 <DialogContent dividers>
