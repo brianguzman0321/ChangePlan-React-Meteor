@@ -113,11 +113,11 @@ function ActivitiesCard(props){
                 <Grid item xs={12} md={4}>
                     <AWARENESSCard activities={props.activities.filter(activity => activity.step === 1)}/>
                 </Grid>
-                <Grid item xs={12} md={4}>
-                    <Step2Card />
+                <Grid item xs={12} md={4} >
+                    <Step2Card activities={props.activities.filter(activity => activity.step === 2)}/>
                 </Grid>
                 <Grid item xs={12} md={4}>
-                    <Step3Card />
+                    <Step3Card activities={props.activities.filter(activity => activity.step === 3)}/>
                 </Grid>
             </Grid>
 

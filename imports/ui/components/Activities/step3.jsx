@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -11,6 +11,13 @@ import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
+import AddActivity from '/imports/ui/components/Activities/Modals/AddActivity3'
+import moment from 'moment'
+import { stringHelpers } from '/imports/helpers/stringHelpers'
+import SVGInline from "react-svg-inline";
+import { data } from "/imports/activitiesContent.json";
+
+var sActivity = {};
 
 const useStyles = makeStyles(theme => ({
     card: {
@@ -19,7 +26,8 @@ const useStyles = makeStyles(theme => ({
         // maxWidth: 345,
         borderTop: '2px solid #bbabd2',
         paddingBottom: 0,
-        paddingTop: 5
+        paddingTop: 5,
+        marginRight: 0
     },
     avatar: {
         backgroundColor: '#bbabd2',
@@ -42,8 +50,11 @@ const useStyles = makeStyles(theme => ({
     },
     innerCard: {
         borderTop: '2px solid #FF915F',
+        marginBottom: theme.spacing(2),
+        cursor: 'pointer'
     },
     innerCardHeader: {
+        padding: 5,
         paddingBottom: 5
     },
     innerCardContent: {
@@ -58,9 +69,42 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export default function AWARENESSCard() {
+export default function AWARENESSCard(props) {
+    let { activities } = props;
     const classes = useStyles();
     let switchBlock = false;
+    const [edit, setEdit] = React.useState(false);
+    const [selectedActivity, setSelectedActivity] = React.useState(false);
+
+    function completeActivity(activity){
+        activity.completed = !activity.completed;
+        delete activity.personResponsible;
+        let params = {
+            activity
+        };
+        Meteor.call('activities.update', params, (err, res) => {
+        })
+    }
+
+    function editActivity(activity){
+        sActivity = activity;
+        setEdit(false);
+        setTimeout(() => {
+            setEdit(true)
+        })
+        // setSelectedActivity(selectedActivity);
+
+    }
+
+    function iconSVG(activity){
+        let selectedActivity = data.find(item => item.name === activity.type) || {};
+        console.log("selectedActivity", selectedActivity);
+        return selectedActivity && selectedActivity.iconSVG
+    }
+
+    useEffect(() => {
+
+    }, [edit]);
 
     return (
         <Card className={classes.card}>
@@ -68,7 +112,7 @@ export default function AWARENESSCard() {
                 className={classes.cardHeader}
                 avatar={
                     <Avatar aria-label="recipe" className={classes.avatar}>
-                        3
+                        1
                     </Avatar>
                 }
                 action={
@@ -79,96 +123,67 @@ export default function AWARENESSCard() {
                 // title="AWARENESS"
                 title={
                     <Typography variant="subtitle1">
-                    SUPPORT
-                </Typography>
+                        AWARENESS
+                    </Typography>
                 }
             />
 
             <CardContent>
 
-                <Card className={classes.innerCard}>
-                    <CardHeader
-                        className={classes.innerCardHeader}
-                        avatar={
-                            <Avatar aria-label="recipe" className={classes.avatar}>
-                                1
-                            </Avatar>
-                        }
-                        action={
-                            <IconButton aria-label="settings" className={classes.info}>
-                                <CheckBoxIcon className={classes.checkBoxIcon} color="primary"/>
-                            </IconButton>
-                        }
-                        // title="AWARENESS"
-                        title={
-                            <Typography variant="subtitle1">
-                                Email
-                            </Typography>
-                        }
-                    />
+                {
+                    activities.map(activity => {
+                        return <Card className={classes.innerCard} key={activity._id} onClick={(e) =>{editActivity(activity)}}>
+                            <CardHeader
+                                className={classes.innerCardHeader}
+                                avatar={<SVGInline
+                                    width="35px"
+                                    height="35px"
+                                    fill='#f1753e'
+                                    svg={iconSVG(activity)}
+                                />
+                                    // <Avatar aria-label="recipe" className={classes.avatar}>
+                                    //
+                                    // </Avatar>
+                                }
+                                action={
+                                    <IconButton aria-label="settings" className={classes.info} onClick={(e) => {
+                                        e.stopPropagation();
+                                        completeActivity(activity)
+                                    }}>
+                                        {
+                                            activity.completed ? <CheckBoxIcon className={classes.checkBoxIcon} color="primary"/> :
+                                                <CheckBoxOutlineBlankIcon className={classes.checkBoxIcon} color="primary"/>
+                                        }
+                                    </IconButton>
+                                }
+                                // title="AWARENESS"
+                                title={
+                                    <Typography variant="subtitle1">
+                                        {activity.name}
+                                    </Typography>
+                                }
+                            />
 
-                    <CardContent className={classes.innerCardContent}>
-                        <Typography variant="body2" color="textSecondary" component="p">
-                        The Quick Brown Fox Jumps over a Lazy Dog.
-                        </Typography>
-                        <br/>
-                        <Grid container justify="space-between">
-                            <Typography variant="body2" color="textSecondary" component="p">
-                                12 Nov
-                            </Typography>
-                            <Typography variant="body2" color="textSecondary" component="p" >
-                                Jhon Smith
-                            </Typography>
-                        </Grid>
-                        <br/>
-                    </CardContent>
-                </Card>
-                <br/>
-                <Card className={classes.innerCard}>
-                    <CardHeader
-                        className={classes.innerCardHeader}
-                        avatar={
-                            <Avatar aria-label="recipe" className={classes.avatar}>
-                                1
-                            </Avatar>
-                        }
-                        action={
-                            <IconButton aria-label="settings" className={classes.info}>
-                                <CheckBoxOutlineBlankIcon className={classes.checkBoxIcon} color="primary"/>
-                            </IconButton>
-                        }
-                        // title="AWARENESS"
-                        title={
-                            <Typography variant="subtitle1">
-                                Email
-                            </Typography>
-                        }
-                    />
+                            <CardContent className={classes.innerCardContent}>
+                                <Typography variant="body2" color="textSecondary" component="p">
+                                    {stringHelpers.limitCharacters(activity.description, 50)}
+                                </Typography>
+                                <br/>
+                                <Grid container justify="space-between">
+                                    <Typography variant="body2" color="textSecondary" component="p">
+                                        {moment(activity.dueDate).format('DD MMM')}
+                                    </Typography>
+                                    <Typography variant="body2" color="textSecondary" component="p" >
+                                        {`${activity.personResponsible.profile.firstName} ${activity.personResponsible.profile.lastName}`}
+                                    </Typography>
+                                </Grid>
+                                <br/>
+                            </CardContent>
+                        </Card>
+                    })
+                }
 
-                    <CardContent className={classes.innerCardContent}>
-                        {switchBlock && <Button variant="contained" className={classes.button} fullWidth={true}>
-                            Add Activity
-                        </Button>
-                        }
-                        <Typography variant="body2" color="textSecondary" component="p">
-                            The Quick Brown Fox Jumps over a Lazy Dog.
-                        </Typography>
-                        <br/>
-                        <Grid container justify="space-between">
-                            <Typography variant="body2" color="textSecondary" component="p">
-                                12 Nov
-                            </Typography>
-                            <Typography variant="body2" color="textSecondary" component="p" >
-                                Jhon Smith
-                            </Typography>
-                        </Grid>
-                        <br/>
-                    </CardContent>
-                </Card>
-                <br/>
-                <Button variant="contained" className={classes.button} fullWidth={true}>
-                    Add Activity
-                </Button>
+                <AddActivity edit={edit} activity={sActivity} newActivity={() => setEdit(false)}/>
             </CardContent>
         </Card>
     );
