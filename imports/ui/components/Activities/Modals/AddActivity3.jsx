@@ -457,7 +457,7 @@ function AddActivity(props) {
                                         style={{position: 'absolute', marginTop: -8}}
                                         width="35px"
                                         height="35px"
-                                        fill='#f1753e'
+                                        fill='#bbabd2'
                                         svg={activityType.iconSVG}
                                     /> : ''
                                     }
@@ -473,7 +473,7 @@ function AddActivity(props) {
                                         <SVGInline
                                             width="35px"
                                             height="35px"
-                                            fill='#f1753e'
+                                            fill='#bbabd2'
                                             svg={item.iconSVG}
                                         />
                                             <Typography className={classes.gridText}>

@@ -49,7 +49,7 @@ const useStyles = makeStyles(theme => ({
 
     },
     innerCard: {
-        borderTop: '2px solid #FF915F',
+        borderTop: '2px solid #bbabd2',
         marginBottom: theme.spacing(2),
         cursor: 'pointer'
     },
@@ -98,7 +98,6 @@ export default function AWARENESSCard(props) {
 
     function iconSVG(activity){
         let selectedActivity = data.find(item => item.name === activity.type) || {};
-        console.log("selectedActivity", selectedActivity);
         return selectedActivity && selectedActivity.iconSVG
     }
 
@@ -138,7 +137,7 @@ export default function AWARENESSCard(props) {
                                 avatar={<SVGInline
                                     width="35px"
                                     height="35px"
-                                    fill='#f1753e'
+                                    fill='#bbabd2'
                                     svg={iconSVG(activity)}
                                 />
                                     // <Avatar aria-label="recipe" className={classes.avatar}>

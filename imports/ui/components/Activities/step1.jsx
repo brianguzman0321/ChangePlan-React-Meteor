@@ -98,7 +98,6 @@ export default function AWARENESSCard(props) {
 
     function iconSVG(activity){
         let selectedActivity = data.find(item => item.name === activity.type) || {};
-        console.log("selectedActivity", selectedActivity);
         return selectedActivity && selectedActivity.iconSVG
     }
 
