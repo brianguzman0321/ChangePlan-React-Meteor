@@ -14,6 +14,8 @@ import Button from '@material-ui/core/Button';
 import AddActivity from '/imports/ui/components/Activities/Modals/AddActivity'
 import moment from 'moment'
 import { stringHelpers } from '/imports/helpers/stringHelpers'
+import SVGInline from "react-svg-inline";
+import { data } from "/imports/activitiesContent.json";
 
 var sActivity = {};
 
@@ -52,6 +54,7 @@ const useStyles = makeStyles(theme => ({
         cursor: 'pointer'
     },
     innerCardHeader: {
+        padding: 5,
         paddingBottom: 5
     },
     innerCardContent: {
@@ -93,6 +96,12 @@ export default function AWARENESSCard(props) {
 
     }
 
+    function iconSVG(activity){
+        let selectedActivity = data.find(item => item.name === activity.type) || {};
+        console.log("selectedActivity", selectedActivity);
+        return selectedActivity && selectedActivity.iconSVG
+    }
+
     useEffect(() => {
 
     }, [edit]);
@@ -126,10 +135,15 @@ export default function AWARENESSCard(props) {
                         return <Card className={classes.innerCard} key={activity._id} onClick={(e) =>{editActivity(activity)}}>
                                 <CardHeader
                                     className={classes.innerCardHeader}
-                                    avatar={
-                                        <Avatar aria-label="recipe" className={classes.avatar}>
-                                            1
-                                        </Avatar>
+                                    avatar={<SVGInline
+                                            width="35px"
+                                            height="35px"
+                                            fill='#f1753e'
+                                            svg={iconSVG(activity)}
+                                        />
+                                        // <Avatar aria-label="recipe" className={classes.avatar}>
+                                        //
+                                        // </Avatar>
                                     }
                                     action={
                                         <IconButton aria-label="settings" className={classes.info} onClick={(e) => {

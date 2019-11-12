@@ -215,17 +215,20 @@ function AddActivity(props) {
             label: `${activity.personResponsible.profile.firstName} ${activity.personResponsible.profile.lastName}`,
             value: activity.personResponsible._id
         };
-        setPerson(obj)
-        // activity.stakeHolders && (updateFilter('localStakeHolders', 'ids', activity.stakeHolders))
+        setPerson(obj);
+        if(local.ids.length !== activity.stakeHolders.length){
+            activity.stakeHolders && (updateFilter('localStakeHolders', 'ids', activity.stakeHolders))
+        }
+
     };
 
     const resetValues = () => {
         let selectedActivity = data.find(item => item.name === activity.type) || {};
-        setActivityType({})
-        setDueDate(new Date())
-        setDescription('')
+        setActivityType({});
+        setDueDate(new Date());
+        setDescription('');
         setPerson(null)
-    }
+    };
 
     const updateUsersList = () => {
         Meteor.call(`users.getPersons`, {company: company}, (err, res) => {
@@ -250,6 +253,7 @@ function AddActivity(props) {
         setOpen(edit || open);
         updateUsersList();
         if(edit && activity && activity.name){
+            setExpanded('panel1');
             updateValues();
         }
 
@@ -283,7 +287,7 @@ function AddActivity(props) {
             props.enqueueSnackbar('Please fill all required Fields', {variant: 'error'});
             return false;
         }
-        else if(!(Object.keys(activityType) || Array.isArray(stakeHolders))){
+        else if(!(activityType && activityType.name) && Array.isArray(stakeHolders)){
             props.enqueueSnackbar('Please fill all required Fields', {variant: 'error'});
             return false;
         }
@@ -294,20 +298,22 @@ function AddActivity(props) {
                 description,
                 owner: person.value,
                 dueDate,
-                stakeHolders: stakeHolders.map((user) => user._id),
+                stakeHolders: local.ids,
                 projectId,
                 step: 1
             }
         };
 
-        Meteor.call('activities.insert', params, (err, res) => {
+        let methodName = isNew ? 'activities.insert' : 'activities.update';
+        !isNew && (params.activity._id = activity._id);
+        Meteor.call(methodName, params, (err, res) => {
             if(err){
                 props.enqueueSnackbar(err.reason, {variant: 'error'})
             }
             else{
                 // updateFilter('localStakeHolders', 'ids', [])
-                setOpen(false);
-                props.enqueueSnackbar('Activity Added Successfully.', {variant: 'success'})
+                handleClose();
+                props.enqueueSnackbar(`Activity ${isNew ? 'Added' : 'Updated'} Successfully.`, {variant: 'success'})
             }
 
         })
