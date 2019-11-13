@@ -111,7 +111,7 @@ export default function AWARENESSCard(props) {
                 className={classes.cardHeader}
                 avatar={
                     <Avatar aria-label="recipe" className={classes.avatar}>
-                        1
+                        2
                     </Avatar>
                 }
                 action={
@@ -122,7 +122,7 @@ export default function AWARENESSCard(props) {
                 // title="AWARENESS"
                 title={
                     <Typography variant="subtitle1">
-                        AWARENESS
+                        PREPAREDNESS
                     </Typography>
                 }
             />
