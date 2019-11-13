@@ -17,6 +17,7 @@ const useStyles = makeStyles(theme => ({
     formControl: {
         marginBottom: -16,
         minWidth: 145,
+        width: 345
     },
     topTexts: {
         color : '#465563',

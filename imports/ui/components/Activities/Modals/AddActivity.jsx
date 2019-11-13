@@ -41,6 +41,7 @@ import { stringHelpers } from '/imports/helpers/stringHelpers';
 import  AutoComplete from '/imports/ui/components/utilityComponents/AutoCompleteInline'
 import AddNewPerson from './AddNewPerson';
 import { withRouter } from 'react-router'
+import DeleteActivity from './DeleteActivity';
 
 const styles = theme => ({
     root: {
@@ -183,6 +184,7 @@ const DialogActions = withStyles(theme => ({
 function AddActivity(props) {
     let { company, stakeHolders, local, match, edit, activity } = props;
     const [open, setOpen] = React.useState(edit || false);
+    const [deleteModal, setDeleteModal] = React.useState(false);
     const [isNew, setIsNew] = React.useState(false);
     const [users, setUsers] = React.useState([]);
     const [name, setName] = React.useState('');
@@ -265,7 +267,7 @@ function AddActivity(props) {
     };
 
     const handleClickOpen = () => {
-        setIsNew(true)
+        setIsNew(true);
         // updateFilter('localStakeHolders', 'ids', [])
         setExpanded('panel1');
         setOpen(true);
@@ -374,6 +376,15 @@ function AddActivity(props) {
 
     function handleSelectOpen() {
         setSelectOpen(true);
+    }
+
+    function deleteActivity() {
+        setDeleteModal(true);
+    }
+
+    function deleteActivityClose(deleted) {
+        setDeleteModal(false);
+        deleted === true && handleClose();
     }
 
 
@@ -562,15 +573,20 @@ function AddActivity(props) {
                     </div>
                 </DialogContent>
                     <DialogActions>
-                        <Button onClick={handleClose} color="secondary">
+                        {isNew ? <Button onClick={handleClose} color="secondary">
                             cancel
-                        </Button>
+                        </Button> :
+                            <Button onClick={deleteActivity} color="secondary">
+                                Delete
+                            </Button>}
+
                         <Button type="submit" color="primary">
                             Save
                         </Button>
                     </DialogActions>
                 </form>
             </Dialog>
+            <DeleteActivity open={deleteModal} handleModalClose={deleteActivityClose} activity={activity}/>
         </div>
     );
 }
