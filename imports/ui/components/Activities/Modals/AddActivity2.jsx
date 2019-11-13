@@ -219,6 +219,7 @@ function AddActivity(props) {
             value: activity.personResponsible._id
         };
         setPerson(obj);
+        updateFilter('localStakeHolders', 'ids', activity.stakeHolders);
         let updatedStakeHolders = local.changed ? local.ids : activity.stakeHolders;
         setPeoples(updatedStakeHolders);
 
@@ -281,6 +282,7 @@ function AddActivity(props) {
         setOpen(false);
         setIsNew(false);
         props.newActivity();
+        updateFilter('localStakeHolders', 'changed', false);
         resetValues()
     };
     const createProject = (e) => {
