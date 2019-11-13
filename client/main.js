@@ -23,7 +23,8 @@ LocalCollection.insert({
 
 LocalCollection.insert({
     name: 'localStakeHolders',
-    ids: []
+    ids: [],
+    changed: false
 });
 
 updateFilter = function (name, key, value){

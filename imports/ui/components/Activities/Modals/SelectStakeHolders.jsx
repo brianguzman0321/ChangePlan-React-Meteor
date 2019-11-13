@@ -376,6 +376,7 @@ export default function SelectStakeHolders(props) {
 
     const updateStakeHolders = () => {
         updateFilter('localStakeHolders', 'ids', stakeHolders);
+        updateFilter('localStakeHolders', 'changed', true);
         setOpen(false);
     };
 

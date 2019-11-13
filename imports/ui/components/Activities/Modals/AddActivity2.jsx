@@ -190,6 +190,7 @@ function AddActivity(props) {
     const [name, setName] = React.useState('');
     const [description, setDescription] = React.useState('');
     const [person, setPerson] = React.useState('');
+    const [peoples, setPeoples] = React.useState(stakeHolders.map(item => item._id));
     const [activityType, setActivityType] = React.useState({});
     const [startingDate, setStartingDate] = React.useState(new Date());
     const [dueDate, setDueDate] = React.useState(new Date());
@@ -218,9 +219,8 @@ function AddActivity(props) {
             value: activity.personResponsible._id
         };
         setPerson(obj);
-        if(local.ids.length !== activity.stakeHolders.length){
-            activity.stakeHolders && (updateFilter('localStakeHolders', 'ids', activity.stakeHolders))
-        }
+        let updatedStakeHolders = local.changed ? local.ids : activity.stakeHolders;
+        setPeoples(updatedStakeHolders);
 
     };
 
@@ -229,7 +229,8 @@ function AddActivity(props) {
         setActivityType({});
         setDueDate(new Date());
         setDescription('');
-        setPerson(null)
+        setPerson(null);
+        setPeoples(stakeHolders.map(item => item._id))
     };
 
     const updateUsersList = () => {
@@ -254,6 +255,9 @@ function AddActivity(props) {
     useEffect(() => {
         setOpen(edit || open);
         updateUsersList();
+        if(isNew){
+            setPeoples(stakeHolders.map(item => item._id))
+        }
         if(edit && activity && activity.name){
             setExpanded('panel1');
             updateValues();
@@ -300,7 +304,7 @@ function AddActivity(props) {
                 description,
                 owner: person.value,
                 dueDate,
-                stakeHolders: local.ids,
+                stakeHolders: peoples,
                 projectId,
                 step: 2
             }
@@ -505,7 +509,7 @@ function AddActivity(props) {
                             >
                                 <Typography className={classes.heading}>Stakeholders</Typography>
                                 <Typography className={classes.secondaryHeading}>
-                                    {local.ids.length} of {stakeHolders.length}
+                                    {peoples.length} of {stakeHolders.length}
                                 </Typography>
                             </ExpansionPanelSummary>
                             <ExpansionPanelDetails>
