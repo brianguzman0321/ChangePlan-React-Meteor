@@ -103,11 +103,11 @@ function EnhancedTableHead(props) {
                 </TableCell>
                 {headCells.map(headCell => (
                     <TableCell style={{color: 'white'}}
-                        key={headCell.id}
+                               key={headCell.id}
                         // align={headCell.numeric ? 'right' : 'left'}
-                        align={'center'}
+                               align={'center'}
                         // padding={headCell.disablePadding ? 'none' : 'default'}
-                        sortDirection={orderBy === headCell.id ? order : false}
+                               sortDirection={orderBy === headCell.id ? order : false}
                     >
                         <TableSortLabel
                             active={orderBy === headCell.id}
@@ -173,10 +173,10 @@ const EnhancedTableToolbar = props => {
                 </Typography>
             ) : ''
                 /*(
-                <Typography className={classes.title} variant="h6" id="tableTitle">
-                    Nutrition
-                </Typography>
-            )*/
+                 <Typography className={classes.title} variant="h6" id="tableTitle">
+                 Nutrition
+                 </Typography>
+                 )*/
             }
 
             {numSelected > 0 ? (
@@ -185,12 +185,12 @@ const EnhancedTableToolbar = props => {
                 </Tooltip>
             ) : ''
                 /*(
-                <Tooltip title="Filter list">
-                    <IconButton aria-label="filter list">
-                        <FilterListIcon />
-                    </IconButton>
-                </Tooltip>
-            )*/
+                 <Tooltip title="Filter list">
+                 <IconButton aria-label="filter list">
+                 <FilterListIcon />
+                 </IconButton>
+                 </Tooltip>
+                 )*/
             }
         </Toolbar>
     );
@@ -206,7 +206,7 @@ const useStyles = makeStyles(theme => ({
         margin: theme.spacing(3),
     },
     head: {
-      background : 'red'
+        background : 'red'
     },
     paper: {
         width: '100%',
@@ -356,11 +356,11 @@ export default function StakeHolderList(props) {
                                             <TableCell align="center" onClick={event => deleteCell(event, row)}>
                                                 <EditStakeHolderPage stakeholder={row} />
                                                 {/*<IconButton aria-label="edit" onClick={(event) => {deleteCell(event, row)}}>*/}
-                                                    {/*<EditIcon />*/}
+                                                {/*<EditIcon />*/}
                                                 {/*</IconButton>*/}
                                                 <DeleteStakeHolder stakeholder={row}/>
                                                 {/*<IconButton aria-label="edit" onClick={(event) => {deleteCell(event, row)}}>*/}
-                                                    {/*<DeleteIcon />*/}
+                                                {/*<DeleteIcon />*/}
                                                 {/*</IconButton>*/}
                                             </TableCell>
                                         </TableRow>

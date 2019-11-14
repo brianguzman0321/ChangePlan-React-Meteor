@@ -108,11 +108,11 @@ function EnhancedTableHead(props) {
                 </TableCell>
                 {headCells.map(headCell => (
                     <TableCell
-                               key={headCell.id}
+                        key={headCell.id}
                         // align={headCell.numeric ? 'right' : 'left'}
-                               align={'center'}
+                        align={'center'}
                         // padding={headCell.disablePadding ? 'none' : 'default'}
-                               sortDirection={orderBy === headCell.id ? order : false}
+                        sortDirection={orderBy === headCell.id ? order : false}
                     >
                         <TableSortLabel
                             active={orderBy === headCell.id}

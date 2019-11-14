@@ -84,23 +84,23 @@ function ActivitiesCard(props){
                     direction="row"
                     justify="space-between"
                 >
-                <Grid item xs={6} md={9}>
-                    <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
-                        Activities
-                    </Typography>
-                </Grid>
-                <Grid item xs={6} md={3}>
-                    <Tabs
-                        value={value}
-                        onChange={handleChange}
-                        indicatorColor="primary"
-                        textColor="primary"
-                        aria-label="icon tabs example"
-                    >
-                        <Tab className={classes.activityTab} label={<><div className={classes.iconTab}><ViewColumnIcon/>&nbsp; Board</div></>}/>
-                        <Tab className={classes.activityTab} label={<><div className={classes.iconTab}><ListIcon/>&nbsp; List</div></>}/>
-                    </Tabs>
-                </Grid>
+                    <Grid item xs={6} md={9}>
+                        <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
+                            Activities
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={6} md={3}>
+                        <Tabs
+                            value={value}
+                            onChange={handleChange}
+                            indicatorColor="primary"
+                            textColor="primary"
+                            aria-label="icon tabs example"
+                        >
+                            <Tab className={classes.activityTab} label={<><div className={classes.iconTab}><ViewColumnIcon/>&nbsp; Board</div></>}/>
+                            <Tab className={classes.activityTab} label={<><div className={classes.iconTab}><ListIcon/>&nbsp; List</div></>}/>
+                        </Tabs>
+                    </Grid>
                 </Grid>
             </Grid>
             <Grid

@@ -199,43 +199,43 @@ function AddNewPerson(props) {
                     </Toolbar>
                 </AppBar>
                 <DialogContent dividers>
-                <Grid container justify="space-between" spacing={4}>
-                    <Grid item={true} xs={6} >
-                        <TextField
-                            autoFocus
-                            margin="dense"
-                            id="firstName"
-                            label="First Name"
-                            value={firstName}
-                            onChange={(e)=> {setFirstName(e.target.value)}}
-                            required={true}
-                            type="text"
-                            fullWidth
-                        />
+                    <Grid container justify="space-between" spacing={4}>
+                        <Grid item={true} xs={6} >
+                            <TextField
+                                autoFocus
+                                margin="dense"
+                                id="firstName"
+                                label="First Name"
+                                value={firstName}
+                                onChange={(e)=> {setFirstName(e.target.value)}}
+                                required={true}
+                                type="text"
+                                fullWidth
+                            />
+                        </Grid>
+                        <Grid item={true} xs={6} >
+                            <TextField
+                                margin="dense"
+                                id="lastName"
+                                label="Last Name"
+                                value={lastName}
+                                onChange={(e)=> {setLastName(e.target.value)}}
+                                required={true}
+                                type="text"
+                                fullWidth
+                            />
+                        </Grid>
                     </Grid>
-                    <Grid item={true} xs={6} >
-                        <TextField
-                            margin="dense"
-                            id="lastName"
-                            label="Last Name"
-                            value={lastName}
-                            onChange={(e)=> {setLastName(e.target.value)}}
-                            required={true}
-                            type="text"
-                            fullWidth
-                        />
-                    </Grid>
-                </Grid>
-                <TextField
-                    margin="dense"
-                    id="email"
-                    label="Email"
-                    value={email}
-                    onChange={(e)=> {setEmail(e.target.value)}}
-                    required={true}
-                    type="email"
-                    fullWidth
-                />
+                    <TextField
+                        margin="dense"
+                        id="email"
+                        label="Email"
+                        value={email}
+                        onChange={(e)=> {setEmail(e.target.value)}}
+                        required={true}
+                        type="email"
+                        fullWidth
+                    />
                 </DialogContent>
             </Dialog>
         </div>

@@ -175,136 +175,136 @@ function AddStakeHolder(props) {
                     Add Stakeholder
                 </DialogTitle>
                 <form onSubmit={onSubmit}>
-                <DialogContent dividers>
-                    <Grid container spacing={2}>
-                        <Grid item xs={6}>
-                            <TextField
-                                autoFocus
-                                // margin="dense"
-                                id="firstName"
-                                label="First Name"
-                                value={firstName}
-                                onChange={(e)=> {setFirstName(e.target.value)}}
-                                required={true}
-                                type="text"
-                                fullWidth={true}
-                            />
-                        </Grid>
-                        <Grid item xs={6}>
-                            <TextField
-                                // margin="dense"
-                                id="lastName"
-                                label="Last Name"
-                                value={lastName}
-                                onChange={(e)=> {setLastName(e.target.value)}}
-                                required={true}
-                                type="text"
-                                fullWidth={true}
-                            />
-                        </Grid>
-                        <Grid item xs={6}>
-                        <TextField
-                            // margin="dense"
-                            id="role"
-                            label="Role"
-                            value={role}
-                            onChange={(e)=> {setRole(e.target.value)}}
-                            required={true}
-                            type="text"
-                            fullWidth={true}
-                        />
-                        </Grid>
-                        <Grid item xs={6}>
-                            <TextField
-                                // margin="dense"
-                                id="businessUnit"
-                                label="Business Unit"
-                                value={businessUnit}
-                                onChange={(e)=> {setBusinessUnit(e.target.value)}}
-                                required={true}
-                                type="text"
-                                fullWidth={true}
-                            />
-                        </Grid>
-                        <Grid item xs={6}>
-                        <TextField
-                            // margin="dense"
-                            id="email"
-                            label="Email"
-                            value={email}
-                            onChange={handleEmailChange}
-                            required={true}
-                            type="email"
-                            fullWidth={true}
-                        />
-                        </Grid>
-                        <Grid item xs={6} />
-                        <Grid item xs={6}>
-                            <FormControl className={classes.formControl} fullWidth={true} required>
-                                <InputLabel htmlFor="demo-controlled-open-select">Level Of Support</InputLabel>
-                                <Select
-                                    id="role"
-                                    label="role"
+                    <DialogContent dividers>
+                        <Grid container spacing={2}>
+                            <Grid item xs={6}>
+                                <TextField
+                                    autoFocus
+                                    // margin="dense"
+                                    id="firstName"
+                                    label="First Name"
+                                    value={firstName}
+                                    onChange={(e)=> {setFirstName(e.target.value)}}
+                                    required={true}
+                                    type="text"
                                     fullWidth={true}
-                                    open={selectOpen}
-                                    onClose={handleSelectClose}
-                                    onOpen={handleSelectOpen}
-                                    value={loS}
-                                    onChange={(e)=> {setLos(e.target.value)}}
-                                    inputProps={{
-                                        name: 'role',
-                                        id: 'demo-controlled-open-select',
-                                    }}
-                                >
-                                    <MenuItem value={1}>1</MenuItem>
-                                    <MenuItem value={2}>2</MenuItem>
-                                    <MenuItem value={3}>3</MenuItem>
-                                    <MenuItem value={4}>4</MenuItem>
-                                    <MenuItem value={5}>5</MenuItem>
-                                </Select>
-                            </FormControl>
-                            <br/>
-                            <br/>
-                            <br/>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <FormControl className={classes.formControl} fullWidth={true} required>
-                                <InputLabel htmlFor="demo-controlled-open-select">Level Of Influence</InputLabel>
-                                <Select
-                                    id="role"
-                                    label="role"
+                                />
+                            </Grid>
+                            <Grid item xs={6}>
+                                <TextField
+                                    // margin="dense"
+                                    id="lastName"
+                                    label="Last Name"
+                                    value={lastName}
+                                    onChange={(e)=> {setLastName(e.target.value)}}
+                                    required={true}
+                                    type="text"
                                     fullWidth={true}
-                                    open={selectOpen1}
-                                    onClose={handleSelectClose1}
-                                    onOpen={handleSelectOpen1}
-                                    value={loI}
-                                    onChange={(e)=> {setLoi(e.target.value)}}
-                                    inputProps={{
-                                        name: 'role',
-                                        id: 'demo-controlled-open-select',
-                                    }}
-                                >
-                                    <MenuItem value={1}>1</MenuItem>
-                                    <MenuItem value={2}>2</MenuItem>
-                                    <MenuItem value={3}>3</MenuItem>
-                                    <MenuItem value={4}>4</MenuItem>
-                                    <MenuItem value={5}>5</MenuItem>
-                                </Select>
-                            </FormControl>
-                            <br/>
-                            <br/>
-                            <br/>
+                                />
+                            </Grid>
+                            <Grid item xs={6}>
+                                <TextField
+                                    // margin="dense"
+                                    id="role"
+                                    label="Role"
+                                    value={role}
+                                    onChange={(e)=> {setRole(e.target.value)}}
+                                    required={true}
+                                    type="text"
+                                    fullWidth={true}
+                                />
+                            </Grid>
+                            <Grid item xs={6}>
+                                <TextField
+                                    // margin="dense"
+                                    id="businessUnit"
+                                    label="Business Unit"
+                                    value={businessUnit}
+                                    onChange={(e)=> {setBusinessUnit(e.target.value)}}
+                                    required={true}
+                                    type="text"
+                                    fullWidth={true}
+                                />
+                            </Grid>
+                            <Grid item xs={6}>
+                                <TextField
+                                    // margin="dense"
+                                    id="email"
+                                    label="Email"
+                                    value={email}
+                                    onChange={handleEmailChange}
+                                    required={true}
+                                    type="email"
+                                    fullWidth={true}
+                                />
+                            </Grid>
+                            <Grid item xs={6} />
+                            <Grid item xs={6}>
+                                <FormControl className={classes.formControl} fullWidth={true} required>
+                                    <InputLabel htmlFor="demo-controlled-open-select">Level Of Support</InputLabel>
+                                    <Select
+                                        id="role"
+                                        label="role"
+                                        fullWidth={true}
+                                        open={selectOpen}
+                                        onClose={handleSelectClose}
+                                        onOpen={handleSelectOpen}
+                                        value={loS}
+                                        onChange={(e)=> {setLos(e.target.value)}}
+                                        inputProps={{
+                                            name: 'role',
+                                            id: 'demo-controlled-open-select',
+                                        }}
+                                    >
+                                        <MenuItem value={1}>1</MenuItem>
+                                        <MenuItem value={2}>2</MenuItem>
+                                        <MenuItem value={3}>3</MenuItem>
+                                        <MenuItem value={4}>4</MenuItem>
+                                        <MenuItem value={5}>5</MenuItem>
+                                    </Select>
+                                </FormControl>
+                                <br/>
+                                <br/>
+                                <br/>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <FormControl className={classes.formControl} fullWidth={true} required>
+                                    <InputLabel htmlFor="demo-controlled-open-select">Level Of Influence</InputLabel>
+                                    <Select
+                                        id="role"
+                                        label="role"
+                                        fullWidth={true}
+                                        open={selectOpen1}
+                                        onClose={handleSelectClose1}
+                                        onOpen={handleSelectOpen1}
+                                        value={loI}
+                                        onChange={(e)=> {setLoi(e.target.value)}}
+                                        inputProps={{
+                                            name: 'role',
+                                            id: 'demo-controlled-open-select',
+                                        }}
+                                    >
+                                        <MenuItem value={1}>1</MenuItem>
+                                        <MenuItem value={2}>2</MenuItem>
+                                        <MenuItem value={3}>3</MenuItem>
+                                        <MenuItem value={4}>4</MenuItem>
+                                        <MenuItem value={5}>5</MenuItem>
+                                    </Select>
+                                </FormControl>
+                                <br/>
+                                <br/>
+                                <br/>
+                            </Grid>
                         </Grid>
-                    </Grid>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose} color="secondary">
-                        Cancel
-                    </Button>
-                    <Button color="primary" type="submit">
-                        Save
-                    </Button>
-                </DialogActions>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose} color="secondary">
+                            Cancel
+                        </Button>
+                        <Button color="primary" type="submit">
+                            Save
+                        </Button>
+                    </DialogActions>
                 </form>
             </Dialog>
         </div>

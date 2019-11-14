@@ -38,8 +38,8 @@ const AdminRoute = ({ loggingIn, authenticated, user, component, ...rest }) => (
         if (loggingIn) return <div></div>;
         if (user && !user.roles) return <div></div>;
         return authenticated && user && Roles.userIsInRole(user._id, 'superAdmin') ?
-        (React.createElement(component, { ...props, loggingIn, authenticated })) :
-        (<Redirect to="/" />);
+            (React.createElement(component, { ...props, loggingIn, authenticated })) :
+            (<Redirect to="/" />);
 
     }} />
 );
@@ -56,21 +56,21 @@ const Public = ({ loggingIn, authenticated, component, ...rest }) => (
 const Routes = appProps => (
     <Router>
         <div className="App">
-                <Switch>
-                    <Authenticated exact path="/" component={Home} {...appProps}/>
-                    <Authenticated exact path="/projects/:projectId" component={Dashboard} {...appProps}/>
-                    <Authenticated exact path="/control-panel" component={ControlPanel} {...appProps}/>
-                    <Authenticated exact path="/projects/:projectId/activities" component={ActivitiesCard} {...appProps}/>
-                    <Authenticated exact path="/projects/:projectId/stake-holders" component={StakeHoldersCard} {...appProps}/>
-                    <Authenticated exact path="/projects/:projectId/reports" component={ReportsCard} {...appProps}/>
-                    <AdminRoute exact path="/admin/control-panel" component={MaterialTableDemo} {...appProps}/>
-                    <AdminRoute exact path="/admin/companies" component={CompaniesListPage} {...appProps}/>
-                    <Public path="/signup" component={Signup} {...appProps}/>
-                    <Public path="/login" component={Login} {...appProps}/>
-                    <Public path="/forgot-password" component={ForgotPassword} {...appProps}/>
-                    <Public path="/reset-password/:id" component={ResetPassword} {...appProps}/>
-                    <Public path="/enroll-account/:id" component={EnrollAccountPage} {...appProps}/>
-                </Switch>
+            <Switch>
+                <Authenticated exact path="/" component={Home} {...appProps}/>
+                <Authenticated exact path="/projects/:projectId" component={Dashboard} {...appProps}/>
+                <Authenticated exact path="/control-panel" component={ControlPanel} {...appProps}/>
+                <Authenticated exact path="/projects/:projectId/activities" component={ActivitiesCard} {...appProps}/>
+                <Authenticated exact path="/projects/:projectId/stake-holders" component={StakeHoldersCard} {...appProps}/>
+                <Authenticated exact path="/projects/:projectId/reports" component={ReportsCard} {...appProps}/>
+                <AdminRoute exact path="/admin/control-panel" component={MaterialTableDemo} {...appProps}/>
+                <AdminRoute exact path="/admin/companies" component={CompaniesListPage} {...appProps}/>
+                <Public path="/signup" component={Signup} {...appProps}/>
+                <Public path="/login" component={Login} {...appProps}/>
+                <Public path="/forgot-password" component={ForgotPassword} {...appProps}/>
+                <Public path="/reset-password/:id" component={ResetPassword} {...appProps}/>
+                <Public path="/enroll-account/:id" component={EnrollAccountPage} {...appProps}/>
+            </Switch>
         </div>
     </Router>
 );
@@ -93,7 +93,7 @@ const Root = withTracker(props => {
 Meteor.startup(() => {
     render(
         <SnackbarProvider maxSnack={3}
-            anchorOrigin={{vertical : 'top', horizontal:"right"}}>
+                          anchorOrigin={{vertical : 'top', horizontal:"right"}}>
             <Root />
         </SnackbarProvider>,
         document.getElementById('render-root'));

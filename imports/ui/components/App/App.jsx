@@ -246,17 +246,17 @@ function TopNavBar(props) {
                     }
 
                     {/*{menus.activities.show && <Typography className={classes.topTexts} noWrap style={{borderLeft: '0.1em solid #eaecef'}}>*/}
-                        {/*<span style={{color: '#aab5c0'}}>102</span> ACTIVITIES*/}
+                    {/*<span style={{color: '#aab5c0'}}>102</span> ACTIVITIES*/}
                     {/*</Typography>}*/}
                     {/*{*/}
-                        {/*menus.stakeHolders.show && <Typography className={classes.topTexts} noWrap>*/}
-                            {/*<span style={{color: '#aab5c0'}}>3270</span> STAKEHOLDERS*/}
-                        {/*</Typography>*/}
+                    {/*menus.stakeHolders.show && <Typography className={classes.topTexts} noWrap>*/}
+                    {/*<span style={{color: '#aab5c0'}}>3270</span> STAKEHOLDERS*/}
+                    {/*</Typography>*/}
                     {/*}*/}
                     {/*{*/}
-                        {/*menus.reports.show && <Typography className={classes.topTexts} noWrap>*/}
-                            {/*REPORTS*/}
-                        {/*</Typography>*/}
+                    {/*menus.reports.show && <Typography className={classes.topTexts} noWrap>*/}
+                    {/*REPORTS*/}
+                    {/*</Typography>*/}
                     {/*}*/}
 
                     <div className={classes.sectionDesktop}>

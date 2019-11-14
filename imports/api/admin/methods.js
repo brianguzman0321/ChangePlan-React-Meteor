@@ -237,23 +237,23 @@ export const InviteNewUser = new ValidatedMethod({
     },
     validate: null,
     run({profile, email, company}) {
-            const newUserID = Accounts.createUser({profile, email});
-            Accounts.sendEnrollmentEmail(newUserID);
-            if(company){
-                let update= {
-                    $addToSet: {
-                        peoples: newUserID
-                    }
-                };
-                if(company.role){
-                    update.$addToSet.admins = newUserID
+        const newUserID = Accounts.createUser({profile, email});
+        Accounts.sendEnrollmentEmail(newUserID);
+        if(company){
+            let update= {
+                $addToSet: {
+                    peoples: newUserID
                 }
-                Companies.update({
-                    _id: company._id
-                }, update)
+            };
+            if(company.role){
+                update.$addToSet.admins = newUserID
             }
-            return newUserID;
+            Companies.update({
+                _id: company._id
+            }, update)
         }
+        return newUserID;
+    }
 });
 
 export const InviteNewProjectUser = new ValidatedMethod({

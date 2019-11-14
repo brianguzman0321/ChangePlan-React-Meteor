@@ -23,7 +23,7 @@ export default function Home(props){
         {
             name: 'reports',
             show: true
-    }];
+        }];
     if (!params.projectId){
         menus = []
     }

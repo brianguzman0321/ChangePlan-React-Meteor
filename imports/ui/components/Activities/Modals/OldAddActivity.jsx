@@ -179,129 +179,129 @@ function AddActivity(props) {
                     Add Activity
                 </DialogTitle>
                 <form onSubmit={onSubmit}>
-                <DialogContent dividers>
-                    <FormControl className={classes.formControl} fullWidth={true}>
-                        <InputLabel htmlFor="demo-controlled-open-select">Stake Holder targeted</InputLabel>
-                        <Select
-                            id="role"
-                            label="role"
-                            fullWidth={true}
-                            open={selectOpen}
-                            onClose={handleSelectClose}
-                            onOpen={handleSelectOpen}
-                            value={role}
-                            onChange={handleSelectChange}
-                            inputProps={{
-                                name: 'role',
-                                id: 'demo-controlled-open-select',
-                            }}
-                        >
-                            <MenuItem value='changeManager'>All Project StakeHolders</MenuItem>
-                            <MenuItem value='manager'>Customize</MenuItem>
-                        </Select>
-                    </FormControl>
-                    <br/>
-                    <br/>
-                    <FormControl className={classes.formControl} fullWidth={true}>
-                        <InputLabel htmlFor="demo-controlled-open-select">Activity Type</InputLabel>
-                        <Select
-                            id="role"
-                            label="role"
-                            fullWidth={true}
-                            open={selectOpen}
-                            onClose={handleSelectClose}
-                            onOpen={handleSelectOpen}
-                            value={role}
-                            onChange={handleSelectChange}
-                            inputProps={{
-                                name: 'role',
-                                id: 'demo-controlled-open-select',
-                            }}
-                        >
-                            <MenuItem value='changeManager'>Select Activity Type</MenuItem>
-                            <MenuItem value='manager'>Customize</MenuItem>
-                        </Select>
-                    </FormControl>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="name"
-                        label="Description"
-                        value={name}
-                        onChange={handleChange}
-                        required={true}
-                        type="text"
-                        fullWidth
-                    />
-                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                        <Grid container justify="space-between">
-                            <KeyboardDatePicker
-                                disableToolbar
-                                variant="inline"
-                                format="MM/dd/yyyy"
-                                margin="normal"
-                                id="date-picker-inline"
-                                label="Due Date"
-                                value={startingDate}
-                                open={startingDateOpen}
-                                onOpen={openStarting}
-                                onChange={handleStartingDate}
-                                KeyboardButtonProps={{
-                                    'aria-label': 'change date',
-                                }}
-                            />
-                            <KeyboardDatePicker
-                                disableToolbar
-                                variant="inline"
-                                // open={true}
-                                margin="normal"
-                                id="date-picker-dialog"
-                                label="Date Completed"
-                                format="MM/dd/yyyy"
-                                value={null}
-                                // minDate={startingDate}
-                                open={endingDateOpen}
-                                onOpen={openEnding}
-                                onChange={handleEndingDate}
-                                disabled={true}
-                                KeyboardButtonProps={{
-                                    'aria-label': 'change date',
-                                }}
-                            />
-                        </Grid>
-                    </MuiPickersUtilsProvider>
-                    <br />
-                    <Typography>
-                        Person Responsible
-                    </Typography>
-                    <Grid container spacing={2}>
-                        <Grid item xs={6}>
-                            <TextField
-                                autoFocus
-                                // margin="dense"
-                                id="name"
-                                label="Name"
-                                // value={name}
-                                // onChange={handleChange}
-                                required={true}
-                                type="text"
+                    <DialogContent dividers>
+                        <FormControl className={classes.formControl} fullWidth={true}>
+                            <InputLabel htmlFor="demo-controlled-open-select">Stake Holder targeted</InputLabel>
+                            <Select
+                                id="role"
+                                label="role"
                                 fullWidth={true}
-                            />
-                        </Grid>
-                        <Grid item xs={6}>
-                            <TextField
-                                // margin="dense"
-                                id="email"
-                                label="Email"
-                                // value={email}
-                                // onChange={handleEmailChange}
-                                required={true}
-                                type="email"
+                                open={selectOpen}
+                                onClose={handleSelectClose}
+                                onOpen={handleSelectOpen}
+                                value={role}
+                                onChange={handleSelectChange}
+                                inputProps={{
+                                    name: 'role',
+                                    id: 'demo-controlled-open-select',
+                                }}
+                            >
+                                <MenuItem value='changeManager'>All Project StakeHolders</MenuItem>
+                                <MenuItem value='manager'>Customize</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <br/>
+                        <br/>
+                        <FormControl className={classes.formControl} fullWidth={true}>
+                            <InputLabel htmlFor="demo-controlled-open-select">Activity Type</InputLabel>
+                            <Select
+                                id="role"
+                                label="role"
                                 fullWidth={true}
-                            />
+                                open={selectOpen}
+                                onClose={handleSelectClose}
+                                onOpen={handleSelectOpen}
+                                value={role}
+                                onChange={handleSelectChange}
+                                inputProps={{
+                                    name: 'role',
+                                    id: 'demo-controlled-open-select',
+                                }}
+                            >
+                                <MenuItem value='changeManager'>Select Activity Type</MenuItem>
+                                <MenuItem value='manager'>Customize</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            id="name"
+                            label="Description"
+                            value={name}
+                            onChange={handleChange}
+                            required={true}
+                            type="text"
+                            fullWidth
+                        />
+                        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                            <Grid container justify="space-between">
+                                <KeyboardDatePicker
+                                    disableToolbar
+                                    variant="inline"
+                                    format="MM/dd/yyyy"
+                                    margin="normal"
+                                    id="date-picker-inline"
+                                    label="Due Date"
+                                    value={startingDate}
+                                    open={startingDateOpen}
+                                    onOpen={openStarting}
+                                    onChange={handleStartingDate}
+                                    KeyboardButtonProps={{
+                                        'aria-label': 'change date',
+                                    }}
+                                />
+                                <KeyboardDatePicker
+                                    disableToolbar
+                                    variant="inline"
+                                    // open={true}
+                                    margin="normal"
+                                    id="date-picker-dialog"
+                                    label="Date Completed"
+                                    format="MM/dd/yyyy"
+                                    value={null}
+                                    // minDate={startingDate}
+                                    open={endingDateOpen}
+                                    onOpen={openEnding}
+                                    onChange={handleEndingDate}
+                                    disabled={true}
+                                    KeyboardButtonProps={{
+                                        'aria-label': 'change date',
+                                    }}
+                                />
+                            </Grid>
+                        </MuiPickersUtilsProvider>
+                        <br />
+                        <Typography>
+                            Person Responsible
+                        </Typography>
+                        <Grid container spacing={2}>
+                            <Grid item xs={6}>
+                                <TextField
+                                    autoFocus
+                                    // margin="dense"
+                                    id="name"
+                                    label="Name"
+                                    // value={name}
+                                    // onChange={handleChange}
+                                    required={true}
+                                    type="text"
+                                    fullWidth={true}
+                                />
+                            </Grid>
+                            <Grid item xs={6}>
+                                <TextField
+                                    // margin="dense"
+                                    id="email"
+                                    label="Email"
+                                    // value={email}
+                                    // onChange={handleEmailChange}
+                                    required={true}
+                                    type="email"
+                                    fullWidth={true}
+                                />
+                            </Grid>
                         </Grid>
-                    </Grid>
-                </DialogContent>
+                    </DialogContent>
                     <DialogActions>
                         <Grid container justify="space-around">
                             <Button onClick={createProject} color="secondary">

@@ -23,7 +23,7 @@ export default function Dashboard(props){
         {
             name: 'reports',
             show: true
-    }];
+        }];
     if (!params.projectId){
         menus = []
     }

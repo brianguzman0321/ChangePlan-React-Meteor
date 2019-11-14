@@ -54,29 +54,29 @@ function DeleteStakeHolder(props) {
             </IconButton>
         }
 
-            <Dialog
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-            >
-                <DialogTitle id="alert-dialog-title">
-                    Delete Stakeholder?
-                </DialogTitle>
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                        Are you sure? You are going to remove stakeholder permanently. this action can's be reverted
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose} color="primary">
-                        Cancel
-                    </Button>
-                    <Button onClick={removeStakeHolder} color="secondary">
-                        Remove
-                    </Button>
-                </DialogActions>
-            </Dialog>
+        <Dialog
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+        >
+            <DialogTitle id="alert-dialog-title">
+                Delete Stakeholder?
+            </DialogTitle>
+            <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                    Are you sure? You are going to remove stakeholder permanently. this action can's be reverted
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={handleClose} color="primary">
+                    Cancel
+                </Button>
+                <Button onClick={removeStakeHolder} color="secondary">
+                    Remove
+                </Button>
+            </DialogActions>
+        </Dialog>
         </>
     );
 }

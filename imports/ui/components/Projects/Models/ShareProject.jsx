@@ -141,32 +141,32 @@ function ShareProject(props) {
                 <DialogContent dividers>
                     <Grid container spacing={2}>
                         <Grid item xs={6}>
-                        <TextField
-                            autoFocus
-                            // margin="dense"
-                            id="name"
-                            label="Name"
-                            value={name}
-                            onChange={handleChange}
-                            required={true}
-                            type="text"
-                            fullWidth={true}
-                        />
+                            <TextField
+                                autoFocus
+                                // margin="dense"
+                                id="name"
+                                label="Name"
+                                value={name}
+                                onChange={handleChange}
+                                required={true}
+                                type="text"
+                                fullWidth={true}
+                            />
                         </Grid>
                         <Grid item xs={6}>
-                        <TextField
-                            // margin="dense"
-                            id="email"
-                            label="Email"
-                            value={email}
-                            onChange={handleEmailChange}
-                            required={true}
-                            type="email"
-                            fullWidth={true}
-                        />
+                            <TextField
+                                // margin="dense"
+                                id="email"
+                                label="Email"
+                                value={email}
+                                onChange={handleEmailChange}
+                                required={true}
+                                type="email"
+                                fullWidth={true}
+                            />
                         </Grid>
                         <Grid item xs={12}>
-                        <br/>
+                            <br/>
                             <FormControl className={classes.formControl} fullWidth={true}>
                                 <InputLabel htmlFor="demo-controlled-open-select">Role</InputLabel>
                                 <Select

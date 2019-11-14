@@ -122,8 +122,8 @@ export default function AWARENESSCard(props) {
                 // title="AWARENESS"
                 title={
                     <Typography variant="subtitle1">
-                    AWARENESS
-                </Typography>
+                        AWARENESS
+                    </Typography>
                 }
             />
 
@@ -132,54 +132,54 @@ export default function AWARENESSCard(props) {
                 {
                     activities.map(activity => {
                         return <Card className={classes.innerCard} key={activity._id} onClick={(e) =>{editActivity(activity)}}>
-                                <CardHeader
-                                    className={classes.innerCardHeader}
-                                    avatar={<SVGInline
-                                            width="35px"
-                                            height="35px"
-                                            fill='#f1753e'
-                                            svg={iconSVG(activity)}
-                                        />
-                                        // <Avatar aria-label="recipe" className={classes.avatar}>
-                                        //
-                                        // </Avatar>
-                                    }
-                                    action={
-                                        <IconButton aria-label="settings" className={classes.info} onClick={(e) => {
-                                            e.stopPropagation();
-                                            completeActivity(activity)
-                                        }}>
-                                            {
-                                                activity.completed ? <CheckBoxIcon className={classes.checkBoxIcon} color="primary"/> :
-                                                <CheckBoxOutlineBlankIcon className={classes.checkBoxIcon} color="primary"/>
-                                            }
-                                        </IconButton>
-                                    }
-                                    // title="AWARENESS"
-                                    title={
-                                        <Typography variant="subtitle1">
-                                            {activity.name}
-                                        </Typography>
-                                    }
+                            <CardHeader
+                                className={classes.innerCardHeader}
+                                avatar={<SVGInline
+                                    width="35px"
+                                    height="35px"
+                                    fill='#f1753e'
+                                    svg={iconSVG(activity)}
                                 />
-
-                                <CardContent className={classes.innerCardContent}>
-                                    <Typography variant="body2" color="textSecondary" component="p">
-                                        {stringHelpers.limitCharacters(activity.description, 50)}
+                                    // <Avatar aria-label="recipe" className={classes.avatar}>
+                                    //
+                                    // </Avatar>
+                                }
+                                action={
+                                    <IconButton aria-label="settings" className={classes.info} onClick={(e) => {
+                                        e.stopPropagation();
+                                        completeActivity(activity)
+                                    }}>
+                                        {
+                                            activity.completed ? <CheckBoxIcon className={classes.checkBoxIcon} color="primary"/> :
+                                                <CheckBoxOutlineBlankIcon className={classes.checkBoxIcon} color="primary"/>
+                                        }
+                                    </IconButton>
+                                }
+                                // title="AWARENESS"
+                                title={
+                                    <Typography variant="subtitle1">
+                                        {activity.name}
                                     </Typography>
-                                    <br/>
-                                    <Grid container justify="space-between">
-                                        <Typography variant="body2" color="textSecondary" component="p">
-                                            {moment(activity.dueDate).format('DD MMM')}
-                                        </Typography>
-                                        <Typography variant="body2" color="textSecondary" component="p" >
-                                            {`${activity.personResponsible.profile.firstName} ${activity.personResponsible.profile.lastName}`}
-                                        </Typography>
-                                    </Grid>
-                                    <br/>
-                                </CardContent>
-                            </Card>
-                })
+                                }
+                            />
+
+                            <CardContent className={classes.innerCardContent}>
+                                <Typography variant="body2" color="textSecondary" component="p">
+                                    {stringHelpers.limitCharacters(activity.description, 50)}
+                                </Typography>
+                                <br/>
+                                <Grid container justify="space-between">
+                                    <Typography variant="body2" color="textSecondary" component="p">
+                                        {moment(activity.dueDate).format('DD MMM')}
+                                    </Typography>
+                                    <Typography variant="body2" color="textSecondary" component="p" >
+                                        {`${activity.personResponsible.profile.firstName} ${activity.personResponsible.profile.lastName}`}
+                                    </Typography>
+                                </Grid>
+                                <br/>
+                            </CardContent>
+                        </Card>
+                    })
                 }
 
                 <AddActivity edit={edit} activity={sActivity} newActivity={() => setEdit(false)}/>

@@ -78,26 +78,26 @@ function UserSelectionModal(props) {
 
     return (
         <div>
-        <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-            ASSIGN EXISTING USER TO {title}
-    </Button>
-    <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" maxWidth="md">
-        <DialogTitle id="form-dialog-title">Assign Users</DialogTitle>
-        <DialogContent>
-        <DialogContentText>
-            {modalMessage()}
-    </DialogContentText>
-    <IntegrationReactSelect updateUsers={updateUsers} data={props.options}/>
-    </DialogContent>
-    <DialogActions>
-    <Button onClick={handleClose} color="primary">
-        Cancel
-        </Button>
-        <Button onClick={saveUsers} color="primary">
-        Save
-        </Button>
-        </DialogActions>
-        </Dialog>
+            <Button variant="outlined" color="primary" onClick={handleClickOpen}>
+                ASSIGN EXISTING USER TO {title}
+            </Button>
+            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" maxWidth="md">
+                <DialogTitle id="form-dialog-title">Assign Users</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        {modalMessage()}
+                    </DialogContentText>
+                    <IntegrationReactSelect updateUsers={updateUsers} data={props.options}/>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={saveUsers} color="primary">
+                        Save
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
 }

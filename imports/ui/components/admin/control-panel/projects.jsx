@@ -76,23 +76,23 @@ function ProjectsSettings(props) {
     };
     useEffect(() => {
         updateUsersList();
-            setProject(props.currentProject);
-            if(props.currentProject.peoplesDetails){
-                let data = [...state.data];
-                data = removeCurrentUserRoles(props.currentProject.peoplesDetails, filterIds).map(user => {
-                    if(user){
-                        return {
-                            _id: user._id,
-                            firstName: user.profile.firstName,
-                            lastName: user.profile.lastName,
-                            email: user.emails[0].address,
-                            role: getRole(props.currentProject, user._id),
-                        }
+        setProject(props.currentProject);
+        if(props.currentProject.peoplesDetails){
+            let data = [...state.data];
+            data = removeCurrentUserRoles(props.currentProject.peoplesDetails, filterIds).map(user => {
+                if(user){
+                    return {
+                        _id: user._id,
+                        firstName: user.profile.firstName,
+                        lastName: user.profile.lastName,
+                        email: user.emails[0].address,
+                        role: getRole(props.currentProject, user._id),
                     }
-                    return user
-                });
-                setState({...state, data});
-            }
+                }
+                return user
+            });
+            setState({...state, data});
+        }
     }, [props.currentCompany, props.currentProject]);
 
 

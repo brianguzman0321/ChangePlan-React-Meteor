@@ -4,10 +4,10 @@
 export const stringHelpers = {
     capitalize(word){
         if(typeof word === 'string')
-        return word.charAt(0).toUpperCase() + word.slice(1);
+            return word.charAt(0).toUpperCase() + word.slice(1);
     },
     limitCharacters(sentence, limit){
         if(typeof sentence === 'string')
-        return sentence.length < limit ? sentence : sentence.slice(0, limit - 2).concat('...')
+            return sentence.length < limit ? sentence : sentence.slice(0, limit - 2).concat('...')
     }
 };

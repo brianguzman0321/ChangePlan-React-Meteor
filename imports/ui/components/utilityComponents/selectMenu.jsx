@@ -85,9 +85,9 @@ function ProjectSelectMenu(props) {
                     }}
                 >
                     {/*{!props.entities || (props.entities && !props.entities.length) ?*/}
-                        {/*<MenuItem value="">*/}
-                            {/*<em>No {title}</em>*/}
-                        {/*</MenuItem> : ''*/}
+                    {/*<MenuItem value="">*/}
+                    {/*<em>No {title}</em>*/}
+                    {/*</MenuItem> : ''*/}
                     {/*}*/}
 
                     {props.projects && props.projects.map((entity) => {

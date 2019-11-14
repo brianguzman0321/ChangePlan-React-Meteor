@@ -89,7 +89,7 @@ function StakeHolders(props){
                 spacing={0}
             >
                 <Grid container className={classes.topBar}>
-                <Grid item xs={12} sm={6} md={2}>
+                    <Grid item xs={12} sm={6} md={2}>
                         <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
                             Stakeholders
                         </Typography>
@@ -109,7 +109,7 @@ function StakeHolders(props){
                     <Grid item xs={4} className={classes.secondTab}>
                         <AddStakeHolder />
                         {/*<Button color="primary" className={classes.createNewProject}>*/}
-                            {/*Add*/}
+                        {/*Add*/}
                         {/*</Button>*/}
                     </Grid>
                 </Grid>

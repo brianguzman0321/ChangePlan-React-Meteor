@@ -71,48 +71,48 @@ function ForgotPassword (props) {
     });
     return <Container maxWidth="sm" style={styles.container}>
         <div className={classes.root}>
-        <Grid container spacing={3}>
-            <Grid item xs={12}>
-                <img src={`/branding/logo-long.png`}/>
+            <Grid container spacing={3}>
+                <Grid item xs={12}>
+                    <img src={`/branding/logo-long.png`}/>
+                </Grid>
+                <Grid item xs={12}>
+                    <h1 className={classes.topText}>Forgot Password</h1>
+                </Grid>
+                <Grid item xs={12}>
+                    <form onSubmit={onSubmit}>
+                        <Card className={classes.card} style={{padding: '12px'}}>
+                            <CardContent>
+                                <FormControl fullWidth>
+                                    <InputLabel htmlFor="my-password">Email address</InputLabel>
+                                    <Input id="my-input" aria-describedby="my-helper-text" name="email" placeholder="Enter Email" onChange={handleEmailInput} value={email} type="email" required/>
+                                    {/*<FormHelperText id="my-helper-text">We'll never share your email.</FormHelperText>*/}
+                                </FormControl>
+                                <br/>
+                                <br/>
+                            </CardContent>
+                            <CardActions style={{justifyContent: 'center'}}>
+                                <Button variant="contained" color="primary" type="submit">
+                                    Reset Your Password
+                                </Button>
+                            </CardActions>
+                            {error ?
+                                <CardActions style={{justifyContent: 'center'}}>
+                                    <Typography variant="body2" component="p" color='error'>
+                                        <br />
+                                        {error}
+                                    </Typography>
+                                </CardActions> : ''}
+                        </Card>
+                    </form>
+                </Grid>
+                <Grid item xs={12} className={classes.root}>
+                    <Typography variant="body2" component="p">
+                        <br />
+                        Don't have Account? <Link to='/signup'> Sign up </Link>
+                    </Typography>
+                </Grid>
             </Grid>
-            <Grid item xs={12}>
-                <h1 className={classes.topText}>Forgot Password</h1>
-            </Grid>
-            <Grid item xs={12}>
-                <form onSubmit={onSubmit}>
-                    <Card className={classes.card} style={{padding: '12px'}}>
-                        <CardContent>
-                            <FormControl fullWidth>
-                                <InputLabel htmlFor="my-password">Email address</InputLabel>
-                                <Input id="my-input" aria-describedby="my-helper-text" name="email" placeholder="Enter Email" onChange={handleEmailInput} value={email} type="email" required/>
-                                {/*<FormHelperText id="my-helper-text">We'll never share your email.</FormHelperText>*/}
-                            </FormControl>
-                            <br/>
-                            <br/>
-                        </CardContent>
-                        <CardActions style={{justifyContent: 'center'}}>
-                            <Button variant="contained" color="primary" type="submit">
-                                Reset Your Password
-                            </Button>
-                        </CardActions>
-                        {error ?
-                        <CardActions style={{justifyContent: 'center'}}>
-                            <Typography variant="body2" component="p" color='error'>
-                                <br />
-                                {error}
-                            </Typography>
-                        </CardActions> : ''}
-                    </Card>
-                </form>
-            </Grid>
-            <Grid item xs={12} className={classes.root}>
-                <Typography variant="body2" component="p">
-                    <br />
-                    Don't have Account? <Link to='/signup'> Sign up </Link>
-                </Typography>
-            </Grid>
-        </Grid>
-    </div>
+        </div>
     </Container>
 }
 

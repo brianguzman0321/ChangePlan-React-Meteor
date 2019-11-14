@@ -31,7 +31,7 @@ updateFilter = function (name, key, value){
     const records = LocalCollection.find({name}).fetch();
     if(records.length){
         LocalCollection.update({name}, {$set: {
-                [key]: value
-            }})
+            [key]: value
+        }})
     }
 };

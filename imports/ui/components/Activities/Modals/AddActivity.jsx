@@ -405,179 +405,179 @@ function AddActivity(props) {
                     { isNew ? 'Add' : 'Edit' } Activity
                 </DialogTitle>
                 <form onSubmit={createProject} noValidate>
-                <DialogContent dividers>
-                    <div className={classes.root}>
-                        <ExpansionPanel expanded={expanded === 'panel1'} onChange={handleChangePanel('panel1')}>
-                            <ExpansionPanelSummary
-                                expandIcon={<ExpandMoreIcon />}
-                                aria-controls="panel1bh-content"
-                                id="panel1bh-header"
-                            >
-                                <Typography className={classes.heading}>Date</Typography>
-                                <Typography className={classes.secondaryHeading}>Due Date: {moment(dueDate).format('DD-MMM-YY')}</Typography>
-                            </ExpansionPanelSummary>
-                            <ExpansionPanelDetails>
-                                <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                                    <Grid container justify="space-between" spacing={4}>
-                                        <Grid item xs={6}>
-                                            <KeyboardDatePicker
-                                                fullWidth
-                                                disableToolbar
-                                                variant="inline"
-                                                format="MM/dd/yyyy"
-                                                margin="normal"
-                                                id="date-picker-inline"
-                                                label="Due Date"
-                                                value={dueDate}
-                                                autoOk={true}
-                                                onChange={handleDueDate}
-                                                KeyboardButtonProps={{
-                                                    'aria-label': 'change date',
-                                                }}
-                                            />
+                    <DialogContent dividers>
+                        <div className={classes.root}>
+                            <ExpansionPanel expanded={expanded === 'panel1'} onChange={handleChangePanel('panel1')}>
+                                <ExpansionPanelSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="panel1bh-content"
+                                    id="panel1bh-header"
+                                >
+                                    <Typography className={classes.heading}>Date</Typography>
+                                    <Typography className={classes.secondaryHeading}>Due Date: {moment(dueDate).format('DD-MMM-YY')}</Typography>
+                                </ExpansionPanelSummary>
+                                <ExpansionPanelDetails>
+                                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                        <Grid container justify="space-between" spacing={4}>
+                                            <Grid item xs={6}>
+                                                <KeyboardDatePicker
+                                                    fullWidth
+                                                    disableToolbar
+                                                    variant="inline"
+                                                    format="MM/dd/yyyy"
+                                                    margin="normal"
+                                                    id="date-picker-inline"
+                                                    label="Due Date"
+                                                    value={dueDate}
+                                                    autoOk={true}
+                                                    onChange={handleDueDate}
+                                                    KeyboardButtonProps={{
+                                                        'aria-label': 'change date',
+                                                    }}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={6}>
+                                                <KeyboardDatePicker
+                                                    disableToolbar
+                                                    fullWidth
+                                                    variant="inline"
+                                                    // open={true}
+                                                    margin="normal"
+                                                    id="date-picker-dialog"
+                                                    label="Date Completed"
+                                                    format="MM/dd/yyyy"
+                                                    value={null}
+                                                    // minDate={startingDate}
+                                                    open={endingDateOpen}
+                                                    onOpen={openEnding}
+                                                    onChange={handleEndingDate}
+                                                    disabled={true}
+                                                    KeyboardButtonProps={{
+                                                        'aria-label': 'change date',
+                                                    }}
+                                                />
+                                            </Grid>
                                         </Grid>
-                                        <Grid item xs={6}>
-                                            <KeyboardDatePicker
-                                                disableToolbar
-                                                fullWidth
-                                                variant="inline"
-                                                // open={true}
-                                                margin="normal"
-                                                id="date-picker-dialog"
-                                                label="Date Completed"
-                                                format="MM/dd/yyyy"
-                                                value={null}
-                                                // minDate={startingDate}
-                                                open={endingDateOpen}
-                                                onOpen={openEnding}
-                                                onChange={handleEndingDate}
-                                                disabled={true}
-                                                KeyboardButtonProps={{
-                                                    'aria-label': 'change date',
-                                                }}
-                                            />
-                                        </Grid>
-                                    </Grid>
-                                </MuiPickersUtilsProvider>
-                            </ExpansionPanelDetails>
-                        </ExpansionPanel>
-                        <ExpansionPanel expanded={expanded === 'panel2'} onChange={handleChangePanel('panel2')}>
-                            <ExpansionPanelSummary
-                                expandIcon={<ExpandMoreIcon />}
-                                aria-controls="panel2bh-content"
-                                id="panel2bh-header"
-                            >
-                                <Typography className={classes.heading}>Activity Type</Typography>
-                                <Typography className={classes.secondaryHeading}>
-                                    {activityType.buttonText || 'Select Activity type'}
-                                    {activityType.iconSVG ? <SVGInline
-                                        style={{position: 'absolute', marginTop: -8}}
-                                        width="35px"
-                                        height="35px"
-                                        fill='#f1753e'
-                                        svg={activityType.iconSVG}
-                                    /> : ''
-                                    }
-                                </Typography>
-                            </ExpansionPanelSummary>
-                            <ExpansionPanelDetails>
-                                <Grid container justify="space-between" spacing={4}>
-                                {
-                                    data.map((item, index) => {
-                                        return <Tooltip title={item.helpText} key={index}>
-                                        <Grid item={true} xs={3} classes={classes1} style={{background : activityType.name === item.name ? '#dae0e5' : '' }} onClick={(e) => { setActivityType(item); }}>
-
-                                        <SVGInline
+                                    </MuiPickersUtilsProvider>
+                                </ExpansionPanelDetails>
+                            </ExpansionPanel>
+                            <ExpansionPanel expanded={expanded === 'panel2'} onChange={handleChangePanel('panel2')}>
+                                <ExpansionPanelSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="panel2bh-content"
+                                    id="panel2bh-header"
+                                >
+                                    <Typography className={classes.heading}>Activity Type</Typography>
+                                    <Typography className={classes.secondaryHeading}>
+                                        {activityType.buttonText || 'Select Activity type'}
+                                        {activityType.iconSVG ? <SVGInline
+                                            style={{position: 'absolute', marginTop: -8}}
                                             width="35px"
                                             height="35px"
                                             fill='#f1753e'
-                                            svg={item.iconSVG}
-                                        />
-                                            <Typography className={classes.gridText}>
-                                                {item.buttonText}
-                                            </Typography>
+                                            svg={activityType.iconSVG}
+                                        /> : ''
+                                        }
+                                    </Typography>
+                                </ExpansionPanelSummary>
+                                <ExpansionPanelDetails>
+                                    <Grid container justify="space-between" spacing={4}>
+                                        {
+                                            data.map((item, index) => {
+                                                return <Tooltip title={item.helpText} key={index}>
+                                                    <Grid item={true} xs={3} classes={classes1} style={{background : activityType.name === item.name ? '#dae0e5' : '' }} onClick={(e) => { setActivityType(item); }}>
+
+                                                        <SVGInline
+                                                            width="35px"
+                                                            height="35px"
+                                                            fill='#f1753e'
+                                                            svg={item.iconSVG}
+                                                        />
+                                                        <Typography className={classes.gridText}>
+                                                            {item.buttonText}
+                                                        </Typography>
+                                                    </Grid>
+                                                </Tooltip>
+                                            })
+                                        }
+                                    </Grid>
+                                </ExpansionPanelDetails>
+                            </ExpansionPanel>
+                            <ExpansionPanel expanded={expanded === 'panel3'} onChange={handleChangePanel('panel3')}>
+                                <ExpansionPanelSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="panel3bh-content"
+                                    id="panel3bh-header"
+                                >
+                                    <Typography className={classes.heading}>Stakeholders</Typography>
+                                    <Typography className={classes.secondaryHeading}>
+                                        {local.ids.length} of {stakeHolders.length}
+                                    </Typography>
+                                </ExpansionPanelSummary>
+                                <ExpansionPanelDetails>
+                                    <Grid container justify="center">
+                                        <SelectStakeHolders rows={stakeHolders} local={local}/>
+                                    </Grid>
+                                </ExpansionPanelDetails>
+                            </ExpansionPanel>
+                            <ExpansionPanel expanded={expanded === 'panel4'} onChange={handleChangePanel('panel4')}>
+                                <ExpansionPanelSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="panel4bh-content"
+                                    id="panel4bh-header"
+                                >
+                                    <Typography className={classes.heading}>Description</Typography>
+                                    <Typography className={classes.secondaryHeading}>{
+                                        stringHelpers.limitCharacters(description, 36) || 'Add Notes or Instructions for the person responsible'
+                                    }</Typography>
+                                </ExpansionPanelSummary>
+                                <ExpansionPanelDetails>
+                                    <TextField
+                                        autoFocus
+                                        margin="dense"
+                                        id="description"
+                                        label="Description"
+                                        value={description}
+                                        onChange={handleDescriptionChange}
+                                        required={true}
+                                        type="text"
+                                        fullWidth
+                                    />
+                                </ExpansionPanelDetails>
+                            </ExpansionPanel>
+                            <ExpansionPanel expanded={expanded === 'panal5'} onChange={handleChangePanel('panal5')}>
+                                <ExpansionPanelSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="panal5bh-content"
+                                    id="panal5bh-header"
+                                >
+                                    <Typography className={classes.heading}>Person Responsible</Typography>
+                                    <Typography className={classes.secondaryHeading}>Assign Activity Owner</Typography>
+                                </ExpansionPanelSummary>
+                                <ExpansionPanelDetails>
+                                    <Grid container justify="space-between" spacing={2}>
+                                        {/*<TextField*/}
+                                        {/*autoFocus*/}
+                                        {/*margin="dense"*/}
+                                        {/*id="name"*/}
+                                        {/*label="Person Responsible"*/}
+                                        {/*value={person}*/}
+                                        {/*onChange={handleChangePerson}*/}
+                                        {/*required={true}*/}
+                                        {/*type="text"*/}
+                                        {/*fullWidth*/}
+                                        {/*/>*/}
+                                        <Grid item={true} xs={7}>
+                                            <AutoComplete updateUsers={updateUsers} data={users} selectedValue={person}/>
                                         </Grid>
-                                        </Tooltip>
-                                    })
-                                }
-                                </Grid>
-                            </ExpansionPanelDetails>
-                        </ExpansionPanel>
-                        <ExpansionPanel expanded={expanded === 'panel3'} onChange={handleChangePanel('panel3')}>
-                            <ExpansionPanelSummary
-                                expandIcon={<ExpandMoreIcon />}
-                                aria-controls="panel3bh-content"
-                                id="panel3bh-header"
-                            >
-                                <Typography className={classes.heading}>Stakeholders</Typography>
-                                <Typography className={classes.secondaryHeading}>
-                                    {local.ids.length} of {stakeHolders.length}
-                                </Typography>
-                            </ExpansionPanelSummary>
-                            <ExpansionPanelDetails>
-                                <Grid container justify="center">
-                                    <SelectStakeHolders rows={stakeHolders} local={local}/>
-                                </Grid>
-                            </ExpansionPanelDetails>
-                        </ExpansionPanel>
-                        <ExpansionPanel expanded={expanded === 'panel4'} onChange={handleChangePanel('panel4')}>
-                            <ExpansionPanelSummary
-                                expandIcon={<ExpandMoreIcon />}
-                                aria-controls="panel4bh-content"
-                                id="panel4bh-header"
-                            >
-                                <Typography className={classes.heading}>Description</Typography>
-                                <Typography className={classes.secondaryHeading}>{
-                                    stringHelpers.limitCharacters(description, 36) || 'Add Notes or Instructions for the person responsible'
-                                }</Typography>
-                            </ExpansionPanelSummary>
-                            <ExpansionPanelDetails>
-                                <TextField
-                                    autoFocus
-                                    margin="dense"
-                                    id="description"
-                                    label="Description"
-                                    value={description}
-                                    onChange={handleDescriptionChange}
-                                    required={true}
-                                    type="text"
-                                    fullWidth
-                                />
-                            </ExpansionPanelDetails>
-                        </ExpansionPanel>
-                        <ExpansionPanel expanded={expanded === 'panal5'} onChange={handleChangePanel('panal5')}>
-                            <ExpansionPanelSummary
-                                expandIcon={<ExpandMoreIcon />}
-                                aria-controls="panal5bh-content"
-                                id="panal5bh-header"
-                            >
-                                <Typography className={classes.heading}>Person Responsible</Typography>
-                                <Typography className={classes.secondaryHeading}>Assign Activity Owner</Typography>
-                            </ExpansionPanelSummary>
-                            <ExpansionPanelDetails>
-                                <Grid container justify="space-between" spacing={2}>
-                                {/*<TextField*/}
-                                    {/*autoFocus*/}
-                                    {/*margin="dense"*/}
-                                    {/*id="name"*/}
-                                    {/*label="Person Responsible"*/}
-                                    {/*value={person}*/}
-                                    {/*onChange={handleChangePerson}*/}
-                                    {/*required={true}*/}
-                                    {/*type="text"*/}
-                                    {/*fullWidth*/}
-                                {/*/>*/}
-                                    <Grid item={true} xs={7}>
-                                        <AutoComplete updateUsers={updateUsers} data={users} selectedValue={person}/>
+                                        <Grid item={true} xs={5}>
+                                            <AddNewPerson company={company}/>
+                                        </Grid>
                                     </Grid>
-                                    <Grid item={true} xs={5}>
-                                        <AddNewPerson company={company}/>
-                                    </Grid>
-                                </Grid>
-                            </ExpansionPanelDetails>
-                        </ExpansionPanel>
-                    </div>
-                </DialogContent>
+                                </ExpansionPanelDetails>
+                            </ExpansionPanel>
+                        </div>
+                    </DialogContent>
                     <DialogActions>
                         {isNew ? <Button onClick={handleClose} color="secondary">
                             cancel
