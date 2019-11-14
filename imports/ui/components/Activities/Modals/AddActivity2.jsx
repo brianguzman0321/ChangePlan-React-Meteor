@@ -219,7 +219,7 @@ function AddActivity(props) {
             value: activity.personResponsible._id
         };
         setPerson(obj);
-        updateFilter('localStakeHolders', 'ids', activity.stakeHolders);
+        local.changed || updateFilter('localStakeHolders', 'ids', activity.stakeHolders);
         let updatedStakeHolders = local.changed ? local.ids : activity.stakeHolders;
         setPeoples(updatedStakeHolders);
 
@@ -231,7 +231,9 @@ function AddActivity(props) {
         setDueDate(new Date());
         setDescription('');
         setPerson(null);
-        setPeoples(stakeHolders.map(item => item._id))
+        setPeoples(stakeHolders.map(item => item._id));
+        updateFilter('localStakeHolders', 'ids', stakeHolders.map(item => item._id));
+
     };
 
     const updateUsersList = () => {
@@ -257,7 +259,8 @@ function AddActivity(props) {
         setOpen(edit || open);
         updateUsersList();
         if(isNew){
-            setPeoples(stakeHolders.map(item => item._id))
+            let updatedStakeHolders = local.changed ? local.ids : stakeHolders.map(item => item._id);
+            setPeoples(updatedStakeHolders);
         }
         if(edit && activity && activity.name){
             setExpanded('panel1');
@@ -265,7 +268,7 @@ function AddActivity(props) {
         }
 
 
-    }, [props.company, stakeHolders, company, props.edit, props.activity, isNew]);
+    }, [props.company, stakeHolders, company, props.edit, props.activity, isNew, local]);
 
     const handleChangePanel = panel => (event, isExpanded) => {
         setExpanded(isExpanded ? panel : false);
