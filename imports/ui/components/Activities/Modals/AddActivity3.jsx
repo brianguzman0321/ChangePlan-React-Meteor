@@ -220,6 +220,7 @@ function AddActivity(props) {
             value: activity.personResponsible._id
         };
         setPerson(obj);
+        setAge(activity.time);
         local.changed || updateFilter('localStakeHolders', 'ids', activity.stakeHolders);
         let updatedStakeHolders = local.changed ? local.ids : activity.stakeHolders;
         setPeoples(updatedStakeHolders);
