@@ -185,6 +185,7 @@ function AddActivity(props) {
     let { company, stakeHolders, local, match, edit, activity } = props;
     const [open, setOpen] = React.useState(edit || false);
     const [deleteModal, setDeleteModal] = React.useState(false);
+    const [age, setAge] = React.useState(5);
     const [isNew, setIsNew] = React.useState(false);
     const [users, setUsers] = React.useState([]);
     const [name, setName] = React.useState('');
@@ -231,6 +232,7 @@ function AddActivity(props) {
         setDueDate(new Date());
         setDescription('');
         setPerson(null);
+        setAge(5);
         setPeoples(stakeHolders.map(item => item._id));
         updateFilter('localStakeHolders', 'ids', stakeHolders.map(item => item._id));
 
@@ -294,7 +296,7 @@ function AddActivity(props) {
         //     props.enqueueSnackbar('Please fix the date error', {variant: 'error'});
         //     return false;
         // }
-        if(!(description && person && dueDate)){
+        if(!(description && person && dueDate && age)){
             props.enqueueSnackbar('Please fill all required Fields', {variant: 'error'});
             return false;
         }
@@ -311,7 +313,8 @@ function AddActivity(props) {
                 dueDate,
                 stakeHolders: peoples,
                 projectId,
-                step: 2
+                step: 2,
+                time: age
             }
         };
 
@@ -358,6 +361,9 @@ function AddActivity(props) {
 
     const handleChange = (e) => {
         setName(e.target.value)
+    };
+    const handleTimeChange = (e) => {
+        setAge(e.target.value)
     };
 
     const handleChangePerson = (e) => {
@@ -459,6 +465,25 @@ function AddActivity(props) {
                                                         'aria-label': 'change date',
                                                     }}
                                                 />
+                                            </Grid>
+                                            <Grid item xs={6}>
+                                                <FormControl className={classes.formControl} fullWidth={true}>
+                                                    <InputLabel htmlFor="demo-controlled-open-select">Time Away from BAU</InputLabel>
+                                                    <Select
+                                                        value={age}
+                                                        onChange={handleTimeChange}
+                                                        placeholder="Time Away from BAU"
+                                                        name="age"
+                                                        className={classes.selectEmpty}
+                                                    >
+                                                        <MenuItem value={5}>5</MenuItem>
+                                                        <MenuItem value={10}>10</MenuItem>
+                                                        <MenuItem value={20}>20</MenuItem>
+                                                        <MenuItem value={30}>30</MenuItem>
+                                                        <MenuItem value={60}>1 hour</MenuItem>
+                                                    </Select>
+                                                    {/*<FormHelperText>Without label</FormHelperText>*/}
+                                                </FormControl>
                                             </Grid>
                                         </Grid>
                                     </MuiPickersUtilsProvider>

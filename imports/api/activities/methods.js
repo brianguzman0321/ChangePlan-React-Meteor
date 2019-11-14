@@ -29,6 +29,9 @@ export const insert = new ValidatedMethod({
         'activity.step': {
             type: Number,
         },
+        'activity.time': {
+            type: Number,
+        },
         'activity.name': {
             type: String,
         },
@@ -82,6 +85,9 @@ export const update = new ValidatedMethod({
             type: String,
         },
         'activity.step': {
+            type: Number,
+        },
+        'activity.time': {
             type: Number,
         },
         'activity.name': {

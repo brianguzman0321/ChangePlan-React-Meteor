@@ -27,6 +27,11 @@ Activities.schema = new SimpleSchema({
         type: Number,
         label: 'activity Step'
     },
+    time: {
+        type: Number,
+        label: 'activity time away BAU',
+        defaultValue: 5,
+    },
     name: {
         type: String,
         label: 'activity Name'
