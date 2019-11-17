@@ -315,7 +315,7 @@ function AddActivity(props) {
                 stakeHolders: peoples,
                 projectId,
                 step: 3,
-                time: age
+                time: Number(age)
             }
         };
 
@@ -468,23 +468,16 @@ function AddActivity(props) {
                                                 />
                                             </Grid>
                                             <Grid item xs={6}>
-                                                <FormControl className={classes.formControl} fullWidth={true}>
-                                                    <InputLabel htmlFor="demo-controlled-open-select">Time Away from BAU</InputLabel>
-                                                    <Select
-                                                        value={age}
-                                                        onChange={handleTimeChange}
-                                                        placeholder="Time Away from BAU"
-                                                        name="age"
-                                                        className={classes.selectEmpty}
-                                                    >
-                                                        <MenuItem value={5}>5</MenuItem>
-                                                        <MenuItem value={10}>10</MenuItem>
-                                                        <MenuItem value={20}>20</MenuItem>
-                                                        <MenuItem value={30}>30</MenuItem>
-                                                        <MenuItem value={60}>1 hour</MenuItem>
-                                                    </Select>
-                                                    {/*<FormHelperText>Without label</FormHelperText>*/}
-                                                </FormControl>
+                                                <TextField
+                                                    margin="dense"
+                                                    id="time"
+                                                    label="Time Away from BAU (Minutes)"
+                                                    value={age}
+                                                    onChange={handleTimeChange}
+                                                    required={true}
+                                                    type="number"
+                                                    fullWidth
+                                                />
                                             </Grid>
                                         </Grid>
                                     </MuiPickersUtilsProvider>
