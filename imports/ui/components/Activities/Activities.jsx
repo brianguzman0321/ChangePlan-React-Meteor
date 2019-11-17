@@ -19,6 +19,7 @@ import config from '/imports/utils/config';
 import { withRouter } from 'react-router';
 import {withTracker} from "meteor/react-meteor-data";
 import { Activities } from '/imports/api/activities/activities'
+import ListView from './ListView'
 
 const useStyles = makeStyles({
     root: {
@@ -103,23 +104,26 @@ function ActivitiesCard(props){
                     </Grid>
                 </Grid>
             </Grid>
-            <Grid
-                container
-                direction="row"
-                justify="flex-start"
-                alignItems="flex-start"
-                spacing={0}
-            >
-                <Grid item xs={12} md={4}>
-                    <AWARENESSCard activities={props.activities.filter(activity => activity.step === 1)}/>
-                </Grid>
-                <Grid item xs={12} md={4} >
-                    <Step2Card activities={props.activities.filter(activity => activity.step === 2)}/>
-                </Grid>
-                <Grid item xs={12} md={4}>
-                    <Step3Card activities={props.activities.filter(activity => activity.step === 3)}/>
-                </Grid>
-            </Grid>
+            {
+                value === 0 ?
+                <Grid
+                    container
+                    direction="row"
+                    justify="flex-start"
+                    alignItems="flex-start"
+                    spacing={0}
+                >
+                    <Grid item xs={12} md={4}>
+                        <AWARENESSCard activities={props.activities.filter(activity => activity.step === 1)}/>
+                    </Grid>
+                    <Grid item xs={12} md={4} >
+                        <Step2Card activities={props.activities.filter(activity => activity.step === 2)}/>
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                        <Step3Card activities={props.activities.filter(activity => activity.step === 3)}/>
+                    </Grid>
+                </Grid>: <ListView rows={props.activities}/>
+            }
 
         </div>
     )
