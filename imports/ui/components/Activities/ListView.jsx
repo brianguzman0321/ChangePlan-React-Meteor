@@ -79,10 +79,10 @@ function getSorting(order, orderBy) {
 
 const headCells = [
     { id: 'dueDate', numeric: false, disablePadding: true, label: 'Due Date' },
+    { id: 'action', numeric: true, disablePadding: false, label: 'Done' },
     { id: 'name', numeric: true, disablePadding: false, label: 'Activity' },
     { id: 'description', numeric: true, disablePadding: false, label: 'Description' },
     { id: 'influenceLevel', numeric: true, disablePadding: false, label: 'Activity Owner' },
-    { id: 'action', numeric: true, disablePadding: false, label: 'Done' },
 ];
 
 function EnhancedTableHead(props) {
@@ -320,16 +320,12 @@ export default function StakeHolderList(props) {
                                         <TableRow
                                             style={{cursor: 'pointer'}}
                                             hover
-                                            key={row.id}
+                                            key={row._id}
                                             onClick={event => editActivity(row)}
                                         >
                                             <TableCell align="center" component="th" id={labelId} scope="row">
                                                 {moment(row.dueDate).format('MMM DD YYYY')}
                                             </TableCell>
-                                            <TableCell align="center">{row.name}</TableCell>
-                                            <TableCell align="center">{row.description}</TableCell>
-                                            <TableCell align="center">{`${row.personResponsible.profile.firstName} ${row.personResponsible.lastName}`}</TableCell>
-                                            {/*<TableCell align="center" onClick={event => deleteCell(event, row)}>*/}
                                             <TableCell align="center">
                                                 <Checkbox
                                                     // indeterminate={numSelected > 0 && numSelected < rowCount}
@@ -347,6 +343,10 @@ export default function StakeHolderList(props) {
                                                 {/*<DeleteIcon />*/}
                                                 {/*</IconButton>*/}
                                             </TableCell>
+                                            <TableCell align="center">{row.name}</TableCell>
+                                            <TableCell align="center">{row.description}</TableCell>
+                                            <TableCell align="center">{`${row.personResponsible.profile.firstName} ${row.personResponsible.lastName}`}</TableCell>
+                                            {/*<TableCell align="center" onClick={event => deleteCell(event, row)}>*/}
                                         </TableRow>
                                     );
                                 })}
@@ -374,9 +374,9 @@ export default function StakeHolderList(props) {
                     onChangeRowsPerPage={handleChangeRowsPerPage}
                 />
             </Paper>
-            <AddActivity edit={edit} activity={sActivity} newActivity={() => setEdit(false)}/>
-            <AddActivity2 edit={edit2} activity={sActivity} newActivity={() => setEdit2(false)}/>
-            <AddActivity3 edit={edit3} activity={sActivity} newActivity={() => setEdit3(false)}/>
+            <AddActivity edit={edit} activity={sActivity} newActivity={() => setEdit(false)} list={true}/>
+            <AddActivity2 edit={edit2} activity={sActivity} newActivity={() => setEdit2(false)} list={true}/>
+            <AddActivity3 edit={edit3} activity={sActivity} newActivity={() => setEdit3(false)} list={true}/>
         </div>
     );
 }

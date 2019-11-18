@@ -182,7 +182,7 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function AddActivity(props) {
-    let { company, stakeHolders, local, match, edit, activity } = props;
+    let { company, stakeHolders, local, match, edit, activity, list } = props;
     const [open, setOpen] = React.useState(edit || false);
     const [deleteModal, setDeleteModal] = React.useState(false);
     const [age, setAge] = React.useState(5);
@@ -407,9 +407,11 @@ function AddActivity(props) {
 
     return (
         <div className={classes.AddNewActivity}>
-            <Button variant="contained" className={classes.button} fullWidth={true} onClick={handleClickOpen}>
-                Add Activity
-            </Button>
+            {
+                !list ? <Button variant="contained" className={classes.button} fullWidth={true} onClick={handleClickOpen}>
+                    Add Activity
+                </Button> : ''
+            }
             <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="sm" fullWidth={true}>
                 <DialogTitle id="customized-dialog-title" onClose={handleClose}>
                     { isNew ? 'Add' : 'Edit' } Activity
