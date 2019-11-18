@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
+import moment from 'moment'
 import { lighten, makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -20,10 +21,15 @@ import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import FilterListIcon from '@material-ui/icons/FilterList';
+import AddActivity from '/imports/ui/components/Activities/Modals/AddActivity'
+import AddActivity2 from '/imports/ui/components/Activities/Modals/AddActivity2'
+import AddActivity3 from '/imports/ui/components/Activities/Modals/AddActivity3'
 
 function createData(name, calories, fat, carbs, protein) {
     return { name, calories, fat, carbs, protein };
 }
+
+var sActivity = {};
 
 // const rows = [
 //     createData('Cupcake', 305, 3.7, 67, 4.3),
@@ -76,8 +82,7 @@ const headCells = [
     { id: 'name', numeric: true, disablePadding: false, label: 'Activity' },
     { id: 'description', numeric: true, disablePadding: false, label: 'Description' },
     { id: 'influenceLevel', numeric: true, disablePadding: false, label: 'Activity Owner' },
-    { id: 'supportLevel', numeric: true, disablePadding: false, label: 'Manager' },
-    { id: 'action', numeric: true, disablePadding: false, label: 'Actions' },
+    { id: 'action', numeric: true, disablePadding: false, label: 'Done' },
 ];
 
 function EnhancedTableHead(props) {
@@ -90,15 +95,6 @@ function EnhancedTableHead(props) {
     return (
         <TableHead classes={tableHeadClasses}>
             <TableRow>
-                <TableCell padding="checkbox">
-                    <Checkbox
-                        indeterminate={numSelected > 0 && numSelected < rowCount}
-                        checked={numSelected === rowCount}
-                        onChange={onSelectAllClick}
-                        inputProps={{ 'aria-label': 'select all desserts' }}
-                        color="default"
-                    />
-                </TableCell>
                 {headCells.map(headCell => (
                     <TableCell style={{color: 'white'}}
                                key={headCell.id}
@@ -237,8 +233,10 @@ export default function StakeHolderList(props) {
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [edit, setEdit] = React.useState(false);
+    const [edit2, setEdit2] = React.useState(false);
+    const [edit3, setEdit3] = React.useState(false);
     let { rows } = props;
-    console.log(rows)
 
     const handleRequestSort = (event, property) => {
         const isDesc = orderBy === property && order === 'desc';
@@ -255,25 +253,15 @@ export default function StakeHolderList(props) {
         setSelected([]);
     };
 
-    const handleClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name);
-        let newSelected = [];
-
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(
-                selected.slice(0, selectedIndex),
-                selected.slice(selectedIndex + 1),
-            );
-        }
-
-
-        setSelected(newSelected);
+    const editActivity = (activity) => {
+        sActivity = activity;
+        setEdit(false);
+        setEdit2(false);
+        setEdit3(false);
+        setTimeout(() => {
+            activity.step === 1 ? setEdit(true) : activity.step === 2 ? setEdit2(true) : setEdit3(true)
+        })
+        // setSelectedActivity(selectedActivity);
     };
 
     const handleChangePage = (event, newPage) => {
@@ -330,29 +318,26 @@ export default function StakeHolderList(props) {
 
                                     return (
                                         <TableRow
+                                            style={{cursor: 'pointer'}}
                                             hover
-                                            onClick={event => handleClick(event, row._id)}
-                                            role="checkbox"
-                                            aria-checked={isItemSelected}
-                                            tabIndex={-1}
-                                            key={row._id}
-                                            selected={isItemSelected}
+                                            key={row.id}
+                                            onClick={event => editActivity(row)}
                                         >
-                                            <TableCell padding="checkbox">
+                                            <TableCell align="center" component="th" id={labelId} scope="row">
+                                                {moment(row.dueDate).format('MMM DD YYYY')}
+                                            </TableCell>
+                                            <TableCell align="center">{row.name}</TableCell>
+                                            <TableCell align="center">{row.description}</TableCell>
+                                            <TableCell align="center">{`${row.personResponsible.profile.firstName} ${row.personResponsible.lastName}`}</TableCell>
+                                            {/*<TableCell align="center" onClick={event => deleteCell(event, row)}>*/}
+                                            <TableCell align="center">
                                                 <Checkbox
-                                                    checked={isItemSelected}
-                                                    inputProps={{ 'aria-labelledby': labelId }}
+                                                    // indeterminate={numSelected > 0 && numSelected < rowCount}
+                                                    // checked={numSelected === rowCount}
+                                                    // onChange={onSelectAllClick}
+                                                    // inputProps={{ 'aria-label': 'select all desserts' }}
                                                     color="default"
                                                 />
-                                            </TableCell>
-                                            <TableCell align="center" component="th" id={labelId} scope="row">
-                                                {row.firstName}
-                                            </TableCell>
-                                            <TableCell align="center">{row.role}</TableCell>
-                                            <TableCell align="center">{row.businessUnit}</TableCell>
-                                            <TableCell align="center">{row.influenceLevel}</TableCell>
-                                            <TableCell align="center">{row.supportLevel}</TableCell>
-                                            <TableCell align="center" onClick={event => deleteCell(event, row)}>
                                                 {/*<EditStakeHolderPage stakeholder={row} />*/}
                                                 {/*<IconButton aria-label="edit" onClick={(event) => {deleteCell(event, row)}}>*/}
                                                 {/*<EditIcon />*/}
@@ -389,6 +374,9 @@ export default function StakeHolderList(props) {
                     onChangeRowsPerPage={handleChangeRowsPerPage}
                 />
             </Paper>
+            <AddActivity edit={edit} activity={sActivity} newActivity={() => setEdit(false)}/>
+            <AddActivity2 edit={edit2} activity={sActivity} newActivity={() => setEdit2(false)}/>
+            <AddActivity3 edit={edit3} activity={sActivity} newActivity={() => setEdit3(false)}/>
         </div>
     );
 }
