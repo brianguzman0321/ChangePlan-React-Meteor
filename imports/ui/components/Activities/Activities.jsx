@@ -4,6 +4,7 @@ import TopNavBar from '/imports/ui/components/App/App'
 import Paper from '@material-ui/core/Paper';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import Button from '@material-ui/core/Button';
 import PhoneIcon from '@material-ui/icons/Phone';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import PersonPinIcon from '@material-ui/icons/PersonPin';
@@ -63,6 +64,7 @@ const useStyles = makeStyles({
 function ActivitiesCard(props){
     const classes = useStyles();
     const [value, setIndex] = React.useState(0);
+    const [addNew, setAddNew] = React.useState(false);
 
     const handleChange = (event, newValue) => {
         setIndex(newValue);
@@ -85,10 +87,19 @@ function ActivitiesCard(props){
                     direction="row"
                     justify="space-between"
                 >
-                    <Grid item xs={6} md={9}>
+                    <Grid item xs={3} md={7}>
                         <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
                             Activities
                         </Typography>
+                    </Grid>
+                    <Grid item xs={3} md={2}>
+                        {
+                            // value === 1 && <Button variant="outlined" color="primary" onClick={(e) => setAddNew(true)}>
+                            false && <Button variant="outlined" color="primary" onClick={(e) => setAddNew(true)}>
+                                Add Activity
+                            </Button>
+                        }
+
                     </Grid>
                     <Grid item xs={6} md={3}>
                         <Tabs
@@ -122,7 +133,7 @@ function ActivitiesCard(props){
                     <Grid item xs={12} md={4}>
                         <Step3Card activities={props.activities.filter(activity => activity.step === 3)}/>
                     </Grid>
-                </Grid>: <ListView rows={props.activities}/>
+                </Grid>: <ListView rows={props.activities} addNew={addNew}/>
             }
 
         </div>

@@ -182,8 +182,8 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function AddActivity(props) {
-    let { company, stakeHolders, local, match, edit, activity, list } = props;
-    const [open, setOpen] = React.useState(edit || false);
+    let { company, stakeHolders, local, match, edit, activity, list, isOpen } = props;
+    const [open, setOpen] = React.useState(edit || isOpen || false);
     const [deleteModal, setDeleteModal] = React.useState(false);
     const [age, setAge] = React.useState(5);
     const [isNew, setIsNew] = React.useState(false);

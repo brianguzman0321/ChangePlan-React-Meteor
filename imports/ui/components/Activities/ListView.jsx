@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from "react";
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import moment from 'moment'
@@ -228,6 +228,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function StakeHolderList(props) {
+    let { rows, local, addNew } = props;
     const classes = useStyles();
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
@@ -235,10 +236,9 @@ function StakeHolderList(props) {
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
-    const [edit, setEdit] = React.useState(false);
+    const [edit, setEdit] = React.useState(addNew || false);
     const [edit2, setEdit2] = React.useState(false);
     const [edit3, setEdit3] = React.useState(false);
-    let { rows, local } = props;
 
     const handleRequestSort = (event, property) => {
         const isDesc = orderBy === property && order === 'desc';
@@ -284,6 +284,10 @@ function StakeHolderList(props) {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
+
+    useEffect(() => {
+
+    }, [addNew]);
 
     const handleChangeDense = event => {
         setDense(event.target.checked);
@@ -391,7 +395,7 @@ function StakeHolderList(props) {
                     onChangeRowsPerPage={handleChangeRowsPerPage}
                 />
             </Paper>
-            <AddActivity edit={edit} activity={sActivity} newActivity={() => setEdit(false)} list={true}/>
+            <AddActivity edit={edit} activity={sActivity} newActivity={() => setEdit(false)} list={true} isOpen={addNew}/>
             <AddActivity2 edit={edit2} activity={sActivity} newActivity={() => setEdit2(false)} list={true}/>
             <AddActivity3 edit={edit3} activity={sActivity} newActivity={() => setEdit3(false)} list={true}/>
         </div>
