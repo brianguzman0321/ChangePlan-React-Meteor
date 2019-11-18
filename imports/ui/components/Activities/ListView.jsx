@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import moment from 'moment'
+import {withTracker} from "meteor/react-meteor-data";
+import { withSnackbar } from 'notistack';
 import { lighten, makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -225,7 +227,7 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-export default function StakeHolderList(props) {
+function StakeHolderList(props) {
     const classes = useStyles();
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
@@ -236,7 +238,7 @@ export default function StakeHolderList(props) {
     const [edit, setEdit] = React.useState(false);
     const [edit2, setEdit2] = React.useState(false);
     const [edit3, setEdit3] = React.useState(false);
-    let { rows } = props;
+    let { rows, local } = props;
 
     const handleRequestSort = (event, property) => {
         const isDesc = orderBy === property && order === 'desc';
@@ -252,6 +254,16 @@ export default function StakeHolderList(props) {
         }
         setSelected([]);
     };
+
+    function completeActivity(activity){
+        activity.completed = !activity.completed;
+        delete activity.personResponsible;
+        let params = {
+            activity
+        };
+        Meteor.call('activities.update', params, (err, res) => {
+        })
+    }
 
     const editActivity = (activity) => {
         sActivity = activity;
@@ -328,6 +340,11 @@ export default function StakeHolderList(props) {
                                             </TableCell>
                                             <TableCell align="center">
                                                 <Checkbox
+                                                    checked={row.completed}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        completeActivity(row)
+                                                    }}
                                                     // indeterminate={numSelected > 0 && numSelected < rowCount}
                                                     // checked={numSelected === rowCount}
                                                     // onChange={onSelectAllClick}
@@ -345,7 +362,7 @@ export default function StakeHolderList(props) {
                                             </TableCell>
                                             <TableCell align="center">{row.name}</TableCell>
                                             <TableCell align="center">{row.description}</TableCell>
-                                            <TableCell align="center">{`${row.personResponsible.profile.firstName} ${row.personResponsible.lastName}`}</TableCell>
+                                            <TableCell align="center">{`${row.personResponsible.profile.firstName} ${row.personResponsible.profile.lastName}`}</TableCell>
                                             {/*<TableCell align="center" onClick={event => deleteCell(event, row)}>*/}
                                         </TableRow>
                                     );
@@ -380,3 +397,14 @@ export default function StakeHolderList(props) {
         </div>
     );
 }
+
+const ActivityListComponent = withTracker(props => {
+    let local = LocalCollection.findOne({
+        name: 'localProjects'
+    });
+    return {
+        local
+    };
+})(StakeHolderList);
+
+export default withSnackbar(ActivityListComponent)
