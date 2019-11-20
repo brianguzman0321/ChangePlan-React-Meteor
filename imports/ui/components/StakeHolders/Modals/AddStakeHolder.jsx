@@ -168,6 +168,7 @@ function AddStakeHolder(props) {
         setLos('');
         setLoi('');
         setOpen(true);
+        setCsvfile('')
     };
 
     const handleChangeValue = (event, newValue) => {
@@ -195,6 +196,10 @@ function AddStakeHolder(props) {
 
     const updateData =(result) =>  {
         var data = result.data;
+        if(!(data && data.length)){
+            props.enqueueSnackbar('No Valid Data Found', {variant: 'error'});
+            return false;
+        }
         data.pop()
         let data1 = data.map((doc) => {
             return {
@@ -208,7 +213,6 @@ function AddStakeHolder(props) {
                 company: company._id
             }
         });
-        console.log(data1)
         let params = {
             peoples: data1
         }
@@ -221,12 +225,17 @@ function AddStakeHolder(props) {
             else{
                 setOpen(false);
                 setName('');
+                setCsvfile(null)
                 props.enqueueSnackbar('StakeHolders Added Successfully.', {variant: 'success'})
             }
         });
     }
 
     const importCSV = () => {
+        if(!csvfile){
+            props.enqueueSnackbar('No File Selected', {variant: 'error'});
+            return false;
+        }
         let self = this;
         Papa.parse(csvfile, {
             complete: updateData,
@@ -451,21 +460,26 @@ function AddStakeHolder(props) {
                         </form>
                         <TabPanel value={value} index={1}>
                             <div className="App">
-                                <h2>Import CSV File!</h2>
-                                <Button>
                                 <input
-                                    className="csv-input"
-                                    type="file"
+                                    accept="/csv/*"
+                                    className={classes.input}
+                                    style={{ display: 'none' }}
                                     ref={input => {
                                         this.filesInput = input;
                                     }}
+                                    id="raised-button-file"
+                                    type="file"
                                     name="file"
                                     placeholder={null}
                                     onChange={handleChangecsv}
                                 />
-                                </Button>
+                                <label htmlFor="raised-button-file">
+                                    <Button variant="raised" component="span" className={classes.button}>
+                                        Choose File
+                                    </Button>
+                                </label>
                                 <p />
-                                <Button onClick={importCSV} disabled={loading}> Upload </Button>
+                                <Button onClick={importCSV} disabled={loading} color="primary"> Upload </Button>
                             </div>
                         </TabPanel>
                     </SwipeableViews>
