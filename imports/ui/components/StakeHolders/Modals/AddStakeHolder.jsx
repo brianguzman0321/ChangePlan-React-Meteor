@@ -4,10 +4,12 @@ import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import MuiDialogContent from '@material-ui/core/DialogContent';
+import Divider from '@material-ui/core/Divider';
 import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
+import Papa from 'papaparse'
 import DialogContentText from '@material-ui/core/DialogContentText';
 import TextField from '@material-ui/core/TextField';
 import { withSnackbar } from 'notistack';
@@ -19,6 +21,66 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import {withTracker} from "meteor/react-meteor-data";
 import { Companies } from "/imports/api/companies/companies";
+import PropTypes from 'prop-types';
+import SwipeableViews from 'react-swipeable-views';
+import { useTheme } from '@material-ui/core/styles';
+import AppBar from '@material-ui/core/AppBar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import Box from '@material-ui/core/Box';
+
+
+function TabPanel(props) {
+    const { children, value, index, ...other } = props;
+
+    return (
+        <Typography
+            component="div"
+            role="tabpanel"
+            hidden={value !== index}
+            id={`full-width-tabpanel-${index}`}
+            aria-labelledby={`full-width-tab-${index}`}
+            {...other}
+        >
+            <Box p={3}>{children}</Box>
+        </Typography>
+    );
+}
+
+TabPanel.propTypes = {
+    children: PropTypes.node,
+    index: PropTypes.any.isRequired,
+    value: PropTypes.any.isRequired,
+};
+
+function a11yProps(index) {
+    return {
+        id: `full-width-tab-${index}`,
+        'aria-controls': `full-width-tabpanel-${index}`,
+    };
+}
+
+const useStyles1 = makeStyles(theme => ({
+    root: {
+        backgroundColor: theme.palette.background.paper,
+        width: 500,
+    },
+}));
+
+function FullWidthTabs() {
+    const classes = useStyles1();
+    const theme = useTheme();
+    const [value, setValue] = React.useState(0);
+
+
+
+
+    return (
+        <div className={classes.root}>
+
+        </div>
+    );
+}
 
 const styles = theme => ({
     root: {
@@ -63,7 +125,8 @@ const DialogTitle = withStyles(styles)(props => {
 
 const DialogContent = withStyles(theme => ({
     root: {
-        padding: theme.spacing(2),
+        // padding: theme.spacing(2),
+        padding: 0
     }
 }))(MuiDialogContent);
 
@@ -86,6 +149,10 @@ function AddStakeHolder(props) {
     const [selectOpen, setSelectOpen] = React.useState(false);
     const [selectOpen1, setSelectOpen1] = React.useState(false);
     const [open, setOpen] = React.useState(false);
+    const [value, setValue] = React.useState(0);
+    const [csvfile, setCsvfile] = React.useState(undefined);
+    const [loading, setLoading] = React.useState(false);
+    const theme = useTheme();
 
     let { company, handleModalClose, project } = props;
     const classes = useStyles();
@@ -103,6 +170,14 @@ function AddStakeHolder(props) {
         setOpen(true);
     };
 
+    const handleChangeValue = (event, newValue) => {
+        setValue(newValue);
+    };
+
+    const handleChangeIndex = index => {
+        setValue(index);
+    };
+
     const handleClose = () => {
         setOpen(false);
     };
@@ -113,6 +188,53 @@ function AddStakeHolder(props) {
     const handleEmailChange = (e) => {
         setEmail(e.target.value)
     };
+
+    const handleChangecsv = event => {
+        setCsvfile(event.target.files[0]);
+    };
+
+    const updateData =(result) =>  {
+        var data = result.data;
+        data.pop()
+        let data1 = data.map((doc) => {
+            return {
+                firstName : doc['First Name'],
+                lastName: doc['Last Name'],
+                role : doc['Role'],
+                businessUnit: doc['Business Unit'],
+                email: doc['Email'],
+                influenceLevel: Number(doc['Level of Influence']),
+                supportLevel: Number(doc['Level of support']),
+                company: company._id
+            }
+        });
+        console.log(data1)
+        let params = {
+            peoples: data1
+        }
+        setLoading(true);
+        Meteor.call('peoples.insertMany', params, (err, res) => {
+            setLoading(false);
+            if(err){
+                props.enqueueSnackbar(err.reason, {variant: 'error'})
+            }
+            else{
+                setOpen(false);
+                setName('');
+                props.enqueueSnackbar('StakeHolders Added Successfully.', {variant: 'success'})
+            }
+        });
+    }
+
+    const importCSV = () => {
+        let self = this;
+        Papa.parse(csvfile, {
+            complete: updateData,
+            header: true
+        });
+    };
+
+
 
     const onSubmit = (e) => {
         event.preventDefault();
@@ -171,141 +293,183 @@ function AddStakeHolder(props) {
                 Add
             </Button>
             <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="sm" fullWidth={true}>
-                <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-                    Add Stakeholder
-                </DialogTitle>
-                <form onSubmit={onSubmit}>
+                    <DialogTitle id="customized-dialog-title" onClose={handleClose}>
+                        Add Stakeholder
+                    </DialogTitle>
                     <DialogContent dividers>
-                        <Grid container spacing={2}>
-                            <Grid item xs={6}>
-                                <TextField
-                                    autoFocus
-                                    // margin="dense"
-                                    id="firstName"
-                                    label="First Name"
-                                    value={firstName}
-                                    onChange={(e)=> {setFirstName(e.target.value)}}
-                                    required={true}
-                                    type="text"
-                                    fullWidth={true}
+                    <AppBar position="static" color="default">
+                        <Tabs
+                            value={value}
+                            onChange={handleChangeValue}
+                            indicatorColor="primary"
+                            textColor="primary"
+                            variant="fullWidth"
+                            aria-label="full width tabs example"
+                        >
+                            <Tab label="INDIVIDUAL" {...a11yProps(0)} />
+                            <Tab label="MULTIPLE VIA CSV" {...a11yProps(1)} />
+                            {/*<Tab label="Item Three" {...a11yProps(2)} />*/}
+                        </Tabs>
+                    </AppBar>
+                    <SwipeableViews
+                        index={value}
+                        onChangeIndex={handleChangeIndex}
+                    >
+                        <form onSubmit={onSubmit} noValidate>
+                        <TabPanel value={value} index={0} >
+                                <Grid container spacing={2}>
+                                    <Grid item xs={6}>
+                                        <TextField
+                                            autoFocus
+                                            // margin="dense"
+                                            id="firstName"
+                                            label="First Name"
+                                            value={firstName}
+                                            onChange={(e)=> {setFirstName(e.target.value)}}
+                                            required={true}
+                                            type="text"
+                                            fullWidth={true}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <TextField
+                                            // margin="dense"
+                                            id="lastName"
+                                            label="Last Name"
+                                            value={lastName}
+                                            onChange={(e)=> {setLastName(e.target.value)}}
+                                            required={true}
+                                            type="text"
+                                            fullWidth={true}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <TextField
+                                            // margin="dense"
+                                            id="role"
+                                            label="Role"
+                                            value={role}
+                                            onChange={(e)=> {setRole(e.target.value)}}
+                                            required={true}
+                                            type="text"
+                                            fullWidth={true}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <TextField
+                                            // margin="dense"
+                                            id="businessUnit"
+                                            label="Business Unit"
+                                            value={businessUnit}
+                                            onChange={(e)=> {setBusinessUnit(e.target.value)}}
+                                            required={true}
+                                            type="text"
+                                            fullWidth={true}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <TextField
+                                            // margin="dense"
+                                            id="email"
+                                            label="Email"
+                                            value={email}
+                                            onChange={handleEmailChange}
+                                            required={true}
+                                            type="email"
+                                            fullWidth={true}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={6} />
+                                    <Grid item xs={6}>
+                                        <FormControl className={classes.formControl} fullWidth={true} required>
+                                            <InputLabel htmlFor="demo-controlled-open-select">Level Of Support</InputLabel>
+                                            <Select
+                                                id="role"
+                                                label="role"
+                                                fullWidth={true}
+                                                open={selectOpen}
+                                                onClose={handleSelectClose}
+                                                onOpen={handleSelectOpen}
+                                                value={loS}
+                                                onChange={(e)=> {setLos(e.target.value)}}
+                                                inputProps={{
+                                                    name: 'role',
+                                                    id: 'demo-controlled-open-select',
+                                                }}
+                                            >
+                                                <MenuItem value={1}>1</MenuItem>
+                                                <MenuItem value={2}>2</MenuItem>
+                                                <MenuItem value={3}>3</MenuItem>
+                                                <MenuItem value={4}>4</MenuItem>
+                                                <MenuItem value={5}>5</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                        <br/>
+                                        <br/>
+                                        <br/>
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <FormControl className={classes.formControl} fullWidth={true} required>
+                                            <InputLabel htmlFor="demo-controlled-open-select">Level Of Influence</InputLabel>
+                                            <Select
+                                                id="role"
+                                                label="role"
+                                                fullWidth={true}
+                                                open={selectOpen1}
+                                                onClose={handleSelectClose1}
+                                                onOpen={handleSelectOpen1}
+                                                value={loI}
+                                                onChange={(e)=> {setLoi(e.target.value)}}
+                                                inputProps={{
+                                                    name: 'role',
+                                                    id: 'demo-controlled-open-select',
+                                                }}
+                                            >
+                                                <MenuItem value={1}>1</MenuItem>
+                                                <MenuItem value={2}>2</MenuItem>
+                                                <MenuItem value={3}>3</MenuItem>
+                                                <MenuItem value={4}>4</MenuItem>
+                                                <MenuItem value={5}>5</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                        <br/>
+                                        <br/>
+                                        <br/>
+                                    </Grid>
+                                </Grid>
+                            <Divider />
+                            <DialogActions>
+
+                                <Button onClick={handleClose} color="secondary">
+                                    Cancel
+                                </Button>
+                                <Button color="primary" type="submit">
+                                    Save
+                                </Button>
+                            </DialogActions>
+                        </TabPanel>
+                        </form>
+                        <TabPanel value={value} index={1}>
+                            <div className="App">
+                                <h2>Import CSV File!</h2>
+                                <Button>
+                                <input
+                                    className="csv-input"
+                                    type="file"
+                                    ref={input => {
+                                        this.filesInput = input;
+                                    }}
+                                    name="file"
+                                    placeholder={null}
+                                    onChange={handleChangecsv}
                                 />
-                            </Grid>
-                            <Grid item xs={6}>
-                                <TextField
-                                    // margin="dense"
-                                    id="lastName"
-                                    label="Last Name"
-                                    value={lastName}
-                                    onChange={(e)=> {setLastName(e.target.value)}}
-                                    required={true}
-                                    type="text"
-                                    fullWidth={true}
-                                />
-                            </Grid>
-                            <Grid item xs={6}>
-                                <TextField
-                                    // margin="dense"
-                                    id="role"
-                                    label="Role"
-                                    value={role}
-                                    onChange={(e)=> {setRole(e.target.value)}}
-                                    required={true}
-                                    type="text"
-                                    fullWidth={true}
-                                />
-                            </Grid>
-                            <Grid item xs={6}>
-                                <TextField
-                                    // margin="dense"
-                                    id="businessUnit"
-                                    label="Business Unit"
-                                    value={businessUnit}
-                                    onChange={(e)=> {setBusinessUnit(e.target.value)}}
-                                    required={true}
-                                    type="text"
-                                    fullWidth={true}
-                                />
-                            </Grid>
-                            <Grid item xs={6}>
-                                <TextField
-                                    // margin="dense"
-                                    id="email"
-                                    label="Email"
-                                    value={email}
-                                    onChange={handleEmailChange}
-                                    required={true}
-                                    type="email"
-                                    fullWidth={true}
-                                />
-                            </Grid>
-                            <Grid item xs={6} />
-                            <Grid item xs={6}>
-                                <FormControl className={classes.formControl} fullWidth={true} required>
-                                    <InputLabel htmlFor="demo-controlled-open-select">Level Of Support</InputLabel>
-                                    <Select
-                                        id="role"
-                                        label="role"
-                                        fullWidth={true}
-                                        open={selectOpen}
-                                        onClose={handleSelectClose}
-                                        onOpen={handleSelectOpen}
-                                        value={loS}
-                                        onChange={(e)=> {setLos(e.target.value)}}
-                                        inputProps={{
-                                            name: 'role',
-                                            id: 'demo-controlled-open-select',
-                                        }}
-                                    >
-                                        <MenuItem value={1}>1</MenuItem>
-                                        <MenuItem value={2}>2</MenuItem>
-                                        <MenuItem value={3}>3</MenuItem>
-                                        <MenuItem value={4}>4</MenuItem>
-                                        <MenuItem value={5}>5</MenuItem>
-                                    </Select>
-                                </FormControl>
-                                <br/>
-                                <br/>
-                                <br/>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <FormControl className={classes.formControl} fullWidth={true} required>
-                                    <InputLabel htmlFor="demo-controlled-open-select">Level Of Influence</InputLabel>
-                                    <Select
-                                        id="role"
-                                        label="role"
-                                        fullWidth={true}
-                                        open={selectOpen1}
-                                        onClose={handleSelectClose1}
-                                        onOpen={handleSelectOpen1}
-                                        value={loI}
-                                        onChange={(e)=> {setLoi(e.target.value)}}
-                                        inputProps={{
-                                            name: 'role',
-                                            id: 'demo-controlled-open-select',
-                                        }}
-                                    >
-                                        <MenuItem value={1}>1</MenuItem>
-                                        <MenuItem value={2}>2</MenuItem>
-                                        <MenuItem value={3}>3</MenuItem>
-                                        <MenuItem value={4}>4</MenuItem>
-                                        <MenuItem value={5}>5</MenuItem>
-                                    </Select>
-                                </FormControl>
-                                <br/>
-                                <br/>
-                                <br/>
-                            </Grid>
-                        </Grid>
+                                </Button>
+                                <p />
+                                <Button onClick={importCSV} disabled={loading}> Upload </Button>
+                            </div>
+                        </TabPanel>
+                    </SwipeableViews>
                     </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleClose} color="secondary">
-                            Cancel
-                        </Button>
-                        <Button color="primary" type="submit">
-                            Save
-                        </Button>
-                    </DialogActions>
-                </form>
             </Dialog>
         </div>
     );

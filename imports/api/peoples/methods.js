@@ -58,6 +58,27 @@ export const insert = new ValidatedMethod({
     }
 });
 
+export const insertMany = new ValidatedMethod({
+    name: 'peoples.insertMany',
+    mixins : [LoggedInMixin],
+    checkLoggedInError: {
+        error: 'notLogged',
+        message: 'You need to be logged in to create people'
+    },
+    validate: null,
+    run({ peoples }) {
+        if(!peoples || !Array.isArray(peoples)){
+            throw new Meteor.Error(500, "Stakeholders required");
+        }
+        _.each(peoples, function(doc) {
+            let params = {
+                people: doc
+            }
+            Meteor.call('peoples.insert', params)
+        })
+    }
+});
+
 
 
 
@@ -149,7 +170,8 @@ export const remove = new ValidatedMethod({
 const PEOPLES_METHODS = _.pluck([
     insert,
     update,
-    remove
+    remove,
+    insertMany
 ], 'name');
 
 if (Meteor.isServer) {
