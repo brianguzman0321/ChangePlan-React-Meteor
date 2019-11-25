@@ -17,7 +17,8 @@ import Select from '@material-ui/core/Select';
 import {withTracker} from "meteor/react-meteor-data";
 import { Companies } from "/imports/api/companies/companies";
 import { Projects } from "/imports/api/projects/projects";
-import NewProject from './NewProject';
+// import NewProject from './NewProject';
+import NewProject from './Models/CreateProject';
 import ProjectMenus from './ProjectMenus'
 
 

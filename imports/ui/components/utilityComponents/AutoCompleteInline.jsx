@@ -311,6 +311,7 @@ export default function IntegrationReactSelect(props) {
     const classes = useStyles();
     const theme = useTheme();
     const [multi, setMulti] = React.useState(props.selectedValue || null);
+    const [multiple, setMultiple] = React.useState(props.multiple || false);
 
 
     const handleChangeMulti = value => {
@@ -351,7 +352,7 @@ export default function IntegrationReactSelect(props) {
                     components={components}
                     value={multi}
                     onChange={handleChangeMulti.bind(event)}
-                    // isMulti
+                    isMulti={multiple}
                 />
             </NoSsr>
         </div>
