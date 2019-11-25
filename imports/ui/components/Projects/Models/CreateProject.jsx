@@ -255,7 +255,7 @@ function AddActivity(props) {
                 startingDate,
                 endingDate,
                 companyId: company._id,
-                managers: person.map(p => p.value)
+                managers: person && person.map(p => p.value) || []
 
             }
         };
