@@ -7,6 +7,10 @@ import {makeStyles} from "@material-ui/core";
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
+import {withTracker} from "meteor/react-meteor-data";
+import { Projects } from "../../../api/projects/projects";
+import { withRouter } from 'react-router';
+import moment from 'moment';
 
 const useStyles = makeStyles({
     root: {
@@ -54,6 +58,10 @@ const useStyles = makeStyles({
         minWidth: 275,
         margin: 12
     },
+    initialRow: {
+        marginTop: 12,
+        marginLeft: 29
+    },
     bullet: {
         display: 'inline-block',
         margin: '0 2px',
@@ -70,8 +78,9 @@ const useStyles = makeStyles({
     }
 });
 
-export default function Dashboard(props){
-    let { match } = props;
+function Dashboard(props){
+    let { match, project } = props;
+    project = project || {};
     let { projectId } = match.params;
     const classes = useStyles();
     let { params } = props.match;
@@ -120,6 +129,37 @@ export default function Dashboard(props){
                     <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
                         Dashboard
                     </Typography>
+                </Grid>
+                <Grid
+                    container
+                    direction="row"
+                    justify="space-between"
+                    alignItems="center"
+                    className={classes.initialRow}
+                >
+                    <Grid item xs={6}>
+                        <Typography variant="h4">
+                            {project.name}
+                        </Typography>
+                        <Typography gutterBottom style={{marginTop: 5}}>
+                            <b>Start date:</b> {moment(project.startingDate).format('DD-MMM-YY')}
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <b>Due date:</b> {moment(project.endingDate).format('DD-MMM-YY')}
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={6} style={{paddingLeft: 23}}>
+                        <Typography gutterBottom>
+                            <b>Change managers:</b>
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            Abdul Hameed, Gavin Wedell
+                        </Typography>
+                        <Typography gutterBottom>
+                            <b>Managers:</b>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            Jhon Cena
+                        </Typography>
+                    </Grid>
                 </Grid>
                 <Grid
                     container
@@ -177,3 +217,14 @@ export default function Dashboard(props){
         </div>
     )
 }
+
+const DashboardPage = withTracker(props => {
+    let { match } = props;
+    let { projectId } = match.params;
+    Meteor.subscribe('compoundActivities', projectId);
+    return {
+        project : Projects.findOne({_id: projectId})
+    };
+})(withRouter(Dashboard));
+
+export default DashboardPage
