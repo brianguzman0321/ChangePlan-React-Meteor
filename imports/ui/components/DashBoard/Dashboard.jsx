@@ -11,6 +11,9 @@ import {withTracker} from "meteor/react-meteor-data";
 import { Projects } from "../../../api/projects/projects";
 import { withRouter } from 'react-router';
 import moment from 'moment';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import Divider from '@material-ui/core/Divider';
+import Icon from '@material-ui/core/Icon';
 
 const useStyles = makeStyles({
     root: {
@@ -55,7 +58,6 @@ const useStyles = makeStyles({
         marginTop: 13,
     },
     firstRowCard: {
-        minWidth: 275,
         margin: 12
     },
     initialRow: {
@@ -183,7 +185,7 @@ function Dashboard(props){
                                     justify="flex-end"
                                     alignItems="baseline"
                                 >
-                                    <Button size="small" align="right" color="primary" onClick={() => props.history.push(`/projects/${projectId}/activities`)}>
+                                    <Button align="right" color="primary" onClick={() => props.history.push(`/projects/${projectId}/activities`)}>
                                         Activities Page
                                     </Button>
                                 </Grid>
@@ -204,11 +206,88 @@ function Dashboard(props){
                                     justify="flex-end"
                                     alignItems="baseline"
                                 >
-                                    <Button size="small" align="right" color="primary" onClick={() => props.history.push(`/projects/${projectId}/stake-holders`)}>
+                                    <Button align="right" color="primary" onClick={() => props.history.push(`/projects/${projectId}/stake-holders`)}>
                                         Stakeholders Page
                                     </Button>
                                 </Grid>
                             </CardActions>
+                        </Card>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Card className={classes.firstRowCard} style={{background: '#f5f5f5'}}>
+                            <LinearProgress variant="determinate"  color="primary"/>
+                            <CardContent>
+                                <Typography className={classes.displayHeading} gutterBottom>
+                                    PROJECT INFORMATION
+                                </Typography>
+                                <Card>
+                                    <CardContent>
+                                        <Typography className={classes.displayHeading} gutterBottom>
+                                            Vision &nbsp;&nbsp;
+                                            <Icon color="disabled" fontSize="small" style={{verticalAlign: 'middle', marginBottom: 4}}>
+                                            help
+                                        </Icon>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            <span style={{color: '#bebebe'}}>What is the big picture vision for this project and how it will benefit the organisation?</span>
+                                        </Typography>
+                                        <Divider />
+                                        <Button align="right" color="primary" style={{marginTop: 5, marginLeft: 9}}>
+                                            Add
+                                        </Button>
+                                    </CardContent>
+                                </Card>
+                                <br/>
+                                <Card>
+                                    <CardContent>
+                                        <Typography className={classes.displayHeading} gutterBottom>
+                                            Objectives &nbsp;&nbsp;
+                                            <Icon color="disabled" fontSize="small" style={{verticalAlign: 'middle', marginBottom: 4}}>
+                                                help
+                                            </Icon>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            <span style={{color: '#bebebe'}}>List the ways in which the project/change will support the organisation. What problems is the project/change solving?</span>
+                                        </Typography>
+                                        <Divider />
+                                        <Button align="right" color="primary" style={{marginTop: 5, marginLeft: 9}}>
+                                            Add
+                                        </Button>
+                                    </CardContent>
+                                </Card>
+                                <br/>
+                                <Card>
+                                    <CardContent>
+                                        <Typography className={classes.displayHeading} gutterBottom>
+                                            Impacts &nbsp;&nbsp;
+                                            <Icon color="disabled" fontSize="small" style={{verticalAlign: 'middle', marginBottom: 4}}>
+                                                help
+                                            </Icon>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            <span style={{color: '#bebebe'}}>List the project's impact on processes, technology, people & organization?</span>
+                                        </Typography>
+                                        <Divider />
+                                        <Button align="right" color="primary" style={{marginTop: 5, marginLeft: 9}}>
+                                            Add
+                                        </Button>
+                                    </CardContent>
+                                </Card>
+                                <br/>
+                                <Card>
+                                    <CardContent>
+                                        <Typography className={classes.displayHeading} gutterBottom>
+                                            Risks &nbsp;&nbsp;
+                                            <Icon color="disabled" fontSize="small" style={{verticalAlign: 'middle', marginBottom: 4}}>
+                                                help
+                                            </Icon>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            <span style={{color: '#bebebe'}}>List risks associated with the change that could effect the projects's success?</span>
+                                        </Typography>
+                                        <Divider />
+                                        <Button align="right" color="primary" style={{marginTop: 5, marginLeft: 9}}>
+                                            Add
+                                        </Button>
+                                    </CardContent>
+                                </Card>
+                            </CardContent>
                         </Card>
                     </Grid>
                 </Grid>
@@ -228,3 +307,5 @@ const DashboardPage = withTracker(props => {
 })(withRouter(Dashboard));
 
 export default DashboardPage
+
+
