@@ -217,7 +217,7 @@ function Dashboard(props){
                         <Card className={classes.firstRowCard} style={{background: '#f5f5f5'}}>
                             <LinearProgress variant="determinate"  color="primary"/>
                             <CardContent>
-                                <Typography className={classes.displayHeading} gutterBottom>
+                                <Typography className={classes.displayHeading}  style={{marginBottom: 15}}>
                                     PROJECT INFORMATION
                                 </Typography>
                                 <Card>
