@@ -94,6 +94,8 @@ function Dashboard(props){
     const classes = useStyles();
     let { params } = props.match;
     const [vision, setVision] = React.useState(project.vision || []);
+    const [index, setIndex] = React.useState('');
+    const [editValue, setEditValue] = React.useState('');
     const [visionModal, setVisionModal] = React.useState(false);
     const [modals, setModals] = React.useState({
         vision: false,
@@ -135,8 +137,16 @@ function Dashboard(props){
         }
     };
 
+    const editVision = (index, value) => {
+        setIndex(index);
+        setEditValue(value);
+        handleClose('vision')
+    };
+
     const handleModalClose = obj => {
-        setModals({modals, ...obj})
+        setModals({modals, ...obj});
+        setIndex('');
+        setEditValue('');
     };
 
     const updateValues = obj => {
@@ -152,7 +162,7 @@ function Dashboard(props){
 
     return (
         <div>
-            <VisionModal open={modals.vision} handleModalClose={handleModalClose} project={project} />
+            <VisionModal open={modals.vision} handleModalClose={handleModalClose} project={project} index={index} editValue={editValue}/>
             <TopNavBar menus={menus} {...props} />
             <Grid
                 container
@@ -274,8 +284,8 @@ function Dashboard(props){
                                         </Typography>
                                         <Divider />
 
-                                        {vision.map(v => {
-                                            return <><Grid
+                                        {vision.map((v, i) => {
+                                            return <><Grid key={i}
                                                 container
                                                 direction="row"
                                                 justify="flex-end"
@@ -286,8 +296,8 @@ function Dashboard(props){
                                                         {v}
                                                     </Typography>
                                                 </Grid>
-                                                <Grid item xs={3} justify="flex-end" display="flex" style={{display: 'flex'}}>
-                                                    <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}}>
+                                                <Grid item xs={3} justify="flex-end" style={{display: 'flex'}}>
+                                                    <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {editVision(i, v)}}>
                                                         edit
                                                     </Icon>
                                                     <Icon fontSize="small" style={{marginRight: 6, cursor: 'pointer'}}>

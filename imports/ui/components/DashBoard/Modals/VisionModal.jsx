@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from "react";
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -67,12 +67,13 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function AddValue(props) {
-    const [name, setName] = React.useState('');
+    let { company, open, handleModalClose, project, index, editValue } = props;
+    const [name, setName] = React.useState(editValue);
     const [email, setEmail] = React.useState('');
     const [role, setRole] = React.useState('changeManager');
     const [selectOpen, setSelectOpen] = React.useState(false);
 
-    let { company, open, handleModalClose, project } = props;
+
     const classes = useStyles();
     const modalName = 'vision';
 
@@ -85,7 +86,13 @@ function AddValue(props) {
             props.enqueueSnackbar('Please fill the required Field', {variant: 'error'});
             return false;
         }
-        project.vision.push(name);
+        if(index >=0 ){
+            project.vision[index] = name;
+        }
+        else{
+            project.vision.push(name);
+        }
+
         delete project.changeManagerDetails;
         delete project.managerDetails;
         delete project.peoplesDetails;
@@ -125,6 +132,10 @@ function AddValue(props) {
     function handleSelectOpen() {
         setSelectOpen(true);
     }
+
+    useEffect(() => {
+        setName(editValue)
+    }, [editValue]);
 
     return (
         <div className={classes.createNewProject}>
