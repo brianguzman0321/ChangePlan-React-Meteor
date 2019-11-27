@@ -151,15 +151,15 @@ function Dashboard(props){
                     </Grid>
                     <Grid item xs={6} style={{paddingLeft: 23}}>
                         <Typography gutterBottom>
-                            <b>Change managers:</b>
+                            <b>{project.changeManagers && project.changeManagers.length > 1 ? "Change managers" : "Change manager"}:</b>
                             &nbsp;&nbsp;&nbsp;&nbsp;
-                            Abdul Hameed, Gavin Wedell
+                            {ChangeManagersNames(project) || '-'}
                         </Typography>
                         <Typography gutterBottom>
-                            <b>Managers:</b>
+                            <b>{project.managers && project.managers.length > 1 ? "Managers" : "Manager"}:</b>
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            Jhon Cena
+                            {ManagersNames(project)}
                         </Typography>
                     </Grid>
                 </Grid>
@@ -215,7 +215,7 @@ function Dashboard(props){
                     </Grid>
                     <Grid item xs={12}>
                         <Card className={classes.firstRowCard} style={{background: '#f5f5f5'}}>
-                            <LinearProgress variant="determinate"  color="primary"/>
+                            <LinearProgress variant="determinate"  color="primary" value={100}/>
                             <CardContent>
                                 <Typography className={classes.displayHeading}  style={{marginBottom: 15}}>
                                     PROJECT INFORMATION
@@ -297,10 +297,41 @@ function Dashboard(props){
     )
 }
 
+function ChangeManagersNames(project) {
+    if(project.changeManagerDetails) {
+        let changeManagers = project.changeManagerDetails.map(changeManager => {
+            return `${changeManager.profile.firstName} ${changeManager.profile.lastName}`
+        });
+        if(changeManagers.length){
+            return changeManagers.join(", ")
+        }
+        else {
+            return "-"
+        }
+
+    }
+}
+
+function ManagersNames(project) {
+    if(project.managerDetails) {
+        let managers = project.managerDetails.map(manager => {
+            return `${manager.profile.firstName} ${manager.profile.lastName}`
+        });
+        if(managers.length){
+            return managers.join(", ")
+        }
+        else {
+            return "-"
+        }
+    }
+
+}
+
 const DashboardPage = withTracker(props => {
     let { match } = props;
     let { projectId } = match.params;
     Meteor.subscribe('compoundActivities', projectId);
+    Meteor.subscribe('compoundProject', projectId);
     return {
         project : Projects.findOne({_id: projectId})
     };

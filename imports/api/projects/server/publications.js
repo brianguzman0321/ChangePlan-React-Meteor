@@ -84,6 +84,52 @@ Meteor.publishTransformed('compoundProjects', function (company) {
     });
 });
 
+Meteor.publishTransformed('compoundProject', function (projectId) {
+    let query = {};
+    projectId && (query._id = projectId);
+    if(Roles.userIsInRole(this.userId, 'superAdmin')){
+
+    }
+    return Projects.find(query).serverTransform({
+        'peoplesDetails': function (doc) {
+            let peoples = [];
+            _(doc.peoples).each(function (PeopleId) {
+                peoples.push(Meteor.users.findOne({_id: PeopleId}, {
+                    fields: {
+                        services: 0, roles: 0
+                    }
+                }));
+            });
+
+            return peoples;
+        },
+        'changeManagerDetails': function (doc) {
+            let peoples = [];
+            _(doc.changeManagers).each(function (PeopleId) {
+                peoples.push(Meteor.users.findOne({_id: PeopleId}, {
+                    fields: {
+                        services: 0, roles: 0
+                    }
+                }));
+            });
+
+            return peoples;
+        },
+        'managerDetails': function (doc) {
+            let peoples = [];
+            _(doc.managers).each(function (PeopleId) {
+                peoples.push(Meteor.users.findOne({_id: PeopleId}, {
+                    fields: {
+                        services: 0, roles: 0
+                    }
+                }));
+            });
+
+            return peoples;
+        },
+    });
+});
+
 Meteor.publish('projects.single', function (id) {
     return Projects.find({
         owner: this.userId,
