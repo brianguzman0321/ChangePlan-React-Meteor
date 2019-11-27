@@ -59,6 +59,14 @@ Projects.schema = new SimpleSchema({
     'managers.$': {
         type: String
     },
+    vision: {
+        type: Array,
+        defaultValue: [],
+        label: 'project vision',
+    },
+    'vision.$': {
+        type: String
+    },
     startingDate: {
         type: Date,
         label: 'Starting Date',

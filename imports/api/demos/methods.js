@@ -47,6 +47,9 @@ export const update = new ValidatedMethod({
         'demo': {
             type: Object
         },
+        'demo._id': {
+            type: Object
+        },
         'demo.country': {
             type: String
         },
@@ -54,8 +57,16 @@ export const update = new ValidatedMethod({
             type: String,
             optional: true
         },
+        'demo.createdAt': {
+            type: Date,
+            optional: true
+        },'demo.updatedAt': {
+            type: Date,
+            optional: true
+        }
     }).validator(),
     run({ demo }) {
+        let { _id } = demo;
         return Demos.update(_id, {$set: demo});
     }
 });

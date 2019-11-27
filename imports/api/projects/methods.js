@@ -62,6 +62,14 @@ export const insert = new ValidatedMethod({
             type: String,
             optional: true
         },
+        'project.vision': {
+            type: Array,
+            optional: true
+        },
+        'project.vision.$': {
+            type: String,
+            optional: true
+        },
         'project.startingDate': {
             type: Date,
         },
@@ -98,6 +106,9 @@ export const update = new ValidatedMethod({
         'project': {
             type: Object
         },
+        'project._id': {
+            type: String,
+        },
         'project.owner': {
             type: String,
         },
@@ -131,6 +142,14 @@ export const update = new ValidatedMethod({
         'project.changeManagers.$': {
             type: String
         },
+        'project.vision': {
+            type: Array,
+            optional: true
+        },
+        'project.vision.$': {
+            type: String,
+            optional: true
+        },
         'project.startingDate': {
             type: Date,
         },
@@ -140,8 +159,17 @@ export const update = new ValidatedMethod({
         'project.endingDate': {
             type: Date,
         },
+        'project.createdAt': {
+            type: Date,
+            optional: true
+        },
+        'project.updatedAt': {
+            type: Date,
+            optional: true
+        },
     }).validator(),
     run({ project }) {
+        let { _id } = project;
         return Projects.update(_id, {$set: project});
     }
 });

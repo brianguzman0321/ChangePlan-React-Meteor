@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from "react";
 import TopNavBar from '/imports/ui/components/App/App';
 import Grid from "@material-ui/core/Grid/Grid";
 import Typography from "@material-ui/core/Typography/Typography";
@@ -14,6 +14,7 @@ import moment from 'moment';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Divider from '@material-ui/core/Divider';
 import Icon from '@material-ui/core/Icon';
+import VisionModal from './Modals/VisionModal';
 
 const useStyles = makeStyles({
     root: {
@@ -29,6 +30,12 @@ const useStyles = makeStyles({
     iconTab: {
         display: 'flex',
         alignItems: 'center'
+    },
+    detailValues: {
+        color: '#465563',
+        marginTop: 9,
+        marginBottom: 9,
+        marginLeft: 5
     },
     activityTab: {
         border: '0.5px solid #c5c6c7',
@@ -86,6 +93,13 @@ function Dashboard(props){
     let { projectId } = match.params;
     const classes = useStyles();
     let { params } = props.match;
+    const [vision, setVision] = React.useState(project.vision || []);
+    const [visionModal, setVisionModal] = React.useState(false);
+    const [modals, setModals] = React.useState({
+        vision: false,
+        duplicate: false,
+        delete: false
+    });
     let menus = [
         {
             show: true,
@@ -109,8 +123,36 @@ function Dashboard(props){
     if (!params.projectId){
         menus = []
     }
+
+    const allowedValues = ['vision', 'delete', 'edit', 'duplicate'];
+
+    const handleClose = (value) => {
+        if(allowedValues.includes(value)){
+            let obj = {
+                [value]: !modals[value]
+            };
+            setModals({modals, ...obj})
+        }
+    };
+
+    const handleModalClose = obj => {
+        setModals({modals, ...obj})
+    };
+
+    const updateValues = obj => {
+        if(project && project.vision){
+            setVision(project.vision)
+        }
+
+    };
+
+    useEffect(() => {
+        updateValues()
+    }, [project]);
+
     return (
         <div>
+            <VisionModal open={modals.vision} handleModalClose={handleModalClose} project={project} />
             <TopNavBar menus={menus} {...props} />
             <Grid
                 container
@@ -231,7 +273,35 @@ function Dashboard(props){
                                             <span style={{color: '#bebebe'}}>What is the big picture vision for this project and how it will benefit the organisation?</span>
                                         </Typography>
                                         <Divider />
-                                        <Button align="right" color="primary" style={{marginTop: 5, marginLeft: 9}}>
+
+                                        {vision.map(v => {
+                                            return <><Grid
+                                                container
+                                                direction="row"
+                                                justify="flex-end"
+                                                alignItems="center"
+                                            >
+                                                <Grid item xs={9} >
+                                                    <Typography className={classes.detailValues} gutterBottom>
+                                                        {v}
+                                                    </Typography>
+                                                </Grid>
+                                                <Grid item xs={3} justify="flex-end" display="flex" style={{display: 'flex'}}>
+                                                    <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}}>
+                                                        edit
+                                                    </Icon>
+                                                    <Icon fontSize="small" style={{marginRight: 6, cursor: 'pointer'}}>
+                                                        delete
+                                                    </Icon>
+                                                </Grid>
+                                            </Grid>
+                                            <Divider />
+                                            </>
+
+                                        })}
+
+                                        <Divider />
+                                        <Button align="right" color="primary" style={{marginTop: 5, marginLeft: 9}} onClick={handleClose.bind(null, 'vision')}>
                                             Add
                                         </Button>
                                     </CardContent>
