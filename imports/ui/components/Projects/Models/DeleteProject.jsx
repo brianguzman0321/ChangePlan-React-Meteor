@@ -130,7 +130,7 @@ function DeleteProject(props) {
                 <DialogContent dividers>
                     <DialogContentText>
                         Are you sure? It's means to remove <strong>{project.name}</strong> and all related activities.
-                        this action can's be reversed.
+                        this action can't be reversed.
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>

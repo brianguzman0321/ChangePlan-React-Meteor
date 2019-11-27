@@ -15,6 +15,7 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import Divider from '@material-ui/core/Divider';
 import Icon from '@material-ui/core/Icon';
 import VisionModal from './Modals/VisionModal';
+import ObjectiveModal from './Modals/ObjectiveModal';
 import DeleteValue from './Modals/deleteModal';
 import { stringHelpers } from '/imports/helpers/stringHelpers';
 
@@ -95,13 +96,16 @@ function Dashboard(props){
     let { projectId } = match.params;
     const classes = useStyles();
     let { params } = props.match;
-    const [vision, setVision] = React.useState(project.vision || []);
     const [index, setIndex] = React.useState('');
     const [editValue, setEditValue] = React.useState('');
     const [deleteValue, setDeleteValue] = React.useState('');
+    const [vision, setVision] = React.useState(project.vision || []);
     const [visionModal, setVisionModal] = React.useState(false);
+    const [objectives, setObjective] = React.useState(project.objectives || []);
+    const [objectivesModal, setObjectivesModal] = React.useState(false);
     const [modals, setModals] = React.useState({
         vision: false,
+        objectives: false,
         delete: false
     });
     let menus = [
@@ -128,7 +132,7 @@ function Dashboard(props){
         menus = []
     }
 
-    const allowedValues = ['vision', 'delete', 'edit', 'duplicate'];
+    const allowedValues = ['vision', 'delete', 'edit', 'objectives'];
 
     const handleClose = (value) => {
         if(allowedValues.includes(value)){
@@ -143,6 +147,12 @@ function Dashboard(props){
         setIndex(index);
         setEditValue(value);
         handleClose('vision')
+    };
+
+    const editObjectives = (index, value) => {
+        setIndex(index);
+        setEditValue(value);
+        handleClose('objectives')
     };
     const deleteEntity = (index, value) => {
         setIndex(index);
@@ -160,6 +170,9 @@ function Dashboard(props){
         if(project && project.vision){
             setVision(project.vision)
         }
+        if(project && project.objectives){
+            setObjective(project.objectives)
+        }
 
     };
 
@@ -170,6 +183,7 @@ function Dashboard(props){
     return (
         <div>
             <VisionModal open={modals.vision} handleModalClose={handleModalClose} project={project} index={index} editValue={editValue}/>
+            <ObjectiveModal open={modals.objectives} handleModalClose={handleModalClose} project={project} index={index} editValue={editValue}/>
             <DeleteValue open={modals.delete} handleModalClose={handleModalClose} project={project} index={index} deleteValue={deleteValue}/>
             <TopNavBar menus={menus} {...props} />
             <Grid
@@ -336,7 +350,35 @@ function Dashboard(props){
                                             <span style={{color: '#bebebe'}}>List the ways in which the project/change will support the organisation. What problems is the project/change solving?</span>
                                         </Typography>
                                         <Divider />
-                                        <Button align="right" color="primary" style={{marginTop: 5, marginLeft: 9}}>
+
+                                        {objectives.map((v, i) => {
+                                            return <><Grid key={i}
+                                                           container
+                                                           direction="row"
+                                                           justify="flex-end"
+                                                           alignItems="center"
+                                            >
+                                                <Grid item xs={10} >
+                                                    <Typography className={classes.detailValues} gutterBottom>
+                                                        {stringHelpers.limitCharacters(v, 112)}
+                                                    </Typography>
+                                                </Grid>
+                                                <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
+                                                    <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {editObjectives(i, v)}}>
+                                                        edit
+                                                    </Icon>
+                                                    <Icon fontSize="small" style={{marginRight: 6, cursor: 'pointer'}} onClick={(e) => {deleteEntity(i, 'vision')}}>
+                                                        delete
+                                                    </Icon>
+                                                </Grid>
+                                            </Grid>
+                                            <Divider />
+                                            </>
+
+                                        })}
+
+                                        <Divider />
+                                        <Button align="right" color="primary" style={{marginTop: 5, marginLeft: 9}} onClick={handleClose.bind(null, 'objectives')}>
                                             Add
                                         </Button>
                                     </CardContent>

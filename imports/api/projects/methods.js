@@ -70,6 +70,14 @@ export const insert = new ValidatedMethod({
             type: String,
             optional: true
         },
+        'project.objectives': {
+            type: Array,
+            optional: true
+        },
+        'project.objectives.$': {
+            type: String,
+            optional: true
+        },
         'project.startingDate': {
             type: Date,
         },
@@ -147,6 +155,14 @@ export const update = new ValidatedMethod({
             optional: true
         },
         'project.vision.$': {
+            type: String,
+            optional: true
+        },
+        'project.objectives': {
+            type: Array,
+            optional: true
+        },
+        'project.objectives.$': {
             type: String,
             optional: true
         },

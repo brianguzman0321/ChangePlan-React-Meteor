@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from "react";
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -9,8 +9,14 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import DialogContentText from '@material-ui/core/DialogContentText';
+import TextField from '@material-ui/core/TextField';
 import { withSnackbar } from 'notistack';
 import 'date-fns';
+import Grid from "@material-ui/core/Grid/Grid";
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
 
 const styles = theme => ({
     root: {
@@ -60,36 +66,48 @@ const DialogActions = withStyles(theme => ({
     },
 }))(MuiDialogActions);
 
-function DeleteProject(props) {
-    const [name, setName] = React.useState('');
+function AddValue(props) {
+    let { company, open, handleModalClose, project, index, editValue } = props;
+    const [name, setName] = React.useState(editValue);
     const [email, setEmail] = React.useState('');
     const [role, setRole] = React.useState('changeManager');
     const [selectOpen, setSelectOpen] = React.useState(false);
 
-    let { company, open, handleModalClose, activity } = props;
-    const classes = useStyles();
-    const modalName = 'delete';
 
-    const handleClose = (value) => {
-        handleModalClose(value);
+    const classes = useStyles();
+    const modalName = 'objectives';
+
+    const handleClose = () => {
+        handleModalClose(modalName);
         setName('');
     };
-    const removeProject = () => {
-        let params = {
-            activity: {
-                _id: activity._id,
+    const createProject = () => {
+        if(!(name)){
+            props.enqueueSnackbar('Please fill the required Field', {variant: 'error'});
+            return false;
+        }
+        if(index !== '' ){
+            project.objectives[index] = name;
+        }
+        else{
+            project.objectives.push(name);
+        }
 
-            }
+        delete project.changeManagerDetails;
+        delete project.managerDetails;
+        delete project.peoplesDetails;
+        let params = {
+            project
+
         };
-        Meteor.call('activities.remove', params, (err, res) => {
+        Meteor.call('projects.update', params, (err, res) => {
             if(err){
                 props.enqueueSnackbar(err.reason, {variant: 'error'})
             }
             else{
-                handleClose(true);
+                handleClose();
                 setName('');
-                setEmail('');
-                props.enqueueSnackbar('Activity Removed Successfully.', {variant: 'success'})
+                props.enqueueSnackbar('Project Updated Successfully.', {variant: 'success'})
             }
 
         })
@@ -115,24 +133,36 @@ function DeleteProject(props) {
         setSelectOpen(true);
     }
 
+    useEffect(() => {
+        setName(editValue)
+    }, [editValue]);
+
     return (
         <div className={classes.createNewProject}>
             <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="sm" fullWidth={true}>
                 <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-                    Remove Activity
+                    Project Objective
                 </DialogTitle>
                 <DialogContent dividers>
-                    <DialogContentText>
-                        Are you sure? It's means to remove <strong>{activity.name}</strong>.
-                        this action can't be reversed.
-                    </DialogContentText>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <TextField
+                                autoFocus
+                                // margin="dense"
+                                id="value"
+                                label="Value"
+                                value={name}
+                                onChange={handleChange}
+                                required={true}
+                                type="text"
+                                fullWidth={true}
+                            />
+                        </Grid>
+                    </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} color="primary">
-                        Cancel
-                    </Button>
-                    <Button onClick={removeProject} color="secondary">
-                        Delete
+                    <Button onClick={createProject} color="primary">
+                        Save
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -140,4 +170,4 @@ function DeleteProject(props) {
     );
 }
 
-export default withSnackbar(DeleteProject)
+export default withSnackbar(AddValue)
