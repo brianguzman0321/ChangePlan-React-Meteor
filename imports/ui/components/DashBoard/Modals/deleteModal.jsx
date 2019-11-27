@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React from 'react';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -66,33 +66,21 @@ const DialogActions = withStyles(theme => ({
     },
 }))(MuiDialogActions);
 
-function AddValue(props) {
-    let { company, open, handleModalClose, project, index, editValue } = props;
-    const [name, setName] = React.useState(editValue);
+function DeleteValue(props) {
+    const [name, setName] = React.useState('');
     const [email, setEmail] = React.useState('');
     const [role, setRole] = React.useState('changeManager');
     const [selectOpen, setSelectOpen] = React.useState(false);
 
-
+    let { company, open, handleModalClose, project, index, deleteValue } = props;
     const classes = useStyles();
-    const modalName = 'vision';
+    const modalName = 'delete';
 
     const handleClose = () => {
         handleModalClose(modalName);
         setName('');
     };
-    const createProject = () => {
-        if(!(name)){
-            props.enqueueSnackbar('Please fill the required Field', {variant: 'error'});
-            return false;
-        }
-        if(index !== '' ){
-            project.vision[index] = name;
-        }
-        else{
-            project.vision.push(name);
-        }
-
+    const removeProject = () => {
         delete project.changeManagerDetails;
         delete project.managerDetails;
         delete project.peoplesDetails;
@@ -100,6 +88,7 @@ function AddValue(props) {
             project
 
         };
+        params.project[deleteValue].splice(index, 1);
         Meteor.call('projects.update', params, (err, res) => {
             if(err){
                 props.enqueueSnackbar(err.reason, {variant: 'error'})
@@ -133,36 +122,24 @@ function AddValue(props) {
         setSelectOpen(true);
     }
 
-    useEffect(() => {
-        setName(editValue)
-    }, [editValue]);
-
     return (
         <div className={classes.createNewProject}>
             <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="sm" fullWidth={true}>
                 <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-                    Project Vision
+                    Remove Value
                 </DialogTitle>
                 <DialogContent dividers>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12}>
-                            <TextField
-                                autoFocus
-                                // margin="dense"
-                                id="value"
-                                label="Value"
-                                value={name}
-                                onChange={handleChange}
-                                required={true}
-                                type="text"
-                                fullWidth={true}
-                            />
-                        </Grid>
-                    </Grid>
+                    <DialogContentText>
+                        Are you sure? It's means to remove it.
+                        this action can's be reversed.
+                    </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={createProject} color="primary">
-                        Save
+                    <Button onClick={handleClose} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={removeProject} color="secondary">
+                        Delete
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -170,4 +147,4 @@ function AddValue(props) {
     );
 }
 
-export default withSnackbar(AddValue)
+export default withSnackbar(DeleteValue)

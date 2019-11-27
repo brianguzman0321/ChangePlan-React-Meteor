@@ -15,6 +15,8 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import Divider from '@material-ui/core/Divider';
 import Icon from '@material-ui/core/Icon';
 import VisionModal from './Modals/VisionModal';
+import DeleteValue from './Modals/deleteModal';
+import { stringHelpers } from '/imports/helpers/stringHelpers';
 
 const useStyles = makeStyles({
     root: {
@@ -96,10 +98,10 @@ function Dashboard(props){
     const [vision, setVision] = React.useState(project.vision || []);
     const [index, setIndex] = React.useState('');
     const [editValue, setEditValue] = React.useState('');
+    const [deleteValue, setDeleteValue] = React.useState('');
     const [visionModal, setVisionModal] = React.useState(false);
     const [modals, setModals] = React.useState({
         vision: false,
-        duplicate: false,
         delete: false
     });
     let menus = [
@@ -142,6 +144,11 @@ function Dashboard(props){
         setEditValue(value);
         handleClose('vision')
     };
+    const deleteEntity = (index, value) => {
+        setIndex(index);
+        setDeleteValue(value);
+        handleClose('delete')
+    };
 
     const handleModalClose = obj => {
         setModals({modals, ...obj});
@@ -163,6 +170,7 @@ function Dashboard(props){
     return (
         <div>
             <VisionModal open={modals.vision} handleModalClose={handleModalClose} project={project} index={index} editValue={editValue}/>
+            <DeleteValue open={modals.delete} handleModalClose={handleModalClose} project={project} index={index} deleteValue={deleteValue}/>
             <TopNavBar menus={menus} {...props} />
             <Grid
                 container
@@ -291,16 +299,16 @@ function Dashboard(props){
                                                 justify="flex-end"
                                                 alignItems="center"
                                             >
-                                                <Grid item xs={9} >
+                                                <Grid item xs={10} >
                                                     <Typography className={classes.detailValues} gutterBottom>
-                                                        {v}
+                                                        {stringHelpers.limitCharacters(v, 112)}
                                                     </Typography>
                                                 </Grid>
-                                                <Grid item xs={3} justify="flex-end" style={{display: 'flex'}}>
+                                                <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
                                                     <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {editVision(i, v)}}>
                                                         edit
                                                     </Icon>
-                                                    <Icon fontSize="small" style={{marginRight: 6, cursor: 'pointer'}}>
+                                                    <Icon fontSize="small" style={{marginRight: 6, cursor: 'pointer'}} onClick={(e) => {deleteEntity(i, 'vision')}}>
                                                         delete
                                                     </Icon>
                                                 </Grid>
