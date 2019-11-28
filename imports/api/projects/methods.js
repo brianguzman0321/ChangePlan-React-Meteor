@@ -78,6 +78,14 @@ export const insert = new ValidatedMethod({
             type: String,
             optional: true
         },
+        'project.impacts': {
+            type: Array,
+            optional: true
+        },
+        'project.impacts.$': {
+            type: Object,
+            optional: true
+        },
         'project.startingDate': {
             type: Date,
         },
@@ -164,6 +172,14 @@ export const update = new ValidatedMethod({
         },
         'project.objectives.$': {
             type: String,
+            optional: true
+        },
+        'project.impacts': {
+            type: Array,
+            optional: true
+        },
+        'project.impacts.$': {
+            type: Object,
             optional: true
         },
         'project.startingDate': {

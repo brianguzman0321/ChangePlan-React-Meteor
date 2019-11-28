@@ -16,6 +16,7 @@ import Divider from '@material-ui/core/Divider';
 import Icon from '@material-ui/core/Icon';
 import VisionModal from './Modals/VisionModal';
 import ObjectiveModal from './Modals/ObjectiveModal';
+import ImpactsModal from './Modals/ImpactsModal';
 import DeleteValue from './Modals/deleteModal';
 import { stringHelpers } from '/imports/helpers/stringHelpers';
 
@@ -102,6 +103,7 @@ function Dashboard(props){
     const [vision, setVision] = React.useState(project.vision || []);
     const [visionModal, setVisionModal] = React.useState(false);
     const [objectives, setObjective] = React.useState(project.objectives || []);
+    const [impacts, setImpacts] = React.useState(project.impacts || []);
     const [objectivesModal, setObjectivesModal] = React.useState(false);
     const [modals, setModals] = React.useState({
         vision: false,
@@ -132,7 +134,7 @@ function Dashboard(props){
         menus = []
     }
 
-    const allowedValues = ['vision', 'delete', 'edit', 'objectives'];
+    const allowedValues = ['vision', 'delete', 'edit', 'objectives', 'impacts'];
 
     const handleClose = (value) => {
         if(allowedValues.includes(value)){
@@ -154,6 +156,12 @@ function Dashboard(props){
         setEditValue(value);
         handleClose('objectives')
     };
+
+    const editImpacts = (index, value) => {
+        setIndex(index);
+        setEditValue(value);
+        handleClose('impacts')
+    };
     const deleteEntity = (index, value) => {
         setIndex(index);
         setDeleteValue(value);
@@ -174,6 +182,10 @@ function Dashboard(props){
             setObjective(project.objectives)
         }
 
+        if(project && project.impacts){
+            setImpacts(project.impacts)
+        }
+
     };
 
     useEffect(() => {
@@ -184,6 +196,7 @@ function Dashboard(props){
         <div>
             <VisionModal open={modals.vision} handleModalClose={handleModalClose} project={project} index={index} editValue={editValue}/>
             <ObjectiveModal open={modals.objectives} handleModalClose={handleModalClose} project={project} index={index} editValue={editValue}/>
+            <ImpactsModal open={modals.impacts} handleModalClose={handleModalClose} project={project} index={index} editValue={editValue}/>
             <DeleteValue open={modals.delete} handleModalClose={handleModalClose} project={project} index={index} deleteValue={deleteValue}/>
             <TopNavBar menus={menus} {...props} />
             <Grid
@@ -395,6 +408,35 @@ function Dashboard(props){
                                             <span style={{color: '#bebebe'}}>List the project's impact on processes, technology, people & organization?</span>
                                         </Typography>
                                         <Divider />
+
+                                        {impacts.map((v, i) => {
+                                            return <><Grid key={i}
+                                                           container
+                                                           direction="row"
+                                                           justify="flex-end"
+                                                           alignItems="center"
+                                            >
+                                                <Grid item xs={10} >
+                                                    <Typography className={classes.detailValues} gutterBottom>
+                                                        {stringHelpers.limitCharacters(v, 112)}
+                                                    </Typography>
+                                                </Grid>
+                                                <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
+                                                    <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {editObjectives(i, v)}}>
+                                                        edit
+                                                    </Icon>
+                                                    <Icon fontSize="small" style={{marginRight: 6, cursor: 'pointer'}} onClick={(e) => {deleteEntity(i, 'impacts')}}>
+                                                        delete
+                                                    </Icon>
+                                                </Grid>
+                                            </Grid>
+                                            <Divider />
+                                            </>
+
+                                        })}
+
+                                        <Divider />
+                                        {/*<Button align="right" color="primary" style={{marginTop: 5, marginLeft: 9}} onClick={handleClose.bind(null, 'impacts')}>*/}
                                         <Button align="right" color="primary" style={{marginTop: 5, marginLeft: 9}}>
                                             Add
                                         </Button>
