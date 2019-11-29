@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -67,46 +67,54 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function AddValue(props) {
+    let { company, open, handleModalClose, project, index, editValue } = props;
     const [name, setName] = React.useState('');
     const [email, setEmail] = React.useState('');
     const [role, setRole] = React.useState('changeManager');
-    const [selectOpen, setSelectOpen] = React.useState(false);
+    const [type, setType] = React.useState('process');
+    const [level, setLevel] = React.useState('high');
+    const [typeOpen, seTypeOpen] = React.useState(false);
+    const [levelOpen, setLevelOpen] = React.useState(false);
 
-    let { company, open, handleModalClose, project } = props;
     const classes = useStyles();
-    const modalName = 'share';
+    const modalName = 'impact';
 
     const handleClose = () => {
         handleModalClose(modalName);
         setName('');
     };
     const createProject = () => {
-        if(!(name && email && role)){
-            props.enqueueSnackbar('Please fill all required Fields', {variant: 'error'});
+        if(!(name && type && process)){
+            props.enqueueSnackbar('Please fill the required Field', {variant: 'error'});
             return false;
         }
-        else{
-            if(!(/^\S+@\S+$/.test(email))){
-                props.enqueueSnackbar('Please Enter Valid Email Address', {variant: 'error'});
-                return false;
-            }
+        let impactObj = {
+            type,
+            level,
+            description: name
         }
+        if(index !== '' ){
+            project.impacts[index] = impactObj;
+        }
+        else{
+            project.impacts.push(impactObj);
+        }
+
+        delete project.changeManagerDetails;
+        delete project.managerDetails;
+        delete project.peoplesDetails;
         let params = {
-            name,
-            email,
-            role,
             project
 
         };
-        Meteor.call('roles.assignRole', params, (err, res) => {
+        Meteor.call('projects.update', params, (err, res) => {
             if(err){
                 props.enqueueSnackbar(err.reason, {variant: 'error'})
             }
             else{
                 handleClose();
                 setName('');
-                setEmail('');
-                props.enqueueSnackbar('Project Shared Successfully.', {variant: 'success'})
+                props.enqueueSnackbar('Project Updated Successfully.', {variant: 'success'})
             }
 
         })
@@ -120,32 +128,106 @@ function AddValue(props) {
         setEmail(e.target.value)
     };
 
-    function handleSelectChange(event) {
-        setRole(event.target.value);
+    function handleLevelChange(event) {
+        setLevel(event.target.value);
     }
 
-    function handleSelectClose() {
-        setSelectOpen(false);
+    function handleTypeChange(event) {
+        setType(event.target.value);
     }
 
-    function handleSelectOpen() {
-        setSelectOpen(true);
+    function handleTypeClose() {
+        seTypeOpen(false);
     }
+
+    function handleTypeOpen() {
+        seTypeOpen(true);
+    }
+
+
+    function handleLevelOpen() {
+        setLevelOpen(true);
+    }
+
+    function handleLevelClose() {
+        setLevelOpen(false);
+    }
+
+    useEffect(() => {
+        setType(editValue.type)
+        setLevel(editValue.level)
+        setName(editValue.description)
+    }, [editValue]);
 
     return (
         <div className={classes.createNewProject}>
             <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="sm" fullWidth={true}>
                 <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-                    Share Project
+                    Project Impact
                 </DialogTitle>
                 <DialogContent dividers>
                     <Grid container spacing={2}>
                         <Grid item xs={6}>
+                            <br/>
+                            <FormControl className={classes.formControl} fullWidth={true}>
+                                <InputLabel htmlFor="demo-controlled-open-select">Type</InputLabel>
+                                <Select
+                                    id="type"
+                                    label="type"
+                                    fullWidth={true}
+                                    open={typeOpen}
+                                    onClose={handleTypeClose}
+                                    onOpen={handleTypeOpen}
+                                    value={type}
+                                    onChange={handleTypeChange}
+                                    inputProps={{
+                                        name: 'type',
+                                        id: 'demo-controlled-open-select',
+                                    }}
+                                >
+                                    <MenuItem value='process'>Process</MenuItem>
+                                    <MenuItem value='technology'>Technology</MenuItem>
+                                    <MenuItem value='people'>People</MenuItem>
+                                    <MenuItem value='organization'>Organization</MenuItem>
+                                </Select>
+                            </FormControl>
+                            <br/>
+                            <br/>
+                            <br/>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <br/>
+                            <FormControl className={classes.formControl} fullWidth={true}>
+                                <InputLabel htmlFor="demo-controlled-open-select">Role</InputLabel>
+                                <Select
+                                    id="level"
+                                    label="level"
+                                    fullWidth={true}
+                                    open={levelOpen}
+                                    onClose={handleLevelClose}
+                                    onOpen={handleLevelOpen}
+                                    value={level}
+                                    onChange={handleLevelChange}
+                                    inputProps={{
+                                        name: 'level',
+                                        id: 'demo-controlled-open-select',
+                                    }}
+                                >
+                                    <MenuItem value='high'>High</MenuItem>
+                                    <MenuItem value='medium'>Medium</MenuItem>
+                                    <MenuItem value='low'>Low</MenuItem>
+                                </Select>
+                            </FormControl>
+                            <br/>
+                            <br/>
+                            <br/>
+                        </Grid>
+                        <Grid item xs={12}>
                             <TextField
                                 autoFocus
                                 // margin="dense"
                                 id="name"
-                                label="Name"
+                                label="Description"
                                 value={name}
                                 onChange={handleChange}
                                 required={true}
@@ -153,49 +235,11 @@ function AddValue(props) {
                                 fullWidth={true}
                             />
                         </Grid>
-                        <Grid item xs={6}>
-                            <TextField
-                                // margin="dense"
-                                id="email"
-                                label="Email"
-                                value={email}
-                                onChange={handleEmailChange}
-                                required={true}
-                                type="email"
-                                fullWidth={true}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <br/>
-                            <FormControl className={classes.formControl} fullWidth={true}>
-                                <InputLabel htmlFor="demo-controlled-open-select">Role</InputLabel>
-                                <Select
-                                    id="role"
-                                    label="role"
-                                    fullWidth={true}
-                                    open={selectOpen}
-                                    onClose={handleSelectClose}
-                                    onOpen={handleSelectOpen}
-                                    value={role}
-                                    onChange={handleSelectChange}
-                                    inputProps={{
-                                        name: 'role',
-                                        id: 'demo-controlled-open-select',
-                                    }}
-                                >
-                                    <MenuItem value='changeManager'>Change Manager (view and edit)</MenuItem>
-                                    <MenuItem value='manager'>Manager (view only)</MenuItem>
-                                </Select>
-                            </FormControl>
-                            <br/>
-                            <br/>
-                            <br/>
-                        </Grid>
                     </Grid>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={createProject} color="primary">
-                        Share
+                        Save
                     </Button>
                 </DialogActions>
             </Dialog>

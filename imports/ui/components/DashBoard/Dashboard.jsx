@@ -312,8 +312,8 @@ function Dashboard(props){
                                         <Typography className={classes.displayHeading} gutterBottom>
                                             Vision &nbsp;&nbsp;
                                             <Icon color="disabled" fontSize="small" style={{verticalAlign: 'middle', marginBottom: 4}}>
-                                            help
-                                        </Icon>
+                                                help
+                                            </Icon>
                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                             <span style={{color: '#bebebe'}}>What is the big picture vision for this project and how it will benefit the organisation?</span>
                                         </Typography>
@@ -321,10 +321,10 @@ function Dashboard(props){
 
                                         {vision.map((v, i) => {
                                             return <><Grid key={i}
-                                                container
-                                                direction="row"
-                                                justify="flex-end"
-                                                alignItems="center"
+                                                           container
+                                                           direction="row"
+                                                           justify="flex-end"
+                                                           alignItems="center"
                                             >
                                                 <Grid item xs={10} >
                                                     <Typography className={classes.detailValues} gutterBottom>
@@ -340,7 +340,7 @@ function Dashboard(props){
                                                     </Icon>
                                                 </Grid>
                                             </Grid>
-                                            <Divider />
+                                                <Divider />
                                             </>
 
                                         })}
@@ -385,7 +385,7 @@ function Dashboard(props){
                                                     </Icon>
                                                 </Grid>
                                             </Grid>
-                                            <Divider />
+                                                <Divider />
                                             </>
 
                                         })}
@@ -408,7 +408,33 @@ function Dashboard(props){
                                             <span style={{color: '#bebebe'}}>List the project's impact on processes, technology, people & organization?</span>
                                         </Typography>
                                         <Divider />
+                                        <Grid
+                                              container
+                                              direction="row"
+                                              justify="flex-end"
+                                              alignItems="center"
+                                        >
+                                            <Grid item xs={3} >
+                                                <Typography className={classes.detailValues} gutterBottom style={{fontWeight: 'bold'}}>
+                                                    TYPE
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item xs={6} >
+                                                <Typography className={classes.detailValues} gutterBottom style={{fontWeight: 'bold'}}>
+                                                    DESCRIPTION
+                                                </Typography>
 
+                                            </Grid>
+                                            <Grid item xs={1} >
+                                                <Typography className={classes.detailValues} gutterBottom style={{fontWeight: 'bold'}}>
+                                                    LEVEL
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
+
+                                            </Grid>
+                                        </Grid>
+                                        <Divider />
                                         {impacts.map((v, i) => {
                                             return <><Grid key={i}
                                                            container
@@ -416,13 +442,19 @@ function Dashboard(props){
                                                            justify="flex-end"
                                                            alignItems="center"
                                             >
-                                                <Grid item xs={10} >
+                                                <Grid item xs={3} >
                                                     <Typography className={classes.detailValues} gutterBottom>
-                                                        {stringHelpers.limitCharacters(v, 112)}
+                                                        {v.type}
                                                     </Typography>
                                                 </Grid>
+                                                <Grid item xs={6} >
+                                                    {stringHelpers.limitCharacters(v.description, 92)}
+                                                </Grid>
+                                                <Grid item xs={1} >
+                                                    {v.level.toUpperCase()}
+                                                </Grid>
                                                 <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
-                                                    <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {editObjectives(i, v)}}>
+                                                    <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {editImpacts(i, v)}}>
                                                         edit
                                                     </Icon>
                                                     <Icon fontSize="small" style={{marginRight: 6, cursor: 'pointer'}} onClick={(e) => {deleteEntity(i, 'impacts')}}>
@@ -430,14 +462,13 @@ function Dashboard(props){
                                                     </Icon>
                                                 </Grid>
                                             </Grid>
-                                            <Divider />
+                                                <Divider />
                                             </>
 
                                         })}
 
                                         <Divider />
-                                        {/*<Button align="right" color="primary" style={{marginTop: 5, marginLeft: 9}} onClick={handleClose.bind(null, 'impacts')}>*/}
-                                        <Button align="right" color="primary" style={{marginTop: 5, marginLeft: 9}}>
+                                        <Button align="right" color="primary" style={{marginTop: 5, marginLeft: 9}} onClick={handleClose.bind(null, 'impacts')}>
                                             Add
                                         </Button>
                                     </CardContent>

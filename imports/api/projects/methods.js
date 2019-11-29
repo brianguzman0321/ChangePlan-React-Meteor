@@ -84,6 +84,7 @@ export const insert = new ValidatedMethod({
         },
         'project.impacts.$': {
             type: Object,
+            blackbox: true,
             optional: true
         },
         'project.startingDate': {
@@ -180,6 +181,7 @@ export const update = new ValidatedMethod({
         },
         'project.impacts.$': {
             type: Object,
+            blackbox: true,
             optional: true
         },
         'project.startingDate': {

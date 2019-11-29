@@ -248,7 +248,6 @@ function AddActivity(props) {
             props.enqueueSnackbar('Please fix the date error', {variant: 'error'});
             return false;
         }
-        console.log("person", person)
         let params = {
             project: {
                 name: description,
