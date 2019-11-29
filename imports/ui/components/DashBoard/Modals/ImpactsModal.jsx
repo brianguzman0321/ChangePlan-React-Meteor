@@ -70,9 +70,8 @@ function AddValue(props) {
     let { company, open, handleModalClose, project, index, editValue } = props;
     const [name, setName] = React.useState('');
     const [email, setEmail] = React.useState('');
-    const [role, setRole] = React.useState('changeManager');
-    const [type, setType] = React.useState('process');
-    const [level, setLevel] = React.useState('high');
+    const [type, setType] = React.useState('');
+    const [level, setLevel] = React.useState('');
     const [typeOpen, seTypeOpen] = React.useState(false);
     const [levelOpen, setLevelOpen] = React.useState(false);
 
@@ -82,6 +81,8 @@ function AddValue(props) {
     const handleClose = () => {
         handleModalClose(modalName);
         setName('');
+        setType('');
+        setLevel('');
     };
     const createProject = () => {
         if(!(name && type && process)){
@@ -92,7 +93,7 @@ function AddValue(props) {
             type,
             level,
             description: name
-        }
+        };
         if(index !== '' ){
             project.impacts[index] = impactObj;
         }
@@ -224,7 +225,6 @@ function AddValue(props) {
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
-                                autoFocus
                                 // margin="dense"
                                 id="name"
                                 label="Description"

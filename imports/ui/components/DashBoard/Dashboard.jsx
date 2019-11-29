@@ -444,7 +444,7 @@ function Dashboard(props){
                                             >
                                                 <Grid item xs={3} >
                                                     <Typography className={classes.detailValues} gutterBottom>
-                                                        {v.type}
+                                                        {stringHelpers.capitalize(v.type)}
                                                     </Typography>
                                                 </Grid>
                                                 <Grid item xs={6} >
