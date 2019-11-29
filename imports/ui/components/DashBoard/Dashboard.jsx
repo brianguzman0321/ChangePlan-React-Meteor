@@ -395,7 +395,7 @@ function Dashboard(props){
                                                     <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {editObjectives(i, v)}}>
                                                         edit
                                                     </Icon>
-                                                    <Icon fontSize="small" style={{marginRight: 6, cursor: 'pointer'}} onClick={(e) => {deleteEntity(i, 'vision')}}>
+                                                    <Icon fontSize="small" style={{marginRight: 6, cursor: 'pointer'}} onClick={(e) => {deleteEntity(i, 'objectives')}}>
                                                         delete
                                                     </Icon>
                                                 </Grid>
