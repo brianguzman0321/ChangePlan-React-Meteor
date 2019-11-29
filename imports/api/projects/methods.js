@@ -78,6 +78,14 @@ export const insert = new ValidatedMethod({
             type: String,
             optional: true
         },
+        'project.risks': {
+            type: Array,
+            optional: true
+        },
+        'project.risks.$': {
+            type: String,
+            optional: true
+        },
         'project.impacts': {
             type: Array,
             optional: true
@@ -180,6 +188,15 @@ export const update = new ValidatedMethod({
             optional: true
         },
         'project.impacts.$': {
+            type: Object,
+            blackbox: true,
+            optional: true
+        },
+        'project.risks': {
+            type: Array,
+            optional: true
+        },
+        'project.risks.$': {
             type: Object,
             blackbox: true,
             optional: true

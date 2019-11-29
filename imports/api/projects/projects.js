@@ -78,9 +78,18 @@ Projects.schema = new SimpleSchema({
     impacts: {
         type: Array,
         defaultValue: [],
-        label: 'project vision',
+        label: 'project impacts',
     },
     'impacts.$': {
+        type: Object,
+        blackbox: true
+    },
+    risks: {
+        type: Array,
+        defaultValue: [],
+        label: 'project risks',
+    },
+    'risks.$': {
         type: Object,
         blackbox: true
     },

@@ -17,6 +17,7 @@ import Icon from '@material-ui/core/Icon';
 import VisionModal from './Modals/VisionModal';
 import ObjectiveModal from './Modals/ObjectiveModal';
 import ImpactsModal from './Modals/ImpactsModal';
+import risksModal from './Modals/risksModal';
 import DeleteValue from './Modals/deleteModal';
 import { stringHelpers } from '/imports/helpers/stringHelpers';
 
@@ -104,11 +105,14 @@ function Dashboard(props){
     const [visionModal, setVisionModal] = React.useState(false);
     const [objectives, setObjective] = React.useState(project.objectives || []);
     const [impacts, setImpacts] = React.useState(project.impacts || []);
+    const [risks, setRisks] = React.useState(project.risks || []);
     const [objectivesModal, setObjectivesModal] = React.useState(false);
     const [modals, setModals] = React.useState({
         vision: false,
+        delete: false,
         objectives: false,
-        delete: false
+        impacts: false,
+        risks: false
     });
     let menus = [
         {
@@ -134,7 +138,7 @@ function Dashboard(props){
         menus = []
     }
 
-    const allowedValues = ['vision', 'delete', 'edit', 'objectives', 'impacts'];
+    const allowedValues = ['vision', 'delete', 'objectives', 'impacts', 'risks'];
 
     const handleClose = (value) => {
         if(allowedValues.includes(value)){
@@ -162,6 +166,12 @@ function Dashboard(props){
         setEditValue(value);
         handleClose('impacts')
     };
+
+    const editRisks = (index, value) => {
+        setIndex(index);
+        setEditValue(value);
+        handleClose('risks')
+    };
     const deleteEntity = (index, value) => {
         setIndex(index);
         setDeleteValue(value);
@@ -186,6 +196,10 @@ function Dashboard(props){
             setImpacts(project.impacts)
         }
 
+        if(project && project.risks){
+            setRisks(project.risks)
+        }
+
     };
 
     useEffect(() => {
@@ -197,6 +211,7 @@ function Dashboard(props){
             <VisionModal open={modals.vision} handleModalClose={handleModalClose} project={project} index={index} editValue={editValue}/>
             <ObjectiveModal open={modals.objectives} handleModalClose={handleModalClose} project={project} index={index} editValue={editValue}/>
             <ImpactsModal open={modals.impacts} handleModalClose={handleModalClose} project={project} index={index} editValue={editValue}/>
+            <risksModal open={modals.risks} handleModalClose={handleModalClose} project={project} index={index} editValue={editValue}/>
             <DeleteValue open={modals.delete} handleModalClose={handleModalClose} project={project} index={index} deleteValue={deleteValue}/>
             <TopNavBar menus={menus} {...props} />
             <Grid
@@ -485,8 +500,58 @@ function Dashboard(props){
                                             <span style={{color: '#bebebe'}}>List risks associated with the change that could effect the projects's success?</span>
                                         </Typography>
                                         <Divider />
-                                        <Button align="right" color="primary" style={{marginTop: 5, marginLeft: 9}}>
-                                            Add
+                                        <Grid
+                                            container
+                                            direction="row"
+                                            justify="flex-end"
+                                            alignItems="center"
+                                        >
+                                            <Grid item xs={9} >
+                                                <Typography className={classes.detailValues} gutterBottom style={{fontWeight: 'bold'}}>
+                                                    DESCRIPTION
+                                                </Typography>
+
+                                            </Grid>
+                                            <Grid item xs={1} >
+                                                <Typography className={classes.detailValues} gutterBottom style={{fontWeight: 'bold'}}>
+                                                    LEVEL
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
+
+                                            </Grid>
+                                        </Grid>
+                                        <Divider />
+                                        {risks.map((v, i) => {
+                                            return <><Grid key={i}
+                                                           container
+                                                           direction="row"
+                                                           justify="flex-end"
+                                                           alignItems="center"
+                                            >
+                                                <Grid item xs={9} >
+                                                    {stringHelpers.limitCharacters(v.description, 92)}
+                                                </Grid>
+                                                <Grid item xs={1} >
+                                                    {v.level.toUpperCase()}
+                                                </Grid>
+                                                <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
+                                                    <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {editRisks(i, v)}}>
+                                                        edit
+                                                    </Icon>
+                                                    <Icon fontSize="small" style={{marginRight: 6, cursor: 'pointer'}} onClick={(e) => {deleteEntity(i, 'risks')}}>
+                                                        delete
+                                                    </Icon>
+                                                </Grid>
+                                            </Grid>
+                                                <Divider />
+                                            </>
+
+                                        })}
+
+                                        <Divider />
+                                        <Button align="right" color="primary" style={{marginTop: 5, marginLeft: 9}} onClick={handleClose.bind(null, 'risks')}>
+                                            Add risks
                                         </Button>
                                     </CardContent>
                                 </Card>
