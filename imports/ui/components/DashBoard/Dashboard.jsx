@@ -530,7 +530,9 @@ function Dashboard(props){
                                                            alignItems="center"
                                             >
                                                 <Grid item xs={9} >
-                                                    {stringHelpers.limitCharacters(v.description, 92)}
+                                                    <Typography className={classes.detailValues} gutterBottom>
+                                                        {stringHelpers.limitCharacters(v.description, 92)}
+                                                    </Typography>
                                                 </Grid>
                                                 <Grid item xs={1} >
                                                     {v.level.toUpperCase()}
