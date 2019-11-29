@@ -17,7 +17,7 @@ import Icon from '@material-ui/core/Icon';
 import VisionModal from './Modals/VisionModal';
 import ObjectiveModal from './Modals/ObjectiveModal';
 import ImpactsModal from './Modals/ImpactsModal';
-import risksModal from './Modals/risksModal';
+import RisksModal from './Modals/RisksModal';
 import DeleteValue from './Modals/deleteModal';
 import { stringHelpers } from '/imports/helpers/stringHelpers';
 
@@ -211,7 +211,7 @@ function Dashboard(props){
             <VisionModal open={modals.vision} handleModalClose={handleModalClose} project={project} index={index} editValue={editValue}/>
             <ObjectiveModal open={modals.objectives} handleModalClose={handleModalClose} project={project} index={index} editValue={editValue}/>
             <ImpactsModal open={modals.impacts} handleModalClose={handleModalClose} project={project} index={index} editValue={editValue}/>
-            <risksModal open={modals.risks} handleModalClose={handleModalClose} project={project} index={index} editValue={editValue}/>
+            <RisksModal open={modals.risks} handleModalClose={handleModalClose} project={project} index={index} editValue={editValue}/>
             <DeleteValue open={modals.delete} handleModalClose={handleModalClose} project={project} index={index} deleteValue={deleteValue}/>
             <TopNavBar menus={menus} {...props} />
             <Grid
@@ -551,7 +551,7 @@ function Dashboard(props){
 
                                         <Divider />
                                         <Button align="right" color="primary" style={{marginTop: 5, marginLeft: 9}} onClick={handleClose.bind(null, 'risks')}>
-                                            Add risks
+                                            Add
                                         </Button>
                                     </CardContent>
                                 </Card>

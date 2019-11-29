@@ -69,10 +69,8 @@ const DialogActions = withStyles(theme => ({
 function AddValue(props) {
     let { company, open, handleModalClose, project, index, editValue } = props;
     const [name, setName] = React.useState('');
-    const [email, setEmail] = React.useState('');
     const [type, setType] = React.useState('');
     const [level, setLevel] = React.useState('');
-    const [typeOpen, seTypeOpen] = React.useState(false);
     const [levelOpen, setLevelOpen] = React.useState(false);
 
     const classes = useStyles();
@@ -85,12 +83,11 @@ function AddValue(props) {
         setLevel('');
     };
     const createProject = () => {
-        if(!(name && type && process)){
+        if(!(name && level)){
             props.enqueueSnackbar('Please fill the required Field', {variant: 'error'});
             return false;
         }
         let riskObj = {
-            type,
             level,
             description: name
         };
@@ -125,24 +122,9 @@ function AddValue(props) {
     const handleChange = (e) => {
         setName(e.target.value)
     };
-    const handleEmailChange = (e) => {
-        setEmail(e.target.value)
-    };
 
     function handleLevelChange(event) {
         setLevel(event.target.value);
-    }
-
-    function handleTypeChange(event) {
-        setType(event.target.value);
-    }
-
-    function handleTypeClose() {
-        seTypeOpen(false);
-    }
-
-    function handleTypeOpen() {
-        seTypeOpen(true);
     }
 
 
@@ -168,38 +150,22 @@ function AddValue(props) {
                 </DialogTitle>
                 <DialogContent dividers>
                     <Grid container spacing={2}>
-                        <Grid item xs={6}>
-                            <br/>
-                            <FormControl className={classes.formControl} fullWidth={true}>
-                                <InputLabel htmlFor="demo-controlled-open-select">Type</InputLabel>
-                                <Select
-                                    id="type"
-                                    label="type"
-                                    fullWidth={true}
-                                    open={typeOpen}
-                                    onClose={handleTypeClose}
-                                    onOpen={handleTypeOpen}
-                                    value={type}
-                                    onChange={handleTypeChange}
-                                    inputProps={{
-                                        name: 'type',
-                                        id: 'demo-controlled-open-select',
-                                    }}
-                                >
-                                    <MenuItem value='process'>Process</MenuItem>
-                                    <MenuItem value='technology'>Technology</MenuItem>
-                                    <MenuItem value='people'>People</MenuItem>
-                                    <MenuItem value='organization'>Organization</MenuItem>
-                                </Select>
-                            </FormControl>
-                            <br/>
-                            <br/>
-                            <br/>
+                        <Grid item xs={12}>
+                            <TextField
+                                // margin="dense"
+                                id="name"
+                                label="Description"
+                                value={name}
+                                onChange={handleChange}
+                                required={true}
+                                type="text"
+                                fullWidth={true}
+                            />
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item xs={12}>
                             <br/>
                             <FormControl className={classes.formControl} fullWidth={true}>
-                                <InputLabel htmlFor="demo-controlled-open-select">Role</InputLabel>
+                                <InputLabel htmlFor="demo-controlled-open-select">Level</InputLabel>
                                 <Select
                                     id="level"
                                     label="level"
@@ -222,18 +188,6 @@ function AddValue(props) {
                             <br/>
                             <br/>
                             <br/>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                // margin="dense"
-                                id="name"
-                                label="Description"
-                                value={name}
-                                onChange={handleChange}
-                                required={true}
-                                type="text"
-                                fullWidth={true}
-                            />
                         </Grid>
                     </Grid>
                 </DialogContent>

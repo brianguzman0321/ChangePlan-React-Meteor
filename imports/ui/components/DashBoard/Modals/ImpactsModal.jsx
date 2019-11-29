@@ -85,7 +85,7 @@ function AddValue(props) {
         setLevel('');
     };
     const createProject = () => {
-        if(!(name && type && process)){
+        if(!(name && type && level)){
             props.enqueueSnackbar('Please fill the required Field', {variant: 'error'});
             return false;
         }
@@ -199,7 +199,7 @@ function AddValue(props) {
                         <Grid item xs={6}>
                             <br/>
                             <FormControl className={classes.formControl} fullWidth={true}>
-                                <InputLabel htmlFor="demo-controlled-open-select">Role</InputLabel>
+                                <InputLabel htmlFor="demo-controlled-open-select">Level</InputLabel>
                                 <Select
                                     id="level"
                                     label="level"
