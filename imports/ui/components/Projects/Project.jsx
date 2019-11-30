@@ -162,6 +162,7 @@ function ProjectCard(props) {
     const [age, setAge] = React.useState('endingDate');
     const [search, setSearch] = React.useState('');
     const [open, setOpen] = React.useState(false);
+    search || updateFilter('localProjects', 'search', '');
 
     const handleChange = event => {
         setAge(event.target.value);
