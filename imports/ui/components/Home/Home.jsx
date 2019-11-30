@@ -17,7 +17,7 @@ export default function Home(props){
         },
         {
             show: true,
-            name: 'stake Holders',
+            name: 'stakeHolders',
             count: 122
         },
         {

@@ -10,7 +10,7 @@ export default config = {
         },
         {
             show: true,
-            name: 'stake Holders',
+            name: 'stakeHolders',
         },
         {
             show: true,

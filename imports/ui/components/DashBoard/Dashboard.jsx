@@ -127,7 +127,7 @@ function Dashboard(props){
         },
         {
             show: true,
-            name: 'stake Holders',
+            name: 'stakeHolders',
             count: 122
         },
         {

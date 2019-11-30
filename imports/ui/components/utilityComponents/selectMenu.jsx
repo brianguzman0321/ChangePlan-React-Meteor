@@ -71,7 +71,7 @@ function ProjectSelectMenu(props) {
     }, [props.index]);
 
     return (
-        <form autoComplete="off" style={{marginRight: 25}}>
+        <form autoComplete="off" style={{marginLeft: 25, marginRight: 25, flexGrow: 1}}>
             <FormControl className={classes.formControl} fullWidth>
                 <Select
                     open={open}

@@ -141,7 +141,7 @@ function TopNavBar(props) {
             },
             {
                 show: false,
-                name: 'stake Holders',
+                name: 'stakeHolders',
             },
             {
                 show: false,
