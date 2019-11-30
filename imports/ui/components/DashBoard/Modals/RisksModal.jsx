@@ -164,7 +164,7 @@ function AddValue(props) {
                         </Grid>
                         <Grid item xs={12}>
                             <br/>
-                            <FormControl className={classes.formControl} fullWidth={true}>
+                            <FormControl className={classes.formControl} maxWidth="md" fullWidth={true}>
                                 <InputLabel htmlFor="demo-controlled-open-select">Level</InputLabel>
                                 <Select
                                     id="level"
