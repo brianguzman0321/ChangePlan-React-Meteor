@@ -93,7 +93,7 @@ function Login (props) {
 
                 </Grid>
                 <Grid item xs={12}>
-                    <h1 className={classes.topText}>Login to Change Plan</h1>
+                    <h1 className={classes.topText}>Login to ChangePlan</h1>
                 </Grid>
                 <Grid item xs={12}>
                     <form onSubmit={onSubmit}>
