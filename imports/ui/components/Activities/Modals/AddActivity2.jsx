@@ -509,7 +509,7 @@ function AddActivity(props) {
                                         {
                                             data.map((item, index) => {
                                                 return <Tooltip title={item.helpText} key={index}>
-                                                    <Grid item={true} xs={3} classes={classes1} style={{background : activityType.name === item.name ? '#dae0e5' : '' }} onClick={(e) => { setActivityType(item); }}>
+                                                    <Grid item={true} xs={2} classes={classes1} style={{background : activityType.name === item.name ? '#dae0e5' : '' }} onClick={(e) => { setActivityType(item); }}>
 
                                                         <SVGInline
                                                             width="35px"
