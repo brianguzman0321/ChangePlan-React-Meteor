@@ -111,7 +111,8 @@ const useStyles = makeStyles(theme => ({
 function TopNavBar(props) {
     let { menus, projectExists, history, match } = props;
     let { projectId } = match.params;
-    let currentNav = history.location.pathname.slice(1), selectedTab = 0;
+    let currentLocation = history.location.pathname.split("/")
+    let currentNav = currentLocation[currentLocation.length - 1], selectedTab = 0;
     if(currentNav === '/'){
         selectedTab = 0;
     }
@@ -180,9 +181,9 @@ function TopNavBar(props) {
     }
 
     function handleChange1 (event, value) {
-        setValue(value || 0);
+        setValue(value);
         if(value === 0){
-            props.history.push('/')
+            props.history.push(`/projects/${projectId}`)
         }
         if(value === 1){
             props.history.push(`/projects/${projectId}/activities`)
