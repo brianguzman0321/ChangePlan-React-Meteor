@@ -81,7 +81,7 @@ function UserSelectionModal(props) {
             <Button variant="outlined" color="primary" onClick={handleClickOpen}>
                 ASSIGN EXISTING USER TO {title}
             </Button>
-            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" maxWidth="md">
+            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" maxWidth="md" fullWidth={true}>
                 <DialogTitle id="form-dialog-title">Assign Users</DialogTitle>
                 <DialogContent>
                     <DialogContentText>

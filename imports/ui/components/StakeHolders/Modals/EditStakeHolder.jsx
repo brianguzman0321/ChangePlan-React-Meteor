@@ -174,7 +174,7 @@ function EditStakeHolder(props) {
         <IconButton aria-label="edit" onClick={handleClickOpen}>
             <EditIcon />
         </IconButton>
-        <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="sm" fullWidth={true}>
+        <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth={true}>
             <DialogTitle id="customized-dialog-title" onClose={handleClose}>
                 Edit Stakeholder
             </DialogTitle>

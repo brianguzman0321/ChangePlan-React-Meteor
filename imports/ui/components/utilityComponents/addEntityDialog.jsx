@@ -49,7 +49,7 @@ function AddEntityDialog(props) {
             <Button variant="outlined" color="primary" onClick={handleClickOpen}>
                 Create New {entity}
             </Button>
-            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" maxWidth="md" fullWidth={true}>
                 <DialogTitle id="form-dialog-title">Create {entity}</DialogTitle>
                 <DialogContent>
                     <DialogContentText>

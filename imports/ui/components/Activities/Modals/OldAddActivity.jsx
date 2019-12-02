@@ -174,7 +174,7 @@ function AddActivity(props) {
             <Button variant="contained" className={classes.button} fullWidth={true} onClick={handleClickOpen}>
                 Add Activity
             </Button>
-            <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="sm" fullWidth={true}>
+            <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth={true}>
                 <DialogTitle id="customized-dialog-title" onClose={handleClose}>
                     Add Activity
                 </DialogTitle>

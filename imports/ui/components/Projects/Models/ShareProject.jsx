@@ -134,7 +134,7 @@ function ShareProject(props) {
 
     return (
         <div className={classes.createNewProject}>
-            <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="sm" fullWidth={true}>
+            <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth={true}>
                 <DialogTitle id="customized-dialog-title" onClose={handleClose}>
                     Share Project
                 </DialogTitle>

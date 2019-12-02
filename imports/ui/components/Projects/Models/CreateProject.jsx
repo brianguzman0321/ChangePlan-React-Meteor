@@ -444,7 +444,7 @@ function AddActivity(props) {
             <Button variant="outlined" color="primary" onClick={handleClickOpen} >
                 Create New Project
             </Button>
-            <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="sm" fullWidth={true}>
+            <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth={true}>
                 <DialogTitle id="customized-dialog-title" onClose={handleClose}>
                     Create New Project
                 </DialogTitle>
