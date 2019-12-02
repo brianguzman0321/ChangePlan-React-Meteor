@@ -223,7 +223,7 @@ function ProjectCard(props) {
                             <MenuItem value="createdAt">Date Added</MenuItem>
                             <MenuItem value="endingDate">Date Due</MenuItem>
                             <MenuItem value="name">Project Name</MenuItem>
-                            <MenuItem value="stakeHolder">Stakeholder Number</MenuItem>
+                            <MenuItem value="stakeHolder">Stakeholder Count</MenuItem>
                         </Select>
                         {/*<FormHelperText>Without label</FormHelperText>*/}
                     </FormControl>

@@ -130,8 +130,7 @@ function DeleteValue(props) {
                 </DialogTitle>
                 <DialogContent dividers>
                     <DialogContentText>
-                        Are you sure? It's means to remove it permanently.
-                        this action can't be reversed.
+                        Are you sure? This action can't be reversed.
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
