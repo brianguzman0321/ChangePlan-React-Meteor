@@ -84,7 +84,8 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
         background: '#fff',
         border: '1px solid #cbcbcc',
-        maxHeight: 40
+        maxHeight: 40,
+        maxWidth: 352,
     },
     iconButton: {
         marginTop: -3
@@ -196,7 +197,7 @@ function ProjectCard(props) {
                 <Grid item xs={4} className={classes.searchGrid}>
                     <InputBase
                         className={classes.input}
-                        placeholder="Search By Project Name"
+                        // placeholder="Search By Project Name"
                         inputProps={{ 'aria-label': 'search by project name' }}
                         onChange={searchFilter}
                         value={search}

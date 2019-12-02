@@ -131,6 +131,10 @@ const useStyles = makeStyles(theme => ({
         root: {
             background: 'red'
         }
+    },
+    dialogPaper: {
+        minHeight: '90vh',
+        maxHeight: '90vh',
     }
 }));
 
@@ -412,7 +416,7 @@ function AddActivity(props) {
                     Add Activity
                 </Button> : ''
             }
-            <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth={true}>
+            <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth={true} classes={{ paper: classes.dialogPaper }}>
                 <DialogTitle id="customized-dialog-title" onClose={handleClose}>
                     { isNew ? 'Add' : 'Edit' } Activity
                 </DialogTitle>
