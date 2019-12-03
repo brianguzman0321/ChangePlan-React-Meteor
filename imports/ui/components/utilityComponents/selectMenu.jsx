@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
         marginBottom: -16,
         minWidth: 65,
         width: 220,
-        textAlign: 'center'
+        // textAlign: 'center'
     },
     topTexts: {
         color : '#465563',
