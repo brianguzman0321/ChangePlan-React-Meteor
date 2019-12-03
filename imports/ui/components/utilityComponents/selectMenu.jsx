@@ -16,8 +16,9 @@ const useStyles = makeStyles(theme => ({
     },
     formControl: {
         marginBottom: -16,
-        minWidth: 145,
-        width: 345
+        minWidth: 65,
+        width: 220,
+        textAlign: 'center'
     },
     topTexts: {
         color : '#465563',
@@ -71,7 +72,7 @@ function ProjectSelectMenu(props) {
     }, [props.index]);
 
     return (
-        <form autoComplete="off" style={{marginLeft: 25, marginRight: 25, flexGrow: 1, textAlign: 'center', fontWeight: 'bold'}}>
+        <form autoComplete="off" style={{marginLeft: 23, flexGrow: 1, fontWeight: 'bold'}}>
             <FormControl className={classes.formControl} fullWidth>
                 <Select
                     open={open}

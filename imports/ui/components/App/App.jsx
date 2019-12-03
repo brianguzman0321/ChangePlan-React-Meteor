@@ -232,8 +232,9 @@ function TopNavBar(props) {
             <AppBar position="static" className={classes.appBar} color="default">
                 <Toolbar className={classes.toolbar}>
                     <Brand handleChange1={handleChange1} />
-                    <div className={classes.grow} />
+                    <div className={classes.grow}>
                     { projectId ? <ProjectSelectMenu title="Projects" entity="Project" entities={[]} localCollection="localProjects" id="projectId"/> : ''}
+                    </div>
                     {displayMenus.length ? <Tabs
                         value={value}
                         onChange={handleChange1}
