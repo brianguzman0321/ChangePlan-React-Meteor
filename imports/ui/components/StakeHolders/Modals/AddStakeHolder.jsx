@@ -106,7 +106,11 @@ const useStyles = makeStyles(theme => ({
         '&:hover': {
             background: '#92a1af'
         }
-    }
+    },
+    dialogPaper: {
+        minHeight: '80vh',
+        maxHeight: '80vh',
+    },
 }));
 
 const DialogTitle = withStyles(styles)(props => {
@@ -301,7 +305,7 @@ function AddStakeHolder(props) {
             <Button variant="contained" color="primary" onClick={handleClickOpen} className={classes.addStakeHolder}>
                 Add
             </Button>
-            <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth={true}>
+            <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" minHeight="md" fullWidth={true} classes={{ paper: classes.dialogPaper }}>
                     <DialogTitle id="customized-dialog-title" onClose={handleClose}>
                         Add Stakeholder
                     </DialogTitle>
