@@ -305,7 +305,7 @@ function AddStakeHolder(props) {
             <Button variant="contained" color="primary" onClick={handleClickOpen} className={classes.addStakeHolder}>
                 Add
             </Button>
-            <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" minHeight="md" fullWidth={true} classes={{ paper: classes.dialogPaper }}>
+            <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md"  fullWidth={true} classes={{ paper: classes.dialogPaper }}>
                     <DialogTitle id="customized-dialog-title" onClose={handleClose}>
                         Add Stakeholder
                     </DialogTitle>

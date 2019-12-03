@@ -58,7 +58,7 @@ function DeleteStakeHolder(props) {
             onClose={handleClose}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
-            maxWidth="md" fullWidth={true}
+            maxWidth="sm" fullWidth={true}
         >
             <DialogTitle id="alert-dialog-title">
                 Delete Stakeholder?
