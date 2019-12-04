@@ -110,6 +110,7 @@ const useStyles = makeStyles(theme => ({
 
 function TopNavBar(props) {
     let { menus, projectExists, history, match } = props;
+    console.log("projectExists", projectExists)
     let { projectId } = match.params;
     let currentLocation = history.location.pathname.split("/")
     let currentNav = currentLocation[currentLocation.length - 1], selectedTab = 0;

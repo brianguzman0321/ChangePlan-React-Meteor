@@ -28,6 +28,9 @@ const useStyles = makeStyles({
         // maxWidth: 400,
         // maxHeight: 200
     },
+    activitiesGrid: {
+        paddingRight: 20
+    },
     activityTabs: {
         wrapper: {
             flexDirection:'row',
@@ -123,6 +126,7 @@ function ActivitiesCard(props){
                     justify="flex-start"
                     alignItems="flex-start"
                     spacing={0}
+                    style={{paddingRight: 20}}
                 >
                     <Grid item xs={12} md={4}>
                         <AWARENESSCard activities={props.activities.filter(activity => activity.step === 1)}/>

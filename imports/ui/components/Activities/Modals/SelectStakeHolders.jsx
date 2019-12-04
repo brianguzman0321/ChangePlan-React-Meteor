@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from "react";
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -364,7 +364,8 @@ export default function SelectStakeHolders(props) {
     let { rows, local } = props;
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
-    const [stakeHolders, setStakeHolders] = React.useState([]);
+    const [stakeHolders, setStakeHolders] = React.useState(local.ids.length || []);
+    const [flag, setFlag] = React.useState(true);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -384,6 +385,13 @@ export default function SelectStakeHolders(props) {
         setStakeHolders(ids);
     };
 
+    useEffect(() => {
+        if(flag && local && local.ids){
+            setStakeHolders(local.ids);
+            setFlag(false)
+        }
+    });
+
     return (
         <div>
             <Button variant="outlined" color="primary" onClick={handleClickOpen} fullWidth={true}>
@@ -397,6 +405,9 @@ export default function SelectStakeHolders(props) {
                         </IconButton>
                         <Typography variant="h6" className={classes.title}>
                             Select StakeHolders
+                        </Typography>
+                        <Typography variant="h6" className={classes.title}>
+                            Selected {stakeHolders.length}
                         </Typography>
                         <Button autoFocus color="inherit" onClick={updateStakeHolders}>
                             save

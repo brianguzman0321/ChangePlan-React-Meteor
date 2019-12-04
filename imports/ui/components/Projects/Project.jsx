@@ -177,6 +177,10 @@ function ProjectCard(props) {
         setSearch(event.target.value);
         updateFilter('localProjects', 'search', event.target.value);
     };
+    console.log("IsAdmin", isAdmin)
+    console.log("IsAdmin", company)
+    console.log("projects", projects)
+    console.log("isAdmin && company", isAdmin && company)
 
     return (
         <>
