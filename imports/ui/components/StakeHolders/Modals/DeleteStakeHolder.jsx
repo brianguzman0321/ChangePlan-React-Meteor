@@ -61,11 +61,11 @@ function DeleteStakeHolder(props) {
             maxWidth="sm" fullWidth={true}
         >
             <DialogTitle id="alert-dialog-title">
-                Delete Stakeholder?
+                Delete Stakeholder
             </DialogTitle>
             <DialogContent>
                 <DialogContentText id="alert-dialog-description">
-                    Are you sure? You are going to remove stakeholder permanently. this action can's be reverted
+                    Are you sure? You are going to remove this stakeholder permanently. This action can't be reversed.
                 </DialogContentText>
             </DialogContent>
             <DialogActions>

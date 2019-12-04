@@ -119,12 +119,11 @@ function DeleteProject(props) {
         <div className={classes.createNewProject}>
             <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="sm" fullWidth={true}>
                 <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-                    Remove Activity
+                    Delete Activity
                 </DialogTitle>
                 <DialogContent dividers>
                     <DialogContentText>
-                        Are you sure? It's means to remove <strong>{activity.name}</strong>.
-                        this action can't be reversed.
+                        Are you sure you want to remove the activity <strong>{activity.name}</strong>? This action can't be reversed.
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
