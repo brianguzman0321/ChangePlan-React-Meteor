@@ -264,6 +264,7 @@ function AddActivity(props) {
         if(isNew){
             let updatedStakeHolders = local.changed ? local.ids : stakeHolders.map(item => item._id);
             setPeoples(updatedStakeHolders);
+            updateFilter('localStakeHolders', 'ids', updatedStakeHolders);
         }
         if(edit && activity && activity.name){
             setExpanded('panel1');

@@ -364,7 +364,7 @@ export default function SelectStakeHolders(props) {
     let { rows, local } = props;
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
-    const [stakeHolders, setStakeHolders] = React.useState(local.ids.length || []);
+    const [stakeHolders, setStakeHolders] = React.useState(local.ids || []);
     const [flag, setFlag] = React.useState(true);
 
     const handleClickOpen = () => {
