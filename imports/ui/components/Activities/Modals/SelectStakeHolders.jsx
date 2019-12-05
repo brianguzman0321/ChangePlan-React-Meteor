@@ -282,6 +282,10 @@ function StakeHolderList(props) {
 
     const isSelected = name => selected.indexOf(name) !== -1;
 
+    useEffect(() => {
+        selectUsers(local.ids)
+    }, [local]);
+
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
     return (
