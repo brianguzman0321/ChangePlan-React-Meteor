@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import { withRouter } from 'react-router';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import Paper from '@material-ui/core/Paper';
@@ -121,20 +122,28 @@ function StakeHolders(props){
 }
 
 const StakeHoldersPage = withTracker(props => {
+    let { match } = props;
+    let { projectId } = match.params;
     let local = LocalCollection.findOne({
         name: 'localPeoples'
     });
     Meteor.subscribe('companies');
     let company = Companies.findOne() || {};
+    let project = Projects.findOne({
+        _id : projectId
+    });
     let companyId = company._id || {};
     Meteor.subscribe('peoples', companyId, {
         name: local.search
     } );
     return {
         company: Companies.findOne(),
-        stakeHolders: Peoples.find().fetch()
-        // projects: sortingFunc(Projects.find({}).fetch(), local),
+        stakeHolders: Peoples.find({
+            _id: {
+                $in: project && project.stakeHolders || []
+            }
+        }).fetch()
     };
-})(StakeHolders);
+})(withRouter(StakeHolders));
 
 export default StakeHoldersPage

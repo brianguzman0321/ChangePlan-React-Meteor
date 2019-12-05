@@ -1,5 +1,6 @@
 import React, {useEffect} from "react";
 import { withStyles, makeStyles } from '@material-ui/core/styles';
+import { withRouter } from 'react-router';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
@@ -159,7 +160,8 @@ function AddStakeHolder(props) {
     const [notes, setNotes] = React.useState('');
     const theme = useTheme();
 
-    let { company, handleModalClose, project } = props;
+    let { company, handleModalClose, project, match } = props;
+    let { projectId } = match.params;
     const classes = useStyles();
     const modalName = 'share';
 
@@ -232,11 +234,11 @@ function AddStakeHolder(props) {
             else{
                 setOpen(false);
                 setName('');
-                setCsvfile(null)
+                setCsvfile(null);
                 props.enqueueSnackbar('StakeHolders Added Successfully.', {variant: 'success'})
             }
         });
-    }
+    };
 
     const importCSV = () => {
         if(!csvfile){
@@ -266,6 +268,7 @@ function AddStakeHolder(props) {
                 businessUnit,
                 email,
                 notes,
+                projectId,
                 influenceLevel: loI,
                 supportLevel: loS,
                 company: company._id
@@ -511,8 +514,7 @@ function AddStakeHolder(props) {
 const AddStakeHolderPage = withTracker(props => {
     return {
         company: Companies.findOne(),
-        // projects: sortingFunc(Projects.find({}).fetch(), local),
     };
-})(AddStakeHolder);
+})(withRouter(AddStakeHolder));
 
 export default withSnackbar(AddStakeHolderPage)

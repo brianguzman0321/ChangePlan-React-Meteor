@@ -8,6 +8,7 @@ import { DDPRateLimiter } from 'meteor/ddp-rate-limiter';
 import { LoggedInMixin } from 'meteor/tunifight:loggedin-mixin';
 
 import { Peoples } from './peoples.js';
+import { Projects } from '/imports/api/projects/projects';
 
 export const insert = new ValidatedMethod({
     name: 'peoples.insert',
@@ -42,6 +43,9 @@ export const insert = new ValidatedMethod({
             type: String,
             optional: true
         },
+        'people.projectId': {
+            type: String,
+        },
         'people.supportLevel': {
             type: Number,
             optional: true
@@ -52,13 +56,23 @@ export const insert = new ValidatedMethod({
         },
     }).validator(),
     run({ people }) {
+        let { projectId } = people;
+        delete people.projectId;
+
         let alreadyExist = Peoples.findOne({
             email: people.email
         });
         if(alreadyExist){
             throw new Meteor.Error(500, "A Stakeholder with this Email Already Exists");
         }
-        return Peoples.insert(people);
+        let personId = Peoples.insert(people);
+        return Projects.update({
+            _id: projectId
+        },{
+            $addToSet: {
+                stakeHolders: personId
+            }
+        })
     }
 });
 
