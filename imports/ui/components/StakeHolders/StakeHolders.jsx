@@ -49,7 +49,6 @@ const useStyles = makeStyles(theme => ({
         border: '1px solid #cbcbcc',
         maxHeight: 40,
         maxWidth: 352,
-        marginLeft: theme.spacing(5),
     },
     createNewProject : {
         flex: 1,
@@ -90,9 +89,10 @@ function StakeHolders(props){
                 spacing={0}
             >
                 <Grid container className={classes.topBar}>
-                    <Grid item xs={12} sm={6} md={2}>
+                    <Grid item xs={12} sm={6} md={4}>
                         <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
                             Stakeholders
+                            &nbsp;&nbsp;&nbsp;{stakeHolders.length}
                         </Typography>
                     </Grid>
                     <Grid item xs={4} className={classes.searchGrid} md={3} sm={6}>
