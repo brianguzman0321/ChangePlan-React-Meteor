@@ -88,6 +88,7 @@ function EditStakeHolder(props) {
     const [loI, setLoi] = React.useState(stakeholder.supportLevel);
     const [selectOpen, setSelectOpen] = React.useState(false);
     const [selectOpen1, setSelectOpen1] = React.useState(false);
+    const [notes, setNotes] = React.useState(stakeholder.notes);
 
     const [open, setOpen] = React.useState(false);
     const classes = useStyles();
@@ -103,6 +104,7 @@ function EditStakeHolder(props) {
             setEmail(stakeholder.email);
             setLos(stakeholder.supportLevel);
             setLoi(stakeholder.influenceLevel);
+            setNotes(stakeholder.notes);
         }, 500);
         setOpen(true);
     };
@@ -132,6 +134,7 @@ function EditStakeHolder(props) {
                 role,
                 businessUnit,
                 email,
+                notes,
                 influenceLevel: loI,
                 supportLevel: loS,
 
@@ -243,6 +246,17 @@ function EditStakeHolder(props) {
                             />
                         </Grid>
                         <Grid item xs={6} />
+                        <Grid item xs={12}>
+                            <TextField
+                                // margin="dense"
+                                id="notes"
+                                label="Notes"
+                                value={notes}
+                                onChange={(e)=> {setNotes(e.target.value)}}
+                                type="text"
+                                fullWidth={true}
+                            />
+                        </Grid>
                         <Grid item xs={6}>
                             <FormControl className={classes.formControl} fullWidth={true} required>
                                 <InputLabel htmlFor="demo-controlled-open-select">Level Of Support</InputLabel>

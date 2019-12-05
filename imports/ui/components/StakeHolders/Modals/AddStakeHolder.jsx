@@ -156,6 +156,7 @@ function AddStakeHolder(props) {
     const [value, setValue] = React.useState(0);
     const [csvfile, setCsvfile] = React.useState(undefined);
     const [loading, setLoading] = React.useState(false);
+    const [notes, setNotes] = React.useState('');
     const theme = useTheme();
 
     let { company, handleModalClose, project } = props;
@@ -173,6 +174,7 @@ function AddStakeHolder(props) {
         setLoi('');
         setOpen(true);
         setCsvfile('')
+        setNotes('')
     };
 
     const handleChangeValue = (event, newValue) => {
@@ -204,7 +206,7 @@ function AddStakeHolder(props) {
             props.enqueueSnackbar('No Valid Data Found', {variant: 'error'});
             return false;
         }
-        data.pop()
+        data.pop();
         let data1 = data.map((doc) => {
             return {
                 firstName : doc['First Name'],
@@ -214,6 +216,7 @@ function AddStakeHolder(props) {
                 email: doc['Email'],
                 influenceLevel: Number(doc['Level of Influence']),
                 supportLevel: Number(doc['Level of support']),
+                notes: Number(doc['Notes']),
                 company: company._id
             }
         });
@@ -262,10 +265,10 @@ function AddStakeHolder(props) {
                 role,
                 businessUnit,
                 email,
+                notes,
                 influenceLevel: loI,
                 supportLevel: loS,
                 company: company._id
-
             }
         };
         Meteor.call('peoples.insert', params, (err, res) => {
@@ -393,6 +396,17 @@ function AddStakeHolder(props) {
                                         />
                                     </Grid>
                                     <Grid item xs={6} />
+                                    <Grid item xs={12}>
+                                        <TextField
+                                            // margin="dense"
+                                            id="notes"
+                                            label="Notes"
+                                            value={notes}
+                                            onChange={(e)=> {setNotes(e.target.value)}}
+                                            type="text"
+                                            fullWidth={true}
+                                        />
+                                    </Grid>
                                     <Grid item xs={6}>
                                         <FormControl className={classes.formControl} fullWidth={true} required>
                                             <InputLabel htmlFor="demo-controlled-open-select">Level Of Support</InputLabel>
@@ -449,6 +463,7 @@ function AddStakeHolder(props) {
                                         <br/>
                                         <br/>
                                     </Grid>
+
                                 </Grid>
                             <Divider />
                             <DialogActions>

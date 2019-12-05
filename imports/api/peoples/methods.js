@@ -38,6 +38,10 @@ export const insert = new ValidatedMethod({
         'people.businessUnit': {
             type: String,
         },
+        'people.notes': {
+            type: String,
+            optional: true
+        },
         'people.supportLevel': {
             type: Number,
             optional: true
@@ -114,6 +118,10 @@ export const update = new ValidatedMethod({
         },
         'people.businessUnit': {
             type: String,
+        },
+        'people.notes': {
+            type: String,
+            optional: true
         },
         'people.supportLevel': {
             type: Number,
