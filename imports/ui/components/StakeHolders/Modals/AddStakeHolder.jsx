@@ -190,8 +190,9 @@ function AddStakeHolder(props) {
                 email: doc['Email'],
                 influenceLevel: Number(doc['Level of Influence']),
                 supportLevel: Number(doc['Level of support']),
-                notes: Number(doc['Notes']),
-                company: company._id
+                notes: doc['Notes'],
+                company: company._id,
+                projectId
             }
         });
         let params = {
