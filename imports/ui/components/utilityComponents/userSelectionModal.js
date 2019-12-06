@@ -1,6 +1,5 @@
 import React, {useEffect} from 'react';
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -65,13 +64,7 @@ function UserSelectionModal(props) {
     };
 
     useEffect(() => {
-        // This gets called after every render, by default
-        // (the first one, and every one after that)
         setUsers([]);
-
-        // If you want to implement componentWillUnmount,
-        // return a function from here, and React will call
-        // it prior to unmounting.
         return () => {
         };
     }, []);

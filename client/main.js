@@ -2,7 +2,6 @@ import '/imports/startup/client';
 
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
-// import moment from 'moment';
 
 import '/imports/startup/client';
 

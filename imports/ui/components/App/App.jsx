@@ -110,9 +110,8 @@ const useStyles = makeStyles(theme => ({
 
 function TopNavBar(props) {
     let { menus, projectExists, history, match } = props;
-    console.log("projectExists", projectExists)
     let { projectId } = match.params;
-    let currentLocation = history.location.pathname.split("/")
+    let currentLocation = history.location.pathname.split("/");
     let currentNav = currentLocation[currentLocation.length - 1], selectedTab = 0;
     if(currentNav === '/'){
         selectedTab = 0;
@@ -247,20 +246,6 @@ function TopNavBar(props) {
                         })}
                     </Tabs> : ''
                     }
-
-                    {/*{menus.activities.show && <Typography className={classes.topTexts} noWrap style={{borderLeft: '0.1em solid #eaecef'}}>*/}
-                    {/*<span style={{color: '#aab5c0'}}>102</span> ACTIVITIES*/}
-                    {/*</Typography>}*/}
-                    {/*{*/}
-                    {/*menus.stakeHolders.show && <Typography className={classes.topTexts} noWrap>*/}
-                    {/*<span style={{color: '#aab5c0'}}>3270</span> STAKEHOLDERS*/}
-                    {/*</Typography>*/}
-                    {/*}*/}
-                    {/*{*/}
-                    {/*menus.reports.show && <Typography className={classes.topTexts} noWrap>*/}
-                    {/*REPORTS*/}
-                    {/*</Typography>*/}
-                    {/*}*/}
 
                     <div className={classes.sectionDesktop}>
                         <IconButton

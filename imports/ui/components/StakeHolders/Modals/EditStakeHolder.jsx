@@ -9,7 +9,6 @@ import IconButton from '@material-ui/core/IconButton';
 import EditIcon from '@material-ui/icons/Edit';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import TextField from '@material-ui/core/TextField';
 import { withSnackbar } from 'notistack';
 import 'date-fns';
@@ -76,7 +75,7 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function EditStakeHolder(props) {
-    let { company, handleModalClose, stakeholder } = props;
+    let { stakeholder } = props;
 
     const [name, setName] = React.useState('');
     const [firstName, setFirstName] = React.useState(stakeholder.firstName);
@@ -92,7 +91,6 @@ function EditStakeHolder(props) {
 
     const [open, setOpen] = React.useState(false);
     const classes = useStyles();
-    const modalName = 'share';
 
     const handleClickOpen = () => {
         setName('');
@@ -113,9 +111,6 @@ function EditStakeHolder(props) {
         setOpen(false);
     };
 
-    const handleChange = (e) => {
-        setName(e.target.value)
-    };
     const handleEmailChange = (e) => {
         setEmail(e.target.value)
     };
@@ -152,10 +147,6 @@ function EditStakeHolder(props) {
 
         })
     };
-
-    function handleSelectChange(event) {
-        setRole(event.target.value);
-    }
 
     function handleSelectClose() {
         setSelectOpen(false);
@@ -332,7 +323,6 @@ function EditStakeHolder(props) {
 const EditStakeHolderPage = withTracker(props => {
     return {
         company: Companies.findOne(),
-        // projects: sortingFunc(Projects.find({}).fetch(), local),
     };
 })(EditStakeHolder);
 

@@ -1,14 +1,9 @@
 import React from 'react';
-import { fade, makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import TopNavBar from '/imports/ui/components/App/App'
-import Paper from '@material-ui/core/Paper';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Button from '@material-ui/core/Button';
-import PhoneIcon from '@material-ui/icons/Phone';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import PersonPinIcon from '@material-ui/icons/PersonPin';
-import Icon from '@material-ui/core/Icon';
 import ViewColumnIcon from '@material-ui/icons/ViewColumn';
 import ListIcon from '@material-ui/icons/List';
 import Grid from '@material-ui/core/Grid';

@@ -1,10 +1,8 @@
 import React, {useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import { Typography } from "@material-ui/core";
 import { Projects } from '/imports/api/projects/projects'
 import { withTracker } from "meteor/react-meteor-data";
 import { withRouter, generatePath } from 'react-router';
@@ -18,7 +16,6 @@ const useStyles = makeStyles(theme => ({
         marginBottom: -16,
         minWidth: 65,
         width: 220,
-        // textAlign: 'center'
     },
     topTexts: {
         color : '#465563',
@@ -33,7 +30,7 @@ const useStyles = makeStyles(theme => ({
 
 function ProjectSelectMenu(props) {
     const classes = useStyles();
-    let { title, entity, index, match,local } = props;
+    let {  match } = props;
     let { projectId } = match.params;
     const [age, setAge] = React.useState(projectId || '');
     const [itemIndex, setIndex] = React.useState(props.index);
@@ -85,11 +82,6 @@ function ProjectSelectMenu(props) {
                         id: 'demo-controlled-open-select',
                     }}
                 >
-                    {/*{!props.entities || (props.entities && !props.entities.length) ?*/}
-                    {/*<MenuItem value="">*/}
-                    {/*<em>No {title}</em>*/}
-                    {/*</MenuItem> : ''*/}
-                    {/*}*/}
 
                     {props.projects && props.projects.map((entity) => {
                         return <MenuItem key={entity._id} className={classes.topTexts} value={entity._id}>{entity.name.toUpperCase()}</MenuItem>

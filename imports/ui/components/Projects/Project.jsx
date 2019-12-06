@@ -17,7 +17,6 @@ import Select from '@material-ui/core/Select';
 import {withTracker} from "meteor/react-meteor-data";
 import { Companies } from "/imports/api/companies/companies";
 import { Projects } from "/imports/api/projects/projects";
-// import NewProject from './NewProject';
 import NewProject from './Models/CreateProject';
 import ProjectMenus from './ProjectMenus'
 
@@ -39,7 +38,6 @@ const useStyles = makeStyles(theme => ({
         marginTop: 23,
         marginLeft: 23,
         marginRight: '0 !important',
-        // color: theme.primary,
         color: '#465563',
         display: 'flex',
         justifyContent: 'center',
@@ -159,7 +157,6 @@ function ProjectCard(props) {
     }
     const classes = useStyles();
     const classes1 = useStyles1();
-    const bull = <span className={classes.bullet}>•</span>;
     const [age, setAge] = React.useState('endingDate');
     const [search, setSearch] = React.useState('');
     const [open, setOpen] = React.useState(false);
@@ -177,10 +174,6 @@ function ProjectCard(props) {
         setSearch(event.target.value);
         updateFilter('localProjects', 'search', event.target.value);
     };
-    console.log("IsAdmin", isAdmin)
-    console.log("IsAdmin", company)
-    console.log("projects", projects)
-    console.log("isAdmin && company", isAdmin && company)
 
     return (
         <>
@@ -201,7 +194,6 @@ function ProjectCard(props) {
                 <Grid item xs={4} className={classes.searchGrid}>
                     <InputBase
                         className={classes.input}
-                        // placeholder="Search By Project Name"
                         inputProps={{ 'aria-label': 'search by project name' }}
                         onChange={searchFilter}
                         value={search}
@@ -230,7 +222,6 @@ function ProjectCard(props) {
                             <MenuItem value="name">Project Name</MenuItem>
                             <MenuItem value="stakeHolder">Stakeholder Count</MenuItem>
                         </Select>
-                        {/*<FormHelperText>Without label</FormHelperText>*/}
                     </FormControl>
                 </Grid>
             </Grid>

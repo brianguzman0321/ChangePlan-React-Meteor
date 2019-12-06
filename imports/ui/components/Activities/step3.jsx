@@ -10,7 +10,6 @@ import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
 import AddActivity from '/imports/ui/components/Activities/Modals/AddActivity3'
 import moment from 'moment'
 import { stringHelpers } from '/imports/helpers/stringHelpers'
@@ -72,7 +71,6 @@ const useStyles = makeStyles(theme => ({
 export default function AWARENESSCard(props) {
     let { activities } = props;
     const classes = useStyles();
-    let switchBlock = false;
     const [edit, setEdit] = React.useState(false);
     const [selectedActivity, setSelectedActivity] = React.useState(false);
 
@@ -92,7 +90,6 @@ export default function AWARENESSCard(props) {
         setTimeout(() => {
             setEdit(true)
         })
-        // setSelectedActivity(selectedActivity);
 
     }
 
@@ -119,7 +116,6 @@ export default function AWARENESSCard(props) {
                         <InfoOutlinedIcon className={classes.infoIcon}/>
                     </IconButton>
                 }
-                // title="AWARENESS"
                 title={
                     <Typography variant="subtitle1">
                         SUPPORT
@@ -140,9 +136,6 @@ export default function AWARENESSCard(props) {
                                     fill='#bbabd2'
                                     svg={iconSVG(activity)}
                                 />
-                                    // <Avatar aria-label="recipe" className={classes.avatar}>
-                                    //
-                                    // </Avatar>
                                 }
                                 action={
                                     <IconButton aria-label="settings" className={classes.info} onClick={(e) => {
@@ -155,7 +148,6 @@ export default function AWARENESSCard(props) {
                                         }
                                     </IconButton>
                                 }
-                                // title="AWARENESS"
                                 title={
                                     <Typography variant="subtitle1">
                                         {activity.name}

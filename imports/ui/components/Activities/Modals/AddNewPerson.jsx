@@ -1,10 +1,6 @@
 import React, {useEffect} from "react";
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItem from '@material-ui/core/ListItem';
-import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
@@ -18,22 +14,7 @@ import { withSnackbar } from 'notistack';
 
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
-import { lighten, makeStyles, withStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
-import TableSortLabel from '@material-ui/core/TableSortLabel';
-import Paper from '@material-ui/core/Paper';
-import Checkbox from '@material-ui/core/Checkbox';
-import Tooltip from '@material-ui/core/Tooltip';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
-import DeleteIcon from '@material-ui/icons/Delete';
-import EditIcon from '@material-ui/icons/Edit';
-import FilterListIcon from '@material-ui/icons/FilterList';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 import MuiDialogContent from '@material-ui/core/DialogContent';
 
 
@@ -46,8 +27,6 @@ const useToolbarStyles = makeStyles(theme => ({
     highlight:
         theme.palette.type === 'light'
             ? {
-            // color: 'white',
-            // backgroundColor: '#f5f5f5',
         }
             : {
             // backgroundColor: '#f5f5f5',
@@ -59,7 +38,7 @@ const useToolbarStyles = makeStyles(theme => ({
 
 const EnhancedTableToolbar = props => {
     const classes = useToolbarStyles();
-    const { numSelected, selected } = props;
+    const { numSelected } = props;
 
     return (
         <Toolbar
@@ -75,37 +54,6 @@ const EnhancedTableToolbar = props => {
 EnhancedTableToolbar.propTypes = {
     numSelected: PropTypes.number.isRequired,
 };
-
-const useStyles1 = makeStyles(theme => ({
-    root: {
-        width: '100%',
-        margin: theme.spacing(3),
-    },
-    head: {
-        background : 'red'
-    },
-    paper: {
-        width: '100%',
-        marginBottom: theme.spacing(2),
-    },
-    table: {
-        minWidth: 750,
-    },
-    tableWrapper: {
-        overflowX: 'auto',
-    },
-    visuallyHidden: {
-        border: 0,
-        clip: 'rect(0 0 0 0)',
-        height: 1,
-        margin: -1,
-        overflow: 'hidden',
-        padding: 0,
-        position: 'absolute',
-        top: 20,
-        width: 1,
-    },
-}));
 
 const useStyles = makeStyles(theme => ({
     appBar: {
@@ -131,17 +79,12 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 function AddNewPerson(props) {
-    let { rows, local, company } = props;
+    let { company } = props;
     const [firstName, setFirstName] = React.useState('');
     const [lastName, setLastName] = React.useState('');
     const [email, setEmail] = React.useState('');
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
-    const [stakeHolders, setStakeHolders] = React.useState([]);
-
-    const handleChange = (e) => {
-        setName(e.target.value)
-    };
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -172,10 +115,6 @@ function AddNewPerson(props) {
             }
 
         })
-    };
-
-    const selectStakeHolders = (ids) => {
-        setStakeHolders(ids);
     };
 
 

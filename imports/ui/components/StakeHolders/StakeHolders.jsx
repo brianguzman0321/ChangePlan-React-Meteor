@@ -1,27 +1,17 @@
 import React from 'react';
-import moment from 'moment';
 import { withRouter } from 'react-router';
 import { makeStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import Paper from '@material-ui/core/Paper';
-import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import IconButton from "@material-ui/core/IconButton/IconButton";
-import CardHeader from "@material-ui/core/CardHeader/CardHeader";
 import Grid from '@material-ui/core/Grid';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import { InputBase } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
 import {withTracker} from "meteor/react-meteor-data";
 import { Companies } from "/imports/api/companies/companies";
 import { Projects } from "/imports/api/projects/projects";
 import { Peoples } from "/imports/api/peoples/peoples";
 import TopNavBar from '/imports/ui/components/App/App';
 import config from '/imports/utils/config';
-import Button from '@material-ui/core/Button';
 import StakeHolderList from './StakeHoldersList'
 import AddStakeHolder from './Modals/AddStakeHolder';
 
@@ -109,9 +99,6 @@ function StakeHolders(props){
                     </Grid>
                     <Grid item xs={4} className={classes.secondTab}>
                         <AddStakeHolder />
-                        {/*<Button color="primary" className={classes.createNewProject}>*/}
-                        {/*Add*/}
-                        {/*</Button>*/}
                     </Grid>
                 </Grid>
                 <StakeHolderList className={classes.stakeHoldersList} rows={stakeHolders}/>

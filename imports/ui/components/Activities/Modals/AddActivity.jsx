@@ -2,7 +2,6 @@ import React, {useEffect} from "react";
 import moment from 'moment';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import Avatar from '@material-ui/core/Avatar';
 import Dialog from '@material-ui/core/Dialog';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import MuiDialogContent from '@material-ui/core/DialogContent';
@@ -12,19 +11,14 @@ import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import { withSnackbar } from 'notistack';
-import MenuItem from '@material-ui/core/MenuItem';
 import 'date-fns';
 import Tooltip from '@material-ui/core/Tooltip';
 import SVGInline from "react-svg-inline";
 import Grid from '@material-ui/core/Grid';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
 import {withTracker} from "meteor/react-meteor-data";
 import DateFnsUtils from '@date-io/date-fns';
 import {
     MuiPickersUtilsProvider,
-    KeyboardTimePicker,
     KeyboardDatePicker,
 } from '@material-ui/pickers';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
@@ -32,8 +26,6 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { data } from "/imports/activitiesContent.json";
-import SvgIcon from '@material-ui/core/SvgIcon';
-import SVG from 'react-inlinesvg';
 import SelectStakeHolders from './SelectStakeHolders';
 import { Peoples } from '/imports/api/peoples/peoples'
 import { Companies } from '/imports/api/companies/companies'
@@ -66,7 +58,6 @@ const gridStyles = makeStyles(theme => ({
         '&:selected': {
             background: '#dae0e5;'
         }
-        // background: 'black'
     },
     item: {
         // background: '#dae0e5'
@@ -80,23 +71,16 @@ const styles2 = {
             background: '#dae0e5;'
         },
         '&:selected': {
-            // background: '#dae0e5;'
         }
-        // background: 'black'
     },
     item: {
         // background: '#dae0e5'
     }
 };
 
-const classes3 = withStyles(styles2);
-
-
 const useStyles = makeStyles(theme => ({
     AddNewActivity: {
         flex: 1,
-        // marginTop: 2,
-        // marginLeft: 15
     },
     button: {
         background: '#f1753e',
@@ -155,22 +139,6 @@ const DialogTitle = withStyles(styles)(props => {
 function createData(name, calories, fat, carbs, protein) {
     return { _id: name, calories, fat, carbs, protein };
 }
-
-const rows = [
-    createData('Cupcake', 305, 3.7, 67, 4.3),
-    createData('Donut', 452, 25.0, 51, 4.9),
-    createData('Eclair', 262, 16.0, 24, 6.0),
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-    createData('Honeycomb', 408, 3.2, 87, 6.5),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-    createData('Jelly Bean', 375, 0.0, 94, 0.0),
-    createData('KitKat', 518, 26.0, 65, 7.0),
-    createData('Lollipop', 392, 0.2, 98, 0.0),
-    createData('Marshmallow', 318, 0, 81, 2.0),
-    createData('Nougat', 360, 19.0, 9, 37.0),
-    createData('Oreo', 437, 18.0, 63, 4.0),
-];
 
 const DialogContent = withStyles(theme => ({
     root: {
@@ -284,7 +252,6 @@ function AddActivity(props) {
 
     const handleClickOpen = () => {
         setIsNew(true);
-        // updateFilter('localStakeHolders', 'ids', [])
         setExpanded('panel1');
         setOpen(true);
     };
@@ -298,10 +265,6 @@ function AddActivity(props) {
     };
     const createProject = (e) => {
         e.preventDefault();
-        // else if(endingDate < startingDate){
-        //     props.enqueueSnackbar('Please fix the date error', {variant: 'error'});
-        //     return false;
-        // }
         if(!(description && person && dueDate && age)){
             props.enqueueSnackbar('Please fill all required Fields', {variant: 'error'});
             return false;
@@ -331,18 +294,12 @@ function AddActivity(props) {
                 props.enqueueSnackbar(err.reason, {variant: 'error'})
             }
             else{
-                // updateFilter('localStakeHolders', 'ids', [])
                 handleClose();
                 props.enqueueSnackbar(`Activity ${isNew ? 'Added' : 'Updated'} Successfully.`, {variant: 'success'})
             }
 
         })
 
-    };
-
-    const handleStartingDate = date => {
-        setStartingDate(date);
-        setStartingDateOpen(false)
     };
 
     const handleDueDate = date => {
@@ -357,23 +314,12 @@ function AddActivity(props) {
 
     };
 
-    const openStarting = (e) => {
-        setStartingDateOpen(true)
-    };
-
     const openEnding = (e) => {
         setEndingDateOpen(true)
     };
 
-    const handleChange = (e) => {
-        setName(e.target.value)
-    };
     const handleTimeChange = (e) => {
         setAge(Number(e.target.value))
-    };
-
-    const handleChangePerson = (e) => {
-        setPerson(e.target.value)
     };
 
     const updateUsers = (value) => {
@@ -382,22 +328,6 @@ function AddActivity(props) {
     const handleDescriptionChange = (e) => {
         setDescription(e.target.value)
     };
-
-    const onSubmit = (event) => {
-        event.preventDefault()
-    };
-
-    function handleSelectChange(event) {
-        setRole(event.target.value);
-    }
-
-    function handleSelectClose() {
-        setSelectOpen(false);
-    }
-
-    function handleSelectOpen() {
-        setSelectOpen(true);
-    }
 
     function deleteActivity() {
         setDeleteModal(true);
@@ -585,17 +515,6 @@ function AddActivity(props) {
                                 </ExpansionPanelSummary>
                                 <ExpansionPanelDetails>
                                     <Grid container justify="space-between" spacing={2}>
-                                        {/*<TextField*/}
-                                        {/*autoFocus*/}
-                                        {/*margin="dense"*/}
-                                        {/*id="name"*/}
-                                        {/*label="Person Responsible"*/}
-                                        {/*value={person}*/}
-                                        {/*onChange={handleChangePerson}*/}
-                                        {/*required={true}*/}
-                                        {/*type="text"*/}
-                                        {/*fullWidth*/}
-                                        {/*/>*/}
                                         <Grid item={true} xs={7}>
                                             <AutoComplete updateUsers={updateUsers} data={users} selectedValue={person}/>
                                         </Grid>

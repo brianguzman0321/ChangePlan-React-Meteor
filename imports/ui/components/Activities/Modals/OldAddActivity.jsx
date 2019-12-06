@@ -19,7 +19,6 @@ import Select from '@material-ui/core/Select';
 import DateFnsUtils from '@date-io/date-fns';
 import {
     MuiPickersUtilsProvider,
-    KeyboardTimePicker,
     KeyboardDatePicker,
 } from '@material-ui/pickers';
 
@@ -39,8 +38,6 @@ const styles = theme => ({
 const useStyles = makeStyles(theme => ({
     AddNewActivity: {
         flex: 1,
-        // marginTop: 2,
-        // marginLeft: 15
     },
     button: {
         background: '#f1753e',

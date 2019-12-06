@@ -11,7 +11,6 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import Papa from 'papaparse'
-import DialogContentText from '@material-ui/core/DialogContentText';
 import TextField from '@material-ui/core/TextField';
 import { withSnackbar } from 'notistack';
 import 'date-fns';
@@ -61,28 +60,6 @@ function a11yProps(index) {
     };
 }
 
-const useStyles1 = makeStyles(theme => ({
-    root: {
-        backgroundColor: theme.palette.background.paper,
-        width: 500,
-    },
-}));
-
-function FullWidthTabs() {
-    const classes = useStyles1();
-    const theme = useTheme();
-    const [value, setValue] = React.useState(0);
-
-
-
-
-    return (
-        <div className={classes.root}>
-
-        </div>
-    );
-}
-
 const styles = theme => ({
     root: {
         margin: 0,
@@ -130,7 +107,6 @@ const DialogTitle = withStyles(styles)(props => {
 
 const DialogContent = withStyles(theme => ({
     root: {
-        // padding: theme.spacing(2),
         padding: 0
     }
 }))(MuiDialogContent);
@@ -160,10 +136,9 @@ function AddStakeHolder(props) {
     const [notes, setNotes] = React.useState('');
     const theme = useTheme();
 
-    let { company, handleModalClose, project, match } = props;
+    let { company, match } = props;
     let { projectId } = match.params;
     const classes = useStyles();
-    const modalName = 'share';
 
     const handleClickOpen = () => {
         setName('');
@@ -175,8 +150,8 @@ function AddStakeHolder(props) {
         setLos('');
         setLoi('');
         setOpen(true);
-        setCsvfile('')
-        setNotes('')
+        setCsvfile('');
+        setNotes('');
     };
 
     const handleChangeValue = (event, newValue) => {
@@ -191,9 +166,6 @@ function AddStakeHolder(props) {
         setOpen(false);
     };
 
-    const handleChange = (e) => {
-        setName(e.target.value)
-    };
     const handleEmailChange = (e) => {
         setEmail(e.target.value)
     };
@@ -224,7 +196,7 @@ function AddStakeHolder(props) {
         });
         let params = {
             peoples: data1
-        }
+        };
         setLoading(true);
         Meteor.call('peoples.insertMany', params, (err, res) => {
             setLoading(false);
@@ -245,7 +217,6 @@ function AddStakeHolder(props) {
             props.enqueueSnackbar('No File Selected', {variant: 'error'});
             return false;
         }
-        let self = this;
         Papa.parse(csvfile, {
             complete: updateData,
             header: true
@@ -287,10 +258,6 @@ function AddStakeHolder(props) {
         })
     };
 
-    function handleSelectChange(event) {
-        setRole(event.target.value);
-    }
-
     function handleSelectClose() {
         setSelectOpen(false);
     }
@@ -327,7 +294,6 @@ function AddStakeHolder(props) {
                         >
                             <Tab label="INDIVIDUAL" {...a11yProps(0)} />
                             <Tab label="MULTIPLE VIA CSV" {...a11yProps(1)} />
-                            {/*<Tab label="Item Three" {...a11yProps(2)} />*/}
                         </Tabs>
                     </AppBar>
                     <SwipeableViews

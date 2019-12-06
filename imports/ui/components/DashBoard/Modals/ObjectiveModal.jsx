@@ -8,15 +8,10 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import TextField from '@material-ui/core/TextField';
 import { withSnackbar } from 'notistack';
 import 'date-fns';
 import Grid from "@material-ui/core/Grid/Grid";
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
 
 const styles = theme => ({
     root: {
@@ -67,7 +62,7 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function AddValue(props) {
-    let { company, open, handleModalClose, project, index, editValue } = props;
+    let { open, handleModalClose, project, index, editValue } = props;
     const [name, setName] = React.useState(editValue);
     const [email, setEmail] = React.useState('');
     const [role, setRole] = React.useState('changeManager');
@@ -117,21 +112,6 @@ function AddValue(props) {
     const handleChange = (e) => {
         setName(e.target.value)
     };
-    const handleEmailChange = (e) => {
-        setEmail(e.target.value)
-    };
-
-    function handleSelectChange(event) {
-        setRole(event.target.value);
-    }
-
-    function handleSelectClose() {
-        setSelectOpen(false);
-    }
-
-    function handleSelectOpen() {
-        setSelectOpen(true);
-    }
 
     useEffect(() => {
         setName(editValue)

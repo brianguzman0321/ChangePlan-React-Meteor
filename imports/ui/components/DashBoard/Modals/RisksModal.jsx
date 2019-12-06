@@ -8,7 +8,6 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import TextField from '@material-ui/core/TextField';
 import { withSnackbar } from 'notistack';
 import 'date-fns';
@@ -137,8 +136,8 @@ function AddValue(props) {
     }
 
     useEffect(() => {
-        setType(editValue.type)
-        setLevel(editValue.level)
+        setType(editValue.type);
+        setLevel(editValue.level);
         setName(editValue.description)
     }, [editValue]);
 

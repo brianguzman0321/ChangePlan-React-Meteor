@@ -8,7 +8,6 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import TextField from '@material-ui/core/TextField';
 import { withSnackbar } from 'notistack';
 import 'date-fns';
@@ -72,7 +71,7 @@ function AddValue(props) {
     const [role, setRole] = React.useState('changeManager');
     const [selectOpen, setSelectOpen] = React.useState(false);
 
-    let { company, open, handleModalClose, project } = props;
+    let { open, handleModalClose, project } = props;
     const classes = useStyles();
     const modalName = 'share';
 

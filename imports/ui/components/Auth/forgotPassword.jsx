@@ -2,7 +2,7 @@ import React, { Component, useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Grid, Container, Card, Button, CardActions, CardContent, Typography,
-    FormControl, Input, InputLabel, FormHelperText} from '@material-ui/core';
+    FormControl, Input, InputLabel} from '@material-ui/core';
 import { BrowserRouter as Router, Route, Link, RouterLink, Redirect } from "react-router-dom";
 import { Accounts } from 'meteor/accounts-base'
 
@@ -85,7 +85,6 @@ function ForgotPassword (props) {
                                 <FormControl fullWidth>
                                     <InputLabel htmlFor="my-password">Email address</InputLabel>
                                     <Input id="my-input" aria-describedby="my-helper-text" name="email" placeholder="Enter Email" onChange={handleEmailInput} value={email} type="email" required/>
-                                    {/*<FormHelperText id="my-helper-text">We'll never share your email.</FormHelperText>*/}
                                 </FormControl>
                                 <br/>
                                 <br/>

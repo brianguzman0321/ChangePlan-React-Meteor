@@ -12,7 +12,6 @@ import Divider from '@material-ui/core/Divider';
 import { Companies } from "/imports/api/companies/companies";
 import { Projects } from "/imports/api/projects/projects";
 
-import MaterialTable from 'material-table';
 import { withTracker } from "meteor/react-meteor-data";
 import {Meteor} from "meteor/meteor";
 import ControlledOpenSelect from '/imports/ui/components/admin/control-panel/selectionModal'
@@ -106,7 +105,6 @@ function FullWidthTabs(props) {
 
 
 const ControlPanelPage = withTracker(props => {
-    // const handle = Meteor.subscribe('todoList', props.id);
     Meteor.subscribe('companies');
     Meteor.subscribe('projects');
 
