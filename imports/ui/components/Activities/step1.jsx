@@ -72,7 +72,6 @@ export default function AWARENESSCard(props) {
     let { activities } = props;
     const classes = useStyles();
     const [edit, setEdit] = React.useState(false);
-    const [selectedActivity, setSelectedActivity] = React.useState(false);
 
     function completeActivity(activity){
         activity.completed = !activity.completed;

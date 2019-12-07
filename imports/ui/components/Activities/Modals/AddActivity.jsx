@@ -157,7 +157,7 @@ function AddActivity(props) {
     let { company, stakeHolders, local, match, edit, activity, list, isOpen } = props;
     const [open, setOpen] = React.useState(edit || isOpen || false);
     const [deleteModal, setDeleteModal] = React.useState(false);
-    const [age, setAge] = React.useState(5);
+    const [time, setTime] = React.useState(5);
     const [isNew, setIsNew] = React.useState(false);
     const [users, setUsers] = React.useState([]);
     const [name, setName] = React.useState('');
@@ -192,7 +192,7 @@ function AddActivity(props) {
             value: activity.personResponsible._id
         };
         setPerson(obj);
-        setAge(activity.time);
+        setTime(activity.time);
         local.changed || updateFilter('localStakeHolders', 'ids', activity.stakeHolders);
         let updatedStakeHolders = local.changed ? local.ids : activity.stakeHolders;
         setPeoples(updatedStakeHolders);
@@ -205,7 +205,7 @@ function AddActivity(props) {
         setDueDate(new Date());
         setDescription('');
         setPerson(null);
-        setAge(5);
+        setTime(5);
         setPeoples(stakeHolders.map(item => item._id));
         updateFilter('localStakeHolders', 'ids', stakeHolders.map(item => item._id));
 
@@ -265,7 +265,7 @@ function AddActivity(props) {
     };
     const createProject = (e) => {
         e.preventDefault();
-        if(!(description && person && dueDate && age)){
+        if(!(description && person && dueDate && time)){
             props.enqueueSnackbar('Please fill all required Fields', {variant: 'error'});
             return false;
         }
@@ -283,7 +283,7 @@ function AddActivity(props) {
                 stakeHolders: peoples,
                 projectId,
                 step: 1,
-                time: Number(age)
+                time: Number(time)
             }
         };
 
@@ -319,7 +319,7 @@ function AddActivity(props) {
     };
 
     const handleTimeChange = (e) => {
-        setAge(Number(e.target.value))
+        setTime(Number(e.target.value))
     };
 
     const updateUsers = (value) => {
@@ -409,7 +409,7 @@ function AddActivity(props) {
                                                     margin="dense"
                                                     id="time"
                                                     label="Time Away from BAU (Minutes)"
-                                                    value={age}
+                                                    value={time}
                                                     onChange={handleTimeChange}
                                                     required={true}
                                                     type="number"

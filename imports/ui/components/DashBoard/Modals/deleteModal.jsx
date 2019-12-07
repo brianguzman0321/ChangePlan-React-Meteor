@@ -61,10 +61,6 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function DeleteValue(props) {
-    const [name, setName] = React.useState('');
-    const [email, setEmail] = React.useState('');
-    const [role, setRole] = React.useState('changeManager');
-    const [selectOpen, setSelectOpen] = React.useState(false);
 
     let { company, open, handleModalClose, project, index, deleteValue } = props;
     const classes = useStyles();
@@ -72,7 +68,6 @@ function DeleteValue(props) {
 
     const handleClose = () => {
         handleModalClose(modalName);
-        setName('');
     };
     const removeProject = () => {
         delete project.changeManagerDetails;
@@ -89,7 +84,6 @@ function DeleteValue(props) {
             }
             else{
                 handleClose();
-                setName('');
                 props.enqueueSnackbar('Project Updated Successfully.', {variant: 'success'})
             }
 

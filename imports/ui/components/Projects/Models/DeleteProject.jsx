@@ -61,10 +61,6 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function DeleteProject(props) {
-    const [name, setName] = React.useState('');
-    const [email, setEmail] = React.useState('');
-    const [role, setRole] = React.useState('changeManager');
-    const [selectOpen, setSelectOpen] = React.useState(false);
 
     let { company, open, handleModalClose, project } = props;
     const classes = useStyles();
@@ -72,7 +68,6 @@ function DeleteProject(props) {
 
     const handleClose = () => {
         handleModalClose(modalName);
-        setName('');
     };
     const removeProject = () => {
         let params = {
@@ -87,8 +82,6 @@ function DeleteProject(props) {
             }
             else{
                 handleClose();
-                setName('');
-                setEmail('');
                 props.enqueueSnackbar('Project Removed Successfully.', {variant: 'success'})
             }
 

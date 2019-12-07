@@ -119,14 +119,13 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function AddStakeHolder(props) {
-    const [name, setName] = React.useState('');
     const [firstName, setFirstName] = React.useState('');
     const [lastName, setLastName] = React.useState('');
     const [role, setRole] = React.useState('');
     const [businessUnit, setBusinessUnit] = React.useState('');
     const [email, setEmail] = React.useState('');
-    const [loS, setLos] = React.useState('');
-    const [loI, setLoi] = React.useState('');
+    const [supportLevel, setSupportLevel] = React.useState('');
+    const [influenceLevel, setInfluenceLevel] = React.useState('');
     const [selectOpen, setSelectOpen] = React.useState(false);
     const [selectOpen1, setSelectOpen1] = React.useState(false);
     const [open, setOpen] = React.useState(false);
@@ -141,14 +140,13 @@ function AddStakeHolder(props) {
     const classes = useStyles();
 
     const handleClickOpen = () => {
-        setName('');
         setFirstName('');
         setLastName('');
         setRole('');
         setBusinessUnit('');
         setEmail('');
-        setLos('');
-        setLoi('');
+        setSupportLevel('');
+        setInfluenceLevel('');
         setOpen(true);
         setCsvfile('');
         setNotes('');
@@ -226,7 +224,6 @@ function AddStakeHolder(props) {
             }
             else{
                 setOpen(false);
-                setName('');
                 setCsvfile(null);
                 props.enqueueSnackbar('StakeHolders Added Successfully.', {variant: 'success'})
             }
@@ -248,7 +245,7 @@ function AddStakeHolder(props) {
 
     const onSubmit = (e) => {
         event.preventDefault();
-        if(!(loI && loS)){
+        if(!(influenceLevel && supportLevel)){
             props.enqueueSnackbar('Please fill all required Fields', {variant: 'error'});
             return false;
         }
@@ -261,8 +258,8 @@ function AddStakeHolder(props) {
                 email,
                 notes,
                 projectId,
-                influenceLevel: loI,
-                supportLevel: loS,
+                influenceLevel: influenceLevel,
+                supportLevel: supportLevel,
                 company: company._id
             }
         };
@@ -272,7 +269,6 @@ function AddStakeHolder(props) {
             }
             else{
                 setOpen(false);
-                setName('');
                 props.enqueueSnackbar('StakeHolder Added Successfully.', {variant: 'success'})
             }
 
@@ -407,8 +403,8 @@ function AddStakeHolder(props) {
                                                 open={selectOpen}
                                                 onClose={handleSelectClose}
                                                 onOpen={handleSelectOpen}
-                                                value={loS}
-                                                onChange={(e)=> {setLos(e.target.value)}}
+                                                value={supportLevel}
+                                                onChange={(e)=> {setSupportLevel(e.target.value)}}
                                                 inputProps={{
                                                     name: 'role',
                                                     id: 'demo-controlled-open-select',
@@ -435,8 +431,8 @@ function AddStakeHolder(props) {
                                                 open={selectOpen1}
                                                 onClose={handleSelectClose1}
                                                 onOpen={handleSelectOpen1}
-                                                value={loI}
-                                                onChange={(e)=> {setLoi(e.target.value)}}
+                                                value={influenceLevel}
+                                                onChange={(e)=> {setInfluenceLevel(e.target.value)}}
                                                 inputProps={{
                                                     name: 'role',
                                                     id: 'demo-controlled-open-select',

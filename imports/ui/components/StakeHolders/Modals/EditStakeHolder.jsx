@@ -77,14 +77,13 @@ const DialogActions = withStyles(theme => ({
 function EditStakeHolder(props) {
     let { stakeholder } = props;
 
-    const [name, setName] = React.useState('');
     const [firstName, setFirstName] = React.useState(stakeholder.firstName);
     const [lastName, setLastName] = React.useState(stakeholder.lastName);
     const [role, setRole] = React.useState(stakeholder.role);
     const [businessUnit, setBusinessUnit] = React.useState(stakeholder.businessUnit);
     const [email, setEmail] = React.useState(stakeholder.email);
-    const [loS, setLos] = React.useState(stakeholder.influenceLevel);
-    const [loI, setLoi] = React.useState(stakeholder.supportLevel);
+    const [supportLevel, setSupportLevel] = React.useState(stakeholder.influenceLevel);
+    const [loI, setInfluenceLevel] = React.useState(stakeholder.supportLevel);
     const [selectOpen, setSelectOpen] = React.useState(false);
     const [selectOpen1, setSelectOpen1] = React.useState(false);
     const [notes, setNotes] = React.useState(stakeholder.notes);
@@ -93,15 +92,14 @@ function EditStakeHolder(props) {
     const classes = useStyles();
 
     const handleClickOpen = () => {
-        setName('');
         setTimeout(() => {
             setFirstName(stakeholder.firstName);
             setLastName(stakeholder.lastName);
             setRole(stakeholder.role);
             setBusinessUnit(stakeholder.businessUnit);
             setEmail(stakeholder.email);
-            setLos(stakeholder.supportLevel);
-            setLoi(stakeholder.influenceLevel);
+            setSupportLevel(stakeholder.supportLevel);
+            setInfluenceLevel(stakeholder.influenceLevel);
             setNotes(stakeholder.notes);
         }, 500);
         setOpen(true);
@@ -117,7 +115,7 @@ function EditStakeHolder(props) {
 
     const onSubmit = (e) => {
         event.preventDefault();
-        if(!(loI && loS)){
+        if(!(loI && supportLevel)){
             props.enqueueSnackbar('Please fill all required Fields', {variant: 'error'});
             return false;
         }
@@ -131,7 +129,7 @@ function EditStakeHolder(props) {
                 email,
                 notes,
                 influenceLevel: loI,
-                supportLevel: loS,
+                supportLevel: supportLevel,
 
             }
         };
@@ -141,7 +139,6 @@ function EditStakeHolder(props) {
             }
             else{
                 setOpen(false);
-                setName('');
                 props.enqueueSnackbar('StakeHolder Updated Successfully.', {variant: 'success'})
             }
 
@@ -258,8 +255,8 @@ function EditStakeHolder(props) {
                                     open={selectOpen}
                                     onClose={handleSelectClose}
                                     onOpen={handleSelectOpen}
-                                    value={loS}
-                                    onChange={(e)=> {setLos(e.target.value)}}
+                                    value={supportLevel}
+                                    onChange={(e)=> {setSupportLevel(e.target.value)}}
                                     inputProps={{
                                         name: 'role',
                                         id: 'demo-controlled-open-select',
@@ -287,7 +284,7 @@ function EditStakeHolder(props) {
                                     onClose={handleSelectClose1}
                                     onOpen={handleSelectOpen1}
                                     value={loI}
-                                    onChange={(e)=> {setLoi(e.target.value)}}
+                                    onChange={(e)=> {setInfluenceLevel(e.target.value)}}
                                     inputProps={{
                                         name: 'role',
                                         id: 'demo-controlled-open-select',

@@ -1,6 +1,6 @@
 import React from 'react';
 import TopNavBar from '/imports/ui/components/App/App'
-import ProjectCard from '/imports/ui/components/Projects/Project'
+import ProjectCard from '/imports/ui/components/Projects/Projects'
 
 export default function Home(props){
     let { params } = props.match;

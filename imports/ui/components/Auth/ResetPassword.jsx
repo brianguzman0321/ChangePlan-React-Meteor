@@ -5,12 +5,6 @@ import { Grid, Container, Card, Button, CardActions, CardContent, Typography,
     FormControl, Input, InputLabel, FormHelperText} from '@material-ui/core';
 import { BrowserRouter as Router, Route, Link, RouterLink, Redirect } from "react-router-dom";
 
-
-const useStyles1 = makeStyles(theme => ({
-
-}));
-
-
 const useStyles = makeStyles(theme => ({
     card: {
         minWidth: 275,

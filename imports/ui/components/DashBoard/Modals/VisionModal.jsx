@@ -64,10 +64,6 @@ const DialogActions = withStyles(theme => ({
 function AddValue(props) {
     let { open, handleModalClose, project, index, editValue } = props;
     const [name, setName] = React.useState(editValue);
-    const [email, setEmail] = React.useState('');
-    const [role, setRole] = React.useState('changeManager');
-    const [selectOpen, setSelectOpen] = React.useState(false);
-
 
     const classes = useStyles();
     const modalName = 'vision';

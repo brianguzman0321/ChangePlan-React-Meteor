@@ -102,11 +102,9 @@ function Dashboard(props){
     const [editValue, setEditValue] = React.useState('');
     const [deleteValue, setDeleteValue] = React.useState('');
     const [vision, setVision] = React.useState(project.vision || []);
-    const [visionModal, setVisionModal] = React.useState(false);
     const [objectives, setObjective] = React.useState(project.objectives || []);
     const [impacts, setImpacts] = React.useState(project.impacts || []);
     const [risks, setRisks] = React.useState(project.risks || []);
-    const [objectivesModal, setObjectivesModal] = React.useState(false);
     const [modals, setModals] = React.useState({
         vision: false,
         delete: false,

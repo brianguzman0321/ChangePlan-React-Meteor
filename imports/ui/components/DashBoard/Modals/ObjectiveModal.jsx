@@ -63,10 +63,7 @@ const DialogActions = withStyles(theme => ({
 
 function AddValue(props) {
     let { open, handleModalClose, project, index, editValue } = props;
-    const [name, setName] = React.useState(editValue);
-    const [email, setEmail] = React.useState('');
-    const [role, setRole] = React.useState('changeManager');
-    const [selectOpen, setSelectOpen] = React.useState(false);
+    const [value, setValue] = React.useState(editValue);
 
 
     const classes = useStyles();
@@ -74,18 +71,18 @@ function AddValue(props) {
 
     const handleClose = () => {
         handleModalClose(modalName);
-        setName('');
+        setValue('');
     };
     const createProject = () => {
-        if(!(name)){
+        if(!(value)){
             props.enqueueSnackbar('Please fill the required Field', {variant: 'error'});
             return false;
         }
         if(index !== '' ){
-            project.objectives[index] = name;
+            project.objectives[index] = value;
         }
         else{
-            project.objectives.push(name);
+            project.objectives.push(value);
         }
 
         delete project.changeManagerDetails;
@@ -101,7 +98,7 @@ function AddValue(props) {
             }
             else{
                 handleClose();
-                setName('');
+                setValue('');
                 props.enqueueSnackbar('Project Updated Successfully.', {variant: 'success'})
             }
 
@@ -110,11 +107,11 @@ function AddValue(props) {
     };
 
     const handleChange = (e) => {
-        setName(e.target.value)
+        setValue(e.target.value)
     };
 
     useEffect(() => {
-        setName(editValue)
+        setValue(editValue)
     }, [editValue]);
 
     return (
@@ -131,7 +128,7 @@ function AddValue(props) {
                                 // margin="dense"
                                 id="value"
                                 label="Value"
-                                value={name}
+                                value={value}
                                 onChange={handleChange}
                                 required={true}
                                 type="text"

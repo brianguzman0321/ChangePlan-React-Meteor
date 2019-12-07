@@ -67,7 +67,7 @@ const DialogActions = withStyles(theme => ({
 
 function AddValue(props) {
     let { company, open, handleModalClose, project, index, editValue } = props;
-    const [name, setName] = React.useState('');
+    const [description, setDescription] = React.useState('');
     const [type, setType] = React.useState('');
     const [level, setLevel] = React.useState('');
     const [levelOpen, setLevelOpen] = React.useState(false);
@@ -77,18 +77,18 @@ function AddValue(props) {
 
     const handleClose = () => {
         handleModalClose(modalName);
-        setName('');
+        setDescription('');
         setType('');
         setLevel('');
     };
     const createProject = () => {
-        if(!(name && level)){
+        if(!(description && level)){
             props.enqueueSnackbar('Please fill the required Field', {variant: 'error'});
             return false;
         }
         let riskObj = {
             level,
-            description: name
+            description: description
         };
         if(index !== '' ){
             project.risks[index] = riskObj;
@@ -110,7 +110,7 @@ function AddValue(props) {
             }
             else{
                 handleClose();
-                setName('');
+                setDescription('');
                 props.enqueueSnackbar('Project Updated Successfully.', {variant: 'success'})
             }
 
@@ -119,7 +119,7 @@ function AddValue(props) {
     };
 
     const handleChange = (e) => {
-        setName(e.target.value)
+        setDescription(e.target.value)
     };
 
     function handleLevelChange(event) {
@@ -138,7 +138,7 @@ function AddValue(props) {
     useEffect(() => {
         setType(editValue.type);
         setLevel(editValue.level);
-        setName(editValue.description)
+        setDescription(editValue.description)
     }, [editValue]);
 
     return (
@@ -152,9 +152,9 @@ function AddValue(props) {
                         <Grid item xs={12}>
                             <TextField
                                 // margin="dense"
-                                id="name"
+                                id="description"
                                 label="Description"
-                                value={name}
+                                value={description}
                                 onChange={handleChange}
                                 required={true}
                                 type="text"

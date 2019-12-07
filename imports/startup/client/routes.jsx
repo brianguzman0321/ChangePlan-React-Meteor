@@ -22,7 +22,6 @@ import Dashboard from '/imports/ui/components/DashBoard/Dashboard'
 import { SnackbarProvider } from 'notistack';
 
 //list of Public Routes
-const listOfPages = ['login', 'signup', 'forgot-password', 'reset-password'];
 
 const Authenticated = ({ loggingIn, authenticated, component, ...rest }) => (
     <Route {...rest} render={(props) => {
