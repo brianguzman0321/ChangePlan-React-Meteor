@@ -171,7 +171,26 @@ function AddStakeHolder(props) {
     };
 
     const handleChangecsv = event => {
-        setCsvfile(event.target.files[0]);
+        let file = event.target.files[0];
+        let ext;
+        try{
+            ext = file.name.match(/\.([^\.]+)$/)[1];
+        }
+        catch (e){
+            props.enqueueSnackbar(`Unsupported File. CSV files only.`, {variant: 'error'});
+            setCsvfile(undefined);
+            return false;
+        }
+
+        switch (ext) {
+            case 'csv':
+                setCsvfile(event.target.files[0]);
+                break;
+            default:
+                props.enqueueSnackbar(`${ext} type not supported. CSV files only.`, {variant: 'error'});
+                setCsvfile(undefined);
+        }
+
     };
 
     const updateData =(result) =>  {
@@ -182,6 +201,7 @@ function AddStakeHolder(props) {
         }
         data.pop();
         let data1 = data.map((doc) => {
+            checkData(doc)
             return {
                 firstName : doc['First Name'],
                 lastName: doc['Last Name'],
@@ -202,7 +222,7 @@ function AddStakeHolder(props) {
         Meteor.call('peoples.insertMany', params, (err, res) => {
             setLoading(false);
             if(err){
-                props.enqueueSnackbar(err.reason, {variant: 'error'})
+                props.enqueueSnackbar(`Upload Failed! ${err.reason}`, {variant: 'error'})
             }
             else{
                 setOpen(false);
@@ -466,9 +486,13 @@ function AddStakeHolder(props) {
                                     <Button variant="raised" component="span" className={classes.button}>
                                         Choose File
                                     </Button>
+                                    <Typography variant="h6">
+                                        &nbsp;&nbsp;{csvfile && csvfile.name}
+                                    </Typography>
+
                                 </label>
                                 <p />
-                                <Button onClick={importCSV} disabled={loading} color="primary"> Upload </Button>
+                                <Button onClick={importCSV} disabled={loading} color="primary" variant="contained"> Upload </Button>
                             </div>
                         </TabPanel>
                     </SwipeableViews>
@@ -485,3 +509,7 @@ const AddStakeHolderPage = withTracker(props => {
 })(withRouter(AddStakeHolder));
 
 export default withSnackbar(AddStakeHolderPage)
+
+function checkData (document) {
+    console.log(document)
+}

@@ -63,7 +63,7 @@ export const insert = new ValidatedMethod({
             email: people.email
         });
         if(alreadyExist){
-            throw new Meteor.Error(500, "A Stakeholder with this Email Already Exists");
+            throw new Meteor.Error(500, "A Stakeholder with given Email Already Exists");
         }
         let personId = Peoples.insert(people);
         return Projects.update({
