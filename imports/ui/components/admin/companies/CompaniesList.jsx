@@ -20,7 +20,7 @@ function CompaniesList(props) {
         columns: [
             {title: 'Company Name', field: 'name'},
             {title: 'ID', field: '_id', editable: 'never'},
-            {title: 'PeoplesCount', field: 'count', editable: 'never'},
+            {title: 'StakeholderCount', field: 'count', editable: 'never'},
             {title: 'Total Projects', field: 'projectsCount', editable: 'never'},
         ],
         data: []

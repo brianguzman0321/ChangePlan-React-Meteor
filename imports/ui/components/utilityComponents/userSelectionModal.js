@@ -21,7 +21,7 @@ function UserSelectionModal(props) {
 
     function modalMessage(){
         if(Roles.userIsInRole(Meteor.userId(), 'superAdmin')){
-            return 'Assign an existing user to this Company. To add new users, click on the the (+) Add button on the bottom right corner.'
+            return 'Assign an existing user to this Project. To add new users, click on the the (+) Add button on the bottom right corner.'
         }
         else if(props.currentCompany && props.currentCompany.admins.includes(Meteor.userId())){
             return 'Assign an existing user to this Project. To add new users, click on the the (+) Add button on the bottom right corner.'
