@@ -68,7 +68,6 @@ function Signup (props) {
         Accounts.createUser({profile, email, password}, (err) => {
             if(err){
                 setError(err.reason);
-                console.log(err)
             }else{
                 Meteor.call("sendVerificationLink", (error, response) => {
                     if (error) {

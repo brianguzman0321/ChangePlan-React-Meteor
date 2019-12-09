@@ -55,7 +55,6 @@ function ForgotPassword (props) {
         Accounts.forgotPassword({ email }, (err) => {
             if(err){
                 setError(err.reason);
-                console.log(err);
             }else{
                 setError("Password Reset Email sent Successfully");
             }
