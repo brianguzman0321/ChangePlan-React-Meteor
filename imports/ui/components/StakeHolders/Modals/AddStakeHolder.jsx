@@ -530,7 +530,3 @@ const AddStakeHolderPage = withTracker(props => {
 })(withRouter(AddStakeHolder));
 
 export default withSnackbar(AddStakeHolderPage)
-
-function checkData (document) {
-    console.log(document)
-}
