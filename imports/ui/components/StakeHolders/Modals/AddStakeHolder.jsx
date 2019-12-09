@@ -198,8 +198,29 @@ function AddStakeHolder(props) {
             return false;
         }
         data.pop();
+        let errorMessage = '';
         let data1 = data.map((doc) => {
-            checkData(doc)
+            if(!doc['First Name']){
+                errorMessage = 'First Name Value is empty or Invalid'
+            }
+            if(!doc['Last Name']){
+                errorMessage = 'Last Name Value is empty or Invalid'
+            }
+            if(!doc['Role']){
+                errorMessage = 'Role Value is empty or Invalid'
+            }
+            if(!doc['Business Unit']){
+                errorMessage = 'Business Unit Value is empty or Invalid'
+            }
+            if(!(doc['Email'] && (/^\S+@\S+$/.test(doc['Email'])))){
+                errorMessage = 'Email Value is empty or Invalid'
+            }
+            if(isNaN(Number(doc['Level of Influence']) )){
+                errorMessage = 'Level of Influence Value is empty or Invalid'
+            }
+            if(isNaN(Number(doc['Level of support']) )){
+                errorMessage = 'Level of support Value is empty or Invalid'
+            }
             return {
                 firstName : doc['First Name'],
                 lastName: doc['Last Name'],
@@ -213,6 +234,10 @@ function AddStakeHolder(props) {
                 projectId
             }
         });
+        if(errorMessage){
+            props.enqueueSnackbar(`Upload Failed! ${errorMessage}`, {variant: 'error'});
+            return false
+        }
         let params = {
             peoples: data1
         };
@@ -220,7 +245,7 @@ function AddStakeHolder(props) {
         Meteor.call('peoples.insertMany', params, (err, res) => {
             setLoading(false);
             if(err){
-                props.enqueueSnackbar(`Upload Failed! ${err.reason}`, {variant: 'error'})
+                props.enqueueSnackbar(`Upload Aborted! ${err.reason}`, {variant: 'error'})
             }
             else{
                 setOpen(false);
