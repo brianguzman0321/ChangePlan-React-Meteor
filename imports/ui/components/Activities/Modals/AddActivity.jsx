@@ -274,6 +274,8 @@ function AddActivity(props) {
     const handleOpenModalDialog = () => {
         if (isUpdated && !isNew) {
             setShowModalDialog(true);
+        } else {
+            handleClose();
         }
     };
 
@@ -369,8 +371,8 @@ function AddActivity(props) {
                     Add Activity
                 </Button> : ''
             }
-            <Dialog onClose={isUpdated ? handleOpenModalDialog : handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth={true} classes={{ paper: classes.dialogPaper }}>
-                <DialogTitle id="customized-dialog-title" onClose={isUpdated ? handleOpenModalDialog : handleClose}>
+            <Dialog onClose={handleOpenModalDialog} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth={true} classes={{ paper: classes.dialogPaper }}>
+                <DialogTitle id="customized-dialog-title" onClose={handleOpenModalDialog}>
                     { isNew ? 'Add' : 'Edit' } Activity
                 </DialogTitle>
                 <form onSubmit={createProject} noValidate>
@@ -549,7 +551,7 @@ function AddActivity(props) {
                         </div>
                     </DialogContent>
                     <DialogActions>
-                        {isNew ? <Button onClick={isUpdated ? handleOpenModalDialog : handleClose} color="secondary">
+                        {isNew ? <Button onClick={handleClose} color="secondary">
                             cancel
                         </Button> :
                             <Button onClick={deleteActivity} color="secondary">
