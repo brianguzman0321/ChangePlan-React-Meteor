@@ -285,7 +285,7 @@ function AddActivity(props) {
     };
 
     const handleOpenModalDialog = () => {
-        if (isUpdated && (isNew === false)) {
+        if (isUpdated && !isNew) {
             setShowModalDialog(true);
         }
     };
