@@ -139,7 +139,7 @@ function Dashboard(props){
         menus = []
     }
 
-    const allowedValues = ['vision', 'delete', 'objectives', 'impacts', 'risks'];
+    const allowedValues = ['vision', 'delete', 'objectives', 'impacts', 'risks', 'edit'];
 
     const handleClose = (value) => {
         if(allowedValues.includes(value)){
@@ -270,8 +270,8 @@ function Dashboard(props){
                             {ManagersNames(project)}
                         </Typography>
                     </Grid>
-                    <Grid item xs={2} onClick={() => setEditProjectModal(true)}>
-                        <EditProject open={editProjectModal} handleModalClose={handleEditModalClose} project={project} displayEditButton={true}/>
+                    <Grid item xs={2} onClick={handleClose.bind(null, 'edit')}>
+                        <EditProject open={modals.edit} handleModalClose={handleModalClose} project={project} displayEditButton={true}/>
                     </Grid>
                 </Grid>
                 <Grid
