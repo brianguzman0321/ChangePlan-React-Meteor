@@ -175,7 +175,7 @@ function AddStakeHolder(props) {
             ext = file.name.match(/\.([^\.]+)$/)[1];
         }
         catch (e){
-            props.enqueueSnackbar(`Unsupported File. CSV files only.`, {variant: 'error'});
+            props.enqueueSnackbar(`Unsupported file type. CSV only.`, {variant: 'error'});
             setCsvfile(undefined);
             return false;
         }
@@ -185,7 +185,7 @@ function AddStakeHolder(props) {
                 setCsvfile(event.target.files[0]);
                 break;
             default:
-                props.enqueueSnackbar(`${ext} type not supported. CSV files only.`, {variant: 'error'});
+                props.enqueueSnackbar(`Unsupported file type (${ext}). CSV only.`, {variant: 'error'});
                 setCsvfile(undefined);
         }
 
@@ -322,7 +322,7 @@ function AddStakeHolder(props) {
             </Button>
             <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md"  fullWidth={true} classes={{ paper: classes.dialogPaper }}>
                     <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-                        Add Stakeholder
+                        Add/Import Stakeholders
                     </DialogTitle>
                     <DialogContent dividers>
                     <AppBar position="static" color="default">
