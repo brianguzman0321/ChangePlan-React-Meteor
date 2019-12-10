@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -19,6 +19,7 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import {withTracker} from "meteor/react-meteor-data";
 import { Companies } from "/imports/api/companies/companies";
+import SaveChanges from "../../Modals/SaveChanges";
 
 const styles = theme => ({
     root: {
@@ -87,6 +88,8 @@ function EditStakeHolder(props) {
     const [selectOpen, setSelectOpen] = React.useState(false);
     const [selectOpen1, setSelectOpen1] = React.useState(false);
     const [notes, setNotes] = React.useState(stakeholder.notes);
+    const [showModalDialog, setShowModalDialog] = useState(false);
+    const [isUpdated, setIsUpdated] = useState(false);
 
     const [open, setOpen] = React.useState(false);
     const classes = useStyles();
@@ -107,10 +110,24 @@ function EditStakeHolder(props) {
 
     const handleClose = () => {
         setOpen(false);
+        setShowModalDialog(false);
+        setIsUpdated(false);
     };
 
+    const handleOpenModalDialog = () => {
+        if (isUpdated) {
+            setShowModalDialog(true);
+        }
+    };
+
+    const closeModalDialog = () => {
+        setShowModalDialog(false);
+    };
+
+
     const handleEmailChange = (e) => {
-        setEmail(e.target.value)
+        setEmail(e.target.value);
+        setIsUpdated(true);
     };
 
     const onSubmit = (e) => {
@@ -138,7 +155,7 @@ function EditStakeHolder(props) {
                 props.enqueueSnackbar(err.reason, {variant: 'error'})
             }
             else{
-                setOpen(false);
+                handleClose();
                 props.enqueueSnackbar('StakeHolder Updated Successfully.', {variant: 'success'})
             }
 
@@ -165,8 +182,8 @@ function EditStakeHolder(props) {
         <IconButton aria-label="edit" onClick={handleClickOpen}>
             <EditIcon />
         </IconButton>
-        <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth={true}>
-            <DialogTitle id="customized-dialog-title" onClose={handleClose}>
+        <Dialog onClose={isUpdated ? handleOpenModalDialog : handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth={true}>
+            <DialogTitle id="customized-dialog-title" onClose={isUpdated ? handleOpenModalDialog : handleClose}>
                 Edit Stakeholder
             </DialogTitle>
             <form onSubmit={onSubmit}>
@@ -179,7 +196,8 @@ function EditStakeHolder(props) {
                                 id="firstName"
                                 label="First Name"
                                 value={firstName}
-                                onChange={(e)=> {setFirstName(e.target.value)}}
+                                onChange={(e)=> {setFirstName(e.target.value);
+                                                 setIsUpdated(true);}}
                                 required={true}
                                 type="text"
                                 fullWidth={true}
@@ -191,7 +209,8 @@ function EditStakeHolder(props) {
                                 id="lastName"
                                 label="Last Name"
                                 value={lastName}
-                                onChange={(e)=> {setLastName(e.target.value)}}
+                                onChange={(e)=> {setLastName(e.target.value);
+                                    setIsUpdated(true);}}
                                 required={true}
                                 type="text"
                                 fullWidth={true}
@@ -203,7 +222,8 @@ function EditStakeHolder(props) {
                                 id="role"
                                 label="Role"
                                 value={role}
-                                onChange={(e)=> {setRole(e.target.value)}}
+                                onChange={(e)=> {setRole(e.target.value);
+                                                    setIsUpdated(true);}}
                                 required={true}
                                 type="text"
                                 fullWidth={true}
@@ -215,7 +235,8 @@ function EditStakeHolder(props) {
                                 id="businessUnit"
                                 label="Business Unit"
                                 value={businessUnit}
-                                onChange={(e)=> {setBusinessUnit(e.target.value)}}
+                                onChange={(e)=> {setBusinessUnit(e.target.value);
+                                    setIsUpdated(true);}}
                                 required={true}
                                 type="text"
                                 fullWidth={true}
@@ -240,7 +261,8 @@ function EditStakeHolder(props) {
                                 id="notes"
                                 label="Notes"
                                 value={notes}
-                                onChange={(e)=> {setNotes(e.target.value)}}
+                                onChange={(e)=> {setNotes(e.target.value);
+                                                setIsUpdated(true);}}
                                 type="text"
                                 fullWidth={true}
                             />
@@ -256,7 +278,8 @@ function EditStakeHolder(props) {
                                     onClose={handleSelectClose}
                                     onOpen={handleSelectOpen}
                                     value={supportLevel}
-                                    onChange={(e)=> {setSupportLevel(e.target.value)}}
+                                    onChange={(e)=> {setSupportLevel(e.target.value);
+                                        setIsUpdated(true);}}
                                     inputProps={{
                                         name: 'role',
                                         id: 'demo-controlled-open-select',
@@ -284,7 +307,8 @@ function EditStakeHolder(props) {
                                     onClose={handleSelectClose1}
                                     onOpen={handleSelectOpen1}
                                     value={loI}
-                                    onChange={(e)=> {setInfluenceLevel(e.target.value)}}
+                                    onChange={(e)=> {setInfluenceLevel(e.target.value);
+                                        setIsUpdated(true);}}
                                     inputProps={{
                                         name: 'role',
                                         id: 'demo-controlled-open-select',
@@ -304,13 +328,19 @@ function EditStakeHolder(props) {
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} color="secondary">
+                    <Button onClick={isUpdated ? handleOpenModalDialog : handleClose} color="secondary">
                         Cancel
                     </Button>
                     <Button color="primary" type="submit">
                         Update
                     </Button>
                 </DialogActions>
+                <SaveChanges
+                  handleClose={handleClose}
+                  showModalDialog={showModalDialog}
+                  handleSave={onSubmit}
+                  closeModalDialog={closeModalDialog}
+                />
             </form>
         </Dialog>
         </>
