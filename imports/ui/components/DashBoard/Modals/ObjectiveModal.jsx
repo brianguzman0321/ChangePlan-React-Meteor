@@ -30,8 +30,7 @@ const styles = theme => ({
 const useStyles = makeStyles(theme => ({
     createNewProject: {
         flex: 1,
-        marginTop: 2,
-        marginLeft: 15
+        marginLeft: 15,
     }
 }));
 
