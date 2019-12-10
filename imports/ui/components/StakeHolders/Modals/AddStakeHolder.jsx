@@ -198,8 +198,29 @@ function AddStakeHolder(props) {
             return false;
         }
         data.pop();
+        let csvUploadErrorMessage = '';
         let data1 = data.map((doc) => {
-            checkData(doc)
+            if(!doc['First Name']){
+                csvUploadErrorMessage = 'First Name Value is empty or Invalid'
+            }
+            if(!doc['Last Name']){
+                csvUploadErrorMessage = 'Last Name Value is empty or Invalid'
+            }
+            if(!doc['Role']){
+                csvUploadErrorMessage = 'Role Value is empty or Invalid'
+            }
+            if(!doc['Business Unit']){
+                csvUploadErrorMessage = 'Business Unit Value is empty or Invalid'
+            }
+            if(!(doc['Email'] && (/^\S+@\S+$/.test(doc['Email'])))){
+                csvUploadErrorMessage = 'Email Value is empty or Invalid'
+            }
+            if(isNaN(Number(doc['Level of Influence']) )){
+                csvUploadErrorMessage = 'Level of Influence Value is empty or Invalid'
+            }
+            if(isNaN(Number(doc['Level of support']) )){
+                csvUploadErrorMessage = 'Level of support Value is empty or Invalid'
+            }
             return {
                 firstName : doc['First Name'],
                 lastName: doc['Last Name'],
@@ -213,6 +234,10 @@ function AddStakeHolder(props) {
                 projectId
             }
         });
+        if(csvUploadErrorMessage){
+            props.enqueueSnackbar(`Upload Failed! ${csvUploadErrorMessage}`, {variant: 'error'});
+            return false
+        }
         let params = {
             peoples: data1
         };
@@ -220,7 +245,7 @@ function AddStakeHolder(props) {
         Meteor.call('peoples.insertMany', params, (err, res) => {
             setLoading(false);
             if(err){
-                props.enqueueSnackbar(`Upload Failed! ${err.reason}`, {variant: 'error'})
+                props.enqueueSnackbar(`Upload Aborted! ${err.reason}`, {variant: 'error'})
             }
             else{
                 setOpen(false);
@@ -505,7 +530,3 @@ const AddStakeHolderPage = withTracker(props => {
 })(withRouter(AddStakeHolder));
 
 export default withSnackbar(AddStakeHolderPage)
-
-function checkData (document) {
-    console.log(document)
-}
