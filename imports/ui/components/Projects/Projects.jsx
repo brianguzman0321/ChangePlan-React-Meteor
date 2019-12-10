@@ -18,7 +18,7 @@ import {withTracker} from "meteor/react-meteor-data";
 import { Companies } from "/imports/api/companies/companies";
 import { Projects } from "/imports/api/projects/projects";
 import NewProject from './Models/CreateProject';
-import ProjectMenus from './ProjectMenus'
+import ProjectMenus from './ProjectMenus';
 
 
 const useStyles = makeStyles(theme => ({
@@ -109,7 +109,6 @@ const useStyles = makeStyles(theme => ({
     },
     createNewProject : {
         flex: 1,
-        marginTop: 2,
         marginLeft: 23
     },
     gridContainer: {
@@ -177,123 +176,123 @@ function ProjectCard(props) {
 
     return (
         <>
-        <Grid
-            container
-            direction="row"
-            justify="flex-start"
-            alignItems="center"
-            className={classes.gridContainer}
-            spacing={0}
-        >
-            <Grid container className={classes.searchContainer}>
-                <Grid item xs={2}>
-                    <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
-                        Projects
-                    </Typography>
-                </Grid>
-                <Grid item xs={4} className={classes.searchGrid}>
-                    <InputBase
-                        className={classes.input}
-                        inputProps={{ 'aria-label': 'search by project name' }}
-                        onChange={searchFilter}
-                        value={search}
-                    />
-                    <IconButton className={classes.iconButton} aria-label="search">
-                        <SearchIcon />
-                    </IconButton>
-                </Grid>
-                <Grid item xs={4} className={isAdmin && company ? classes.secondTab: ''}>
-                    { isAdmin && company && <NewProject {...props} className={classes.createNewProject} /> }
-                    <Typography color="textSecondary" variant="title" className={classes.sortBy}>
-                        Sort by
-                    </Typography>
-                </Grid>
-                <Grid item xs={2}>
-                    <FormControl className={classes.formControl}>
-                        <Select
-                            value={age}
-                            onChange={handleChange}
-                            displayEmpty
-                            name="age"
-                            className={classes.selectEmpty}
-                        >
-                            <MenuItem value="createdAt">Date Added</MenuItem>
-                            <MenuItem value="endingDate">Date Due</MenuItem>
-                            <MenuItem value="name">Project Name</MenuItem>
-                            <MenuItem value="stakeHolder">Stakeholder Count</MenuItem>
-                        </Select>
-                    </FormControl>
-                </Grid>
-            </Grid>
-            {projects.map((project, index) => (
-                <Grid item xs={12} sm={6} md={3} key={index} className={classes.grid} onClick={(e) =>selectProject(project)}>
-                    <Card className={classes.card}>
-                        <LinearProgress variant="determinate" value={index * 10} color="primary"/>
-                        <CardHeader
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                e.preventDefault();
-                            }}
-                            action={<ProjectMenus project={project} company={company} />}
-                            classes={classes1}
-                            title={projectName(project.name)}
+            <Grid
+                container
+                direction="row"
+                justify="flex-start"
+                alignItems="center"
+                className={classes.gridContainer}
+                spacing={0}
+            >
+                <Grid container className={classes.searchContainer}>
+                    <Grid item xs={2}>
+                        <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
+                            Projects
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={4} className={classes.searchGrid}>
+                        <InputBase
+                            className={classes.input}
+                            inputProps={{ 'aria-label': 'search by project name' }}
+                            onChange={searchFilter}
+                            value={search}
                         />
-                        <CardContent className={classes.cardContent}>
-                            <Grid container>
-                                <Grid item xs={4}>
-                                    <Typography className={classes.title}  gutterBottom>
-                                        STAKEHOLDERS
-                                    </Typography>
-                                    <Typography className={classes.pos} color="textSecondary">
-                                        {project.stakeHolders.length}
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs={4} className={classes.activities}>
-                                    <Typography className={classes.title} gutterBottom>
-                                        ACTIVITIES
-                                    </Typography>
-                                    <Typography className={classes.pos} color="textSecondary">
-                                        {/*{project.totalActivities}*/}
-                                        0
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs={4}>
-                                    <Typography className={classes.title} gutterBottom>
-                                        DUE
-                                    </Typography>
-                                    <Typography className={classes.pos} color="textSecondary">
-                                        {moment(project.endingDate).format('DD-MMM-YY')}
-                                    </Typography>
-                                </Grid>
-
-                            </Grid>
-                            <Typography variant="body2" component="p" className={classes.bottomText}>
-                                {project.changeManagers.length > 1 ? "CHANGE MANAGERS" : "CHANGE MANAGER"}
-                                <br />
-                                {ChangeManagersNames(project)}
-                            </Typography>
-                        </CardContent>
-                    </Card>
+                        <IconButton className={classes.iconButton} aria-label="search">
+                            <SearchIcon />
+                        </IconButton>
+                    </Grid>
+                    <Grid item xs={4} className={isAdmin && company ? classes.secondTab: ''}>
+                        { isAdmin && company && <NewProject {...props} className={classes.createNewProject} /> }
+                        <Typography color="textSecondary" variant="title" className={classes.sortBy}>
+                            Sort by
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                        <FormControl className={classes.formControl}>
+                            <Select
+                                value={age}
+                                onChange={handleChange}
+                                displayEmpty
+                                name="age"
+                                className={classes.selectEmpty}
+                            >
+                                <MenuItem value="createdAt">Date Added</MenuItem>
+                                <MenuItem value="endingDate">Date Due</MenuItem>
+                                <MenuItem value="name">Project Name</MenuItem>
+                                <MenuItem value="stakeHolder">Stakeholder Count</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
                 </Grid>
-            ))}
-        </Grid>
-        {!projects.length &&
-        <Grid
-            container
-            direction="row"
-            justify="center"
-            alignItems="center"
-            justify-content="center"
-        >
-            <Grid item xs={12}>
-                <Paper className={classes.noData}>
-                    <Typography variant="h5" component="h5" align="center">
-                        No Data Found.
-                    </Typography>
-                </Paper>
+                {projects.map((project, index) => (
+                    <Grid item xs spacing={1} key={index} className={classes.grid} onClick={(e) =>selectProject(project)}>
+                        <Card className={classes.card}>
+                            <LinearProgress variant="determinate" value={index * 10} color="primary"/>
+                            <CardHeader
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                }}
+                                action={<ProjectMenus project={project} company={company} />}
+                                classes={classes1}
+                                title={projectName(project.name)}
+                            />
+                            <CardContent className={classes.cardContent}>
+                                <Grid container>
+                                    <Grid item xs={4}>
+                                        <Typography className={classes.title}  gutterBottom>
+                                            STAKEHOLDERS
+                                        </Typography>
+                                        <Typography className={classes.pos} color="textSecondary">
+                                            {project.stakeHolders.length}
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={4} className={classes.activities}>
+                                        <Typography className={classes.title} gutterBottom>
+                                            ACTIVITIES
+                                        </Typography>
+                                        <Typography className={classes.pos} color="textSecondary">
+                                            {/*{project.totalActivities}*/}
+                                            0
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <Typography className={classes.title} gutterBottom>
+                                            DUE
+                                        </Typography>
+                                        <Typography className={classes.pos} color="textSecondary">
+                                            {moment(project.endingDate).format('DD-MMM-YY')}
+                                        </Typography>
+                                    </Grid>
+
+                                </Grid>
+                                <Typography variant="body2" component="p" className={classes.bottomText}>
+                                    {project.changeManagers.length > 1 ? "CHANGE MANAGERS" : "CHANGE MANAGER"}
+                                    <br />
+                                    {ChangeManagersNames(project)}
+                                </Typography>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                ))}
             </Grid>
-        </Grid>
-        }
+            {!projects.length &&
+            <Grid
+                container
+                direction="row"
+                justify="center"
+                alignItems="center"
+                justify-content="center"
+            >
+                <Grid item xs={12}>
+                    <Paper className={classes.noData}>
+                        <Typography variant="h5" component="h5" align="center">
+                            No Data Found.
+                        </Typography>
+                    </Paper>
+                </Grid>
+            </Grid>
+            }
         </>
 
     );

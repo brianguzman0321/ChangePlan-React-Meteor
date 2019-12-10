@@ -34,8 +34,7 @@ const styles = theme => ({
 const useStyles = makeStyles(theme => ({
     createNewProject: {
         flex: 1,
-        marginTop: 2,
-        marginLeft: 15
+        marginLeft: 15,
     }
 }));
 
@@ -163,7 +162,7 @@ function AddValue(props) {
         <div className={classes.createNewProject}>
             <Dialog onClose={isUpdated ? handleOpenModalDialog : handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth={true}>
                 <DialogTitle id="customized-dialog-title" onClose={isUpdated ? handleOpenModalDialog : handleClose}>
-                    Project Risk
+                    Add a Project Risk
                 </DialogTitle>
                 <DialogContent dividers>
                     <Grid container spacing={2}>
