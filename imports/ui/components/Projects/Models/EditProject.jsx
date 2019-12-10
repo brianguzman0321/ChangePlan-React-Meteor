@@ -400,12 +400,9 @@ function AddActivity(props) {
                         </div>
                     </DialogContent>
                     <DialogActions>
-                        {isNew ? <Button onClick={handleClose} color="secondary">
-                                cancel
-                            </Button> :
-                            <Button onClick={deleteActivity} color="secondary">
-                                Delete
-                            </Button>}
+                        <Button onClick={handleClose} color="secondary">
+                            cancel
+                        </Button>
 
                         <Button type="submit" color="primary" onClick={updateProject}>
                             Update Project

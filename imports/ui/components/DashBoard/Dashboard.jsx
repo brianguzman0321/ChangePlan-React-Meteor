@@ -20,6 +20,7 @@ import ImpactsModal from './Modals/ImpactsModal';
 import RisksModal from './Modals/RisksModal';
 import DeleteValue from './Modals/deleteModal';
 import { stringHelpers } from '/imports/helpers/stringHelpers';
+import EditProject from "/imports/ui/components/Projects/Models/EditProject";
 
 const useStyles = makeStyles({
     root: {
@@ -74,7 +75,8 @@ const useStyles = makeStyles({
     },
     initialRow: {
         marginTop: 12,
-        marginLeft: 29
+        marginLeft: 29,
+        marginRight: 29
     },
     bullet: {
         display: 'inline-block',
@@ -105,6 +107,7 @@ function Dashboard(props){
     const [objectives, setObjective] = React.useState(project.objectives || []);
     const [impacts, setImpacts] = React.useState(project.impacts || []);
     const [risks, setRisks] = React.useState(project.risks || []);
+    const [editProjectModal, setEditProjectModal] = React.useState(false);
     const [modals, setModals] = React.useState({
         vision: false,
         delete: false,
@@ -200,9 +203,14 @@ function Dashboard(props){
 
     };
 
+    function handleEditModalClose(){
+        console.log("I am running")
+        setEditProjectModal(false)
+    }
+
     useEffect(() => {
         updateValues()
-    }, [project]);
+    }, [project, editProjectModal]);
 
     return (
         <div>
@@ -249,7 +257,7 @@ function Dashboard(props){
                             <b>Due date:</b> {moment(project.endingDate).format('DD-MMM-YY')}
                         </Typography>
                     </Grid>
-                    <Grid item xs={6} style={{paddingLeft: 23}}>
+                    <Grid item xs={4} style={{paddingLeft: 39}}>
                         <Typography gutterBottom>
                             <b>{project.changeManagers && project.changeManagers.length > 1 ? "Change managers" : "Change manager"}:</b>
                             &nbsp;&nbsp;&nbsp;&nbsp;
@@ -261,6 +269,9 @@ function Dashboard(props){
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             {ManagersNames(project)}
                         </Typography>
+                    </Grid>
+                    <Grid item xs={2} onClick={() => setEditProjectModal(true)}>
+                        <EditProject open={editProjectModal} handleModalClose={handleEditModalClose} project={project} displayEditButton={true}/>
                     </Grid>
                 </Grid>
                 <Grid
