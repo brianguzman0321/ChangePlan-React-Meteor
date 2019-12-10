@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import moment from 'moment';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -34,6 +34,7 @@ import  AutoComplete from '/imports/ui/components/utilityComponents/AutoComplete
 import AddNewPerson from './AddNewPerson';
 import { withRouter } from 'react-router'
 import DeleteActivity from './DeleteActivity';
+import SaveChanges from "../../Modals/SaveChanges";
 
 const styles = theme => ({
     root: {
@@ -155,24 +156,27 @@ const DialogActions = withStyles(theme => ({
 
 function AddActivity(props) {
     let { company, stakeHolders, local, match, edit, activity, list, isOpen } = props;
-    const [open, setOpen] = React.useState(edit || isOpen || false);
-    const [deleteModal, setDeleteModal] = React.useState(false);
-    const [time, setTime] = React.useState(5);
-    const [isNew, setIsNew] = React.useState(false);
-    const [users, setUsers] = React.useState([]);
-    const [name, setName] = React.useState('');
-    const [description, setDescription] = React.useState('');
-    const [person, setPerson] = React.useState('');
-    const [peoples, setPeoples] = React.useState(stakeHolders.map(item => item._id));
-    const [activityType, setActivityType] = React.useState({});
-    const [startingDate, setStartingDate] = React.useState(new Date());
-    const [dueDate, setDueDate] = React.useState(new Date());
-    const [startingDateOpen, setStartingDateOpen] = React.useState(false);
-    const [endingDate, setEndingDate] = React.useState(new Date());
-    const [endingDateOpen, setEndingDateOpen] = React.useState(false);
-    const [selectOpen, setSelectOpen] = React.useState(false);
-    const [role, setRole] = React.useState('changeManager');
-    const [expanded, setExpanded] = React.useState('panel1');
+    const [open, setOpen] = useState(edit || isOpen || false);
+    const [deleteModal, setDeleteModal] = useState(false);
+    const [time, setTime] = useState(5);
+    const [isNew, setIsNew] = useState(false);
+    const [users, setUsers] = useState([]);
+    const [name, setName] = useState('');
+    const [description, setDescription] = useState('');
+    const [person, setPerson] = useState('');
+    const [peoples, setPeoples] = useState(stakeHolders.map(item => item._id));
+    const [activityType, setActivityType] = useState({});
+    const [startingDate, setStartingDate] = useState(new Date());
+    const [dueDate, setDueDate] = useState(new Date());
+    const [startingDateOpen, setStartingDateOpen] = useState(false);
+    const [endingDate, setEndingDate] = useState(new Date());
+    const [endingDateOpen, setEndingDateOpen] = useState(false);
+    const [selectOpen, setSelectOpen] = useState(false);
+    const [role, setRole] = useState('changeManager');
+    const [expanded, setExpanded] = useState('panel1');
+    const [showModalDialog, setShowModalDialog] = useState(false);
+    const [isUpdated, setIsUpdated] = useState(false);
+
 
     let { projectId } = match.params;
     const classes = useStyles();
@@ -255,14 +259,28 @@ function AddActivity(props) {
         setExpanded('panel1');
         setOpen(true);
     };
+
     const handleClose = () => {
         setName('');
         setOpen(false);
         setIsNew(false);
         props.newActivity();
         updateFilter('localStakeHolders', 'changed', false);
-        resetValues()
+        resetValues();
+        setShowModalDialog(false);
+        setIsUpdated(false);
     };
+
+    const handleOpenModalDialog = () => {
+        if (isUpdated && !isNew) {
+            setShowModalDialog(true);
+        }
+    };
+
+    const closeModalDialog = () => {
+        setShowModalDialog(false);
+    };
+
     const createProject = (e) => {
         e.preventDefault();
         if(!(description && person && dueDate && time)){
@@ -303,7 +321,8 @@ function AddActivity(props) {
     };
 
     const handleDueDate = date => {
-        setDueDate(date)
+        setDueDate(date);
+        setIsUpdated(true);
     };
 
     const handleEndingDate = date => {
@@ -311,7 +330,7 @@ function AddActivity(props) {
             setEndingDateOpen(false)
         }
         setEndingDate(date);
-
+        setIsUpdated(true);
     };
 
     const openEnding = (e) => {
@@ -319,14 +338,17 @@ function AddActivity(props) {
     };
 
     const handleTimeChange = (e) => {
-        setTime(Number(e.target.value))
+        setTime(Number(e.target.value));
+        setIsUpdated(true);
     };
 
     const updateUsers = (value) => {
-        setPerson(value)
+        setPerson(value);
+        setIsUpdated(true);
     };
     const handleDescriptionChange = (e) => {
-        setDescription(e.target.value)
+        setDescription(e.target.value);
+        setIsUpdated(true);
     };
 
     function deleteActivity() {
@@ -347,8 +369,8 @@ function AddActivity(props) {
                     Add Activity
                 </Button> : ''
             }
-            <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth={true} classes={{ paper: classes.dialogPaper }}>
-                <DialogTitle id="customized-dialog-title" onClose={handleClose}>
+            <Dialog onClose={isUpdated ? handleOpenModalDialog : handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth={true} classes={{ paper: classes.dialogPaper }}>
+                <DialogTitle id="customized-dialog-title" onClose={isUpdated ? handleOpenModalDialog : handleClose}>
                     { isNew ? 'Add' : 'Edit' } Activity
                 </DialogTitle>
                 <form onSubmit={createProject} noValidate>
@@ -527,7 +549,7 @@ function AddActivity(props) {
                         </div>
                     </DialogContent>
                     <DialogActions>
-                        {isNew ? <Button onClick={handleClose} color="secondary">
+                        {isNew ? <Button onClick={isUpdated ? handleOpenModalDialog : handleClose} color="secondary">
                             cancel
                         </Button> :
                             <Button onClick={deleteActivity} color="secondary">
@@ -538,6 +560,12 @@ function AddActivity(props) {
                             Save
                         </Button>
                     </DialogActions>
+                    <SaveChanges
+                      handleClose={handleClose}
+                      showModalDialog={showModalDialog}
+                      handleSave={createProject}
+                      closeModalDialog={closeModalDialog}
+                    />
                 </form>
             </Dialog>
             <DeleteActivity open={deleteModal} handleModalClose={deleteActivityClose} activity={activity}/>

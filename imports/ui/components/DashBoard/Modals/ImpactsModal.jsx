@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -16,6 +16,7 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
+import SaveChanges from "../../Modals/SaveChanges";
 
 const styles = theme => ({
     root: {
@@ -73,6 +74,8 @@ function AddValue(props) {
     const [level, setLevel] = React.useState('');
     const [typeOpen, seTypeOpen] = React.useState(false);
     const [levelOpen, setLevelOpen] = React.useState(false);
+    const [showModalDialog, setShowModalDialog] = useState(false);
+    const [isUpdated, setIsUpdated] = useState(false);
 
     const classes = useStyles();
     const modalName = 'impact';
@@ -82,7 +85,20 @@ function AddValue(props) {
         setName('');
         setType('');
         setLevel('');
+        setShowModalDialog(false);
+        setIsUpdated(false);
     };
+
+    const handleOpenModalDialog = () => {
+        if (isUpdated) {
+            setShowModalDialog(true);
+        }
+    };
+
+    const closeModalDialog = () => {
+        setShowModalDialog(false);
+    };
+
     const createProject = () => {
         if(!(name && type && level)){
             props.enqueueSnackbar('Please fill the required Field', {variant: 'error'});
@@ -122,7 +138,8 @@ function AddValue(props) {
     };
 
     const handleChange = (e) => {
-        setName(e.target.value)
+        setName(e.target.value);
+        setIsUpdated(true);
     };
     const handleEmailChange = (e) => {
         setEmail(e.target.value)
@@ -130,10 +147,12 @@ function AddValue(props) {
 
     function handleLevelChange(event) {
         setLevel(event.target.value);
+        setIsUpdated(true);
     }
 
     function handleTypeChange(event) {
         setType(event.target.value);
+        setIsUpdated(true);
     }
 
     function handleTypeClose() {
@@ -161,8 +180,8 @@ function AddValue(props) {
 
     return (
         <div className={classes.createNewProject}>
-            <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth={true}>
-                <DialogTitle id="customized-dialog-title" onClose={handleClose}>
+            <Dialog onClose={isUpdated ? handleOpenModalDialog : handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth={true}>
+                <DialogTitle id="customized-dialog-title" onClose={isUpdated ? handleOpenModalDialog : handleClose}>
                     Project Impact
                 </DialogTitle>
                 <DialogContent dividers>
@@ -241,6 +260,12 @@ function AddValue(props) {
                         Save
                     </Button>
                 </DialogActions>
+                <SaveChanges
+                  handleClose={handleClose}
+                  showModalDialog={showModalDialog}
+                  handleSave={createProject}
+                  closeModalDialog={closeModalDialog}
+                />
             </Dialog>
         </div>
     );

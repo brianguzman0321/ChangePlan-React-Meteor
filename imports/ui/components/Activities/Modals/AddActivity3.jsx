@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import moment from 'moment';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -34,6 +34,7 @@ import  AutoComplete from '/imports/ui/components/utilityComponents/AutoComplete
 import AddNewPerson from './AddNewPerson';
 import { withRouter } from 'react-router'
 import DeleteActivity from './DeleteActivity';
+import SaveChanges from "../../Modals/SaveChanges";
 
 const styles = theme => ({
     root: {
@@ -188,6 +189,8 @@ function AddActivity(props) {
     const [selectOpen, setSelectOpen] = React.useState(false);
     const [role, setRole] = React.useState('changeManager');
     const [expanded, setExpanded] = React.useState('panel1');
+    const [showModalDialog, setShowModalDialog] = useState(false);
+    const [isUpdated, setIsUpdated] = useState(false);
 
     let { projectId } = match.params;
     const classes = useStyles();
@@ -276,8 +279,21 @@ function AddActivity(props) {
         setIsNew(false);
         props.newActivity();
         updateFilter('localStakeHolders', 'changed', false);
-        resetValues()
+        resetValues();
+        setShowModalDialog(false);
+        setIsUpdated(false);
     };
+
+    const handleOpenModalDialog = () => {
+        if (isUpdated && !isNew) {
+            setShowModalDialog(true);
+        }
+    };
+
+    const closeModalDialog = () => {
+        setShowModalDialog(false);
+    };
+
     const createProject = (e) => {
         e.preventDefault();
         if(!(description && person && dueDate && time)){
@@ -318,7 +334,8 @@ function AddActivity(props) {
     };
 
     const handleDueDate = date => {
-        setDueDate(date)
+        setDueDate(date);
+        setIsUpdated(true);
     };
 
     const handleEndingDate = date => {
@@ -326,7 +343,7 @@ function AddActivity(props) {
             setEndingDateOpen(false)
         }
         setEndingDate(date);
-
+        setIsUpdated(true);
     };
 
     const openEnding = (e) => {
@@ -334,14 +351,16 @@ function AddActivity(props) {
     };
 
     const handleTimeChange = (e) => {
-        setTime(e.target.value)
+        setTime(Number(e.target.value));
+        setIsUpdated(true);
     };
 
     const updateUsers = (value) => {
         setPerson(value)
     };
     const handleDescriptionChange = (e) => {
-        setDescription(e.target.value)
+        setDescription(e.target.value);
+        setIsUpdated(true);
     };
 
     function deleteActivity() {
@@ -362,8 +381,8 @@ function AddActivity(props) {
                     Add Activity
                 </Button> : ''
             }
-            <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth={true}>
-                <DialogTitle id="customized-dialog-title" onClose={handleClose}>
+            <Dialog onClose={isUpdated ? handleOpenModalDialog : handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth={true}>
+                <DialogTitle id="customized-dialog-title" onClose={isUpdated ? handleOpenModalDialog : handleClose}>
                     { isNew ? 'Add' : 'Edit' } Activity
                 </DialogTitle>
                 <form onSubmit={createProject} noValidate>
@@ -542,7 +561,7 @@ function AddActivity(props) {
                         </div>
                     </DialogContent>
                     <DialogActions>
-                        {isNew ? <Button onClick={handleClose} color="secondary">
+                        {isNew ? <Button onClick={isUpdated ? handleOpenModalDialog : handleClose} color="secondary">
                             cancel
                         </Button> :
                             <Button onClick={deleteActivity} color="secondary">
@@ -553,6 +572,12 @@ function AddActivity(props) {
                             Save
                         </Button>
                     </DialogActions>
+                    <SaveChanges
+                      handleClose={handleClose}
+                      showModalDialog={showModalDialog}
+                      handleSave={createProject}
+                      closeModalDialog={closeModalDialog}
+                    />
                 </form>
             </Dialog>
             <DeleteActivity open={deleteModal} handleModalClose={deleteActivityClose} activity={activity}/>

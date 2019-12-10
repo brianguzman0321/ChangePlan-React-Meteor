@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -12,6 +12,7 @@ import TextField from '@material-ui/core/TextField';
 import { withSnackbar } from 'notistack';
 import 'date-fns';
 import Grid from "@material-ui/core/Grid/Grid";
+import SaveChanges from "../../Modals/SaveChanges";
 
 const styles = theme => ({
     root: {
@@ -64,6 +65,8 @@ const DialogActions = withStyles(theme => ({
 function AddValue(props) {
     let { open, handleModalClose, project, index, editValue } = props;
     const [name, setName] = React.useState(editValue);
+    const [showModalDialog, setShowModalDialog] = useState(false);
+    const [isUpdated, setIsUpdated] = useState(false);
 
     const classes = useStyles();
     const modalName = 'vision';
@@ -71,7 +74,20 @@ function AddValue(props) {
     const handleClose = () => {
         handleModalClose(modalName);
         setName('');
+        setShowModalDialog(false);
+        setIsUpdated(false);
     };
+
+    const handleOpenModalDialog = () => {
+        if (isUpdated) {
+            setShowModalDialog(true);
+        }
+    };
+
+    const closeModalDialog = () => {
+        setShowModalDialog(false);
+    };
+
     const createProject = () => {
         if(!(name)){
             props.enqueueSnackbar('Please fill the required Field', {variant: 'error'});
@@ -106,7 +122,8 @@ function AddValue(props) {
     };
 
     const handleChange = (e) => {
-        setName(e.target.value)
+        setName(e.target.value);
+        setIsUpdated(true);
     };
 
     useEffect(() => {
@@ -115,8 +132,8 @@ function AddValue(props) {
 
     return (
         <div className={classes.createNewProject}>
-            <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth={true}>
-                <DialogTitle id="customized-dialog-title" onClose={handleClose}>
+            <Dialog onClose={isUpdated ? handleOpenModalDialog : handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth={true}>
+                <DialogTitle id="customized-dialog-title" onClose={isUpdated ? handleOpenModalDialog : handleClose}>
                     Project Vision
                 </DialogTitle>
                 <DialogContent dividers>
@@ -142,6 +159,12 @@ function AddValue(props) {
                     </Button>
                 </DialogActions>
             </Dialog>
+            <SaveChanges
+              handleClose={handleClose}
+              showModalDialog={showModalDialog}
+              handleSave={createProject}
+              closeModalDialog={closeModalDialog}
+            />
         </div>
     );
 }
