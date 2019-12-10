@@ -189,6 +189,18 @@ Meteor.publishTransformed('myProjects', function (company, parameters) {
 
             return peoples;
         },
+        'managerDetails': function (doc) {
+            let peoples = [];
+            _(doc.managers).each(function (PeopleId) {
+                peoples.push(Meteor.users.findOne({_id: PeopleId}, {
+                    fields: {
+                        services: 0, roles: 0
+                    }
+                }));
+            });
+
+            return peoples;
+        },
         'totalActivities': function (doc) {
             return Activities.find({
                 projectId: doc._id

@@ -88,7 +88,7 @@ function NewProject(props) {
             props.enqueueSnackbar('Please fill all required Fields', {variant: 'error'});
             return false;
         }
-        else if(endingDate < startingDate){
+        else if(endingDate <= startingDate){
             props.enqueueSnackbar('Please fix the date error', {variant: 'error'});
             return false;
         }
@@ -121,7 +121,7 @@ function NewProject(props) {
     };
 
     const handleEndingDate = date => {
-        if(!(endingDate < startingDate)){
+        if(!(endingDate <= startingDate)){
             setEndingDateOpen(false)
         }
         setEndingDate(date);

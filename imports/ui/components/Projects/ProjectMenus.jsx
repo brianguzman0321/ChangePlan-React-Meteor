@@ -6,10 +6,12 @@ import IconButton from "@material-ui/core/IconButton/IconButton";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ShareProject from "./Models/ShareProject";
 import DeleteProject from "./Models/DeleteProject";
+import EditProject from "./Models/EditProject";
 
 export default function SimpleMenu(props) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [modals, setModals] = React.useState({
+        edit: false,
         share: false,
         duplicate: false,
         delete: false
@@ -50,12 +52,13 @@ export default function SimpleMenu(props) {
                 onClose={handleClose}
             >
                 <MenuItem onClick={handleClose.bind(null, 'share')} disabled={isAdminOrChangeManager(company, project)}>Share</MenuItem>
-                <MenuItem onClick={handleClose.bind(null, 'edit')} disabled={true}>Edit</MenuItem>
+                <MenuItem onClick={handleClose.bind(null, 'edit')} disabled={isAdminOrChangeManager(company, project)}>Edit</MenuItem>
                 {/*<MenuItem onClick={handleClose}>Duplicate</MenuItem>*/}
                 <MenuItem onClick={handleClose.bind(null, 'delete')} disabled={isAdminOrChangeManager(company, project)}>Delete</MenuItem>
             </Menu>
             <ShareProject open={modals.share} handleModalClose={handleModalClose} project={project}/>
             <DeleteProject open={modals.delete} handleModalClose={handleModalClose} project={project}/>
+            <EditProject open={modals.edit} handleModalClose={handleModalClose} project={project}/>
         </div>
     );
 }
