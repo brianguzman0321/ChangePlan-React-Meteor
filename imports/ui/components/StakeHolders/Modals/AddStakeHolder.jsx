@@ -198,28 +198,28 @@ function AddStakeHolder(props) {
             return false;
         }
         data.pop();
-        let errorMessage = '';
+        let csvUploadErrorMessage = '';
         let data1 = data.map((doc) => {
             if(!doc['First Name']){
-                errorMessage = 'First Name Value is empty or Invalid'
+                csvUploadErrorMessage = 'First Name Value is empty or Invalid'
             }
             if(!doc['Last Name']){
-                errorMessage = 'Last Name Value is empty or Invalid'
+                csvUploadErrorMessage = 'Last Name Value is empty or Invalid'
             }
             if(!doc['Role']){
-                errorMessage = 'Role Value is empty or Invalid'
+                csvUploadErrorMessage = 'Role Value is empty or Invalid'
             }
             if(!doc['Business Unit']){
-                errorMessage = 'Business Unit Value is empty or Invalid'
+                csvUploadErrorMessage = 'Business Unit Value is empty or Invalid'
             }
             if(!(doc['Email'] && (/^\S+@\S+$/.test(doc['Email'])))){
-                errorMessage = 'Email Value is empty or Invalid'
+                csvUploadErrorMessage = 'Email Value is empty or Invalid'
             }
             if(isNaN(Number(doc['Level of Influence']) )){
-                errorMessage = 'Level of Influence Value is empty or Invalid'
+                csvUploadErrorMessage = 'Level of Influence Value is empty or Invalid'
             }
             if(isNaN(Number(doc['Level of support']) )){
-                errorMessage = 'Level of support Value is empty or Invalid'
+                csvUploadErrorMessage = 'Level of support Value is empty or Invalid'
             }
             return {
                 firstName : doc['First Name'],
@@ -234,8 +234,8 @@ function AddStakeHolder(props) {
                 projectId
             }
         });
-        if(errorMessage){
-            props.enqueueSnackbar(`Upload Failed! ${errorMessage}`, {variant: 'error'});
+        if(csvUploadErrorMessage){
+            props.enqueueSnackbar(`Upload Failed! ${csvUploadErrorMessage}`, {variant: 'error'});
             return false
         }
         let params = {
