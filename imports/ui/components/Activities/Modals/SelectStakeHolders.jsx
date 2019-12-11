@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import AppBar from '@material-ui/core/AppBar';
@@ -20,6 +20,7 @@ import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
+import SaveChanges from "../../Modals/SaveChanges";
 
 const tableHeadStyle = makeStyles(theme => ({
     root: {
@@ -182,7 +183,7 @@ const useStyles1 = makeStyles(theme => ({
 }));
 
 function StakeHolderList(props) {
-    let { rows, selectUsers, local } = props;
+    let { rows, selectUsers, local, update } = props;
     const classes = useStyles1();
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
@@ -191,6 +192,7 @@ function StakeHolderList(props) {
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
+
     const handleRequestSort = (event, property) => {
         const isDesc = orderBy === property && order === 'desc';
         setOrder(isDesc ? 'asc' : 'desc');
@@ -198,6 +200,7 @@ function StakeHolderList(props) {
     };
 
     const handleSelectAllClick = event => {
+        update();
         if (event.target.checked) {
             const newSelecteds = rows.map(n => n._id);
             setSelected(newSelecteds);
@@ -224,10 +227,9 @@ function StakeHolderList(props) {
                 selected.slice(selectedIndex + 1),
             );
         }
-
-
         setSelected(newSelected);
         selectUsers(newSelected);
+        update();
     };
 
     const isSelected = name => selected.indexOf(name) !== -1;
@@ -320,6 +322,9 @@ export default function SelectStakeHolders(props) {
     const [open, setOpen] = React.useState(false);
     const [stakeHolders, setStakeHolders] = React.useState(local.ids || []);
     const [flag, setFlag] = React.useState(true);
+    const [showModalDialog, setShowModalDialog] = useState(false);
+    const [isUpdated, setIsUpdated] = useState(false);
+
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -327,12 +332,32 @@ export default function SelectStakeHolders(props) {
 
     const handleClose = () => {
         setOpen(false);
+        setShowModalDialog(false);
+        setIsUpdated(false);
     };
+
+    const handleOpenModalDialog = () => {
+        if (isUpdated) {
+            setShowModalDialog(true);
+        } else {
+            handleClose();
+        }
+    };
+
+    const closeModalDialog = () => {
+        setShowModalDialog(false);
+        setIsUpdated(false);
+    };
+
+    const updateValue = () => {
+        setIsUpdated(true);
+    }
 
     const updateStakeHolders = () => {
         updateFilter('localStakeHolders', 'ids', stakeHolders);
         updateFilter('localStakeHolders', 'changed', true);
         setOpen(false);
+        closeModalDialog();
     };
 
     const selectStakeHolders = (ids) => {
@@ -354,7 +379,7 @@ export default function SelectStakeHolders(props) {
             <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
                 <AppBar className={classes.appBar} color="default">
                     <Toolbar>
-                        <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
+                        <IconButton edge="start" color="inherit" onClick={isUpdated ? handleOpenModalDialog : handleClose} aria-label="close">
                             <CloseIcon />
                         </IconButton>
                         <Typography variant="h6" className={classes.title}>
@@ -368,7 +393,14 @@ export default function SelectStakeHolders(props) {
                         </Button>
                     </Toolbar>
                 </AppBar>
-                <StakeHolderList rows={rows} selectUsers={selectStakeHolders} local={local} />
+                <StakeHolderList rows={rows}
+                                 selectUsers={selectStakeHolders}
+                                 local={local} update={updateValue}/>
+                <SaveChanges closeModalDialog={closeModalDialog}
+                             handleClose={handleClose}
+                             showModalDialog={showModalDialog}
+                             handleSave={updateStakeHolders}
+                             />
             </Dialog>
         </div>
     );
