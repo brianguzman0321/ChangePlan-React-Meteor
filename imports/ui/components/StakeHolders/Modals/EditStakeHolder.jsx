@@ -133,7 +133,7 @@ function EditStakeHolder(props) {
     const onSubmit = (e) => {
         event.preventDefault();
         if(!(loI && supportLevel)){
-            props.enqueueSnackbar('Please fill all required Fields', {variant: 'error'});
+            props.enqueueSnackbar('Please fill all required fields', {variant: 'error'});
             return false;
         }
         let params = {

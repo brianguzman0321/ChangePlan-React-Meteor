@@ -85,7 +85,7 @@ function NewProject(props) {
     };
     const createProject = () => {
         if(!(name && startingDate && endingDate)){
-            props.enqueueSnackbar('Please fill all required Fields', {variant: 'error'});
+            props.enqueueSnackbar('Please fill all required fields', {variant: 'error'});
             return false;
         }
         else if(endingDate <= startingDate){

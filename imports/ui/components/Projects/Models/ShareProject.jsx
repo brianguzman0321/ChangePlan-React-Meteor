@@ -81,7 +81,7 @@ function ShareProject(props) {
     };
     const createProject = () => {
         if(!(name && email && role)){
-            props.enqueueSnackbar('Please fill all required Fields', {variant: 'error'});
+            props.enqueueSnackbar('Please fill all required fields', {variant: 'error'});
             return false;
         }
         else{
