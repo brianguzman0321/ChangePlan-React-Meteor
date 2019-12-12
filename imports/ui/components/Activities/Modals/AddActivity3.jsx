@@ -299,11 +299,11 @@ function AddActivity(props) {
     const createProject = (e) => {
         e.preventDefault();
         if(!(description && person && dueDate && time)){
-            props.enqueueSnackbar('Please fill all required Fields', {variant: 'error'});
+            props.enqueueSnackbar('Please fill all required fields', {variant: 'error'});
             return false;
         }
         else if(!(activityType && activityType.name) && Array.isArray(stakeHolders)){
-            props.enqueueSnackbar('Please fill all required Fields', {variant: 'error'});
+            props.enqueueSnackbar('Please fill all required fields', {variant: 'error'});
             return false;
         }
         let params = {

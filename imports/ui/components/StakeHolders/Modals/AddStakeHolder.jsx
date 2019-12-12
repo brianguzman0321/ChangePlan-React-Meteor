@@ -271,7 +271,7 @@ function AddStakeHolder(props) {
     const onSubmit = (e) => {
         event.preventDefault();
         if(!(influenceLevel && supportLevel)){
-            props.enqueueSnackbar('Please fill all required Fields', {variant: 'error'});
+            props.enqueueSnackbar('Please fill all required fields', {variant: 'error'});
             return false;
         }
         let params = {
@@ -342,7 +342,7 @@ function AddStakeHolder(props) {
                         index={value}
                         onChangeIndex={handleChangeIndex}
                     >
-                        <form onSubmit={onSubmit} noValidate>
+                        <form onSubmit={onSubmit}>
                         <TabPanel value={value} index={0} >
                                 <Grid container spacing={2}>
                                     <Grid item xs={6}>
