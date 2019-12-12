@@ -197,6 +197,7 @@ function AddActivity(props) {
         delete project.managerDetails;
         delete project.peoplesDetails;
         delete project.totalActivities;
+        delete project.completedActivities;
         project.name = description;
         project.startingDate = startingDate;
         project.endingDate = dueDate;

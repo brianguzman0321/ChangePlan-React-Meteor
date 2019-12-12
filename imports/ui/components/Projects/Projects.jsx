@@ -224,10 +224,10 @@ function ProjectCard(props) {
                         </FormControl>
                     </Grid>
                 </Grid>
-                {projects.map((project, index) => (
-                    <Grid item xs spacing={1} key={index} className={classes.grid} onClick={(e) =>selectProject(project)}>
+                {projects.map((project, index) => {
+                    return <Grid item xs spacing={1} key={index} className={classes.grid} onClick={(e) =>selectProject(project)}>
                         <Card className={classes.card}>
-                            <LinearProgress variant="determinate" value={index * 10} color="primary"/>
+                            <LinearProgress variant="determinate" value={parseInt((100 * project.completedActivities) / project.totalActivities)} color="primary"/>
                             <CardHeader
                                 onClick={(e) => {
                                     e.stopPropagation();
@@ -274,7 +274,8 @@ function ProjectCard(props) {
                             </CardContent>
                         </Card>
                     </Grid>
-                ))}
+                })
+                }
             </Grid>
             {!projects.length &&
             <Grid
