@@ -142,6 +142,9 @@ function Dashboard(props){
     const allowedValues = ['vision', 'delete', 'objectives', 'impacts', 'risks', 'edit'];
 
     const handleClose = (value) => {
+        if(modals.edit){
+            return false
+        }
         if(allowedValues.includes(value)){
             let obj = {
                 [value]: !modals[value]
