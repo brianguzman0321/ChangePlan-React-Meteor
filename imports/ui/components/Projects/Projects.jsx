@@ -227,7 +227,7 @@ function ProjectCard(props) {
                 {projects.map((project, index) => {
                     return <Grid item xs spacing={1} key={index} className={classes.grid} onClick={(e) =>selectProject(project)}>
                         <Card className={classes.card}>
-                            <LinearProgress variant="determinate" value={parseInt((100 * project.completedActivities) / project.totalActivities)} color="primary"/>
+                            <LinearProgress variant="determinate" value={project.totalActivities > 0 ? parseInt((100 * project.completedActivities) / project.totalActivities) : 0} color="primary"/>
                             <CardHeader
                                 onClick={(e) => {
                                     e.stopPropagation();

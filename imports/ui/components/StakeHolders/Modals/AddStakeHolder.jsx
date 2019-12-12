@@ -215,24 +215,25 @@ function AddStakeHolder(props) {
             if(!(doc['Email'] && (/^\S+@\S+$/.test(doc['Email'])))){
                 csvUploadErrorMessage = 'Email Value is empty or Invalid'
             }
-            if(isNaN(Number(doc['Level of Influence']) )){
-                csvUploadErrorMessage = 'Level of Influence Value is empty or Invalid'
+            if(doc['Level of Influence'] && isNaN(Number(doc['Level of Influence']) )){
+                csvUploadErrorMessage = 'Level of Influence Value is Invalid'
             }
-            if(isNaN(Number(doc['Level of support']) )){
-                csvUploadErrorMessage = 'Level of support Value is empty or Invalid'
+            if(doc['Level of support'] && isNaN(Number(doc['Level of support']) )){
+                csvUploadErrorMessage = 'Level of support Value is Invalid'
             }
-            return {
+            let paramsObj = {
                 firstName : doc['First Name'],
                 lastName: doc['Last Name'],
                 role : doc['Role'],
                 businessUnit: doc['Business Unit'],
                 email: doc['Email'],
-                influenceLevel: Number(doc['Level of Influence']),
-                supportLevel: Number(doc['Level of support']),
                 notes: doc['Notes'],
                 company: company._id,
                 projectId
-            }
+            };
+            doc['Level of Influence'] && (paramsObj.influenceLevel = Number(doc['Level of Influence']));
+            doc['Level of support'] && (paramsObj.supportLevel = Number(doc['Level of support']));
+            return paramsObj
         });
         if(csvUploadErrorMessage){
             props.enqueueSnackbar(`Upload Failed! ${csvUploadErrorMessage}`, {variant: 'error'});
@@ -270,10 +271,6 @@ function AddStakeHolder(props) {
 
     const onSubmit = (e) => {
         event.preventDefault();
-        if(!(influenceLevel && supportLevel)){
-            props.enqueueSnackbar('Please fill all required fields', {variant: 'error'});
-            return false;
-        }
         let params = {
             people: {
                 firstName,
@@ -283,11 +280,11 @@ function AddStakeHolder(props) {
                 email,
                 notes,
                 projectId,
-                influenceLevel: influenceLevel,
-                supportLevel: supportLevel,
                 company: company._id
             }
         };
+        influenceLevel && (params.people.influenceLevel = influenceLevel);
+        supportLevel && (params.people.supportLevel = supportLevel);
         Meteor.call('peoples.insert', params, (err, res) => {
             if(err){
                 props.enqueueSnackbar(err.reason, {variant: 'error'})
@@ -419,7 +416,7 @@ function AddStakeHolder(props) {
                                         />
                                     </Grid>
                                     <Grid item xs={6}>
-                                        <FormControl className={classes.formControl} fullWidth={true} required>
+                                        <FormControl className={classes.formControl} fullWidth={true}>
                                             <InputLabel htmlFor="demo-controlled-open-select">Level Of Support</InputLabel>
                                             <Select
                                                 id="role"
@@ -447,7 +444,7 @@ function AddStakeHolder(props) {
                                         <br/>
                                     </Grid>
                                     <Grid item xs={6}>
-                                        <FormControl className={classes.formControl} fullWidth={true} required>
+                                        <FormControl className={classes.formControl} fullWidth={true}>
                                             <InputLabel htmlFor="demo-controlled-open-select">Level Of Influence</InputLabel>
                                             <Select
                                                 id="role"
