@@ -213,7 +213,7 @@ function AddActivity(props) {
             else{
                 setName('');
                 resetValues();
-                props.enqueueSnackbar('New Project Created Successfully.', {variant: 'success'})
+                props.enqueueSnackbar('Project Updated Successfully.', {variant: 'success'})
                 handleClose();
             }
 
