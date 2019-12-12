@@ -76,7 +76,7 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function EditStakeHolder(props) {
-    let { stakeholder } = props;
+    let { stakeholder, open, close } = props;
 
     const [firstName, setFirstName] = React.useState(stakeholder.firstName);
     const [lastName, setLastName] = React.useState(stakeholder.lastName);
@@ -90,28 +90,24 @@ function EditStakeHolder(props) {
     const [notes, setNotes] = React.useState(stakeholder.notes);
     const [showModalDialog, setShowModalDialog] = useState(false);
     const [isUpdated, setIsUpdated] = useState(false);
-
-    const [open, setOpen] = React.useState(false);
     const classes = useStyles();
 
-    const handleClickOpen = () => {
-        setTimeout(() => {
-            setFirstName(stakeholder.firstName);
-            setLastName(stakeholder.lastName);
-            setRole(stakeholder.role);
-            setBusinessUnit(stakeholder.businessUnit);
-            setEmail(stakeholder.email);
-            setSupportLevel(stakeholder.supportLevel);
-            setInfluenceLevel(stakeholder.influenceLevel);
-            setNotes(stakeholder.notes);
-        }, 500);
-        setOpen(true);
+    const resetChanges = () => {
+        setFirstName(stakeholder.firstName);
+        setLastName(stakeholder.lastName);
+        setRole(stakeholder.role);
+        setBusinessUnit(stakeholder.businessUnit);
+        setEmail(stakeholder.email);
+        setSupportLevel(stakeholder.supportLevel);
+        setInfluenceLevel(stakeholder.influenceLevel);
+        setNotes(stakeholder.notes);
     };
 
     const handleClose = () => {
-        setOpen(false);
         setShowModalDialog(false);
         setIsUpdated(false);
+        resetChanges();
+        close();
     };
 
     const handleOpenModalDialog = () => {
@@ -175,11 +171,8 @@ function EditStakeHolder(props) {
 
     return (
         <>
-        <IconButton aria-label="edit" onClick={handleClickOpen}>
-            <EditIcon />
-        </IconButton>
-        <Dialog onClose={isUpdated ? handleOpenModalDialog : handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth={true}>
-            <DialogTitle id="customized-dialog-title" onClose={isUpdated ? handleOpenModalDialog : handleClose}>
+        <Dialog onClose={isUpdated ? handleOpenModalDialog : () => close()} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth={true}>
+            <DialogTitle id="customized-dialog-title" onClose={isUpdated ? handleOpenModalDialog : () => close()}>
                 Edit Stakeholder
             </DialogTitle>
             <form onSubmit={onSubmit}>
@@ -324,7 +317,7 @@ function EditStakeHolder(props) {
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={isUpdated ? handleOpenModalDialog : handleClose} color="secondary">
+                    <Button onClick={isUpdated ? handleOpenModalDialog : () => close()} color="secondary">
                         Cancel
                     </Button>
                     <Button color="primary" type="submit">

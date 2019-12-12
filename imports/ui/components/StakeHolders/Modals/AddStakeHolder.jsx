@@ -28,6 +28,10 @@ import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
+import { Peoples } from '../../../../api/peoples/peoples';
+import AddExistingStakeholder from "./AddExistingStakeholder";
+import { Projects } from '../../../../api/projects/projects'
+
 
 
 function TabPanel(props) {
@@ -79,12 +83,6 @@ const useStyles = makeStyles(theme => ({
         marginTop: 2,
         marginLeft: 15
     },
-    addStakeHolder: {
-        background: '#92a1af',
-        '&:hover': {
-            background: '#92a1af'
-        }
-    },
     dialogPaper: {
         minHeight: '80vh',
         maxHeight: '80vh',
@@ -124,8 +122,8 @@ function AddStakeHolder(props) {
     const [role, setRole] = React.useState('');
     const [businessUnit, setBusinessUnit] = React.useState('');
     const [email, setEmail] = React.useState('');
-    const [supportLevel, setSupportLevel] = React.useState('');
-    const [influenceLevel, setInfluenceLevel] = React.useState('');
+    const [supportLevel, setSupportLevel] = React.useState(null);
+    const [influenceLevel, setInfluenceLevel] = React.useState(null);
     const [selectOpen, setSelectOpen] = React.useState(false);
     const [selectOpen1, setSelectOpen1] = React.useState(false);
     const [open, setOpen] = React.useState(false);
@@ -133,7 +131,9 @@ function AddStakeHolder(props) {
     const [csvfile, setCsvfile] = React.useState(undefined);
     const [loading, setLoading] = React.useState(false);
     const [notes, setNotes] = React.useState('');
+    const [agreedToAddModal, setAgreedToAddModal] = React.useState(false);
     const theme = useTheme();
+    const [stakeholder, setNewStakeholder] = React.useState(null);
 
     let { company, match } = props;
     let { projectId } = match.params;
@@ -145,8 +145,8 @@ function AddStakeHolder(props) {
         setRole('');
         setBusinessUnit('');
         setEmail('');
-        setSupportLevel('');
-        setInfluenceLevel('');
+        setSupportLevel(null);
+        setInfluenceLevel(null);
         setOpen(true);
         setCsvfile('');
         setNotes('');
@@ -165,7 +165,20 @@ function AddStakeHolder(props) {
     };
 
     const handleEmailChange = (e) => {
-        setEmail(e.target.value)
+        setEmail(e.target.value);
+        checkEmail(e.target.value);
+    };
+
+    const checkEmail = (stakeholderEmail) => {
+        const newStakeholder = Peoples.find({email: stakeholderEmail, company: company._id}).fetch()[0];
+        setNewStakeholder({...newStakeholder});
+        if (newStakeholder) {
+            setAgreedToAddModal(true);
+        }
+    };
+
+    const closeAgreedToAddModal = () => {
+      setAgreedToAddModal(false);
     };
 
     const handleChangecsv = event => {
@@ -270,7 +283,12 @@ function AddStakeHolder(props) {
 
 
     const onSubmit = (e) => {
-        event.preventDefault();
+        e.preventDefault();
+        const newStakeholder = Peoples.find({email, company: company._id}).fetch()[0];
+        setNewStakeholder({...newStakeholder});
+        if (newStakeholder) {
+            setAgreedToAddModal(true);
+        } else {
         let params = {
             people: {
                 firstName,
@@ -294,7 +312,30 @@ function AddStakeHolder(props) {
                 props.enqueueSnackbar('StakeHolder Added Successfully.', {variant: 'success'})
             }
 
-        })
+        })}
+    };
+
+    const addExistingStakeholder = () => {
+        const currentProject = Projects.find({_id: projectId}).fetch();
+        if (currentProject[0].stakeHolders.includes(stakeholder._id)) {
+            props.enqueueSnackbar('This StakeHolder was already added to current project.', {variant: 'warning'})
+            closeAgreedToAddModal();
+        } else {
+            currentProject[0].stakeHolders.push(stakeholder._id);
+            const params = {
+                project: currentProject[0]
+            };
+            Meteor.call('projects.update', params, (error, result) => {
+                if (error) {
+                    props.enqueueSnackbar(err.reason, {variant: 'error'})
+                } else {
+                    props.enqueueSnackbar('StakeHolder Added Successful.', {variant: 'success'});
+                    closeAgreedToAddModal();
+                    setOpen(false);
+                }
+            })
+        }
+
     };
 
     function handleSelectClose() {
@@ -314,8 +355,8 @@ function AddStakeHolder(props) {
 
     return (
         <div className={classes.createNewProject}>
-            <Button variant="contained" color="primary" onClick={handleClickOpen} className={classes.addStakeHolder}>
-                Add
+            <Button variant="outlined" color="primary" onClick={handleClickOpen}>
+                ADD/IMPORT
             </Button>
             <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md"  fullWidth={true} classes={{ paper: classes.dialogPaper }}>
                     <DialogTitle id="customized-dialog-title" onClose={handleClose}>
@@ -483,6 +524,10 @@ function AddStakeHolder(props) {
                                     Save
                                 </Button>
                             </DialogActions>
+                            <AddExistingStakeholder showModalDialog={agreedToAddModal}
+                                                    stakeholder={stakeholder}
+                                                    closeModalDialog={closeAgreedToAddModal}
+                                                    handleSave={addExistingStakeholder}/>
                         </TabPanel>
                         </form>
                         <TabPanel value={value} index={1}>
@@ -521,7 +566,10 @@ function AddStakeHolder(props) {
 }
 
 const AddStakeHolderPage = withTracker(props => {
+    const { email } = props;
+    Meteor.subscribe('peoples', {email});
     return {
+        people: Peoples.find({email}).fetch(),
         company: Companies.findOne(),
     };
 })(withRouter(AddStakeHolder));
