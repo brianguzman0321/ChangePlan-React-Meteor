@@ -54,7 +54,10 @@ const useStyles = makeStyles(theme => ({
     },
     stakeHoldersList: {
         margin: theme.spacing(2)
-    }
+    },
+    stakeholdersCount: {
+        fontSize: '30px'
+    },
 }));
 function StakeHolders(props){
     let menus = config.menus;
@@ -82,7 +85,8 @@ function StakeHolders(props){
                     <Grid item xs={12} sm={6} md={4}>
                         <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
                             Stakeholders
-                            &nbsp;&nbsp;&nbsp;{stakeHolders.length}
+                            &nbsp;&nbsp;&nbsp;
+                            <span className={classes.stakeholdersCount}>{stakeHolders.length}</span>
                         </Typography>
                     </Grid>
                     <Grid item xs={4} className={classes.searchGrid} md={3} sm={6}>

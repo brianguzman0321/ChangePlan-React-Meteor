@@ -15,7 +15,7 @@ import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import Tooltip from '@material-ui/core/Tooltip';
 import DeleteStakeHolder from './Modals/DeleteStakeHolder';
-import EditStakeHolderPage from './Modals/EditStakeHolder';
+import StakeHolder from "./StakeHolder";
 
 const tableHeadStyle = makeStyles(theme => ({
     root: {
@@ -48,12 +48,12 @@ function getSorting(order, orderBy) {
 }
 
 const headCells = [
-    { id: 'firstName', numeric: false, disablePadding: true, label: 'FirstName' },
+    { id: 'firstName', numeric: false, disablePadding: true, label: 'NAME' },
     { id: 'role', numeric: true, disablePadding: false, label: 'ROLE' },
     { id: 'businessUnit', numeric: true, disablePadding: false, label: 'BUSINESS UNIT' },
-    { id: 'influenceLevel', numeric: true, disablePadding: false, label: 'UPCOMING ACTIVITIES' },
-    { id: 'supportLevel', numeric: true, disablePadding: false, label: 'TIME AWAY FROM BAU' },
-    { id: 'action', numeric: true, disablePadding: false, label: 'Actions' },
+    { id: 'influenceLevel', numeric: true, disablePadding: false, label: 'INFLUENCE' },
+    { id: 'supportLevel', numeric: true, disablePadding: false, label: 'SUPPORT' },
+    { id: 'action', numeric: true, disablePadding: false, label: 'ACTIONS' },
 ];
 
 function EnhancedTableHead(props) {
@@ -78,21 +78,20 @@ function EnhancedTableHead(props) {
                 {headCells.map(headCell => (
                     <TableCell style={{color: 'white'}}
                                key={headCell.id}
-                        // align={headCell.numeric ? 'right' : 'left'}
-                               align={'center'}
-                        // padding={headCell.disablePadding ? 'none' : 'default'}
+                               align={headCell.id === 'firstName' || headCell.id === 'role' || headCell.id === 'businessUnit' ? 'left' : 'center'}
                                sortDirection={orderBy === headCell.id ? order : false}
                     >
                         <TableSortLabel
                             active={orderBy === headCell.id}
                             direction={order}
-                            onClick={createSortHandler(headCell.id)}
+                            onClick={headCell.id === 'action' ? null : createSortHandler(headCell.id)}
+                            hideSortIcon={headCell.id === 'action'}
                         >
                             {headCell.label}
                             {orderBy === headCell.id ? (
-                                <span className={classes.visuallyHidden}>
-                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                </span>
+                              <span className={classes.visuallyHidden}>
+                                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                              </span>
                             ) : null}
                         </TableSortLabel>
                     </TableCell>
@@ -138,21 +137,12 @@ const EnhancedTableToolbar = props => {
     return (
         <Toolbar
             className={clsx(classes.root, {
-                [classes.highlight]: numSelected > 0,
+                [classes.highlight]: true,
             })}
         >
-            {numSelected > 0 ? (
                 <Typography className={classes.title} variant="subtitle1">
                     {numSelected} selected
                 </Typography>
-            ) : ''
-                /*(
-                 <Typography className={classes.title} variant="h6" id="tableTitle">
-                 Nutrition
-                 </Typography>
-                 )*/
-            }
-
             {numSelected > 0 ? (
                 <Tooltip title="Delete">
                     <DeleteStakeHolder stakeholder={selected} multiple={true}/>
@@ -213,6 +203,7 @@ export default function StakeHolderList(props) {
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [showEditModalDialog, setShowEditModalDialog] = React.useState(false);
     let { rows } = props;
 
     const handleRequestSort = (event, property) => {
@@ -230,27 +221,6 @@ export default function StakeHolderList(props) {
         setSelected([]);
     };
 
-    const handleClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name);
-        let newSelected = [];
-
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(
-                selected.slice(0, selectedIndex),
-                selected.slice(selectedIndex + 1),
-            );
-        }
-
-
-        setSelected(newSelected);
-    };
-
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
@@ -265,6 +235,16 @@ export default function StakeHolderList(props) {
         // e.stopImmediatePropagation();
         e.stopPropagation();
     };
+    const handleOpenModalDialog = () => {
+        setShowEditModalDialog(true)
+    };
+    const handleCloseModalDialog = () => {
+        setShowEditModalDialog(false)
+    };
+
+    const setRowSelected = (newSelected) => {
+        setSelected(newSelected);
+    };
 
     const isSelected = name => selected.indexOf(name) !== -1;
 
@@ -273,7 +253,7 @@ export default function StakeHolderList(props) {
     return (
         <div className={classes.root}>
             <Paper className={classes.paper}>
-                {selected.length ? <EnhancedTableToolbar numSelected={selected.length} selected={selected} /> : ''}
+                <EnhancedTableToolbar numSelected={selected.length} selected={selected} />
                 <div className={classes.tableWrapper}>
                     <Table
                         className={classes.table}
@@ -298,42 +278,15 @@ export default function StakeHolderList(props) {
                                 .map((row, index) => {
                                     const isItemSelected = isSelected(row._id);
                                     const labelId = `enhanced-table-checkbox-${index}`;
-
                                     return (
-                                        <TableRow
-                                            hover
-                                            onClick={event => handleClick(event, row._id)}
-                                            role="checkbox"
-                                            aria-checked={isItemSelected}
-                                            tabIndex={-1}
-                                            key={row._id}
-                                            selected={isItemSelected}
-                                        >
-                                            <TableCell padding="checkbox">
-                                                <Checkbox
-                                                    checked={isItemSelected}
-                                                    inputProps={{ 'aria-labelledby': labelId }}
-                                                    color="default"
-                                                />
-                                            </TableCell>
-                                            <TableCell align="center" component="th" id={labelId} scope="row">
-                                                {row.firstName}
-                                            </TableCell>
-                                            <TableCell align="center">{row.role}</TableCell>
-                                            <TableCell align="center">{row.businessUnit}</TableCell>
-                                            <TableCell align="center">{row.influenceLevel}</TableCell>
-                                            <TableCell align="center">{row.supportLevel}</TableCell>
-                                            <TableCell align="center" onClick={event => deleteCell(event, row)}>
-                                                <EditStakeHolderPage stakeholder={row} />
-                                                {/*<IconButton aria-label="edit" onClick={(event) => {deleteCell(event, row)}}>*/}
-                                                {/*<EditIcon />*/}
-                                                {/*</IconButton>*/}
-                                                <DeleteStakeHolder stakeholder={row}/>
-                                                {/*<IconButton aria-label="edit" onClick={(event) => {deleteCell(event, row)}}>*/}
-                                                {/*<DeleteIcon />*/}
-                                                {/*</IconButton>*/}
-                                            </TableCell>
-                                        </TableRow>
+                                      <StakeHolder
+                                        row={row}
+                                        isItemSelected={isItemSelected}
+                                        labelId={labelId}
+                                        setRowSelected={setRowSelected}
+                                        deleteCell={deleteCell}
+                                        selected={selected}
+                                      />
                                     );
                                 })}
                             {emptyRows > 0 && (
