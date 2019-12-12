@@ -206,5 +206,11 @@ Meteor.publishTransformed('myProjects', function (company, parameters) {
                 projectId: doc._id
             }).fetch().length
         },
+        'completedActivities': function (doc) {
+            return Activities.find({
+                projectId: doc._id,
+                completed: true
+            }).fetch().length
+        },
     });
 });
