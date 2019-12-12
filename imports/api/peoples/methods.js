@@ -170,6 +170,9 @@ export const remove = new ValidatedMethod({
             type: String,
             optional: true
         },
+        'people.projectId': {
+            type: String,
+        },
         'people._ids': {
             type: Array,
             optional: true
@@ -179,12 +182,20 @@ export const remove = new ValidatedMethod({
         }
     }).validator(),
     run({ people }) {
-        const {_id, _ids} = people;
-        return _ids ? Peoples.remove({
+        const {_id, _ids, projectId } = people;
+        let update = {
+            $pull: {}
+        }
+        _ids && (update.$pull.stakeHolders = {$in: _ids});
+        _id && (update.$pull.stakeHolders = _id);
+        _ids ? Peoples.remove({
             _id: {
                 $in: _ids
             }
-        }) : Peoples.remove(_id)
+        }) : Peoples.remove(_id);
+        return Projects.update({
+            _id: projectId
+        }, update)
     }
 });
 

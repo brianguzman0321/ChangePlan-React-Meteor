@@ -8,8 +8,11 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { withSnackbar } from 'notistack';
+import { withRouter } from 'react-router';
 
 function DeleteStakeHolder(props) {
+    let { match } = props;
+    let { projectId } = match.params;
     const [open, setOpen] = React.useState(props.open || false);
     const {stakeholder, multiple} = props;
 
@@ -25,6 +28,7 @@ function DeleteStakeHolder(props) {
         let params = {
             people: {
                 _id: stakeholder._id,
+                projectId
 
             }
         };
@@ -81,4 +85,4 @@ function DeleteStakeHolder(props) {
     );
 }
 
-export default withSnackbar(DeleteStakeHolder)
+export default withSnackbar(withRouter(DeleteStakeHolder))
