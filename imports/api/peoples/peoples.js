@@ -35,11 +35,13 @@ Peoples.schema = new SimpleSchema({
     },
     supportLevel: {
         type: Number,
-        label: 'stake holder support Level'
+        label: 'stake holder support Level',
+        optional: true
     },
     influenceLevel: {
         type: Number,
-        label: 'stake holder Influence Level'
+        label: 'stake holder Influence Level',
+        optional: true
     },
     company: {
         type: String,

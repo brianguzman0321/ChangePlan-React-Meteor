@@ -132,10 +132,6 @@ function EditStakeHolder(props) {
 
     const onSubmit = (e) => {
         event.preventDefault();
-        if(!(loI && supportLevel)){
-            props.enqueueSnackbar('Please fill all required fields', {variant: 'error'});
-            return false;
-        }
         let params = {
             people: {
                 _id: stakeholder._id,
@@ -268,7 +264,7 @@ function EditStakeHolder(props) {
                             />
                         </Grid>
                         <Grid item xs={6}>
-                            <FormControl className={classes.formControl} fullWidth={true} required>
+                            <FormControl className={classes.formControl} fullWidth={true}>
                                 <InputLabel htmlFor="demo-controlled-open-select">Level Of Support</InputLabel>
                                 <Select
                                     id="role"
@@ -297,7 +293,7 @@ function EditStakeHolder(props) {
                             <br/>
                         </Grid>
                         <Grid item xs={6}>
-                            <FormControl className={classes.formControl} fullWidth={true} required>
+                            <FormControl className={classes.formControl} fullWidth={true}>
                                 <InputLabel htmlFor="demo-controlled-open-select">Level Of Influence</InputLabel>
                                 <Select
                                     id="role"
