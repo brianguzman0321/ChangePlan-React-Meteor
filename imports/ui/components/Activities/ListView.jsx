@@ -54,11 +54,12 @@ function getSorting(order, orderBy) {
 }
 
 const headCells = [
-    { id: 'dueDate', numeric: false, disablePadding: true, label: 'Due Date' },
-    { id: 'action', numeric: true, disablePadding: false, label: 'Done' },
-    { id: 'name', numeric: true, disablePadding: false, label: 'Activity' },
-    { id: 'description', numeric: true, disablePadding: false, label: 'Description' },
-    { id: 'influenceLevel', numeric: true, disablePadding: false, label: 'Activity Owner' },
+    { id: 'dueDate', numeric: false, disablePadding: true, label: 'DUE DATE' },
+    { id: 'dateCompleted', numeric: false, disablePadding: true, label: 'DATA COMPLETED' },
+    { id: 'action', numeric: true, disablePadding: false, label: 'MARK COMPLETE' },
+    { id: 'activity', numeric: true, disablePadding: false, label: 'ACTIVITY' },
+    { id: 'description', numeric: true, disablePadding: false, label: 'DESCRIPTION' },
+    { id: 'activityOwner', numeric: false, disablePadding: false, label: 'ACTIVITY OWNER' },
 ];
 
 function EnhancedTableHead(props) {
@@ -74,7 +75,7 @@ function EnhancedTableHead(props) {
                 {headCells.map(headCell => (
                     <TableCell style={{color: 'white'}}
                                key={headCell.id}
-                               align={'center'}
+                               align={headCell.id === 'activity' || headCell.id === 'description' || headCell.id === 'activityOwner' ? 'left' : 'center'}
                                sortDirection={orderBy === headCell.id ? order : false}
                     >
                         <TableSortLabel
@@ -170,14 +171,14 @@ EnhancedTableToolbar.propTypes = {
 
 const useStyles = makeStyles(theme => ({
     root: {
-        width: '100%',
+        width: '98%',
         margin: theme.spacing(3),
     },
     head: {
         background : 'red'
     },
     paper: {
-        width: '100%',
+        width: '99%',
         marginBottom: theme.spacing(2),
     },
     table: {
@@ -230,6 +231,12 @@ function StakeHolderList(props) {
     function completeActivity(activity){
         activity.completed = !activity.completed;
         delete activity.personResponsible;
+        if (activity.completed) {
+            activity.completedAt = activity.dueDate;
+        } else {
+            activity.completedAt = null;
+        }
+        delete activity.activityOwner;
         let params = {
             activity
         };
@@ -264,7 +271,9 @@ function StakeHolderList(props) {
     const isSelected = name => selected.indexOf(name) !== -1;
 
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
-
+    rows.forEach(row => {
+      row.activityOwner = `${row.personResponsible.profile.firstName} ${row.personResponsible.profile.lastName}`;
+    });
     return (
         <div className={classes.root}>
             <Paper className={classes.paper}>
@@ -303,6 +312,9 @@ function StakeHolderList(props) {
                                             <TableCell align="center" component="th" id={labelId} scope="row">
                                                 {moment(row.dueDate).format('MMM DD YYYY')}
                                             </TableCell>
+                                            <TableCell align="center" component="th" id={labelId} scope="row">
+                                                {row.completedAt ? moment(row.completedAt).format('MMM DD YYYY') : ''}
+                                            </TableCell>
                                             <TableCell align="center">
                                                 <Checkbox
                                                     checked={row.completed}
@@ -325,9 +337,9 @@ function StakeHolderList(props) {
                                                 {/*<DeleteIcon />*/}
                                                 {/*</IconButton>*/}
                                             </TableCell>
-                                            <TableCell align="center">{row.name}</TableCell>
-                                            <TableCell align="center">{row.description}</TableCell>
-                                            <TableCell align="center">{`${row.personResponsible.profile.firstName} ${row.personResponsible.profile.lastName}`}</TableCell>
+                                            <TableCell align="left">{row.name}</TableCell>
+                                            <TableCell align="left">{row.description}</TableCell>
+                                            <TableCell align="left">{`${row.personResponsible.profile.firstName} ${row.personResponsible.profile.lastName}`}</TableCell>
                                             {/*<TableCell align="center" onClick={event => deleteCell(event, row)}>*/}
                                         </TableRow>
                                     );
