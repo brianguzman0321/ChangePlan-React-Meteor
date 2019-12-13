@@ -15,6 +15,7 @@ import Grid from '@material-ui/core/Grid';
 import {withTracker} from "meteor/react-meteor-data";
 import DateFnsUtils from '@date-io/date-fns';
 import {
+    DatePicker,
     MuiPickersUtilsProvider,
     KeyboardDatePicker,
 } from '@material-ui/pickers';
@@ -274,6 +275,10 @@ function AddActivity(props) {
         setDueDate(date)
     };
 
+    const handleStartingDate = date => {
+        setStartingDate(date)
+    };
+
     const handleEndingDate = date => {
         if(!(endingDate < startingDate)){
             setEndingDateOpen(false)
@@ -292,7 +297,6 @@ function AddActivity(props) {
     function deleteActivity() {
         setDeleteModal(true);
     }
-
 
 
     return (
@@ -344,7 +348,7 @@ function AddActivity(props) {
                                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
                                         <Grid container justify="space-between" spacing={4}>
                                             <Grid item xs={6}>
-                                                <KeyboardDatePicker
+                                                <DatePicker
                                                     fullWidth
                                                     disableToolbar
                                                     variant="inline"
@@ -352,16 +356,16 @@ function AddActivity(props) {
                                                     margin="normal"
                                                     id="date-picker-inline"
                                                     label="Start Date"
-                                                    value={dueDate}
+                                                    value={startingDate}
                                                     autoOk={true}
-                                                    onChange={handleDueDate}
+                                                    onChange={handleStartingDate}
                                                     KeyboardButtonProps={{
                                                         'aria-label': 'change date',
                                                     }}
                                                 />
                                             </Grid>
                                             <Grid item xs={6}>
-                                                <KeyboardDatePicker
+                                                <DatePicker
                                                     disableToolbar
                                                     fullWidth
                                                     variant="inline"
@@ -372,7 +376,7 @@ function AddActivity(props) {
                                                     value={endingDate}
                                                     minDate={startingDate}
                                                     autoOk={true}
-                                                    onChange={handleEndingDate}
+                                                    onChange={handleDueDate}
                                                     KeyboardButtonProps={{
                                                         'aria-label': 'change date',
                                                     }}
@@ -389,7 +393,9 @@ function AddActivity(props) {
                                     id="panal5bh-header"
                                 >
                                     <Typography className={classes.heading}>Managers</Typography>
-                                    <Typography className={classes.secondaryHeading}>Can View project Information</Typography>
+                                    <Typography className={classes.secondaryHeading}>
+                                        {person && person.length ? person.map(t => t.label).join(", ") : 'Invite for view-only access (optional)'}
+                                    </Typography>
                                 </ExpansionPanelSummary>
                                 <ExpansionPanelDetails>
                                     <Grid container justify="space-between" spacing={2}>
