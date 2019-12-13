@@ -65,7 +65,7 @@ const useStyles = makeStyles({
     },
     displayHeading: {
         color: '#465563',
-        fontSize: 18
+        fontSize: 22
     },
     gridContainer: {
         // marginBottom: 15,
@@ -95,6 +95,24 @@ const useStyles = makeStyles({
     },
     firstRow: {
         margin: 12
+    },
+    projectName: {
+        textTransform :"uppercase",
+        "fontSize":"1.5rem",
+        "fontWeight":"500",
+        "letterSpacing":"0em"
+    },
+    columnsHeadings: {
+        fontSize: '0.75rem',
+        fontWeight: 500,
+        color: '#465563',
+        marginTop: 9,
+        marginBottom: 9,
+        marginLeft: 5
+    },
+    helpTipText: {
+        color: '#bebebe',
+        fontSize: 16
     }
 });
 
@@ -255,7 +273,7 @@ function Dashboard(props){
                     className={classes.initialRow}
                 >
                     <Grid item xs={6}>
-                        <Typography variant="h4">
+                        <Typography variant="h4" className={classes.projectName}>
                             {project.name}
                         </Typography>
                         <Typography gutterBottom style={{marginTop: 5}}>
@@ -346,7 +364,7 @@ function Dashboard(props){
                                                 help
                                             </Icon>
                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                            <span style={{color: '#bebebe'}}>What is the big picture vision for this project and how it will benefit the organisation?</span>
+                                            <span className={classes.helpTipText}>What is the big picture vision for this project and how it will benefit the organisation?</span>
                                         </Typography>
                                         <Divider />
 
@@ -377,7 +395,7 @@ function Dashboard(props){
                                         })}
 
                                         <Divider />
-                                        <Button align="right" color="primary" style={{marginTop: 5, marginLeft: 9}} onClick={handleClose.bind(null, 'vision')}>
+                                        <Button align="right" color="primary" variant="contained" fullWidth={true} style={{marginTop: 7}} onClick={handleClose.bind(null, 'vision')}>
                                             Add
                                         </Button>
                                     </CardContent>
@@ -391,7 +409,7 @@ function Dashboard(props){
                                                 help
                                             </Icon>
                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                            <span style={{color: '#bebebe'}}>List the ways in which the project/change will support the organisation. What problems is the project/change solving?</span>
+                                            <span className={classes.helpTipText}>List the ways in which the project/change will support the organisation. What problems is the project/change solving?</span>
                                         </Typography>
                                         <Divider />
 
@@ -422,7 +440,7 @@ function Dashboard(props){
                                         })}
 
                                         <Divider />
-                                        <Button align="right" color="primary" style={{marginTop: 5, marginLeft: 9}} onClick={handleClose.bind(null, 'objectives')}>
+                                        <Button align="right" color="primary" variant="contained" fullWidth={true} style={{marginTop: 7}} onClick={handleClose.bind(null, 'objectives')}>
                                             Add
                                         </Button>
                                     </CardContent>
@@ -436,7 +454,7 @@ function Dashboard(props){
                                                 help
                                             </Icon>
                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                            <span style={{color: '#bebebe'}}>List the project's impact on processes, technology, people & organization?</span>
+                                            <span className={classes.helpTipText}>List the project's impact on processes, technology, people & organization?</span>
                                         </Typography>
                                         <Divider />
                                         <Grid
@@ -446,18 +464,18 @@ function Dashboard(props){
                                               alignItems="center"
                                         >
                                             <Grid item xs={3} >
-                                                <Typography className={classes.detailValues} gutterBottom style={{fontWeight: 'bold'}}>
+                                                <Typography className={classes.columnsHeadings} gutterBottom style={{fontWeight: 'bold'}}>
                                                     TYPE
                                                 </Typography>
                                             </Grid>
                                             <Grid item xs={6} >
-                                                <Typography className={classes.detailValues} gutterBottom style={{fontWeight: 'bold'}}>
+                                                <Typography className={classes.columnsHeadings} gutterBottom style={{fontWeight: 'bold'}}>
                                                     DESCRIPTION
                                                 </Typography>
 
                                             </Grid>
                                             <Grid item xs={1} >
-                                                <Typography className={classes.detailValues} gutterBottom style={{fontWeight: 'bold'}}>
+                                                <Typography className={classes.columnsHeadings} gutterBottom style={{fontWeight: 'bold'}}>
                                                     LEVEL
                                                 </Typography>
                                             </Grid>
@@ -499,7 +517,7 @@ function Dashboard(props){
                                         })}
 
                                         <Divider />
-                                        <Button align="right" color="primary" style={{marginTop: 5, marginLeft: 9}} onClick={handleClose.bind(null, 'impacts')}>
+                                        <Button align="right" color="primary" variant="contained" fullWidth={true} style={{marginTop: 7}} onClick={handleClose.bind(null, 'impacts')}>
                                             Add
                                         </Button>
                                     </CardContent>
@@ -513,7 +531,7 @@ function Dashboard(props){
                                                 help
                                             </Icon>
                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                            <span style={{color: '#bebebe'}}>List risks associated with the change that could effect the projects's success?</span>
+                                            <span className={classes.helpTipText}>List risks associated with the change that could effect the projects's success?</span>
                                         </Typography>
                                         <Divider />
                                         <Grid
@@ -523,13 +541,13 @@ function Dashboard(props){
                                             alignItems="center"
                                         >
                                             <Grid item xs={9} >
-                                                <Typography className={classes.detailValues} gutterBottom style={{fontWeight: 'bold'}}>
+                                                <Typography className={classes.columnsHeadings} gutterBottom style={{fontWeight: 'bold'}}>
                                                     DESCRIPTION
                                                 </Typography>
 
                                             </Grid>
                                             <Grid item xs={1} >
-                                                <Typography className={classes.detailValues} gutterBottom style={{fontWeight: 'bold'}}>
+                                                <Typography className={classes.columnsHeadings} gutterBottom style={{fontWeight: 'bold'}}>
                                                     LEVEL
                                                 </Typography>
                                             </Grid>
@@ -568,7 +586,7 @@ function Dashboard(props){
                                         })}
 
                                         <Divider />
-                                        <Button align="right" color="primary" style={{marginTop: 5, marginLeft: 9}} onClick={handleClose.bind(null, 'risks')}>
+                                        <Button align="right" color="primary" variant="contained" fullWidth={true} style={{marginTop: 7}} onClick={handleClose.bind(null, 'risks')}>
                                             Add
                                         </Button>
                                     </CardContent>
