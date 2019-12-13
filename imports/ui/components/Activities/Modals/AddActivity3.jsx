@@ -35,6 +35,7 @@ import AddNewPerson from './AddNewPerson';
 import { withRouter } from 'react-router'
 import DeleteActivity from './DeleteActivity';
 import SaveChanges from "../../Modals/SaveChanges";
+import {Projects} from "../../../../api/projects/projects";
 
 const styles = theme => ({
     root: {
@@ -170,10 +171,10 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function AddActivity(props) {
-    let { company, stakeHolders, local, match, edit, activity, list } = props;
+    let { company, stakeHolders, local, project, match, edit, activity, list, isOpen, currentChangeManager } = props;
     const [open, setOpen] = React.useState(edit || false);
     const [deleteModal, setDeleteModal] = React.useState(false);
-    const [time, setTime] = React.useState(5);
+    const [time, setTime] = useState('');
     const [isNew, setIsNew] = React.useState(false);
     const [users, setUsers] = React.useState([]);
     const [name, setName] = React.useState('');
@@ -183,6 +184,8 @@ function AddActivity(props) {
     const [activityType, setActivityType] = React.useState({});
     const [startingDate, setStartingDate] = React.useState(new Date());
     const [dueDate, setDueDate] = React.useState(new Date());
+    const [dueDateOpen, setDueDateOpen] = useState(false);
+    const [changeManager, setChangeManager] = useState(currentChangeManager);
     const [completedDate, setCompletedDate] = useState(null);
     const [startingDateOpen, setStartingDateOpen] = React.useState(false);
     const [endingDate, setEndingDate] = React.useState(new Date());
@@ -219,21 +222,28 @@ function AddActivity(props) {
 
     };
 
+    const getProjectManager = () => {
+        const curProject = Projects.find({_id: projectId}).fetch()[0];
+        const changeManager = users.find(user => curProject.changeManagers.includes(user.id));
+
+        setChangeManager(changeManager);
+    };
+
     const resetValues = () => {
         let selectedActivity = data.find(item => item.name === activity.type) || {};
         setActivityType({});
         setDueDate(new Date());
         setCompletedDate(null);
         setDescription('');
-        setPerson(null);
-        setTime(5);
+        setPerson(changeManager);
+        setTime('');
         setPeoples(stakeHolders.map(item => item._id));
         updateFilter('localStakeHolders', 'ids', stakeHolders.map(item => item._id));
 
     };
 
     const updateUsersList = () => {
-        Meteor.call(`users.getPersons`, {company: company}, (err, res) => {
+        Meteor.call(`users.getAllUsersInCompany`, {company: company}, (err, res) => {
             if(err){
                 props.enqueueSnackbar(err.reason, {variant: 'error'});
             }
@@ -241,7 +251,8 @@ function AddActivity(props) {
                 setUsers(res.map(user => {
                     return {
                         label: `${user.profile.firstName} ${user.profile.lastName}`,
-                        value: user._id
+                        id: user._id,
+                        role: user.roles,
                     }
                 }))
             }
@@ -263,7 +274,7 @@ function AddActivity(props) {
             setExpanded('panel1');
             updateValues();
         }
-
+        getProjectManager();
 
     }, [props.company, stakeHolders, company, props.edit, props.activity, isNew, local]);
 
@@ -301,7 +312,7 @@ function AddActivity(props) {
 
     const createProject = (e) => {
         e.preventDefault();
-        if(!(description && person && dueDate && time)){
+        if(!(person && dueDate)){
             props.enqueueSnackbar('Please fill all required fields', {variant: 'error'});
             return false;
         }
@@ -314,7 +325,7 @@ function AddActivity(props) {
                 name: activityType.buttonText,
                 type: activityType.name,
                 description,
-                owner: person.value,
+                owner: person.id,
                 dueDate,
                 completedAt: completedDate,
                 stakeHolders: peoples,
@@ -355,8 +366,12 @@ function AddActivity(props) {
         setIsUpdated(true);
     };
 
-    const openEnding = (e) => {
-        setEndingDateOpen(true)
+    const openDueDatePicker = () => {
+        setDueDateOpen(!dueDateOpen)
+    };
+
+    const openCompletedDatePicker = () => {
+        setEndingDateOpen(!endingDateOpen)
     };
 
     const handleTimeChange = (e) => {
@@ -409,7 +424,7 @@ function AddActivity(props) {
                                 <ExpansionPanelDetails>
                                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
                                         <Grid container justify="space-between" spacing={4}>
-                                            <Grid item xs={6}>
+                                            <Grid item xs={6} onClick={openDueDatePicker}>
                                                 <KeyboardDatePicker
                                                     fullWidth
                                                     disableToolbar
@@ -420,26 +435,25 @@ function AddActivity(props) {
                                                     label="Due Date"
                                                     value={dueDate}
                                                     autoOk={true}
+                                                    open={dueDateOpen}
                                                     onChange={handleDueDate}
                                                     KeyboardButtonProps={{
                                                         'aria-label': 'change date',
                                                     }}
                                                 />
                                             </Grid>
-                                            <Grid item xs={6}>
+                                            <Grid item xs={6} onClick={openCompletedDatePicker}>
                                                 <KeyboardDatePicker
                                                     disableToolbar
                                                     fullWidth
                                                     variant="inline"
-                                                    // open={true}
                                                     margin="normal"
                                                     id="date-picker-dialog"
                                                     label="Date Completed"
                                                     format="MM/dd/yyyy"
                                                     value={completedDate}
-                                                    // minDate={startingDate}
+                                                    autoOk={true}
                                                     open={endingDateOpen}
-                                                    onOpen={openEnding}
                                                     onChange={handleEndingDate}
                                                     KeyboardButtonProps={{
                                                         'aria-label': 'change date',
@@ -453,7 +467,6 @@ function AddActivity(props) {
                                                     label="Time Away from BAU (Minutes)"
                                                     value={time}
                                                     onChange={handleTimeChange}
-                                                    required={true}
                                                     type="number"
                                                     fullWidth
                                                 />
@@ -540,7 +553,6 @@ function AddActivity(props) {
                                         label="Description"
                                         value={description}
                                         onChange={handleDescriptionChange}
-                                        required={true}
                                         type="text"
                                         fullWidth
                                     />
@@ -553,12 +565,12 @@ function AddActivity(props) {
                                     id="panal5bh-header"
                                 >
                                     <Typography className={classes.heading}>Person Responsible</Typography>
-                                    <Typography className={classes.secondaryHeading}>Assign Activity Owner</Typography>
+                                    <Typography className={classes.secondaryHeading}>{ person ? `${person.label}` : (changeManager || {label: ''}).label }</Typography>
                                 </ExpansionPanelSummary>
                                 <ExpansionPanelDetails>
                                     <Grid container justify="space-between" spacing={2}>
                                         <Grid item={true} xs={7}>
-                                            <AutoComplete updateUsers={updateUsers} data={users} selectedValue={person}/>
+                                            <AutoComplete updateUsers={updateUsers} data={users} selectedValue={person} currentChangeManager={changeManager}/>
                                         </Grid>
                                         <Grid item={true} xs={5}>
                                             <AddNewPerson company={company}/>
@@ -604,7 +616,7 @@ const AddActivityPage = withTracker(props => {
     return {
         stakeHolders: Peoples.find().fetch(),
         local,
-        company
+        company,
     };
 })(withRouter(AddActivity));
 

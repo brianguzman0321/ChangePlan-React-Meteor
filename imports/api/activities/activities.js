@@ -30,7 +30,7 @@ Activities.schema = new SimpleSchema({
     time: {
         type: Number,
         label: 'activity time away BAU',
-        defaultValue: 5,
+        optional: true,
     },
     name: {
         type: String,
@@ -38,7 +38,8 @@ Activities.schema = new SimpleSchema({
     },
     description: {
         type: String,
-        label: 'activity Description'
+        label: 'activity Description',
+        optional: true,
     },
     projectId: {
         type: String,
