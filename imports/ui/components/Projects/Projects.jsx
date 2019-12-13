@@ -235,6 +235,7 @@ function ProjectCard(props) {
                                 }}
                                 action={<ProjectMenus project={project} company={company} />}
                                 classes={classes1}
+                                style={{cursor: "auto"}}
                                 title={projectName(project.name)}
                             />
                             <CardContent className={classes.cardContent}>
