@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -10,11 +10,17 @@ import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import Grid from '@material-ui/core/Grid';
-import AddActivity from '/imports/ui/components/Activities/Modals/AddActivity3'
-import moment from 'moment'
+import AddActivity from '/imports/ui/components/Activities/Modals/AddActivity3';
+import moment from 'moment';
+import { withRouter } from 'react-router';
+import {withTracker} from "meteor/react-meteor-data";
 import { stringHelpers } from '/imports/helpers/stringHelpers'
 import SVGInline from "react-svg-inline";
 import { data } from "/imports/activitiesContent.json";
+import {Companies} from "../../../api/companies/companies";
+import {Peoples} from "../../../api/peoples/peoples";
+import {Projects} from "../../../api/projects/projects";
+
 
 var sActivity = {};
 
@@ -68,10 +74,13 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export default function AWARENESSCard(props) {
-    let { activities } = props;
+function AWARENESSCard(props) {
+    let { activities, company, match } = props;
     const classes = useStyles();
-    const [edit, setEdit] = React.useState(false);
+    const [edit, setEdit] = useState(false);
+    const [changeManager, setChangeManager] = useState('');
+    const [users, setUsers] = useState([]);
+    let { projectId } = match.params;
 
     function completeActivity(activity){
         activity.completed = !activity.completed;
@@ -100,9 +109,36 @@ export default function AWARENESSCard(props) {
         return selectedActivity && selectedActivity.iconSVG
     }
 
-    useEffect(() => {
+    const getProjectManager = () => {
+        const curProject = Projects.find({_id: projectId}).fetch()[0];
+        const changeManager = users.find(user => curProject.changeManagers.includes(user.id));
+        setChangeManager(changeManager);
+    };
 
-    }, [edit]);
+    const updateUsersList = () => {
+        Meteor.call(`users.getAllUsersInCompany`, {company: company}, (err, res) => {
+            if(err){
+                props.enqueueSnackbar(err.reason, {variant: 'error'});
+            }
+            if(res && res.length){
+                setUsers(res.map(user => {
+                    return {
+                        label: `${user.profile.firstName} ${user.profile.lastName}`,
+                        id: user._id,
+                        role: user.roles,
+                    }
+                }))
+            }
+            else {
+                setUsers([])
+            }
+        })
+    };
+
+    useEffect(() => {
+        updateUsersList();
+        getProjectManager();
+    }, [edit], [changeManager]);
 
     return (
         <Card className={classes.card}>
@@ -176,8 +212,25 @@ export default function AWARENESSCard(props) {
                     })
                 }
 
-                <AddActivity edit={edit} activity={sActivity} newActivity={() => setEdit(false)}/>
+                <AddActivity edit={edit}
+                             currentChangeManager={changeManager}
+                             activity={sActivity}
+                             newActivity={() => setEdit(false)}/>
             </CardContent>
         </Card>
     );
 }
+export default withTracker(props => {
+    let local = LocalCollection.findOne({
+        name: 'localStakeHolders'
+    });
+    Meteor.subscribe('companies');
+    let company = Companies.findOne() || {};
+    let companyId = company._id || {};
+    Meteor.subscribe('peoples', companyId );
+    return {
+        stakeHolders: Peoples.find().fetch(),
+        local,
+        company,
+    };
+})(withRouter(AWARENESSCard));

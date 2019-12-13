@@ -55,9 +55,9 @@ function getSorting(order, orderBy) {
 
 const headCells = [
     { id: 'dueDate', numeric: false, disablePadding: true, label: 'DUE DATE' },
-    { id: 'dateCompleted', numeric: false, disablePadding: true, label: 'DATA COMPLETED' },
-    { id: 'action', numeric: true, disablePadding: false, label: 'MARK COMPLETE' },
-    { id: 'activity', numeric: true, disablePadding: false, label: 'ACTIVITY' },
+    { id: 'completedAt', numeric: false, disablePadding: true, label: 'DATA COMPLETED' },
+    { id: 'completed', numeric: true, disablePadding: false, label: 'MARK COMPLETE' },
+    { id: 'name', numeric: true, disablePadding: false, label: 'ACTIVITY' },
     { id: 'description', numeric: true, disablePadding: false, label: 'DESCRIPTION' },
     { id: 'activityOwner', numeric: false, disablePadding: false, label: 'ACTIVITY OWNER' },
 ];
@@ -75,7 +75,7 @@ function EnhancedTableHead(props) {
                 {headCells.map(headCell => (
                     <TableCell style={{color: 'white'}}
                                key={headCell.id}
-                               align={headCell.id === 'activity' || headCell.id === 'description' || headCell.id === 'activityOwner' ? 'left' : 'center'}
+                               align={headCell.id === 'name' || headCell.id === 'description' || headCell.id === 'activityOwner' ? 'left' : 'center'}
                                sortDirection={orderBy === headCell.id ? order : false}
                     >
                         <TableSortLabel

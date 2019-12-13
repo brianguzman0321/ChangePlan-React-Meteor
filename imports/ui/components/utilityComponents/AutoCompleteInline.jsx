@@ -29,6 +29,8 @@ const useStyles = makeStyles(theme => ({
         flex: 1,
         alignItems: 'center',
         overflow: 'hidden',
+        maxHeight: '200px',
+        overflowY: 'auto',
     },
     chip: {
         margin: theme.spacing(0.5, 0.25),
@@ -310,9 +312,8 @@ const components = {
 export default function IntegrationReactSelect(props) {
     const classes = useStyles();
     const theme = useTheme();
-    const [multi, setMulti] = React.useState(props.selectedValue || null);
+    const [multi, setMulti] = React.useState(props.currentChangeManager || null);
     const [multiple, setMultiple] = React.useState(props.multiple || false);
-
 
     const handleChangeMulti = value => {
         setMulti(value);
@@ -328,9 +329,6 @@ export default function IntegrationReactSelect(props) {
             },
         }),
     };
-
-    useEffect(() => {
-    }, [props]);
 
 
     return (

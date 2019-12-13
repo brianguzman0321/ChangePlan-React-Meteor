@@ -31,12 +31,14 @@ export const insert = new ValidatedMethod({
         },
         'activity.time': {
             type: Number,
+            optional: true,
         },
         'activity.name': {
             type: String,
         },
         'activity.description': {
             type: String,
+            optional: true,
         },
         'activity.projectId': {
             type: String,
@@ -93,12 +95,14 @@ export const update = new ValidatedMethod({
         },
         'activity.time': {
             type: Number,
+            optional: true,
         },
         'activity.name': {
             type: String,
         },
         'activity.description': {
             type: String,
+            optional: true,
         },
         'activity.projectId': {
             type: String,
