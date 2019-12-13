@@ -75,6 +75,9 @@ export default function AWARENESSCard(props) {
 
     function completeActivity(activity){
         activity.completed = !activity.completed;
+        activity.completed ?
+          activity.completedAt = activity.dueDate :
+          activity.completedAt = null;
         delete activity.personResponsible;
         let params = {
             activity

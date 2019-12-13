@@ -164,6 +164,7 @@ function AddActivity(props) {
     const [activityType, setActivityType] = React.useState({});
     const [startingDate, setStartingDate] = React.useState(new Date());
     const [dueDate, setDueDate] = React.useState(new Date());
+    const [completedDate, setCompletedDate] = useState(null);
     const [startingDateOpen, setStartingDateOpen] = React.useState(false);
     const [endingDate, setEndingDate] = React.useState(new Date());
     const [endingDateOpen, setEndingDateOpen] = React.useState(false);
@@ -186,6 +187,7 @@ function AddActivity(props) {
         let selectedActivity = data.find(item => item.name === activity.type) || {};
         setActivityType(selectedActivity);
         setDueDate(activity.dueDate);
+        setCompletedDate(activity.completedAt);
         setDescription(activity.description);
         let obj = {
             label: `${activity.personResponsible.profile.firstName} ${activity.personResponsible.profile.lastName}`,
@@ -203,6 +205,7 @@ function AddActivity(props) {
         let selectedActivity = data.find(item => item.name === activity.type) || {};
         setActivityType({});
         setDueDate(new Date());
+        setCompletedDate(null);
         setDescription('');
         setPerson(null);
         setTime(5);
@@ -295,13 +298,17 @@ function AddActivity(props) {
                 description,
                 owner: person.value,
                 dueDate,
+                completedAt: completedDate,
                 stakeHolders: peoples,
                 projectId,
                 step: 2,
                 time: Number(time)
             }
         };
-
+        if (completedDate) {
+            activity.completed = true;
+            params.activity.completed = activity.completed
+        };
         let methodName = isNew ? 'activities.insert' : 'activities.update';
         !isNew && (params.activity._id = activity._id);
         Meteor.call(methodName, params, (err, res) => {
@@ -326,7 +333,7 @@ function AddActivity(props) {
         if(!(endingDate < startingDate)){
             setEndingDateOpen(false)
         }
-        setEndingDate(date);
+        setCompletedDate(date);
         setIsUpdated(true);
     };
 
@@ -413,12 +420,11 @@ function AddActivity(props) {
                                                     id="date-picker-dialog"
                                                     label="Date Completed"
                                                     format="MM/dd/yyyy"
-                                                    value={null}
+                                                    value={completedDate}
                                                     // minDate={startingDate}
                                                     open={endingDateOpen}
                                                     onOpen={openEnding}
                                                     onChange={handleEndingDate}
-                                                    disabled={true}
                                                     KeyboardButtonProps={{
                                                         'aria-label': 'change date',
                                                     }}

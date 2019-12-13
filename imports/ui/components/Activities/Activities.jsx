@@ -145,6 +145,7 @@ const ActivitiesPage = withTracker(props => {
     let { match } = props;
     let { projectId } = match.params;
     Meteor.subscribe('compoundActivities', projectId);
+
     return {
         activities : Activities.find().fetch()
     };

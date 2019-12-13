@@ -55,6 +55,10 @@ export const insert = new ValidatedMethod({
         'activity.dueDate': {
             type: Date,
         },
+        'activity.completed': {
+            type: Boolean,
+            optional: true
+        },
     }).validator(),
     run({ activity }) {
         return Activities.insert(activity);

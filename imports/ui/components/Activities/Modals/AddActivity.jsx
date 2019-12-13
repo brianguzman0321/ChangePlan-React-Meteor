@@ -168,6 +168,7 @@ function AddActivity(props) {
     const [activityType, setActivityType] = useState({});
     const [startingDate, setStartingDate] = useState(new Date());
     const [dueDate, setDueDate] = useState(new Date());
+    const [completedDate, setCompletedDate] = useState(null);
     const [startingDateOpen, setStartingDateOpen] = useState(false);
     const [endingDate, setEndingDate] = useState(new Date());
     const [endingDateOpen, setEndingDateOpen] = useState(false);
@@ -190,10 +191,11 @@ function AddActivity(props) {
         let selectedActivity = data.find(item => item.name === activity.type) || {};
         setActivityType(selectedActivity);
         setDueDate(activity.dueDate);
+        setCompletedDate(activity.completedAt);
         setDescription(activity.description);
         let obj = {
             label: `${activity.personResponsible.profile.firstName} ${activity.personResponsible.profile.lastName}`,
-            value: activity.personResponsible._id
+            value: activity.personResponsible._id,
         };
         setPerson(obj);
         setTime(activity.time);
@@ -207,6 +209,7 @@ function AddActivity(props) {
         let selectedActivity = data.find(item => item.name === activity.type) || {};
         setActivityType({});
         setDueDate(new Date());
+        setCompletedDate(null);
         setDescription('');
         setPerson(null);
         setTime(5);
@@ -224,7 +227,7 @@ function AddActivity(props) {
                 setUsers(res.map(user => {
                     return {
                         label: `${user.profile.firstName} ${user.profile.lastName}`,
-                        value: user._id
+                        value: user._id,
                     }
                 }))
             }
@@ -300,13 +303,17 @@ function AddActivity(props) {
                 description,
                 owner: person.value,
                 dueDate,
+                completedAt: completedDate,
                 stakeHolders: peoples,
                 projectId,
                 step: 1,
                 time: Number(time)
             }
         };
-
+        if (completedDate) {
+            activity.completed = true;
+            params.activity.completed = activity.completed
+        };
         let methodName = isNew ? 'activities.insert' : 'activities.update';
         !isNew && (params.activity._id = activity._id);
         Meteor.call(methodName, params, (err, res) => {
@@ -331,7 +338,7 @@ function AddActivity(props) {
         if(!(endingDate < startingDate)){
             setEndingDateOpen(false)
         }
-        setEndingDate(date);
+        setCompletedDate(date);
         setIsUpdated(true);
     };
 
@@ -417,12 +424,11 @@ function AddActivity(props) {
                                                     id="date-picker-dialog"
                                                     label="Date Completed"
                                                     format="MM/dd/yyyy"
-                                                    value={null}
+                                                    value={completedDate}
                                                     // minDate={startingDate}
                                                     open={endingDateOpen}
                                                     onOpen={openEnding}
                                                     onChange={handleEndingDate}
-                                                    disabled={true}
                                                     KeyboardButtonProps={{
                                                         'aria-label': 'change date',
                                                     }}
