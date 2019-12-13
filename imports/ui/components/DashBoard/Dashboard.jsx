@@ -56,6 +56,10 @@ const useStyles = makeStyles({
         overflow: 'hidden'
     },
     topHeading: {
+        fontSize: '1.8rem',
+        fontWeight: 500,
+        lineHeight: 1.5,
+        letterSpacing: '-0.015em',
         color: '#465563',
         marginLeft: 24,
     },
