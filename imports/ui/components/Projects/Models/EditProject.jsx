@@ -17,6 +17,7 @@ import DateFnsUtils from '@date-io/date-fns';
 import {
     MuiPickersUtilsProvider,
     KeyboardDatePicker,
+    DatePicker
 } from '@material-ui/pickers';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
@@ -343,7 +344,7 @@ function AddActivity(props) {
                                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
                                         <Grid container justify="space-between" spacing={4}>
                                             <Grid item xs={6}>
-                                                <KeyboardDatePicker
+                                                <DatePicker
                                                     fullWidth
                                                     disableToolbar
                                                     variant="inline"
@@ -360,7 +361,7 @@ function AddActivity(props) {
                                                 />
                                             </Grid>
                                             <Grid item xs={6}>
-                                                <KeyboardDatePicker
+                                                <DatePicker
                                                     disableToolbar
                                                     fullWidth
                                                     variant="inline"
@@ -388,7 +389,9 @@ function AddActivity(props) {
                                     id="panal5bh-header"
                                 >
                                     <Typography className={classes.heading}>Managers</Typography>
-                                    <Typography className={classes.secondaryHeading}>Can View project Information</Typography>
+                                    <Typography className={classes.secondaryHeading}>
+                                        {person && person.length ? person.map(t => t.label).join(", ") : 'Invite for view-only access (optional)'}
+                                    </Typography>
                                 </ExpansionPanelSummary>
                                 <ExpansionPanelDetails>
                                     <Grid container justify="space-between" spacing={2}>
