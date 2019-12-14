@@ -163,11 +163,35 @@ export const remove = new ValidatedMethod({
     }
 });
 
+export const getStakeholderActivities = new ValidatedMethod({
+    name: 'activities.getStakeholderActivities',
+    mixins : [LoggedInMixin],
+    checkLoggedInError: {
+        error: 'notLogged',
+        message: 'You need to be logged in to remove activity'
+    },
+    validate: new SimpleSchema({
+        'activity': {
+            type: Object
+        },
+        'activity.stakeholderId': {
+            type: String
+        }
+    }).validator(),
+    run({ activity }) {
+        const { stakeholderId } = activity;
+        return Activities.find({
+            stakeHolders: stakeholderId
+        }).fetch();
+    }
+});
+
 // Get list of all method names on Companies
 const ACTIVITIES_METHODS = _.pluck([
     insert,
     update,
-    remove
+    remove,
+    getStakeholderActivities
 ], 'name');
 
 if (Meteor.isServer) {

@@ -1,4 +1,9 @@
 import React, {useEffect, useState} from "react";
+import Card from '@material-ui/core/Card';
+import CardActionArea from '@material-ui/core/CardActionArea';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import CardMedia from '@material-ui/core/CardMedia';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -6,7 +11,6 @@ import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import MuiDialogContent from '@material-ui/core/DialogContent';
 import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
-import EditIcon from '@material-ui/icons/Edit';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
@@ -45,6 +49,14 @@ const useStyles = makeStyles(theme => ({
         '&:hover': {
             background: '#92a1af'
         }
+    },
+    stakeholderDetails: {
+        background: '#f4f5f7'
+    },
+    columnHeadings: {
+        color: '#465563',
+        fontSize: '0.75rem',
+        fontWeight: 500
     }
 }));
 
@@ -90,6 +102,8 @@ function EditStakeHolder(props) {
     const [notes, setNotes] = React.useState(stakeholder.notes);
     const [showModalDialog, setShowModalDialog] = useState(false);
     const [isUpdated, setIsUpdated] = useState(false);
+    const [stakeholderActivities, setStakeholderActivities] = useState(false);
+    const [stakeholderProjects, setStakeholderProjects] = useState(false);
     const classes = useStyles();
 
     const resetChanges = () => {
@@ -101,6 +115,39 @@ function EditStakeHolder(props) {
         setSupportLevel(stakeholder.supportLevel);
         setInfluenceLevel(stakeholder.influenceLevel);
         setNotes(stakeholder.notes);
+    };
+
+
+
+    const fetchStakeholderData = () => {
+        let params = {
+            activity: {
+                stakeholderId: stakeholder._id
+            }
+        };
+        Meteor.call('activities.getStakeholderActivities', params, (err, res) => {
+            if(err){
+                props.enqueueSnackbar(err.reason, {variant: 'error'})
+            }
+            else{
+                setStakeholderActivities(res);
+            }
+        });
+
+        let projectPrams = {
+            project: {
+                stakeholderId: stakeholder._id
+            }
+        };
+
+        Meteor.call('projects.getStakeholderProjects', projectPrams, (err, res) => {
+            if(err){
+                props.enqueueSnackbar(err.reason, {variant: 'error'})
+            }
+            else{
+                setStakeholderProjects(res);
+            }
+        });
     };
 
     const handleClose = () => {
@@ -168,6 +215,12 @@ function EditStakeHolder(props) {
     function handleSelectOpen1() {
         setSelectOpen1(true);
     }
+
+    useEffect(() => {
+        if(open){
+            fetchStakeholderData();
+        }
+    }, [open]);
 
     return (
         <>
@@ -315,6 +368,56 @@ function EditStakeHolder(props) {
                             <br/>
                         </Grid>
                     </Grid>
+                    <Card className={classes.stakeholderDetails}>
+                        <CardActionArea>
+                            <CardMedia
+                                className={classes.media}
+                                image="/static/images/cards/contemplative-reptile.jpg"
+                                title="Contemplative Reptile"
+                            />
+                            <CardContent>
+                                <Typography gutterBottom variant="h6" component="h2">
+                                    Stakeholder Activity
+                                </Typography>
+                                <br/>
+                                <Typography gutterBottom className={classes.columnHeadings}>
+                                    Total time away from BAU
+                                </Typography>
+                                <Typography variant="body2" color="textSecondary" component="p">
+                                    4.5 hours
+                                </Typography>
+                                <br/>
+                                <br/>
+                                <Typography gutterBottom className={classes.columnHeadings}>
+                                    Current Projects
+                                </Typography>
+                                {
+                                    stakeholderProjects && stakeholderProjects.length ? stakeholderProjects.map((project) => {
+                                        return <Typography variant="body2" color="textSecondary" component="p">
+                                                {project.name}
+                                        </Typography>
+                                        }) : <Typography variant="body2" color="textSecondary" component="p">
+                                        No projects found
+                                    </Typography>
+                                }
+
+                                <br/>
+                                <br/>
+                                <Typography gutterBottom className={classes.columnHeadings}>
+                                    Upcoming Activities
+                                </Typography>
+                                {
+                                    stakeholderActivities && stakeholderActivities.length ? stakeholderActivities.map((activity) => {
+                                        return <Typography variant="body2" color="textSecondary" component="p">
+                                            {activity.name}
+                                        </Typography>
+                                    }) : <Typography variant="body2" color="textSecondary" component="p">
+                                        No activities Found
+                                    </Typography>
+                                }
+                            </CardContent>
+                        </CardActionArea>
+                    </Card>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={isUpdated ? handleOpenModalDialog : () => close()} color="secondary">
