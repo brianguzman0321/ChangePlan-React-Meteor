@@ -55,7 +55,10 @@ const useStyles = makeStyles(theme => ({
         }
     },
     stakeholderDetails: {
-        background: '#f4f5f7'
+        background: '#f4f5f7',
+        '&:hover': {
+            background: '#f4f5f7'
+        }
     },
     columnHeadings: {
         color: '#465563',
@@ -378,11 +381,6 @@ function EditStakeHolder(props) {
                     </Grid>
                     <Card className={classes.stakeholderDetails}>
                         <CardActionArea>
-                            <CardMedia
-                                className={classes.media}
-                                image="/static/images/cards/contemplative-reptile.jpg"
-                                title="Contemplative Reptile"
-                            />
                             <CardContent>
                                 <Typography gutterBottom variant="h6" component="h2">
                                     Stakeholder Activity
@@ -401,7 +399,7 @@ function EditStakeHolder(props) {
                                 </Typography>
                                 {
                                     stakeholderProjects && stakeholderProjects.length ? stakeholderProjects.map((project) => {
-                                        return <Typography variant="body2" color="textSecondary" component="p">
+                                        return <Typography variant="body2" color="textSecondary" component="p" style={{marginTop: 5}}>
                                                 {project.name}
                                         </Typography>
                                         }) : <Typography variant="body2" color="textSecondary" component="p">
@@ -417,12 +415,12 @@ function EditStakeHolder(props) {
                                 {
                                     stakeholderActivities && stakeholderActivities.length ? stakeholderActivities.map((activity) => {
                                         let selectedActivity = data.find(item => item.name === activity.type) || {};
-                                        return <Typography variant="body2" color="textSecondary" component="p">
+                                        return <Typography variant="body2" color="textSecondary" component="p" style={{marginTop: 5}}>
                                             {moment(activity.dueDate).format('DD-MMM-YY')} &nbsp;&nbsp;&nbsp;&nbsp;
                                             {selectedActivity.iconSVG ? <SVGInline style={{position: 'absolute', marginTop: -4, marginLeft: -9}} width="23px" height="23px" fill='#465563' svg={selectedActivity.iconSVG}/> : ''
                                             } &nbsp;&nbsp;&nbsp;
                                             {activity.name} &nbsp;&nbsp;&nbsp;&nbsp;
-                                            {stringHelpers.limitCharacters(activity.description, 112)}
+                                            <span className={classes.activityDescription}>{stringHelpers.limitCharacters(activity.description, 112)}</span>
                                         </Typography>
                                     }) : <Typography variant="body2" color="textSecondary" component="p">
                                         No activities Found

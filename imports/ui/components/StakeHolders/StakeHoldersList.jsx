@@ -115,6 +115,7 @@ const useToolbarStyles = makeStyles(theme => ({
     root: {
         paddingLeft: theme.spacing(2),
         paddingRight: theme.spacing(1),
+        minHeight: 50
     },
     highlight:
         theme.palette.type === 'light'
@@ -137,7 +138,7 @@ const EnhancedTableToolbar = props => {
     return (
         <Toolbar
             className={clsx(classes.root, {
-                [classes.highlight]: true,
+                [classes.highlight]: false,
             })}
         >
                 <Typography className={classes.title} variant="subtitle1">
