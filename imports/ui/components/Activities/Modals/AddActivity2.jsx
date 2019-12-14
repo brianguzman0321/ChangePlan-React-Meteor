@@ -166,6 +166,7 @@ function AddActivity(props) {
     const [startingDate, setStartingDate] = React.useState(new Date());
     const [changeManager, setChangeManager] = useState(currentChangeManager);
     const [dueDate, setDueDate] = React.useState(new Date());
+    const [currentProject, setProject] = useState(project);
     const [completedDate, setCompletedDate] = useState(null);
     const [startingDateOpen, setStartingDateOpen] = React.useState(false);
     const [endingDate, setEndingDate] = React.useState(new Date());
@@ -182,6 +183,37 @@ function AddActivity(props) {
     const classes = useStyles();
     const classes1 = gridStyles();
 
+    const sendNotificationEmail = (username,
+                                   activityType,
+                                   activityDueDate,
+                                   time,
+                                   activityName,
+                                   description,
+                                   stakeholders, currentProject, person, projectId, currentChangeManager) => {
+        const projectName = currentProject && currentProject.name;
+        const email = person ? (person && person.email[0].address) : (currentChangeManager && currentChangeManager.email[0].address);
+        if (description === undefined) {
+            description = ''
+        }
+        const fromEmail = email;
+        const activityHelpLink = `https://changeplan.herokuapp.com/projects/${projectId}/activities`
+        Meteor.call('sendEmail', email,  fromEmail, username,
+          projectName,
+          activityType,
+          activityDueDate,
+          time,
+          activityName,
+          description,
+          stakeholders,
+          activityHelpLink, (error, result) => {
+              if (error) {
+                  props.enqueueSnackbar(err.reason, {variant: 'error'});
+              } else {
+                  props.enqueueSnackbar('Email send successful', {variant: 'success'});
+              }
+          });
+    };
+
     const updateValues = () => {
         if(isNew){
             resetValues();
@@ -196,6 +228,7 @@ function AddActivity(props) {
             let obj = {
                 label: `${activity.personResponsible.profile.firstName} ${activity.personResponsible.profile.lastName}`,
                 value: activity.personResponsible._id,
+                email: activity.personResponsible.emails,
             };
             setPerson(obj);
         }
@@ -212,6 +245,7 @@ function AddActivity(props) {
 
     const getProjectManager = () => {
         const curProject = Projects.find({_id: projectId}).fetch()[0];
+        setProject(curProject);
         const changeManager = users.find(user => curProject.changeManagers.includes(user.value));
         setChangeManager(changeManager);
     };
@@ -240,6 +274,7 @@ function AddActivity(props) {
                         label: `${user.profile.firstName} ${user.profile.lastName}`,
                         value: user._id,
                         role: user.roles,
+                        email: user.emails
                     }
                 }))
             } else {
@@ -311,7 +346,7 @@ function AddActivity(props) {
                 name: activityType.buttonText,
                 type: activityType.name,
                 description,
-                owner:person && person.value,
+                owner: person && person.value,
                 dueDate,
                 completedAt: completedDate,
                 stakeHolders: peoples,
@@ -573,6 +608,16 @@ function AddActivity(props) {
                                         </Grid>
                                     </Grid>
                                 </ExpansionPanelDetails>
+                                <Grid container
+                                      direction="row"
+                                      justify="flex-end"
+                                      alignItems="baseline">
+                                    <Button color="primary"
+                                            onClick={() => {sendNotificationEmail(person.label, activityType.name, activity.dueDate, time, activity.name, description, stakeHolders.length, currentProject, person, projectId, currentChangeManager)}}>
+
+                                        Notify/Remind by email
+                                    </Button>
+                                </Grid>
                             </ExpansionPanel>
                         </div>
                     </DialogContent>

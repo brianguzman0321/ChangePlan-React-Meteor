@@ -25,7 +25,9 @@ const useStyles = makeStyles(theme => ({
         flexGrow: 1,
     },
     toolbar: {
-        minHeight: 48
+        minHeight: 48,
+        flexWrap: 'wrap',
+        justifyContent: 'center'
     },
     menuButton: {
         marginRight: theme.spacing(2),
@@ -242,34 +244,33 @@ function TopNavBar(props) {
                         indicatorColor="primary"
                     >
                         {displayMenus.map((item, index) => {
-                            return <Tab label={item.name.toUpperCase()} className={classes.topTexts} value={index} key={index}/>
+                            return <Tab label={item.name.toUpperCase()} className={classes.topTexts} value={index} key={index} style={{ minWidth: 50 }} />
                         })}
+                        <div className={classes.sectionDesktop}>
+                            <IconButton
+                              edge="end"
+                              aria-label="account of current user"
+                              aria-controls={menuId}
+                              aria-haspopup="true"
+                              onClick={handleProfileMenuOpen}
+                              color="inherit"
+                            >
+                                <AccountCircle />
+                            </IconButton>
+                        </div>
+                        <div className={classes.sectionMobile}>
+                            <IconButton
+                              aria-label="show more"
+                              aria-controls={mobileMenuId}
+                              aria-haspopup="true"
+                              onClick={handleProfileMenuOpen}
+                              color="inherit"
+                            >
+                                <MoreIcon />
+                            </IconButton>
+                        </div>
                     </Tabs> : ''
                     }
-
-                    <div className={classes.sectionDesktop}>
-                        <IconButton
-                            edge="end"
-                            aria-label="account of current user"
-                            aria-controls={menuId}
-                            aria-haspopup="true"
-                            onClick={handleProfileMenuOpen}
-                            color="inherit"
-                        >
-                            <AccountCircle />
-                        </IconButton>
-                    </div>
-                    <div className={classes.sectionMobile}>
-                        <IconButton
-                            aria-label="show more"
-                            aria-controls={mobileMenuId}
-                            aria-haspopup="true"
-                            onClick={handleProfileMenuOpen}
-                            color="inherit"
-                        >
-                            <MoreIcon />
-                        </IconButton>
-                    </div>
                 </Toolbar>
             </AppBar>
             {renderMenu}

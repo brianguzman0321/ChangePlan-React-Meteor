@@ -98,7 +98,6 @@ function NewProject(props) {
                 startingDate,
                 endingDate,
                 companyId: company._id
-
             }
         };
         Meteor.call('projects.insert', params, (err, res) => {
@@ -110,9 +109,7 @@ function NewProject(props) {
                 setName('');
                 props.enqueueSnackbar('New Project Created Successfully.', {variant: 'success'})
             }
-
         })
-
     };
 
     const handleStartingDate = date => {

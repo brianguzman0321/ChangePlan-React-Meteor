@@ -19,6 +19,7 @@ import { Companies } from "/imports/api/companies/companies";
 import { Projects } from "/imports/api/projects/projects";
 import NewProject from './Models/CreateProject';
 import ProjectMenus from './ProjectMenus';
+import {Activities} from "../../../api/activities/activities";
 
 
 const useStyles = makeStyles(theme => ({
@@ -144,13 +145,14 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function ProjectCard(props) {
+    let { projects, company, activities } = props;
+
     const useStyles1 = makeStyles(theme => ({
         title: {
             fontWeight: 1000,
             fontSize: 16
         }
     }));
-    let { projects, company } = props;
     let isAdmin = false;
     if (Roles.userIsInRole(Meteor.userId(), 'superAdmin')) {
         isAdmin = true;
@@ -163,7 +165,20 @@ function ProjectCard(props) {
     const [age, setAge] = React.useState('endingDate');
     const [search, setSearch] = React.useState('');
     const [open, setOpen] = React.useState(false);
+    const [totalActivities, setTotalActivities] = React.useState();
     search || updateFilter('localProjects', 'search', '');
+
+    React.useEffect(() => {
+        if (!projects.length && !activities.length) {
+            return;
+        }
+
+        projects.forEach((project, i) => {
+           const projectActivities = activities.filter((activity) => activity.projectId === project._id) || [];
+
+           projects[i].totalActivities = projectActivities.length;
+        });
+    }, [projects, activities]);
 
     const handleChange = event => {
         setAge(event.target.value);
@@ -257,8 +272,7 @@ function ProjectCard(props) {
                                             ACTIVITIES
                                         </Typography>
                                         <Typography className={classes.pos} color="textSecondary">
-                                            {/*{project.totalActivities}*/}
-                                            0
+                                            {project.totalActivities}
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={4}>
@@ -353,8 +367,10 @@ const ProjectsPage = withTracker(props => {
         sort: local.sort || {},
         name: local.search
     } );
+
     return {
         company: Companies.findOne(),
+        activities: Activities.find({}).fetch(),
         projects: sortingFunc(Projects.find({}).fetch(), local),
     };
 })(ProjectCard);

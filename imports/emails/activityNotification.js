@@ -1,15 +1,16 @@
 const activityNotification = ({
-  targetName,
-  fromEmail,
-  username,
-  changeDescription,
-  activityPurpose,
-  activityDueDate,
-  activityName,
-  activityDescription,
-  activityHelpLink,
-  audience
-}) => `
+                                targetName,
+                                fromEmail,
+                                username,
+                                projectName,
+                                activityType,
+                                activityDueDate,
+                                time,
+                                activityName,
+                                description,
+                                stakeholders,
+                                activityHelpLink,
+                              }) => `
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html><head><title>Activity notification</title></head>
 <body>
@@ -64,14 +65,15 @@ const activityNotification = ({
 <p class="lead" style="font-family: Helvetica,Arial,sans-serif; font-size: 19px; line-height: 27px; color: rgb(75, 75, 75); display: block; margin-top: 0px; margin-bottom: 16px; text-align: center;">Good
 news.</p>
 <p class="lead" style="font-family: Helvetica,Arial,sans-serif; font-size: 19px; line-height: 27px; color: rgb(75, 75, 75); display: block; margin-top: 0px; margin-bottom: 16px; text-align: left;"></p>
-<p class="lead" style="font-family: Helvetica,Arial,sans-serif; font-size: 19px; line-height: 27px; color: rgb(75, 75, 75); display: block; margin-top: 0px; margin-bottom: 16px; text-align: left;">${username} has assigned you an activity to support&nbsp;the ${activityPurpose} change ${changeDescription}.<br>
+<p class="lead" style="font-family: Helvetica,Arial,sans-serif; font-size: 19px; line-height: 27px; color: rgb(75, 75, 75); display: block; margin-top: 0px; margin-bottom: 16px; text-align: left;">You've been assigned a change management activity for the project ${projectName}<br>
 </p>
-<p class="lead" style="font-family: Helvetica,Arial,sans-serif; font-size: 19px; line-height: 27px; color: rgb(75, 75, 75); display: block; margin-top: 0px; margin-bottom: 16px; text-align: left;">Due
-date: ${activityDueDate}<br>
+<p class="lead" style="font-family: Helvetica,Arial,sans-serif; font-size: 19px; line-height: 27px; color: rgb(75, 75, 75); display: block; margin-top: 0px; margin-bottom: 16px; text-align: left;">
+Activity type: ${activityType}<br>
+Due date: ${activityDueDate}<br>
+Duration (time away from BAU): ${time}<br>
 Activity: ${activityName}<br>
-Activity purpose: ${activityPurpose}<br>
-Audience: ${audience}<br>
-Details: ${activityDescription}</p>
+Description: ${description}<br>
+Stakeholders targeted: ${stakeholders}</p>
 <p class="lead" style="font-family: Helvetica,Arial,sans-serif; font-size: 19px; line-height: 27px; color: rgb(75, 75, 75); display: block; margin-top: 40px; margin-bottom: 30px; text-align: left;">If
 you have any questions about this activity, please email ${username} at
 ${fromEmail}.</p>
