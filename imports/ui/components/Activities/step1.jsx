@@ -76,10 +76,11 @@ const useStyles = makeStyles(theme => ({
 function AWARENESSCard(props) {
     let { activities, company, match } = props;
     const classes = useStyles();
-    const [edit, setEdit] = useState(false);
+    const [edit, setEdit] = React.useState(false);
     const [changeManager, setChangeManager] = useState('');
     const [users, setUsers] = useState([]);
     let { projectId } = match.params;
+    const [currentProject, setProject] = useState({});
 
     function completeActivity(activity){
         activity.completed = !activity.completed;
@@ -108,9 +109,10 @@ function AWARENESSCard(props) {
         return selectedActivity && selectedActivity.iconSVG
     }
 
+
     const getProjectManager = () => {
         const curProject = Projects.find({_id: projectId}).fetch()[0];
-        const changeManager = users.find(user => curProject.changeManagers.includes(user.id));
+        const changeManager = users.find(user => curProject.changeManagers.includes(user.value));
         setChangeManager(changeManager);
     };
 
@@ -123,12 +125,12 @@ function AWARENESSCard(props) {
                 setUsers(res.map(user => {
                     return {
                         label: `${user.profile.firstName} ${user.profile.lastName}`,
-                        id: user._id,
+                        value: user._id,
                         role: user.roles,
+                        email: user.emails,
                     }
                 }))
-            }
-            else {
+            } else {
                 setUsers([])
             }
         })
@@ -213,6 +215,7 @@ function AWARENESSCard(props) {
 
                 <AddActivity edit={edit}
                              currentChangeManager={changeManager}
+                             project={currentProject}
                              activity={sActivity}
                              newActivity={() => setEdit(false)}/>
             </CardContent>

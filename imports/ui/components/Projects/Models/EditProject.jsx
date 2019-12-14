@@ -206,8 +206,6 @@ function AddActivity(props) {
         let params = {
             project
         };
-
-
         Meteor.call('projects.update', params, (err, res) => {
             if(err){
                 props.enqueueSnackbar(err.reason, {variant: 'error'});

@@ -65,6 +65,7 @@ const gridStyles = makeStyles(theme => ({
         // background: '#dae0e5'
     }
 }));
+
 const styles2 = {
     root: {
         cursor: 'pointer',
@@ -164,9 +165,10 @@ function AddActivity(props) {
     const [users, setUsers] = useState([]);
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
-    const [person, setPerson] = useState('');
+    const [person, setPerson] = useState(currentChangeManager);
     const [peoples, setPeoples] = useState(stakeHolders.map(item => item._id));
     const [activityType, setActivityType] = useState({});
+    const [currentProject, setProject] = useState(project);
     const [startingDate, setStartingDate] = useState(new Date());
     const [dueDate, setDueDate] = useState(new Date());
     const [completedDate, setCompletedDate] = useState(null);
@@ -183,6 +185,29 @@ function AddActivity(props) {
     const classes = useStyles();
     const classes1 = gridStyles();
 
+    const sendNotificationEmail = (username,
+                                   activityType,
+                                   activityDueDate,
+                                   time,
+                                   activityName,
+                                   description,
+                                   stakeholders, currentProject, person, projectId, currentChangeManager) => {
+        const projectName = currentProject && currentProject.name;
+        const email = person ? (person && person[0].email[0].address) : (currentChangeManager && currentChangeManager[0].email[0].address);
+
+        const fromEmail = 'no-reply.changeplan.co';
+        const activityHelpLink = `https://changeplan.herokuapp.com/projects/${projectId}/activities`
+        Meteor.call('sendEmail', email,  fromEmail, username,
+          projectName,
+          activityType,
+          activityDueDate,
+          time,
+          activityName,
+          description,
+          stakeholders,
+          activityHelpLink);
+    };
+
     const updateValues = () => {
         if(isNew){
             resetValues();
@@ -197,6 +222,7 @@ function AddActivity(props) {
             let obj = {
                 label: `${activity.personResponsible.profile.firstName} ${activity.personResponsible.profile.lastName}`,
                 value: activity.personResponsible._id,
+                email: activity.personResponsible.email,
             };
         setPerson(obj);
         }
@@ -209,10 +235,11 @@ function AddActivity(props) {
         setPeoples(updatedStakeHolders);
     };
 
+
     const getProjectManager = () => {
       const curProject = Projects.find({_id: projectId}).fetch()[0];
       const changeManager = users.find(user => curProject.changeManagers.includes(user.value));
-
+      setProject(curProject);
       setChangeManager(changeManager);
     };
 
@@ -239,6 +266,8 @@ function AddActivity(props) {
                     return {
                         label: `${user.profile.firstName} ${user.profile.lastName}`,
                         value: user._id,
+                        role: user.roles,
+                        email: user.emails
                     }
                 }))
             } else {
@@ -568,6 +597,16 @@ function AddActivity(props) {
                                         </Grid>
                                     </Grid>
                                 </ExpansionPanelDetails>
+                                <Grid container
+                                      direction="row"
+                                      justify="flex-end"
+                                      alignItems="baseline">
+                                    <Button color="primary"
+                                            onClick={() => {sendNotificationEmail(person.label, activityType.name, activity.dueDate, time, activity.name, description, stakeHolders.length, currentProject, person, projectId, currentChangeManager)}}>
+
+                                        Notify/Remind by email
+                                    </Button>
+                                </Grid>
                             </ExpansionPanel>
                         </div>
                     </DialogContent>
