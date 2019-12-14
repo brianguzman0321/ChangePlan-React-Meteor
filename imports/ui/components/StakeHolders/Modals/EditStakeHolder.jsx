@@ -24,6 +24,10 @@ import InputLabel from '@material-ui/core/InputLabel';
 import {withTracker} from "meteor/react-meteor-data";
 import { Companies } from "/imports/api/companies/companies";
 import SaveChanges from "../../Modals/SaveChanges";
+import moment from "moment";
+import { data } from "/imports/activitiesContent.json";
+import {stringHelpers} from "../../../../helpers/stringHelpers";
+import SVGInline from "react-svg-inline";
 
 const styles = theme => ({
     root: {
@@ -104,6 +108,7 @@ function EditStakeHolder(props) {
     const [isUpdated, setIsUpdated] = useState(false);
     const [stakeholderActivities, setStakeholderActivities] = useState(false);
     const [stakeholderProjects, setStakeholderProjects] = useState(false);
+    const [totalTimeAwayBAU, setTotalTimeAwayBAU] = useState(false);
     const classes = useStyles();
 
     const resetChanges = () => {
@@ -130,7 +135,10 @@ function EditStakeHolder(props) {
                 props.enqueueSnackbar(err.reason, {variant: 'error'})
             }
             else{
-                setStakeholderActivities(res);
+                setStakeholderActivities(res.activities);
+                let totalTime = res.totalTime;
+                totalTime = totalTime < 60 ? totalTime + " Minutes" : parseFloat(totalTime / 60).toFixed(2) + " Hours";
+                setTotalTimeAwayBAU(totalTime);
             }
         });
 
@@ -384,7 +392,7 @@ function EditStakeHolder(props) {
                                     Total time away from BAU
                                 </Typography>
                                 <Typography variant="body2" color="textSecondary" component="p">
-                                    4.5 hours
+                                    {totalTimeAwayBAU}
                                 </Typography>
                                 <br/>
                                 <br/>
@@ -408,8 +416,13 @@ function EditStakeHolder(props) {
                                 </Typography>
                                 {
                                     stakeholderActivities && stakeholderActivities.length ? stakeholderActivities.map((activity) => {
+                                        let selectedActivity = data.find(item => item.name === activity.type) || {};
                                         return <Typography variant="body2" color="textSecondary" component="p">
-                                            {activity.name}
+                                            {moment(activity.dueDate).format('DD-MMM-YY')} &nbsp;&nbsp;&nbsp;&nbsp;
+                                            {selectedActivity.iconSVG ? <SVGInline style={{position: 'absolute', marginTop: -4, marginLeft: -9}} width="23px" height="23px" fill='#465563' svg={selectedActivity.iconSVG}/> : ''
+                                            } &nbsp;&nbsp;&nbsp;
+                                            {activity.name} &nbsp;&nbsp;&nbsp;&nbsp;
+                                            {stringHelpers.limitCharacters(activity.description, 112)}
                                         </Typography>
                                     }) : <Typography variant="body2" color="textSecondary" component="p">
                                         No activities Found

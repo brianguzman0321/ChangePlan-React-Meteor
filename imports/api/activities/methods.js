@@ -179,10 +179,26 @@ export const getStakeholderActivities = new ValidatedMethod({
         }
     }).validator(),
     run({ activity }) {
-        const { stakeholderId } = activity;
-        return Activities.find({
+        const {stakeholderId} = activity;
+        let pipeline = [
+            {
+                $match: {
+                    stakeHolders: stakeholderId
+                }
+            },
+            {
+                $group: {_id: null, totalTime: {$sum: "$time"}}
+            }
+        ];
+        let result = Activities.aggregate(pipeline);
+        let totalTime = result.length && result[0].totalTime;
+        let activities = Activities.find({
             stakeHolders: stakeholderId
         }).fetch();
+        return {
+            activities,
+            totalTime
+        }
     }
 });
 
