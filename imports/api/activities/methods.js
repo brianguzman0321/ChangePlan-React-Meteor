@@ -22,6 +22,7 @@ export const insert = new ValidatedMethod({
         },
         'activity.owner': {
             type: String,
+            optional: true
         },
         'activity.type': {
             type: String,
@@ -86,6 +87,7 @@ export const update = new ValidatedMethod({
         },
         'activity.owner': {
             type: String,
+            optional: true,
         },
         'activity.type': {
             type: String,

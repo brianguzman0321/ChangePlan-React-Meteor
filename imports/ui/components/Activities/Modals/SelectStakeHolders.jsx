@@ -53,7 +53,8 @@ function getSorting(order, orderBy) {
 }
 
 const headCells = [
-    { id: 'name', numeric: true, disablePadding: true, label: 'Name' },
+    { id: 'firstName', numeric: true, disablePadding: true, label: 'First name' },
+    { id: 'lastName', numeric: false, disablePadding: true, label: 'Last Name'},
     { id: 'role', numeric: true, disablePadding: false, label: 'ROLE' }
 ];
 
@@ -80,7 +81,7 @@ function EnhancedTableHead(props) {
                     <TableCell
                         key={headCell.id}
                         // align={headCell.numeric ? 'right' : 'left'}
-                        align={'center'}
+                        align={'left'}
                         // padding={headCell.disablePadding ? 'none' : 'default'}
                         sortDirection={orderBy === headCell.id ? order : false}
                     >
@@ -284,8 +285,9 @@ function StakeHolderList(props) {
                                                     color="default"
                                                 />
                                             </TableCell>
-                                            <TableCell align="center">{`${row.firstName} ${row.lastName}`}</TableCell>
-                                            <TableCell align="center">{row.role}</TableCell>
+                                            <TableCell align="left">{row.firstName}</TableCell>
+                                            <TableCell align="left">{row.lastName}</TableCell>
+                                            <TableCell align="left">{row.role}</TableCell>
                                         </TableRow>
                                     );
                                 })}
@@ -357,7 +359,7 @@ export default function SelectStakeHolders(props) {
         updateFilter('localStakeHolders', 'ids', stakeHolders);
         updateFilter('localStakeHolders', 'changed', true);
         setOpen(false);
-        closeModalDialog();
+        closeModalDialog(isUpdated);
     };
 
     const selectStakeHolders = (ids) => {
@@ -383,7 +385,7 @@ export default function SelectStakeHolders(props) {
                             <CloseIcon />
                         </IconButton>
                         <Typography variant="h6" className={classes.title}>
-                            Select StakeHolders
+                            Select Stakeholders
                         </Typography>
                         <Typography variant="h6" className={classes.title}>
                             Selected {stakeHolders.length}

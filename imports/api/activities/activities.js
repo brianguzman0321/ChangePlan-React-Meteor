@@ -17,7 +17,8 @@ Activities.deny({
 Activities.schema = new SimpleSchema({
     owner: {
         type: String,
-        label: 'Owner'
+        label: 'Owner',
+        optional: true,
     },
     type: {
         type: String,
