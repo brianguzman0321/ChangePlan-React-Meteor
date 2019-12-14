@@ -55,7 +55,7 @@ function getSorting(order, orderBy) {
 
 const headCells = [
     { id: 'dueDate', numeric: false, disablePadding: true, label: 'DUE DATE' },
-    { id: 'completedAt', numeric: false, disablePadding: true, label: 'DATA COMPLETED' },
+    { id: 'completedAt', numeric: false, disablePadding: true, label: 'DATE COMPLETED' },
     { id: 'completed', numeric: true, disablePadding: false, label: 'MARK COMPLETE' },
     { id: 'name', numeric: true, disablePadding: false, label: 'ACTIVITY' },
     { id: 'description', numeric: true, disablePadding: false, label: 'DESCRIPTION' },
