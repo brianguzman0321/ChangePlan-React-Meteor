@@ -202,7 +202,7 @@ function AWARENESSCard(props) {
                                         {moment(activity.dueDate).format('DD MMM')}
                                     </Typography>
                                     <Typography variant="body2" color="textSecondary" component="p" >
-                                        {`${activity.personResponsible.profile.firstName} ${activity.personResponsible.profile.lastName}`}
+                                        {activity.personResponsible !== undefined ? `${activity.personResponsible.profile.firstName} ${activity.personResponsible.profile.lastName}` : ''}
                                     </Typography>
                                 </Grid>
                                 <br/>

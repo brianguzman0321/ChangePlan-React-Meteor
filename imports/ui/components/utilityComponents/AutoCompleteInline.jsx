@@ -312,7 +312,7 @@ const components = {
 export default function IntegrationReactSelect(props) {
     const classes = useStyles();
     const theme = useTheme();
-    const [multi, setMulti] = React.useState(props.currentChangeManager || null);
+    const [multi, setMulti] = React.useState(props.selectedValue || props.currentChangeManager);
     const [multiple, setMultiple] = React.useState(props.multiple || false);
 
     const handleChangeMulti = value => {

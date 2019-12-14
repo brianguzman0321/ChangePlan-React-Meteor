@@ -192,13 +192,18 @@ function AddActivity(props) {
         setDueDate(activity.dueDate);
         setCompletedDate(activity.completedAt);
         setDescription(activity.description);
-        let obj = {
-            label: `${activity.personResponsible.profile.firstName} ${activity.personResponsible.profile.lastName}`,
-            value: activity.personResponsible._id
-        };
-        setPerson(obj);
+        if (activity.personResponsible !== undefined) {
+            let obj = {
+                label: `${activity.personResponsible.profile.firstName} ${activity.personResponsible.profile.lastName}`,
+                value: activity.personResponsible._id,
+            };
+            setPerson(obj);
+        }
         setTime(activity.time);
         local.changed || updateFilter('localStakeHolders', 'ids', activity.stakeHolders);
+        if (local.changed) {
+            setIsUpdated(true)
+        }
         let updatedStakeHolders = local.changed ? local.ids : activity.stakeHolders;
         setPeoples(updatedStakeHolders);
 
@@ -207,7 +212,7 @@ function AddActivity(props) {
 
     const getProjectManager = () => {
         const curProject = Projects.find({_id: projectId}).fetch()[0];
-        const changeManager = users.find(user => curProject.changeManagers.includes(user.id));
+        const changeManager = users.find(user => curProject.changeManagers.includes(user.value));
         setChangeManager(changeManager);
     };
 
@@ -233,12 +238,11 @@ function AddActivity(props) {
                 setUsers(res.map(user => {
                     return {
                         label: `${user.profile.firstName} ${user.profile.lastName}`,
-                        id: user._id,
+                        value: user._id,
                         role: user.roles,
                     }
                 }))
-            }
-            else {
+            } else {
                 setUsers([])
             }
         })
@@ -294,7 +298,7 @@ function AddActivity(props) {
 
     const createProject = (e) => {
         e.preventDefault();
-        if(!(person && dueDate)){
+        if(!(dueDate)){
             props.enqueueSnackbar('Please fill all required fields', {variant: 'error'});
             return false;
         }
@@ -307,7 +311,7 @@ function AddActivity(props) {
                 name: activityType.buttonText,
                 type: activityType.name,
                 description,
-                owner: person.id,
+                owner:person && person.value,
                 dueDate,
                 completedAt: completedDate,
                 stakeHolders: peoples,
@@ -338,6 +342,7 @@ function AddActivity(props) {
     const handleDueDate = date => {
         setDueDate(date);
         setIsUpdated(true);
+        setDueDateOpen(false);
     };
 
     const handleEndingDate = date => {
@@ -346,14 +351,15 @@ function AddActivity(props) {
         }
         setCompletedDate(date);
         setIsUpdated(true);
+        setEndingDateOpen(false);
     };
 
     const openDueDatePicker = () => {
-        setDueDateOpen(!dueDateOpen)
+        setDueDateOpen(true)
     };
 
     const openCompletedDatePicker = () => {
-        setEndingDateOpen(!endingDateOpen)
+        setEndingDateOpen(true);
     };
 
     const openEnding = (e) => {
@@ -412,40 +418,42 @@ function AddActivity(props) {
                                 <ExpansionPanelDetails>
                                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
                                         <Grid container justify="space-between" spacing={4}>
-                                            <Grid item xs={6} onClick={openDueDatePicker}>
+                                            <Grid item xs={6}>
                                                 <KeyboardDatePicker
-                                                    fullWidth
-                                                    disableToolbar
-                                                    variant="inline"
-                                                    format="MM/dd/yyyy"
-                                                    margin="normal"
-                                                    id="date-picker-inline"
-                                                    label="Due Date"
-                                                    value={dueDate}
-                                                    autoOk={true}
-                                                    open={dueDateOpen}
-                                                    onChange={handleDueDate}
-                                                    KeyboardButtonProps={{
-                                                        'aria-label': 'change date',
-                                                    }}
+                                                  fullWidth
+                                                  disableToolbar
+                                                  variant="inline"
+                                                  format="MM/dd/yyyy"
+                                                  margin="normal"
+                                                  id="date-picker-inline"
+                                                  label="Due Date"
+                                                  value={dueDate}
+                                                  autoOk={true}
+                                                  open={dueDateOpen}
+                                                  onClick={openDueDatePicker}
+                                                  onChange={handleDueDate}
+                                                  KeyboardButtonProps={{
+                                                      'aria-label': 'change date',
+                                                  }}
                                                 />
                                             </Grid>
-                                            <Grid item xs={6} onClick={openCompletedDatePicker}>
+                                            <Grid item xs={6}>
                                                 <KeyboardDatePicker
-                                                    disableToolbar
-                                                    fullWidth
-                                                    variant="inline"
-                                                    margin="normal"
-                                                    id="date-picker-dialog"
-                                                    label="Date Completed"
-                                                    format="MM/dd/yyyy"
-                                                    value={completedDate}
-                                                    autoOk={true}
-                                                    open={endingDateOpen}
-                                                    onChange={handleEndingDate}
-                                                    KeyboardButtonProps={{
-                                                        'aria-label': 'change date',
-                                                    }}
+                                                  disableToolbar
+                                                  fullWidth
+                                                  variant="inline"
+                                                  margin="normal"
+                                                  id="date-picker-dialog"
+                                                  label="Date Completed"
+                                                  format="MM/dd/yyyy"
+                                                  value={completedDate}
+                                                  autoOk={true}
+                                                  open={endingDateOpen}
+                                                  onClick={openCompletedDatePicker}
+                                                  onChange={handleEndingDate}
+                                                  KeyboardButtonProps={{
+                                                      'aria-label': 'change date',
+                                                  }}
                                                 />
                                             </Grid>
                                             <Grid item xs={6}>
