@@ -12,9 +12,6 @@ Meteor.methods({
                        description,
                        stakeholders,
                        activityHelpLink) {
-    if (!Meteor.user()) {
-      throw new Meteor.Error(403, "not logged in");
-    } else {
       Email.send({
         to: email,
         from: 'no-reply.changeplan.co',
@@ -30,5 +27,4 @@ Meteor.methods({
           activityHelpLink } )
       })
     }
-  }
 });

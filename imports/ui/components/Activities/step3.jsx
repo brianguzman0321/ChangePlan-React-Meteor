@@ -80,6 +80,7 @@ function AWARENESSCard(props) {
     const [edit, setEdit] = useState(false);
     const [changeManager, setChangeManager] = useState('');
     const [users, setUsers] = useState([]);
+    const [currentProject, setProject] = useState({});
     let { projectId } = match.params;
 
     function completeActivity(activity){
@@ -111,6 +112,7 @@ function AWARENESSCard(props) {
 
     const getProjectManager = () => {
         const curProject = Projects.find({_id: projectId}).fetch()[0];
+        setProject(curProject);
         const changeManager = users.find(user => curProject.changeManagers.includes(user.id));
         setChangeManager(changeManager);
     };
@@ -124,8 +126,9 @@ function AWARENESSCard(props) {
                 setUsers(res.map(user => {
                     return {
                         label: `${user.profile.firstName} ${user.profile.lastName}`,
-                        id: user._id,
+                        value: user._id,
                         role: user.roles,
+                        email: user.emails,
                     }
                 }))
             }
@@ -214,6 +217,7 @@ function AWARENESSCard(props) {
 
                 <AddActivity edit={edit}
                              currentChangeManager={changeManager}
+                             project={currentProject}
                              activity={sActivity}
                              newActivity={() => setEdit(false)}/>
             </CardContent>

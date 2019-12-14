@@ -112,6 +112,7 @@ function AWARENESSCard(props) {
 
     const getProjectManager = () => {
         const curProject = Projects.find({_id: projectId}).fetch()[0];
+        setProject(curProject);
         const changeManager = users.find(user => curProject.changeManagers.includes(user.value));
         setChangeManager(changeManager);
     };

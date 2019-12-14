@@ -193,9 +193,11 @@ function AddActivity(props) {
                                    description,
                                    stakeholders, currentProject, person, projectId, currentChangeManager) => {
         const projectName = currentProject && currentProject.name;
-        const email = person ? (person && person[0].email[0].address) : (currentChangeManager && currentChangeManager[0].email[0].address);
-
-        const fromEmail = 'no-reply.changeplan.co';
+        const email = person ? (person && person.email[0].address) : (currentChangeManager && currentChangeManager.email[0].address);
+        if (description === undefined) {
+            description = ''
+        }
+        const fromEmail = email;
         const activityHelpLink = `https://changeplan.herokuapp.com/projects/${projectId}/activities`
         Meteor.call('sendEmail', email,  fromEmail, username,
           projectName,
@@ -205,7 +207,13 @@ function AddActivity(props) {
           activityName,
           description,
           stakeholders,
-          activityHelpLink);
+          activityHelpLink, (error, result) => {
+            if (error) {
+                props.enqueueSnackbar(err.reason, {variant: 'error'});
+            } else {
+                props.enqueueSnackbar('Email send successful', {variant: 'success'});
+            }
+          });
     };
 
     const updateValues = () => {
@@ -222,7 +230,7 @@ function AddActivity(props) {
             let obj = {
                 label: `${activity.personResponsible.profile.firstName} ${activity.personResponsible.profile.lastName}`,
                 value: activity.personResponsible._id,
-                email: activity.personResponsible.email,
+                email: activity.personResponsible.emails,
             };
         setPerson(obj);
         }

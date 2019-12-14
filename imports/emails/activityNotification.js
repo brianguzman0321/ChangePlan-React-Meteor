@@ -7,7 +7,7 @@ const activityNotification = ({
                                 activityDueDate,
                                 time,
                                 activityName,
-                                activityDescription,
+                                description,
                                 stakeholders,
                                 activityHelpLink,
                               }) => `
@@ -70,9 +70,9 @@ news.</p>
 <p class="lead" style="font-family: Helvetica,Arial,sans-serif; font-size: 19px; line-height: 27px; color: rgb(75, 75, 75); display: block; margin-top: 0px; margin-bottom: 16px; text-align: left;">
 Activity type: ${activityType}<br>
 Due date: ${activityDueDate}<br>
-Duration (time away from BAU): ${time}
+Duration (time away from BAU): ${time}<br>
 Activity: ${activityName}<br>
-Description: ${activityDescription}<br>
+Description: ${description}<br>
 Stakeholders targeted: ${stakeholders}</p>
 <p class="lead" style="font-family: Helvetica,Arial,sans-serif; font-size: 19px; line-height: 27px; color: rgb(75, 75, 75); display: block; margin-top: 40px; margin-bottom: 30px; text-align: left;">If
 you have any questions about this activity, please email ${username} at
