@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -28,6 +28,7 @@ import { Peoples } from '/imports/api/peoples/peoples'
 import { Companies } from '/imports/api/companies/companies'
 import  AutoComplete from '/imports/ui/components/utilityComponents/AutoCompleteInline'
 import { withRouter } from 'react-router'
+import SaveChanges from "../../Modals/SaveChanges";
 
 const styles = theme => ({
     root: {
@@ -136,6 +137,8 @@ function AddActivity(props) {
     const [users, setUsers] = React.useState([]);
     const [name, setName] = React.useState(project.name || '');
     const [description, setDescription] = React.useState(project.name || '');
+    const [showModalDialog, setShowModalDialog] = useState(false);
+    const [isUpdated, setIsUpdated] = useState(false);
     let managers;
     if(project && project.managerDetails)
     managers = project.managerDetails.map((manager) => {
@@ -269,20 +272,36 @@ function AddActivity(props) {
         updateFilter('localStakeHolders', 'changed', false);
         resetValues()
         handleModalClose(modalName);
+        setIsUpdated(false);
+        setShowModalDialog(false);
     };
 
     const handleStartingDate = date => {
+        setIsUpdated(true);
         setStartingDate(date)
     };
 
     const handleDueDate = date => {
+        setIsUpdated(true);
         setDueDate(date)
     };
 
+    const handleOpenModalDialog = () => {
+        if (isUpdated) {
+            setShowModalDialog(true);
+        }
+    };
+
+    const closeModalDialog = () => {
+        setShowModalDialog(false);
+    };
+
     const updateUsers = (value) => {
+        setIsUpdated(true);
         setPerson(value)
     };
     const handleDescriptionChange = (e) => {
+        setIsUpdated(true);
         setDescription(e.target.value)
     };
 
@@ -298,8 +317,8 @@ function AddActivity(props) {
                 Edit Project Details
             </Button> : ''}
 
-            <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth={true}>
-                <DialogTitle id="customized-dialog-title" onClose={handleClose}>
+            <Dialog onClose={isUpdated ? handleOpenModalDialog : () => handleClose()} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth={true}>
+                <DialogTitle id="customized-dialog-title" onClose={isUpdated ? handleOpenModalDialog : () => handleClose()}>
                     Edit Project Details
                 </DialogTitle>
                 <form onSubmit={updateProject} noValidate>
@@ -400,12 +419,17 @@ function AddActivity(props) {
                                 </ExpansionPanelDetails>
                             </ExpansionPanel>
                         </div>
+                        <SaveChanges
+                          handleClose={handleClose}
+                          showModalDialog={showModalDialog}
+                          handleSave={updateProject}
+                          closeModalDialog={closeModalDialog}
+                        />
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={handleClose} color="secondary">
-                            cancel
+                        <Button onClick={isUpdated ? handleOpenModalDialog : () => handleClose()} color="secondary">
+                            Cancel
                         </Button>
-
                         <Button type="submit" color="primary" onClick={updateProject}>
                             Update Project
                         </Button>
