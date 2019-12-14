@@ -8,6 +8,7 @@ import { DDPRateLimiter } from 'meteor/ddp-rate-limiter';
 import { LoggedInMixin } from 'meteor/tunifight:loggedin-mixin';
 
 import { Projects } from './projects.js';
+import {Activities} from "../activities/activities";
 
 export const insert = new ValidatedMethod({
     name: 'projects.insert',
@@ -248,11 +249,35 @@ export const remove = new ValidatedMethod({
     }
 });
 
+export const getStakeholderProjects = new ValidatedMethod({
+    name: 'projects.getStakeholderProjects',
+    mixins : [LoggedInMixin],
+    checkLoggedInError: {
+        error: 'notLogged',
+        message: 'You need to be logged in to remove activity'
+    },
+    validate: new SimpleSchema({
+        'project': {
+            type: Object
+        },
+        'project.stakeholderId': {
+            type: String
+        }
+    }).validator(),
+    run({ project }) {
+        const { stakeholderId } = project;
+        return Projects.find({
+            stakeHolders: stakeholderId
+        }).fetch();
+    }
+});
+
 // Get list of all method names on Companies
 const PROJECTS_METHODS = _.pluck([
     insert,
     update,
-    remove
+    remove,
+    getStakeholderProjects
 ], 'name');
 
 if (Meteor.isServer) {
