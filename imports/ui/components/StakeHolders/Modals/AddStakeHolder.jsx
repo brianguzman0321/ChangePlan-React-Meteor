@@ -299,13 +299,13 @@ function AddStakeHolder(props) {
       if (addToProject.length) {
         tempTableDate = { ...tempTableDate, attached: addToProject };
         console.log('addToProject works', tempTableDate);
-        setTableData({ ...tableData, attached: addToProject });
+        setTableData(tempTableDate);
         setAddConfirmation(true);
       }
 
       if (addToBoth.length) {
-        setTableData({ ...tableData, new: addToBoth });
         tempTableDate = { ...tempTableDate, new: addToBoth };
+        setTableData(tempTableDate);
         console.log('addToBoth works', addToBoth);
         console.log('addToBoth works tempTableDate', tempTableDate);
 
