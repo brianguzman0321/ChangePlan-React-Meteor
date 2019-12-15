@@ -291,7 +291,7 @@ function AddStakeHolder(props) {
       let tempTableDate = { attached: [], new: [] };
       console.log('addToProject', addToProject);
       console.log('addToBoth', addToBoth);
-      
+
       currentProject.stakeHolders = [...currentProject.stakeHolders, ...addToProject.map(people => people._id)];
 
       setStakeHolderId(currentProject);
@@ -384,11 +384,13 @@ function AddStakeHolder(props) {
   };
 
   const addExistingStakeholder = (isMulti = false) => {
+    console.log('addExistingStakeholder call');
     if (isMulti) {
+      console.log('isMulti', isMulti);
       const params = {
         project: stakeHolderId,
       };
-
+      console.log('params', params);
       Meteor.call('projects.update', params, (error, result) => {
         if (error) {
           props.enqueueSnackbar(err.reason, { variant: 'error' })
@@ -402,8 +404,11 @@ function AddStakeHolder(props) {
 
     } else {
       const currentProject = Projects.find({ _id: projectId }).fetch();
+      console.log('isMulti', isMulti);
+      console.log('currentProject', currentProject);
 
       if (currentProject[0].stakeHolders.includes(stakeholder._id)) {
+        console.log('exist in proejct');
         props.enqueueSnackbar('This StakeHolder was already added to current project.', { variant: 'warning' })
         closeAgreedToAddModal();
       } else {
@@ -627,15 +632,6 @@ function AddStakeHolder(props) {
                     Save
                   </Button>
                 </DialogActions>
-                <AddExistingStakeholder showModalDialog={agreedToAddModal}
-                  stakeholder={stakeholder}
-                  closeModalDialog={() => setAgreedToAddModal(false)}
-                  handleSave={() => addExistingStakeholder(false)} />
-                <AddExistingStakeholder showModalDialog={addConfirmation}
-                  isMulti={true}
-                  stakeholder={stakeholder}
-                  closeModalDialog={() => setAddConfirmation(false)}
-                  handleSave={() => addExistingStakeholder(true)} />
               </TabPanel>
             </form>
             <TabPanel value={value} index={1}>
@@ -671,6 +667,15 @@ function AddStakeHolder(props) {
       </Dialog>
       <AddStakeHoldersResults tableData={tableData} showModalDialog={openResultTable}
         closeModalDialog={() => setOpenResultTable(false)} />
+      <AddExistingStakeholder showModalDialog={agreedToAddModal}
+        stakeholder={stakeholder}
+        closeModalDialog={() => setAgreedToAddModal(false)}
+        handleSave={() => addExistingStakeholder(false)} />
+      <AddExistingStakeholder showModalDialog={addConfirmation}
+        isMulti={true}
+        stakeholder={stakeholder}
+        closeModalDialog={() => setAddConfirmation(false)}
+        handleSave={() => addExistingStakeholder(true)} />
     </div>
   );
 }
