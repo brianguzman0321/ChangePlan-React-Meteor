@@ -280,6 +280,9 @@ function AddStakeHolder(props) {
       const peoples = Peoples.find({
         company: company._id
       }).fetch();
+
+      const allPeoples = Peoples.find({}).fetch();
+
       const peoplesEmails = peoples.map(people => people.email);
       console.log('peoplesEmails', peoplesEmails);
 
@@ -287,7 +290,8 @@ function AddStakeHolder(props) {
       console.log('currentProject', currentProject);
 
       const addToProject = peoples.filter(people => (importedEmails.includes(people.email) && !currentProject.stakeHolders.includes(people._id)));
-      const addToBoth = data1.filter(({ email }) => !peoplesEmails.includes(email));
+      const addToBoth = data1.filter(({ email }) => !peoplesEmails.includes(email)).filter(people => allPeoples.find((_people) => _people.email === people.email) === -1);
+      
       let tempTableDate = { attached: [], new: [] };
       console.log('addToProject', addToProject);
       console.log('addToBoth', addToBoth);
