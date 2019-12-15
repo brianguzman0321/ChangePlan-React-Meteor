@@ -298,6 +298,7 @@ function AddStakeHolder(props) {
 
       if (addToProject.length) {
         tempTableDate = { ...tempTableDate, attached: addToProject };
+        console.log('addToProject works', tempTableDate);
         setTableData({ ...tableData, attached: addToProject });
         setAddConfirmation(true);
       }
@@ -306,6 +307,8 @@ function AddStakeHolder(props) {
         setTableData({ ...tableData, new: addToBoth });
         tempTableDate = { ...tempTableDate, new: addToBoth };
         console.log('addToBoth works', addToBoth);
+        console.log('addToBoth works tempTableDate', tempTableDate);
+
         insertManyStakeholders({ peoples: addToBoth }, tempTableDate);
       }
 
@@ -398,6 +401,7 @@ function AddStakeHolder(props) {
           props.enqueueSnackbar('StakeHolder Added Successful.', { variant: 'success' });
           setAddConfirmation(false);
           setOpen(false);
+          console.log('RESULT data', tableData);
           setOpenResultTable(true);
         }
       });
