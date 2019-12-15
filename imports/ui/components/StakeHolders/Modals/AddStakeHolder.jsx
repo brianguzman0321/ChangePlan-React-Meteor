@@ -232,7 +232,8 @@ function AddStakeHolder(props) {
     data.pop();
 
     let csvUploadErrorMessage = '';
-    
+    console.log('data before mpa', data);
+
     let data1 = data.map((doc) => {
       if (!doc['First Name']) {
         csvUploadErrorMessage = 'First Name Value is empty or Invalid'
@@ -269,21 +270,28 @@ function AddStakeHolder(props) {
       doc['Level of support'] && (paramsObj.supportLevel = Number(doc['Level of support']));
       return paramsObj
     });
+    console.log('data1', data1);
 
     const importedEmails = data1.map(csvRow => csvRow.email) || [];
+    console.log('importedEmails', importedEmails);
+    console.log('company', company);
 
     if (importedEmails.length && company) {
       const peoples = Peoples.find({
         company: company._id
       }).fetch();
       const peoplesEmails = peoples.map(people => people.email);
+      console.log('peoplesEmails', peoplesEmails);
 
       const currentProject = Projects.findOne({ _id: projectId });
+      console.log('currentProject', currentProject);
 
       const addToProject = peoples.filter(people => (importedEmails.includes(people.email) && !currentProject.stakeHolders.includes(people._id)));
       const addToBoth = data1.filter(({ email }) => !peoplesEmails.includes(email));
       let tempTableDate = { attached: [], new: [] };
-
+      console.log('addToProject', addToProject);
+      console.log('addToBoth', addToBoth);
+      
       currentProject.stakeHolders = [...currentProject.stakeHolders, ...addToProject.map(people => people._id)];
 
       setStakeHolderId(currentProject);
@@ -297,6 +305,7 @@ function AddStakeHolder(props) {
       if (addToBoth.length) {
         setTableData({ ...tableData, new: addToBoth });
         tempTableDate = { ...tempTableDate, new: addToBoth };
+        console.log('addToBoth works', addToBoth);
         insertManyStakeholders({ peoples: addToBoth }, tempTableDate);
       }
 
