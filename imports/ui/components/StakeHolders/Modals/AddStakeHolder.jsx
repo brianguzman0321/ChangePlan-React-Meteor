@@ -1,6 +1,6 @@
-import React, {useEffect} from "react";
-import {withStyles, makeStyles} from '@material-ui/core/styles';
-import {withRouter} from 'react-router';
+import React, { useEffect } from "react";
+import { withStyles, makeStyles } from '@material-ui/core/styles';
+import { withRouter } from 'react-router';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
@@ -12,29 +12,29 @@ import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import Papa from 'papaparse'
 import TextField from '@material-ui/core/TextField';
-import {withSnackbar} from 'notistack';
+import { withSnackbar } from 'notistack';
 import 'date-fns';
 import Grid from "@material-ui/core/Grid/Grid";
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
-import {withTracker} from "meteor/react-meteor-data";
-import {Companies} from "/imports/api/companies/companies";
+import { withTracker } from "meteor/react-meteor-data";
+import { Companies } from "/imports/api/companies/companies";
 import PropTypes from 'prop-types';
 import SwipeableViews from 'react-swipeable-views';
-import {useTheme} from '@material-ui/core/styles';
+import { useTheme } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
-import {Peoples} from '../../../../api/peoples/peoples';
+import { Peoples } from '../../../../api/peoples/peoples';
 import AddExistingStakeholder from "./AddExistingStakeholder";
-import {Projects} from '../../../../api/projects/projects'
+import { Projects } from '../../../../api/projects/projects'
 import AddStakeHoldersResults from "./AddStakeholdersResults";
 
 function TabPanel(props) {
-  const {children, value, index, ...other} = props;
+  const { children, value, index, ...other } = props;
 
   return (
     <Typography
@@ -89,13 +89,13 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const DialogTitle = withStyles(styles)(props => {
-  const {children, classes, onClose} = props;
+  const { children, classes, onClose } = props;
   return (
     <MuiDialogTitle disableTypography className={classes.root}>
       <Typography variant="h6">{children}</Typography>
       {onClose ? (
         <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
-          <CloseIcon/>
+          <CloseIcon />
         </IconButton>
       ) : null}
     </MuiDialogTitle>
@@ -141,8 +141,8 @@ function AddStakeHolder(props) {
   });
   const [openResultTable, setOpenResultTable] = React.useState(false);
 
-  let {company, match} = props;
-  let {projectId} = match.params;
+  let { company, match } = props;
+  let { projectId } = match.params;
   let both = false;
 
   const classes = useStyles();
@@ -170,6 +170,7 @@ function AddStakeHolder(props) {
 
   const handleClose = () => {
     setOpen(false);
+    setLoading(false);
   };
 
   const handleEmailChange = (e) => {
@@ -178,17 +179,17 @@ function AddStakeHolder(props) {
   };
 
   const checkEmail = (stakeholderEmail) => {
-    const newStakeholder = Peoples.find({email: stakeholderEmail, company: company._id}).fetch()[0];
-    setNewStakeholder({...newStakeholder});
+    const newStakeholder = Peoples.find({ email: stakeholderEmail, company: company._id }).fetch()[0];
+    setNewStakeholder({ ...newStakeholder });
     if (newStakeholder) {
       setAgreedToAddModal(true);
     }
   };
 
   const checkManyEmail = (stakeholderEmail) => {
-    const newStakeholder = Peoples.find({email: stakeholderEmail, company: company._id}).fetch();
+    const newStakeholder = Peoples.find({ email: stakeholderEmail, company: company._id }).fetch();
 
-    setNewStakeholder({...newStakeholder});
+    setNewStakeholder({ ...newStakeholder });
     if (newStakeholder) {
       setAgreedToAddModal(true);
     }
@@ -204,7 +205,7 @@ function AddStakeHolder(props) {
     try {
       ext = file.name.match(/\.([^\.]+)$/)[1];
     } catch (e) {
-      props.enqueueSnackbar(`Unsupported file type. CSV only.`, {variant: 'error'});
+      props.enqueueSnackbar(`Unsupported file type. CSV only.`, { variant: 'error' });
       setCsvfile(undefined);
       return false;
     }
@@ -214,7 +215,7 @@ function AddStakeHolder(props) {
         setCsvfile(event.target.files[0]);
         break;
       default:
-        props.enqueueSnackbar(`Unsupported file type (${ext}). CSV only.`, {variant: 'error'});
+        props.enqueueSnackbar(`Unsupported file type (${ext}). CSV only.`, { variant: 'error' });
         setCsvfile(undefined);
     }
 
@@ -224,14 +225,14 @@ function AddStakeHolder(props) {
     var data = result.data;
 
     if (!(data && data.length)) {
-      props.enqueueSnackbar('No Valid Data Found', {variant: 'error'});
+      props.enqueueSnackbar('No Valid Data Found', { variant: 'error' });
       return false;
     }
 
     data.pop();
 
     let csvUploadErrorMessage = '';
-
+    
     let data1 = data.map((doc) => {
       if (!doc['First Name']) {
         csvUploadErrorMessage = 'First Name Value is empty or Invalid'
@@ -277,46 +278,49 @@ function AddStakeHolder(props) {
       }).fetch();
       const peoplesEmails = peoples.map(people => people.email);
 
-      const currentProject = Projects.findOne({_id: projectId});
+      const currentProject = Projects.findOne({ _id: projectId });
 
       const addToProject = peoples.filter(people => (importedEmails.includes(people.email) && !currentProject.stakeHolders.includes(people._id)));
-      const addToBoth = data1.filter(({email}) => !peoplesEmails.includes(email));
-      let tempTableDate = {attached: [], new: []};
+      const addToBoth = data1.filter(({ email }) => !peoplesEmails.includes(email));
+      let tempTableDate = { attached: [], new: [] };
 
       currentProject.stakeHolders = [...currentProject.stakeHolders, ...addToProject.map(people => people._id)];
 
       setStakeHolderId(currentProject);
 
       if (addToProject.length) {
-        tempTableDate = {...tempTableDate, attached: addToProject};
-        setTableData({...tableData, attached: addToProject});
+        tempTableDate = { ...tempTableDate, attached: addToProject };
+        setTableData({ ...tableData, attached: addToProject });
         setAddConfirmation(true);
       }
 
       if (addToBoth.length) {
-        setTableData({...tableData, new: addToBoth});
-        tempTableDate = {...tempTableDate, new: addToBoth};
-        insertManyStakeholders({peoples: addToBoth}, tempTableDate);
+        setTableData({ ...tableData, new: addToBoth });
+        tempTableDate = { ...tempTableDate, new: addToBoth };
+        insertManyStakeholders({ peoples: addToBoth }, tempTableDate);
+      }
+
+      if (!addToBoth.length && !addToProject.length) {
+        props.enqueueSnackbar(`Nothing to add from this file.`, { variant: 'warning' });
+        setLoading(false);
       }
     }
 
     if (csvUploadErrorMessage) {
-      props.enqueueSnackbar(`Upload Failed! ${csvUploadErrorMessage}`, {variant: 'error'});
+      props.enqueueSnackbar(`Upload Failed! ${csvUploadErrorMessage}`, { variant: 'error' });
       return false
     }
-
-    setLoading(true);
   };
 
   const insertManyStakeholders = (params, tempTableDate) => {
     Meteor.call('peoples.insertMany', params, (err, res) => {
       setLoading(false);
       if (err) {
-        props.enqueueSnackbar(`Upload Aborted! ${err.reason}`, {variant: 'error'})
+        props.enqueueSnackbar(`Upload Aborted! ${err.reason}`, { variant: 'error' })
       } else {
         setOpen(false);
         setCsvfile(null);
-        props.enqueueSnackbar('StakeHolders Added Successfully.', {variant: 'success'});
+        props.enqueueSnackbar('StakeHolders Added Successfully.', { variant: 'success' });
         if (tempTableDate.new.length) {
           setOpenResultTable(true);
         }
@@ -326,20 +330,21 @@ function AddStakeHolder(props) {
 
   const importCSV = () => {
     if (!csvfile) {
-      props.enqueueSnackbar('No File Selected', {variant: 'error'});
+      props.enqueueSnackbar('No File Selected', { variant: 'error' });
       return false;
     }
     Papa.parse(csvfile, {
       complete: updateData,
-      header: true
+      header: true,
+      skipEmptyLines: true,
     });
   };
 
 
   const onSubmit = (e) => {
     e.preventDefault();
-    const newStakeholder = Peoples.find({email, company: company._id}).fetch()[0];
-    setNewStakeholder({...newStakeholder});
+    const newStakeholder = Peoples.find({ email, company: company._id }).fetch()[0];
+    setNewStakeholder({ ...newStakeholder });
     if (newStakeholder) {
       setAgreedToAddModal(true);
     } else {
@@ -359,10 +364,10 @@ function AddStakeHolder(props) {
       supportLevel && (params.people.supportLevel = supportLevel);
       Meteor.call('peoples.insert', params, (err, res) => {
         if (err) {
-          props.enqueueSnackbar(err.reason, {variant: 'error'})
+          props.enqueueSnackbar(err.reason, { variant: 'error' })
         } else {
           setOpen(false);
-          props.enqueueSnackbar('StakeHolder Added Successfully.', {variant: 'success'})
+          props.enqueueSnackbar('StakeHolder Added Successfully.', { variant: 'success' })
         }
 
       })
@@ -377,9 +382,9 @@ function AddStakeHolder(props) {
 
       Meteor.call('projects.update', params, (error, result) => {
         if (error) {
-          props.enqueueSnackbar(err.reason, {variant: 'error'})
+          props.enqueueSnackbar(err.reason, { variant: 'error' })
         } else {
-          props.enqueueSnackbar('StakeHolder Added Successful.', {variant: 'success'});
+          props.enqueueSnackbar('StakeHolder Added Successful.', { variant: 'success' });
           setAddConfirmation(false);
           setOpen(false);
           setOpenResultTable(true);
@@ -387,10 +392,10 @@ function AddStakeHolder(props) {
       });
 
     } else {
-      const currentProject = Projects.find({_id: projectId}).fetch();
+      const currentProject = Projects.find({ _id: projectId }).fetch();
 
       if (currentProject[0].stakeHolders.includes(stakeholder._id)) {
-        props.enqueueSnackbar('This StakeHolder was already added to current project.', {variant: 'warning'})
+        props.enqueueSnackbar('This StakeHolder was already added to current project.', { variant: 'warning' })
         closeAgreedToAddModal();
       } else {
         currentProject[0].stakeHolders.push(stakeholder._id);
@@ -399,9 +404,9 @@ function AddStakeHolder(props) {
         };
         Meteor.call('projects.update', params, (error, result) => {
           if (error) {
-            props.enqueueSnackbar(err.reason, {variant: 'error'})
+            props.enqueueSnackbar(err.reason, { variant: 'error' })
           } else {
-            props.enqueueSnackbar('StakeHolder Added Successful.', {variant: 'success'});
+            props.enqueueSnackbar('StakeHolder Added Successful.', { variant: 'success' });
             closeAgreedToAddModal();
             setOpen(false);
           }
@@ -433,7 +438,7 @@ function AddStakeHolder(props) {
         ADD/IMPORT
       </Button>
       <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth={true}
-              classes={{paper: classes.dialogPaper}}>
+        classes={{ paper: classes.dialogPaper }}>
         <DialogTitle id="customized-dialog-title" onClose={handleClose}>
           Add/Import Stakeholders
         </DialogTitle>
@@ -527,7 +532,7 @@ function AddStakeHolder(props) {
                       fullWidth={true}
                     />
                   </Grid>
-                  <Grid item xs={6}/>
+                  <Grid item xs={6} />
                   <Grid item xs={12}>
                     <TextField
                       // margin="dense"
@@ -567,9 +572,9 @@ function AddStakeHolder(props) {
                         <MenuItem value={5}>5</MenuItem>
                       </Select>
                     </FormControl>
-                    <br/>
-                    <br/>
-                    <br/>
+                    <br />
+                    <br />
+                    <br />
                   </Grid>
                   <Grid item xs={6}>
                     <FormControl className={classes.formControl} fullWidth={true}>
@@ -597,13 +602,13 @@ function AddStakeHolder(props) {
                         <MenuItem value={5}>5</MenuItem>
                       </Select>
                     </FormControl>
-                    <br/>
-                    <br/>
-                    <br/>
+                    <br />
+                    <br />
+                    <br />
                   </Grid>
 
                 </Grid>
-                <Divider/>
+                <Divider />
                 <DialogActions>
 
                   <Button onClick={handleClose} color="secondary">
@@ -614,14 +619,14 @@ function AddStakeHolder(props) {
                   </Button>
                 </DialogActions>
                 <AddExistingStakeholder showModalDialog={agreedToAddModal}
-                                        stakeholder={stakeholder}
-                                        closeModalDialog={() => setAgreedToAddModal(false)}
-                                        handleSave={() => addExistingStakeholder(false)}/>
+                  stakeholder={stakeholder}
+                  closeModalDialog={() => setAgreedToAddModal(false)}
+                  handleSave={() => addExistingStakeholder(false)} />
                 <AddExistingStakeholder showModalDialog={addConfirmation}
-                                        isMulti={true}
-                                        stakeholder={stakeholder}
-                                        closeModalDialog={() => setAddConfirmation(false)}
-                                        handleSave={() => addExistingStakeholder(true)}/>
+                  isMulti={true}
+                  stakeholder={stakeholder}
+                  closeModalDialog={() => setAddConfirmation(false)}
+                  handleSave={() => addExistingStakeholder(true)} />
               </TabPanel>
             </form>
             <TabPanel value={value} index={1}>
@@ -629,7 +634,7 @@ function AddStakeHolder(props) {
                 <input
                   accept="/csv/*"
                   className={classes.input}
-                  style={{display: 'none'}}
+                  style={{ display: 'none' }}
                   ref={input => {
                     this.filesInput = input;
                   }}
@@ -648,7 +653,7 @@ function AddStakeHolder(props) {
                   </Typography>
 
                 </label>
-                <p/>
+                <p />
                 <Button onClick={importCSV} disabled={loading} color="primary" variant="contained"> Upload </Button>
               </div>
             </TabPanel>
@@ -656,16 +661,16 @@ function AddStakeHolder(props) {
         </DialogContent>
       </Dialog>
       <AddStakeHoldersResults tableData={tableData} showModalDialog={openResultTable}
-                              closeModalDialog={() => setOpenResultTable(false)}/>
+        closeModalDialog={() => setOpenResultTable(false)} />
     </div>
   );
 }
 
 const AddStakeHolderPage = withTracker(props => {
-  const {email} = props;
-  Meteor.subscribe('peoples', {email});
+  const { email } = props;
+  Meteor.subscribe('peoples', { email });
   return {
-    people: Peoples.find({email}).fetch(),
+    people: Peoples.find({ email }).fetch(),
     company: Companies.findOne(),
   };
 })(withRouter(AddStakeHolder));
