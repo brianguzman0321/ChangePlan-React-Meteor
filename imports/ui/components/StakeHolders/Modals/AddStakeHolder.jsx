@@ -330,7 +330,7 @@ function AddStakeHolder(props) {
         setOpen(false);
         setCsvfile(null);
         props.enqueueSnackbar('StakeHolders Added Successfully.', { variant: 'success' });
-        if (tempTableDate.new.length) {
+        if (!tempTableDate.attached.length) {
           setOpenResultTable(true);
         }
       }
