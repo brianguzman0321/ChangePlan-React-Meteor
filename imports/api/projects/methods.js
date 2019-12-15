@@ -84,7 +84,8 @@ export const insert = new ValidatedMethod({
             optional: true
         },
         'project.risks.$': {
-            type: String,
+            type: Object,
+            blackbox: true,
             optional: true
         },
         'project.impacts': {
