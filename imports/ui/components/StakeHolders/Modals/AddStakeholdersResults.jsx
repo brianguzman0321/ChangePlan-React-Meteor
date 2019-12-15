@@ -77,7 +77,6 @@ const EnhancedTableHead = () => {
 }
 
 const AddStakeHoldersResults = ({showModalDialog, tableData, closeModalDialog }) => {
-  console.log('howModalDialog, tableData, closeModalDialog', showModalDialog, tableData, closeModalDialog)
   const styles = useStyles();
   const tableRows = Object.values(tableData);
   let stakeHolders = [];
