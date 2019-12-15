@@ -14,12 +14,13 @@ import SearchIcon from '@material-ui/icons/Search';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import {withTracker} from "meteor/react-meteor-data";
+import { withTracker } from "meteor/react-meteor-data";
 import { Companies } from "/imports/api/companies/companies";
 import { Projects } from "/imports/api/projects/projects";
 import NewProject from './Models/CreateProject';
 import ProjectMenus from './ProjectMenus';
-import {Activities} from "../../../api/activities/activities";
+import { Activities } from "../../../api/activities/activities";
+import { Peoples } from '../../../api/peoples/peoples';
 
 
 const useStyles = makeStyles(theme => ({
@@ -44,7 +45,7 @@ const useStyles = makeStyles(theme => ({
         justifyContent: 'center',
         alignItems: 'center'
     },
-    progress:{
+    progress: {
         color: '#4294db'
     },
     bullet: {
@@ -93,7 +94,7 @@ const useStyles = makeStyles(theme => ({
     iconButton: {
         marginTop: -3
     },
-    sortBy:{
+    sortBy: {
         float: 'right',
         marginTop: 13,
         fontSize: 18
@@ -112,7 +113,7 @@ const useStyles = makeStyles(theme => ({
     secondTab: {
         display: 'flex'
     },
-    createNewProject : {
+    createNewProject: {
         flex: 1,
         marginLeft: 23
     },
@@ -147,6 +148,22 @@ const useStyles = makeStyles(theme => ({
 function ProjectCard(props) {
     let { projects, company, activities } = props;
 
+
+    if (projects && projects.length) {
+
+        projects = projects.map(project => {
+            const peoples = Peoples.find({
+                '_id': {
+                    $in: project.stakeHolders
+                }
+            }).fetch();
+
+            return {
+                ...project,
+                stakeHolders: peoples.map(people => people._id),
+            }
+        });
+    }
     const useStyles1 = makeStyles(theme => ({
         title: {
             fontWeight: 1000,
@@ -157,7 +174,7 @@ function ProjectCard(props) {
     if (Roles.userIsInRole(Meteor.userId(), 'superAdmin')) {
         isAdmin = true;
     }
-    else if(company && company.admins.includes(Meteor.userId())){
+    else if (company && company.admins.includes(Meteor.userId())) {
         isAdmin = true;
     }
     const classes = useStyles();
@@ -174,9 +191,9 @@ function ProjectCard(props) {
         }
 
         projects.forEach((project, i) => {
-           const projectActivities = activities.filter((activity) => activity.projectId === project._id) || [];
+            const projectActivities = activities.filter((activity) => activity.projectId === project._id) || [];
 
-           projects[i].totalActivities = projectActivities.length;
+            projects[i].totalActivities = projectActivities.length;
         });
     }, [projects, activities]);
 
@@ -220,8 +237,8 @@ function ProjectCard(props) {
                             <SearchIcon />
                         </IconButton>
                     </Grid>
-                    <Grid item xs={4} className={isAdmin && company ? classes.secondTab: ''}>
-                        { isAdmin && company && <NewProject {...props} className={classes.createNewProject} /> }
+                    <Grid item xs={4} className={isAdmin && company ? classes.secondTab : ''}>
+                        {isAdmin && company && <NewProject {...props} className={classes.createNewProject} />}
                         <Typography color="textSecondary" variant="title" className={classes.sortBy}>
                             Sort by
                         </Typography>
@@ -244,9 +261,9 @@ function ProjectCard(props) {
                     </Grid>
                 </Grid>
                 {projects.map((project, index) => {
-                    return <Grid item xs spacing={1} key={index} className={classes.grid} onClick={(e) =>selectProject(project)}>
+                    return <Grid item xs spacing={1} key={index} className={classes.grid} onClick={(e) => selectProject(project)}>
                         <Card className={classes.card}>
-                            <LinearProgress variant="determinate" value={project.totalActivities > 0 ? parseInt((100 * project.completedActivities) / project.totalActivities) : 0} color="primary"/>
+                            <LinearProgress variant="determinate" value={project.totalActivities > 0 ? parseInt((100 * project.completedActivities) / project.totalActivities) : 0} color="primary" />
                             <CardHeader
                                 onClick={(e) => {
                                     e.stopPropagation();
@@ -254,13 +271,13 @@ function ProjectCard(props) {
                                 }}
                                 action={<ProjectMenus project={project} company={company} />}
                                 classes={classes1}
-                                style={{cursor: "auto"}}
+                                style={{ cursor: "auto" }}
                                 title={projectName(project.name)}
                             />
                             <CardContent className={classes.cardContent}>
                                 <Grid container>
                                     <Grid item xs={4}>
-                                        <Typography className={classes.title}  gutterBottom>
+                                        <Typography className={classes.title} gutterBottom>
                                             STAKEHOLDERS
                                         </Typography>
                                         <Typography className={classes.pos} color="textSecondary">
@@ -297,36 +314,36 @@ function ProjectCard(props) {
                 }
             </Grid>
             {!projects.length &&
-            <Grid
-                container
-                direction="row"
-                justify="center"
-                alignItems="center"
-                justify-content="center"
-            >
-                <Grid item xs={12}>
-                    <Paper className={classes.noData}>
-                        <Typography variant="h5" component="h5" align="center">
-                            No Data Found.
+                <Grid
+                    container
+                    direction="row"
+                    justify="center"
+                    alignItems="center"
+                    justify-content="center"
+                >
+                    <Grid item xs={12}>
+                        <Paper className={classes.noData}>
+                            <Typography variant="h5" component="h5" align="center">
+                                No Data Found.
                         </Typography>
-                    </Paper>
+                        </Paper>
+                    </Grid>
                 </Grid>
-            </Grid>
             }
         </>
 
     );
 }
 
-function projectName(name){
-    if(typeof name === 'string') {
+function projectName(name) {
+    if (typeof name === 'string') {
         return name.length < 53 ? name : `${name.slice(0, 50)}...`
     }
     return name
 }
 
 function ChangeManagersNames(project) {
-    if(project.changeManagerDetails) {
+    if (project.changeManagerDetails) {
         let changeManagers = project.changeManagerDetails.map(changeManager => {
             return `${changeManager.profile.firstName} ${changeManager.profile.lastName}`
         });
@@ -335,13 +352,13 @@ function ChangeManagersNames(project) {
 }
 
 function sortingFunc(projects, local) {
-    switch (local.sort){
-        case 'endingDate':{
-            projects = projects.sort((a, b) => new Date(a.endingDate) -  new Date(b.endingDate));
+    switch (local.sort) {
+        case 'endingDate': {
+            projects = projects.sort((a, b) => new Date(a.endingDate) - new Date(b.endingDate));
             break;
         }
-        case 'createdAt':{
-            projects = projects.sort((a, b) => new Date(a.createdAt) -  new Date(b.createdAt));
+        case 'createdAt': {
+            projects = projects.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
             break;
         }
         case 'name': {
@@ -366,7 +383,7 @@ const ProjectsPage = withTracker(props => {
     Meteor.subscribe('myProjects', null, {
         sort: local.sort || {},
         name: local.search
-    } );
+    });
 
     return {
         company: Companies.findOne(),
@@ -375,4 +392,4 @@ const ProjectsPage = withTracker(props => {
     };
 })(ProjectCard);
 
-export default ProjectsPage
+export default ProjectsPage;
