@@ -56,7 +56,7 @@ const headCells = [
     { id: 'action', numeric: true, disablePadding: false, label: 'ACTIONS' },
 ];
 
-function EnhancedTableHead(props) {
+export function EnhancedTableHead(props) {
     const tableHeadClasses = tableHeadStyle();
     const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
     const createSortHandler = property => event => {

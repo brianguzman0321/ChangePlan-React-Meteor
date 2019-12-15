@@ -12,7 +12,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const AddExistingStakeholder = ({ showModalDialog, stakeholder, handleSave, closeModalDialog }) => {
+const AddExistingStakeholder = ({ showModalDialog, stakeholder, handleSave, closeModalDialog, isMulti }) => {
   const styles = useStyles();
 
   return (
@@ -26,7 +26,8 @@ const AddExistingStakeholder = ({ showModalDialog, stakeholder, handleSave, clos
           { "Add already existing Stakeholder?" }
         </DialogTitle>
         <DialogContentText id="customized-dialog-description" className={styles.dialogContent}>
-          {stakeholder && `There is a record for the stakeholder ${stakeholder.firstName} ${stakeholder.lastName} (${stakeholder.email}) already in the system. Add this stakeholder to the project?`}
+          {isMulti ? `There are a records for the stakeholders already in the system. Add this stakeholders to the project?` :
+            stakeholder && `There is a record for the stakeholder ${stakeholder.firstName} ${stakeholder.lastName} (${stakeholder.email}) already in the system. Add this stakeholder to the project?`}
         </DialogContentText>
         <DialogActions>
           <Button type="submit" color="primary" onClick={ () => handleSave() }>Yes</Button>
