@@ -6,7 +6,7 @@ import EditStakeHolderPage from './Modals/EditStakeHolder';
 import DeleteStakeHolder from './Modals/DeleteStakeHolder';
 
 const StakeHolder = (props) => {
-  const { row, isItemSelected, labelId, setRowSelected, deleteCell, selected } = props;
+  const {row, isItemSelected, labelId, setRowSelected, deleteCell, selected, hideSelected = false, smallTable = false, index} = props;
   const [showEditModalDialog, setShowEditModalDialog] = React.useState(false);
 
   const handleOpenModalDialog = () => {
@@ -41,26 +41,26 @@ const StakeHolder = (props) => {
       role="checkbox"
       aria-checked={isItemSelected}
       tabIndex={-1}
-      key={row._id}
+      key={row._id || index}
       selected={isItemSelected}
     >
-
-      <TableCell padding="checkbox">
+      {!hideSelected && <TableCell padding="checkbox">
         <Checkbox
           checked={isItemSelected}
           onChange={event => handleClick(event, row._id)}
-          inputProps={{ 'aria-labelledby': labelId }}
+          inputProps={{'aria-labelledby': labelId}}
           color="default"
         />
-      </TableCell>
+      </TableCell>}
       <TableCell align="left" component="th" id={labelId} scope="row" onClick={handleOpenModalDialog}>
         {row.firstName} {row.lastName}
       </TableCell>
+      {smallTable && <TableCell align="left" onClick={handleOpenModalDialog}>{row.email}</TableCell>}
       <TableCell align="left" onClick={handleOpenModalDialog}>{row.role}</TableCell>
       <TableCell align="left" onClick={handleOpenModalDialog}>{row.businessUnit}</TableCell>
-      <TableCell align="center" onClick={handleOpenModalDialog}>{row.influenceLevel}</TableCell>
-      <TableCell align="center" onClick={handleOpenModalDialog}>{row.supportLevel}</TableCell>
-      <TableCell align="center" onClick={event => deleteCell(event, row)}>
+      {!smallTable && <TableCell align="center" onClick={handleOpenModalDialog}>{row.influenceLevel}</TableCell>}
+      {!smallTable && <TableCell align="center" onClick={handleOpenModalDialog}>{row.supportLevel}</TableCell>}
+      {!smallTable && <TableCell align="center" onClick={event => deleteCell(event, row)}>
         {/*<IconButton aria-label="edit" onClick={handleOpenModalDialog}>*/}
         {/*    <EditIcon />*/}
         {/*</IconButton>*/}
@@ -72,7 +72,7 @@ const StakeHolder = (props) => {
         {/*<IconButton aria-label="edit" onClick={(event) => {deleteCell(event, row)}}>*/}
         {/*<DeleteIcon />*/}
         {/*</IconButton>*/}
-      </TableCell>
+      </TableCell>}
     </TableRow>
   )
 };
