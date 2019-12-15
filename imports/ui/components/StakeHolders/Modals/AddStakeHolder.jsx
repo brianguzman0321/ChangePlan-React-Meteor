@@ -232,7 +232,6 @@ function AddStakeHolder(props) {
     data.pop();
 
     let csvUploadErrorMessage = '';
-    console.log('data before mpa', data);
 
     let data1 = data.map((doc) => {
       if (!doc['First Name']) {
@@ -270,11 +269,8 @@ function AddStakeHolder(props) {
       doc['Level of support'] && (paramsObj.supportLevel = Number(doc['Level of support']));
       return paramsObj
     });
-    console.log('data1', data1);
 
     const importedEmails = data1.map(csvRow => csvRow.email) || [];
-    console.log('importedEmails', importedEmails);
-    console.log('company', company);
 
     if (importedEmails.length && company) {
       const peoples = Peoples.find({
@@ -282,19 +278,13 @@ function AddStakeHolder(props) {
       }).fetch();
 
       const allPeoples = Peoples.find({}).fetch();
-
       const peoplesEmails = peoples.map(people => people.email);
-      console.log('peoplesEmails', peoplesEmails);
-
       const currentProject = Projects.findOne({ _id: projectId });
-      console.log('currentProject', currentProject);
 
       const addToProject = peoples.filter(people => (importedEmails.includes(people.email) && !currentProject.stakeHolders.includes(people._id)));
       const addToBoth = data1.filter(({ email }) => !peoplesEmails.includes(email)).filter(people => allPeoples.find((_people) => _people.email === people.email) === -1);
-      
+
       let tempTableDate = { attached: [], new: [] };
-      console.log('addToProject', addToProject);
-      console.log('addToBoth', addToBoth);
 
       currentProject.stakeHolders = [...currentProject.stakeHolders, ...addToProject.map(people => people._id)];
 
@@ -302,7 +292,7 @@ function AddStakeHolder(props) {
 
       if (addToProject.length) {
         tempTableDate = { ...tempTableDate, attached: addToProject };
-        console.log('addToProject works', tempTableDate);
+
         setTableData(tempTableDate);
         setAddConfirmation(true);
       }
@@ -310,9 +300,6 @@ function AddStakeHolder(props) {
       if (addToBoth.length) {
         tempTableDate = { ...tempTableDate, new: addToBoth };
         setTableData(tempTableDate);
-        console.log('addToBoth works', addToBoth);
-        console.log('addToBoth works tempTableDate', tempTableDate);
-
         insertManyStakeholders({ peoples: addToBoth }, tempTableDate);
       }
 
@@ -330,7 +317,6 @@ function AddStakeHolder(props) {
 
   const insertManyStakeholders = (params, tempTableDate) => {
     Meteor.call('peoples.insertMany', params, (err, res) => {
-      console.log('insert may result', res);
       setLoading(false);
       if (err) {
         props.enqueueSnackbar(`Upload Aborted! ${err.reason}`, { variant: 'error' })
@@ -392,13 +378,10 @@ function AddStakeHolder(props) {
   };
 
   const addExistingStakeholder = (isMulti = false) => {
-    console.log('addExistingStakeholder call');
     if (isMulti) {
-      console.log('isMulti', isMulti);
       const params = {
         project: stakeHolderId,
       };
-      console.log('params', params);
       Meteor.call('projects.update', params, (error, result) => {
         if (error) {
           props.enqueueSnackbar(err.reason, { variant: 'error' })
@@ -406,18 +389,14 @@ function AddStakeHolder(props) {
           props.enqueueSnackbar('StakeHolder Added Successful.', { variant: 'success' });
           setAddConfirmation(false);
           setOpen(false);
-          console.log('RESULT data', tableData);
           setOpenResultTable(true);
         }
       });
 
     } else {
       const currentProject = Projects.find({ _id: projectId }).fetch();
-      console.log('isMulti', isMulti);
-      console.log('currentProject', currentProject);
 
       if (currentProject[0].stakeHolders.includes(stakeholder._id)) {
-        console.log('exist in proejct');
         props.enqueueSnackbar('This StakeHolder was already added to current project.', { variant: 'warning' })
         closeAgreedToAddModal();
       } else {

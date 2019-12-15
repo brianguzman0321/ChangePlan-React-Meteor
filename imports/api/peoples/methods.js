@@ -65,7 +65,7 @@ export const insert = new ValidatedMethod({
         if (!alreadyExist){
             //throw new Meteor.Error(500, "A Stakeholder with given Email Already Exists");
             let personId = Peoples.insert(people);
-            
+
             return Projects.update({
                 _id: projectId
             },{
@@ -94,7 +94,6 @@ export const insertMany = new ValidatedMethod({
     },
     validate: null,
     run({ peoples }) {
-        console.log('peoples', peoples);
         if(!peoples || !Array.isArray(peoples)){
             throw new Meteor.Error(500, "Stakeholders required");
         }
