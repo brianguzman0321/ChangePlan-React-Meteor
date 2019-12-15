@@ -326,6 +326,7 @@ function AddStakeHolder(props) {
 
   const insertManyStakeholders = (params, tempTableDate) => {
     Meteor.call('peoples.insertMany', params, (err, res) => {
+      console.log('insert may result', res);
       setLoading(false);
       if (err) {
         props.enqueueSnackbar(`Upload Aborted! ${err.reason}`, { variant: 'error' })

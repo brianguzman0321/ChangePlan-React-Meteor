@@ -92,8 +92,8 @@ const AddStakeHoldersResults = ({showModalDialog, tableData, closeModalDialog })
         aria-describedby="customized-dialog-description"
         onClose={ () => closeModalDialog() }>
         <DialogTitle id="customized-dialog-title" onClose={() => closeModalDialog()}>
-          { tableData.new.length ? `${tableData.new.length} new stakeholders added` : ''}
-          { tableData.attached.length ? `${tableData.attached.length} Stakeholders added that are also attached to other projects:` : ''}
+          { tableData.new.length ? `${tableData.new.length} new stakeholders added \n` : ''}
+          { tableData.attached.length ? `${tableData.attached.length} Stakeholders added that are also attached to other projects: \n` : ''}
         </DialogTitle>
         <DialogContent id="customized-dialog-description" className={styles.dialogContent}>
           <Table
