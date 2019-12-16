@@ -103,7 +103,7 @@ const useStyles = makeStyles(theme => ({
     },
     gridText: {
         fontSize: theme.typography.pxToRem(12),
-        color: theme.palette.text.secondary,
+        color: '#465563'
     },
     avatar: {
         position: 'absolute',
