@@ -96,16 +96,25 @@ const useStyles = makeStyles(theme => ({
     },
     sortBy: {
         float: 'right',
-        marginTop: 13,
+        marginTop: 8,
         fontSize: 18
     },
     formControl: {
-        margin: theme.spacing(1),
+        margin: theme.spacing(0, 1),
         minWidth: 200,
+        background: '#ffffff',
+        '&:selected': {
+            background: '#ffffff'
+        }
     },
     selectEmpty: {
         border: '1px solid #c5c6c7',
-        paddingLeft: 5
+        paddingLeft: 5,
+        minHeight: 40,
+        background: '#ffffff',
+        '&:selected': {
+            background: '#ffffff'
+        }
     },
     activities: {
         paddingLeft: 12
@@ -143,6 +152,9 @@ const useStyles = makeStyles(theme => ({
         margin: 23
 
     },
+    selected: {
+        background: 'white'
+    }
 }));
 
 function ProjectCard(props) {
@@ -246,16 +258,17 @@ function ProjectCard(props) {
                     <Grid item xs={2}>
                         <FormControl className={classes.formControl}>
                             <Select
+                                style={{background: 'white'}}
                                 value={age}
                                 onChange={handleChange}
                                 displayEmpty
                                 name="age"
                                 className={classes.selectEmpty}
                             >
-                                <MenuItem value="createdAt">Date Added</MenuItem>
-                                <MenuItem value="endingDate">Date Due</MenuItem>
-                                <MenuItem value="name">Project Name</MenuItem>
-                                <MenuItem value="stakeHolder">Stakeholder Count</MenuItem>
+                                <MenuItem value="createdAt" classes={{root: classes.selected, selected: classes.selected}}>Date Added</MenuItem>
+                                <MenuItem value="endingDate" classes={{root: classes.selected, selected: classes.selected}}>Date Due</MenuItem>
+                                <MenuItem value="name" classes={{root: classes.selected, selected: classes.selected}}>Project Name</MenuItem>
+                                <MenuItem value="stakeHolder" classes={{root: classes.selected, selected: classes.selected}}>Stakeholder Count</MenuItem>
                             </Select>
                         </FormControl>
                     </Grid>

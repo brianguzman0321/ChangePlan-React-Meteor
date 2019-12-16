@@ -301,7 +301,7 @@ function AddActivity(props) {
 
     return (
         <div className={classes.AddNewActivity}>
-            <Button variant="outlined" color="primary" onClick={handleClickOpen} >
+            <Button variant="contained" color="primary" onClick={handleClickOpen} >
                 Create New Project
             </Button>
             <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth={true}>
