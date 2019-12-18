@@ -20,6 +20,7 @@ import StakeHoldersCard from '/imports/ui/components/StakeHolders/StakeHolders'
 import ReportsCard from '/imports/ui/components/Reports/Reports'
 import Dashboard from '/imports/ui/components/DashBoard/Dashboard'
 import { SnackbarProvider } from 'notistack';
+import Timeline from "../../ui/components/Timeline/Timeline";
 
 //list of Public Routes
 
@@ -62,6 +63,7 @@ const Routes = appProps => (
                 <Authenticated exact path="/projects/:projectId/activities" component={ActivitiesCard} {...appProps}/>
                 <Authenticated exact path="/projects/:projectId/stake-holders" component={StakeHoldersCard} {...appProps}/>
                 <Authenticated exact path="/projects/:projectId/reports" component={ReportsCard} {...appProps}/>
+                <Authenticated exact path="/projects/:projectId/timeline" component={Timeline} {...appProps}/>
                 <AdminRoute exact path="/admin/control-panel" component={MaterialTableDemo} {...appProps}/>
                 <AdminRoute exact path="/admin/companies" component={CompaniesListPage} {...appProps}/>
                 <Public path="/signup" component={Signup} {...appProps}/>

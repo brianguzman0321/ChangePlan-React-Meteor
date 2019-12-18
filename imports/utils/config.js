@@ -5,6 +5,10 @@ export default config = {
             name: 'dashboard'
         },
         {
+            show:  true,
+            name: 'timeline',
+        },
+        {
             show: true,
             name: 'activities'
         },
@@ -14,7 +18,7 @@ export default config = {
         },
         {
             show: true,
-            name: 'reports'
-        }
+            name: 'reports',
+        },
     ]
 }
