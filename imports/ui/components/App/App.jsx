@@ -118,14 +118,21 @@ function TopNavBar(props) {
     if(currentNav === '/'){
         selectedTab = 0;
     }
-    if(currentNav === 'activities'){
-        selectedTab = 1;
-    }
-    else if(currentNav === 'stake-holders'){
-        selectedTab = 2
-    }
-    else if (currentNav === 'reports'){
-        selectedTab = 3
+    switch (currentNav) {
+        case 'timeline':
+            selectedTab = 1;
+            break;
+        case 'activities':
+            selectedTab = 2;
+            break;
+        case 'stake-holders':
+            selectedTab = 3;
+            break;
+        case 'reports':
+            selectedTab = 4;
+            break
+        default:
+            break;
     }
     //if not supply menus hide by default
     let isAdmin = false;
@@ -140,6 +147,10 @@ function TopNavBar(props) {
             },
             {
                 show: false,
+                name: 'timeline'
+            },
+            {
+                show: false,
                 name: 'activities'
             },
             {
@@ -149,7 +160,7 @@ function TopNavBar(props) {
             {
                 show: false,
                 name: 'reports'
-            }
+            },
         ];
     }
     let displayMenus = menus.filter(item => item.show);
@@ -184,17 +195,25 @@ function TopNavBar(props) {
 
     function handleChange1 (event, value) {
         setValue(value);
-        if(value === 0){
-            props.history.push(`/projects/${projectId}`)
-        }
-        if(value === 1){
-            props.history.push(`/projects/${projectId}/activities`)
-        }
-        if(value === 2){
-            props.history.push(`/projects/${projectId}/stake-holders`)
-        }
-        if(value === 3){
-            props.history.push(`/projects/${projectId}/reports`)
+        switch (value) {
+            case 0:
+                props.history.push(`/projects/${projectId}`);
+                break;
+            case 1:
+                props.history.push(`/projects/${projectId}/timeline`)
+                break;
+            case 2:
+                props.history.push(`/projects/${projectId}/activities`);
+
+                break;
+            case 3:
+                props.history.push(`/projects/${projectId}/stake-holders`);
+                break;
+            case 4:
+                props.history.push(`/projects/${projectId}/reports`);
+                break;
+            default:
+                break;
         }
     }
 

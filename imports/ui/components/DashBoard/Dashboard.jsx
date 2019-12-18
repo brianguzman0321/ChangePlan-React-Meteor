@@ -19,6 +19,7 @@ import ObjectiveModal from './Modals/ObjectiveModal';
 import ImpactsModal from './Modals/ImpactsModal';
 import RisksModal from './Modals/RisksModal';
 import DeleteValue from './Modals/deleteModal';
+import config from '/imports/utils/config';
 import { stringHelpers } from '/imports/helpers/stringHelpers';
 import EditProject from "/imports/ui/components/Projects/Models/EditProject";
 
@@ -137,26 +138,7 @@ function Dashboard(props){
         impacts: false,
         risks: false
     });
-    let menus = [
-        {
-            show: true,
-            name: 'dashboard',
-            count: 14
-        },
-        {
-            show: true,
-            name: 'activities',
-            count: 14
-        },
-        {
-            show: true,
-            name: 'stakeHolders',
-            count: 122
-        },
-        {
-            name: 'reports',
-            show: true
-        }];
+    let menus = config.menus;
     if (!params.projectId){
         menus = []
     }
