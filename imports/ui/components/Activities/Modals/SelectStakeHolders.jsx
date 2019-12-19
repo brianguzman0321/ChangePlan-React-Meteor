@@ -353,7 +353,7 @@ export default function SelectStakeHolders(props) {
 
     const updateValue = () => {
         setIsUpdated(true);
-    }
+    };
 
     const updateStakeHolders = () => {
         updateFilter('localStakeHolders', 'ids', stakeHolders);
@@ -388,7 +388,7 @@ export default function SelectStakeHolders(props) {
                             Select Stakeholders
                         </Typography>
                         <Typography variant="h6" className={classes.title}>
-                            Selected {stakeHolders.length}
+                            Selected {stakeHolders && stakeHolders.length}
                         </Typography>
                         <Button autoFocus color="inherit" onClick={updateStakeHolders}>
                             save
