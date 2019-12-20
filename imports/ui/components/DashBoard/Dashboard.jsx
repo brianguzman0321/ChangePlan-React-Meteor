@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import TopNavBar from '/imports/ui/components/App/App';
 import Grid from "@material-ui/core/Grid/Grid";
 import Typography from "@material-ui/core/Typography/Typography";
@@ -121,20 +121,21 @@ const useStyles = makeStyles({
 });
 
 function Dashboard(props) {
-  let {match, project, stakeHolders, local} = props;
-  project = project || {};
-  stakeHolders = stakeHolders || [];
+  let {match, project: currentProject,} = props;
   let {projectId} = match.params;
   const classes = useStyles();
   let {params} = props.match;
+  const [project, setProject] = useState({});
   const [index, setIndex] = React.useState('');
+  const [impactIndex, setImpactIndex] = React.useState('');
+  const [benefitsIndex, setBenefitsIndex] = React.useState('');
   const [editValue, setEditValue] = React.useState('');
   const [deleteValue, setDeleteValue] = React.useState('');
   const [vision, setVision] = React.useState(project.vision || []);
   const [objectives, setObjective] = React.useState(project.objectives || []);
-  const [impacts, setImpacts] = React.useState(project.impacts || []);
+  const [impacts, setImpacts] = React.useState([]);
   const [risks, setRisks] = React.useState(project.risks || []);
-  const [benefits, setBenefits] = React.useState(project.benefits || []);
+  const [benefits, setBenefits] = React.useState([]);
   const [editProjectModal, setEditProjectModal] = React.useState(false);
   const [modals, setModals] = React.useState({
     vision: false,
@@ -176,13 +177,13 @@ function Dashboard(props) {
   };
 
   const editImpacts = (index, value) => {
-    setIndex(index);
+    setImpactIndex(index);
     setEditValue(value);
     handleClose('impacts')
   };
 
   const editBenefits = (index, value) => {
-    setIndex(index);
+    setBenefitsIndex(index);
     setEditValue(value);
     handleClose('benefits')
   };
@@ -202,10 +203,12 @@ function Dashboard(props) {
   const handleModalClose = obj => {
     setModals({modals, ...obj});
     setIndex('');
+    setImpactIndex('');
+    setBenefitsIndex('');
     setEditValue('');
   };
 
-  const updateValues = obj => {
+  const updateValues = project => {
     if (project && project.vision) {
       setVision(project.vision)
     }
@@ -232,8 +235,12 @@ function Dashboard(props) {
   }
 
   useEffect(() => {
-    updateValues()
-  }, [project, editProjectModal]);
+    if (currentProject) {
+      setProject(currentProject);
+      updateValues(currentProject)
+    }
+  }, [currentProject]);
+
 
   return (
     <div>
@@ -241,11 +248,12 @@ function Dashboard(props) {
                    editValue={editValue}/>
       <ObjectiveModal open={modals.objectives} handleModalClose={handleModalClose} project={project} index={index}
                       editValue={editValue}/>
-      <ImpactsModal open={modals.impacts} handleModalClose={handleModalClose} project={project} index={index}
+      <ImpactsModal open={modals.impacts} handleModalClose={handleModalClose} project={project}
+                    indexImpact={impactIndex}
                     editValue={editValue}/>
       <RisksModal open={modals.risks} handleModalClose={handleModalClose} project={project} index={index}
                   editValue={editValue}/>
-      <BenefitsModal open={modals.benefits} handleModalClose={handleModalClose} project={project} local={local} stakeHolders={stakeHolders} index={index}
+      <BenefitsModal open={modals.benefits} handleModalClose={handleModalClose} project={project} indexBenefits={benefitsIndex}
                      editValue={editValue}/>
       <DeleteValue open={modals.delete} handleModalClose={handleModalClose} project={project} index={index}
                    deleteValue={deleteValue}/>
@@ -383,7 +391,9 @@ function Dashboard(props) {
                                      justify="flex-end"
                                      alignItems="center"
                       >
-                        <Grid item xs={10}>
+                        <Grid item xs={10} onClick={(e) => {
+                          editVision(i, v)
+                        }}>
                           <Typography className={classes.detailValues} gutterBottom>
                             {stringHelpers.limitCharacters(v, 112)}
                           </Typography>
@@ -433,7 +443,9 @@ function Dashboard(props) {
                                      justify="flex-end"
                                      alignItems="center"
                       >
-                        <Grid item xs={10}>
+                        <Grid item xs={10} onClick={(e) => {
+                          editObjectives(i, v)
+                        }}>
                           <Typography className={classes.detailValues} gutterBottom>
                             {stringHelpers.limitCharacters(v, 112)}
                           </Typography>
@@ -481,12 +493,17 @@ function Dashboard(props) {
                       justify="flex-end"
                       alignItems="center"
                     >
-                      <Grid item xs={3}>
+                      <Grid item xs={2}>
+                        <Typography className={classes.columnsHeadings} gutterBottom style={{fontWeight: 'bold'}}>
+                          EXPECTED DATE
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={2}>
                         <Typography className={classes.columnsHeadings} gutterBottom style={{fontWeight: 'bold'}}>
                           TYPE
                         </Typography>
                       </Grid>
-                      <Grid item xs={6}>
+                      <Grid item xs={5}>
                         <Typography className={classes.columnsHeadings} gutterBottom style={{fontWeight: 'bold'}}>
                           DESCRIPTION
                         </Typography>
@@ -494,10 +511,15 @@ function Dashboard(props) {
                       </Grid>
                       <Grid item xs={1}>
                         <Typography className={classes.columnsHeadings} gutterBottom style={{fontWeight: 'bold'}}>
+                          STAKEHOLDERS
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={1}>
+                        <Typography className={classes.columnsHeadings} gutterBottom style={{fontWeight: 'bold'}}>
                           LEVEL
                         </Typography>
                       </Grid>
-                      <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
+                      <Grid item xs={1} justify="flex-end" style={{display: 'flex'}}>
 
                       </Grid>
                     </Grid>
@@ -508,19 +530,38 @@ function Dashboard(props) {
                                      direction="row"
                                      justify="flex-end"
                                      alignItems="center"
+                                     style={{cursor: 'pointer'}}
                       >
-                        <Grid item xs={3}>
+                        <Grid item xs={2} onClick={(e) => {
+                          editImpacts(i, v)
+                        }}>
+                          <Typography className={classes.detailValues} gutterBottom>
+                            {v.expectedDate !== null ? moment(v.expectedDate).format('DD-MMM-YY') : '--'}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={2} onClick={(e) => {
+                          editImpacts(i, v)
+                        }}>
                           <Typography className={classes.detailValues} gutterBottom>
                             {stringHelpers.capitalize(v.type)}
                           </Typography>
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item xs={5} onClick={(e) => {
+                          editImpacts(i, v)
+                        }}>
                           {stringHelpers.limitCharacters(v.description, 92)}
                         </Grid>
-                        <Grid item xs={1}>
+                        <Grid item xs={1} onClick={(e) => {
+                          editImpacts(i, v)
+                        }}>
+                          {v.stakeholders && v.stakeholders.length}
+                        </Grid>
+                        <Grid item xs={1} onClick={(e) => {
+                          editImpacts(i, v)
+                        }}>
                           {v.level.toUpperCase()}
                         </Grid>
-                        <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
+                        <Grid item xs={1} justify="flex-end" style={{display: 'flex'}}>
                           <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {
                             editImpacts(i, v)
                           }}>
@@ -589,15 +630,21 @@ function Dashboard(props) {
                                      justify="flex-end"
                                      alignItems="center"
                       >
-                        <Grid item xs={3}>
+                        <Grid item xs={3} onClick={(e) => {
+                          editBenefits(i, v)
+                        }}>
                           <Typography className={classes.detailValues} gutterBottom>
                             {v.expectedDate !== null ? moment(v.expectedDate).format('DD-MMM-YY') : '--'}
                           </Typography>
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item xs={6} onClick={(e) => {
+                          editBenefits(i, v)
+                        }}>
                           {stringHelpers.limitCharacters(v.description, 92)}
                         </Grid>
-                        <Grid item xs={1}>
+                        <Grid item xs={1} onClick={(e) => {
+                          editBenefits(i, v)
+                        }}>
                           {v.stakeholders && v.stakeholders.length}
                         </Grid>
                         <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
@@ -666,12 +713,16 @@ function Dashboard(props) {
                                      justify="flex-end"
                                      alignItems="center"
                       >
-                        <Grid item xs={9}>
+                        <Grid item xs={9} onClick={(e) => {
+                          editRisks(i, v)
+                        }}>
                           <Typography className={classes.detailValues} gutterBottom>
                             {stringHelpers.limitCharacters(v.description, 92)}
                           </Typography>
                         </Grid>
-                        <Grid item xs={1}>
+                        <Grid item xs={1} onClick={(e) => {
+                          editRisks(i, v)
+                        }}>
                           {v.level.toUpperCase()}
                         </Grid>
                         <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
@@ -719,7 +770,6 @@ function ChangeManagersNames(project) {
     } else {
       return "-"
     }
-
   }
 }
 
@@ -740,9 +790,6 @@ function ManagersNames(project) {
 const DashboardPage = withTracker(props => {
   let {match} = props;
   let {projectId} = match.params;
-  let local = LocalCollection.findOne({
-    name: 'localStakeHolders'
-  });
   Meteor.subscribe('compoundActivities', projectId);
   Meteor.subscribe('compoundProject', projectId);
   Meteor.subscribe('companies');
@@ -750,9 +797,7 @@ const DashboardPage = withTracker(props => {
   let companyId = company._id || {};
   Meteor.subscribe('peoples', companyId);
   return {
-    stakeHolders: Peoples.find().fetch(),
     project: Projects.findOne({_id: projectId}),
-    local,
     company,
   };
 })(withRouter(Dashboard));

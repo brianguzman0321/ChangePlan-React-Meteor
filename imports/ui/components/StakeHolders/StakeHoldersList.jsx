@@ -48,7 +48,8 @@ function getSorting(order, orderBy) {
 }
 
 const headCells = [
-    { id: 'firstName', numeric: false, disablePadding: true, label: 'NAME' },
+    { id: 'firstName', numeric: false, disablePadding: true, label: 'FIRST NAME' },
+    { id: 'lastName', numeric: false, disablePadding: true, label: 'LAST NAME' },
     { id: 'role', numeric: true, disablePadding: false, label: 'ROLE' },
     { id: 'businessUnit', numeric: true, disablePadding: false, label: 'BUSINESS UNIT' },
     { id: 'influenceLevel', numeric: true, disablePadding: false, label: 'INFLUENCE' },
@@ -78,7 +79,7 @@ export function EnhancedTableHead(props) {
                 {headCells.map(headCell => (
                     <TableCell style={{color: 'white'}}
                                key={headCell.id}
-                               align={headCell.id === 'firstName' || headCell.id === 'role' || headCell.id === 'businessUnit' ? 'left' : 'center'}
+                               align={headCell.id === 'lastName' || headCell.id === 'firstName' || headCell.id === 'role' || headCell.id === 'businessUnit' ? 'left' : 'center'}
                                sortDirection={orderBy === headCell.id ? order : false}
                     >
                         <TableSortLabel

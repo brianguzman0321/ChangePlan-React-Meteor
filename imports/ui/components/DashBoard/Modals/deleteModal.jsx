@@ -74,7 +74,6 @@ function DeleteValue(props) {
         delete project.peoplesDetails;
         let params = {
             project
-
         };
         params.project[deleteValue].splice(index, 1);
         Meteor.call('projects.update', params, (err, res) => {

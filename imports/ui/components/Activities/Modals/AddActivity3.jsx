@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import moment from 'moment';
-import { withStyles, makeStyles } from '@material-ui/core/styles';
+import {withStyles, makeStyles} from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
@@ -10,7 +10,7 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
-import { withSnackbar } from 'notistack';
+import {withSnackbar} from 'notistack';
 import 'date-fns';
 import Tooltip from '@material-ui/core/Tooltip';
 import SVGInline from "react-svg-inline";
@@ -18,658 +18,667 @@ import Grid from '@material-ui/core/Grid';
 import {withTracker} from "meteor/react-meteor-data";
 import DateFnsUtils from '@date-io/date-fns';
 import {
-    MuiPickersUtilsProvider,
-    KeyboardDatePicker,
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker,
 } from '@material-ui/pickers';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { data } from "/imports/activitiesContent.json";
+import {data} from "/imports/activitiesContent.json";
 import SelectStakeHolders from './SelectStakeHolders';
-import { Peoples } from '/imports/api/peoples/peoples'
-import { Companies } from '/imports/api/companies/companies'
-import { stringHelpers } from '/imports/helpers/stringHelpers';
-import  AutoComplete from '/imports/ui/components/utilityComponents/AutoCompleteInline'
+import {Peoples} from '/imports/api/peoples/peoples'
+import {Companies} from '/imports/api/companies/companies'
+import {stringHelpers} from '/imports/helpers/stringHelpers';
+import AutoComplete from '/imports/ui/components/utilityComponents/AutoCompleteInline'
 import AddNewPerson from './AddNewPerson';
-import { withRouter } from 'react-router'
+import {withRouter} from 'react-router'
 import DeleteActivity from './DeleteActivity';
 import SaveChanges from "../../Modals/SaveChanges";
 import {Projects} from "../../../../api/projects/projects";
 
 const styles = theme => ({
-    root: {
-        margin: 0,
-        padding: theme.spacing(3, 3),
-    },
-    closeButton: {
-        position: 'absolute',
-        right: theme.spacing(1),
-        top: theme.spacing(1),
-        color: theme.palette.grey[500],
-    },
+  root: {
+    margin: 0,
+    padding: theme.spacing(3, 3),
+  },
+  closeButton: {
+    position: 'absolute',
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    color: theme.palette.grey[500],
+  },
 });
 
 const gridStyles = makeStyles(theme => ({
-    root: {
-        cursor: 'pointer',
-        textAlign: 'center',
-        '&:hover': {
-            background: '#dae0e5;'
-        },
-        '&:selected': {
-            background: '#dae0e5;'
-        }
+  root: {
+    cursor: 'pointer',
+    textAlign: 'center',
+    '&:hover': {
+      background: '#dae0e5;'
     },
-    item: {
-        // background: '#dae0e5'
+    '&:selected': {
+      background: '#dae0e5;'
     }
+  },
+  item: {
+    // background: '#dae0e5'
+  }
 }));
 const styles2 = {
-    root: {
-        cursor: 'pointer',
-        textAlign: 'center',
-        '&:hover': {
-            background: '#dae0e5;'
-        },
-        '&:selected': {
-        }
+  root: {
+    cursor: 'pointer',
+    textAlign: 'center',
+    '&:hover': {
+      background: '#dae0e5;'
     },
-    item: {
-        // background: '#dae0e5'
-    }
+    '&:selected': {}
+  },
+  item: {
+    // background: '#dae0e5'
+  }
 };
 
 const classes3 = withStyles(styles2);
 
 
 const useStyles = makeStyles(theme => ({
-    AddNewActivity: {
-        flex: 1,
-    },
-    button: {
-        background: '#bbabd2',
-        color: 'white',
-        '&:hover': {
-            background: '#bbabd2',
-            color: 'white'
-        }
-    },
-    heading: {
-        fontSize: theme.typography.pxToRem(15),
-        flexBasis: '33.33%',
-        flexShrink: 0,
-    },
-    secondaryHeading: {
-        fontSize: theme.typography.pxToRem(15),
-        color: theme.palette.text.secondary,
-    },
-    gridText: {
-        fontSize: theme.typography.pxToRem(12),
-        color: '#465563'
-    },
-    avatar: {
-        position: 'absolute',
-        top: theme.spacing(1),
-        left: theme.spacing(1),
-        width: 15,
-        height: 15
-    },
-    panelSummary: {
-        background: 'red',
-        root: {
-            background: 'red'
-        }
+  AddNewActivity: {
+    flex: 1,
+  },
+  button: {
+    background: '#bbabd2',
+    color: 'white',
+    '&:hover': {
+      background: '#bbabd2',
+      color: 'white'
     }
+  },
+  heading: {
+    fontSize: theme.typography.pxToRem(15),
+    flexBasis: '33.33%',
+    flexShrink: 0,
+  },
+  secondaryHeading: {
+    fontSize: theme.typography.pxToRem(15),
+    color: theme.palette.text.secondary,
+  },
+  gridText: {
+    fontSize: theme.typography.pxToRem(12),
+    color: '#465563'
+  },
+  avatar: {
+    position: 'absolute',
+    top: theme.spacing(1),
+    left: theme.spacing(1),
+    width: 15,
+    height: 15
+  },
+  panelSummary: {
+    background: 'red',
+    root: {
+      background: 'red'
+    }
+  }
 }));
 
 const DialogTitle = withStyles(styles)(props => {
-    const { children, classes, onClose } = props;
-    return (
-        <MuiDialogTitle disableTypography className={classes.root}>
-            <Typography variant="h6">{children}</Typography>
-            {onClose ? (
-                <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
-                    <CloseIcon />
-                </IconButton>
-            ) : null}
-        </MuiDialogTitle>
-    );
+  const {children, classes, onClose} = props;
+  return (
+    <MuiDialogTitle disableTypography className={classes.root}>
+      <Typography variant="h6">{children}</Typography>
+      {onClose ? (
+        <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
+          <CloseIcon/>
+        </IconButton>
+      ) : null}
+    </MuiDialogTitle>
+  );
 });
 
 function createData(name, calories, fat, carbs, protein) {
-    return { _id: name, calories, fat, carbs, protein };
+  return {_id: name, calories, fat, carbs, protein};
 }
 
 const rows = [
-    createData('Cupcake', 305, 3.7, 67, 4.3),
-    createData('Donut', 452, 25.0, 51, 4.9),
-    createData('Eclair', 262, 16.0, 24, 6.0),
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-    createData('Honeycomb', 408, 3.2, 87, 6.5),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-    createData('Jelly Bean', 375, 0.0, 94, 0.0),
-    createData('KitKat', 518, 26.0, 65, 7.0),
-    createData('Lollipop', 392, 0.2, 98, 0.0),
-    createData('Marshmallow', 318, 0, 81, 2.0),
-    createData('Nougat', 360, 19.0, 9, 37.0),
-    createData('Oreo', 437, 18.0, 63, 4.0),
+  createData('Cupcake', 305, 3.7, 67, 4.3),
+  createData('Donut', 452, 25.0, 51, 4.9),
+  createData('Eclair', 262, 16.0, 24, 6.0),
+  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
+  createData('Gingerbread', 356, 16.0, 49, 3.9),
+  createData('Honeycomb', 408, 3.2, 87, 6.5),
+  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
+  createData('Jelly Bean', 375, 0.0, 94, 0.0),
+  createData('KitKat', 518, 26.0, 65, 7.0),
+  createData('Lollipop', 392, 0.2, 98, 0.0),
+  createData('Marshmallow', 318, 0, 81, 2.0),
+  createData('Nougat', 360, 19.0, 9, 37.0),
+  createData('Oreo', 437, 18.0, 63, 4.0),
 ];
 
 const DialogContent = withStyles(theme => ({
-    root: {
-        padding: theme.spacing(2),
-    }
+  root: {
+    padding: theme.spacing(2),
+  }
 }))(MuiDialogContent);
 
 const DialogActions = withStyles(theme => ({
-    root: {
-        margin: 0,
-        padding: theme.spacing(1),
-    },
+  root: {
+    margin: 0,
+    padding: theme.spacing(1),
+  },
 }))(MuiDialogActions);
 
 function AddActivity(props) {
-    let { company, stakeHolders, local, project, match, edit, activity, list, isOpen, currentChangeManager } = props;
-    const [open, setOpen] = React.useState(edit || false);
-    const [deleteModal, setDeleteModal] = React.useState(false);
-    const [time, setTime] = useState('');
-    const [isNew, setIsNew] = React.useState(false);
-    const [users, setUsers] = React.useState([]);
-    const [name, setName] = React.useState('');
-    const [description, setDescription] = React.useState('');
-    const [person, setPerson] = React.useState('');
-    const [peoples, setPeoples] = React.useState(stakeHolders.map(item => item._id));
-    const [activityType, setActivityType] = React.useState({});
-    const [startingDate, setStartingDate] = React.useState(new Date());
-    const [dueDate, setDueDate] = React.useState(new Date());
-    const [dueDateOpen, setDueDateOpen] = useState(false);
-    const [currentProject, setProject] = useState(project);
-    const [changeManager, setChangeManager] = useState(currentChangeManager);
-    const [completedDate, setCompletedDate] = useState(null);
-    const [startingDateOpen, setStartingDateOpen] = React.useState(false);
-    const [endingDate, setEndingDate] = React.useState(new Date());
-    const [endingDateOpen, setEndingDateOpen] = React.useState(false);
-    const [selectOpen, setSelectOpen] = React.useState(false);
-    const [role, setRole] = React.useState('changeManager');
-    const [expanded, setExpanded] = React.useState('panel1');
-    const [showModalDialog, setShowModalDialog] = useState(false);
-    const [isUpdated, setIsUpdated] = useState(false);
+  let {company, stakeHolders, local, project, match, edit, activity, list, isOpen, currentChangeManager} = props;
+  const [open, setOpen] = React.useState(edit || false);
+  const [deleteModal, setDeleteModal] = React.useState(false);
+  const [time, setTime] = useState('');
+  const [isNew, setIsNew] = React.useState(false);
+  const [users, setUsers] = React.useState([]);
+  const [name, setName] = React.useState('');
+  const [description, setDescription] = React.useState('');
+  const [person, setPerson] = React.useState('');
+  const [peoples, setPeoples] = React.useState(stakeHolders.map(item => item._id));
+  const [activityType, setActivityType] = React.useState({});
+  const [startingDate, setStartingDate] = React.useState(new Date());
+  const [dueDate, setDueDate] = React.useState(new Date());
+  const [dueDateOpen, setDueDateOpen] = useState(false);
+  const [currentProject, setProject] = useState(project);
+  const [changeManager, setChangeManager] = useState(currentChangeManager);
+  const [completedDate, setCompletedDate] = useState(null);
+  const [endingDate, setEndingDate] = React.useState(new Date());
+  const [endingDateOpen, setEndingDateOpen] = React.useState(false);
+  const [expanded, setExpanded] = useState(true);
+  const [showModalDialog, setShowModalDialog] = useState(false);
+  const [isUpdated, setIsUpdated] = useState(false);
 
-    let { projectId } = match.params;
-    const classes = useStyles();
-    const classes1 = gridStyles();
+  let {projectId} = match.params;
+  const classes = useStyles();
+  const classes1 = gridStyles();
 
-    const sendNotificationEmail = (username,
-                                   activityType,
-                                   activityDueDate,
-                                   time,
-                                   activityName,
-                                   description,
-                                   stakeholders, currentProject, person, projectId, currentChangeManager) => {
-        const projectName = currentProject && currentProject.name;
-        const email = person ? (person && person.email[0].address) : (currentChangeManager && currentChangeManager.email[0].address);
-        if (description === undefined) {
-            description = ''
-        }
-        const fromEmail = email;
-        const activityHelpLink = `https://changeplan.herokuapp.com/projects/${projectId}/activities`
-        Meteor.call('sendEmail', email,  fromEmail, username,
-          projectName,
-          activityType,
-          activityDueDate,
-          time,
-          activityName,
-          description,
-          stakeholders,
-          activityHelpLink, (error, result) => {
-              if (error) {
-                  props.enqueueSnackbar(err.reason, {variant: 'error'});
-              } else {
-                  props.enqueueSnackbar('Email send successful', {variant: 'success'});
-              }
-          });
-    };
-
-    const updateValues = () => {
-        if(isNew){
-            resetValues();
-            return false;
-        }
-        let selectedActivity = data.find(item => item.name === activity.type) || {};
-        setActivityType(selectedActivity);
-        setDueDate(activity.dueDate);
-        setCompletedDate(activity.completedAt);
-        setDescription(activity.description);
-        if (activity.personResponsible !== undefined) {
-            let obj = {
-                label: `${activity.personResponsible.profile.firstName} ${activity.personResponsible.profile.lastName}`,
-                value: activity.personResponsible._id,
-                email: activity.personResponsible.emails,
-            };
-            setPerson(obj);
-        }
-        setTime(activity.time);
-        local.changed || updateFilter('localStakeHolders', 'ids', activity.stakeHolders);
-        if (local.changed) {
-            setIsUpdated(true)
-        }
-        let updatedStakeHolders = local.changed ? local.ids : activity.stakeHolders;
-        setPeoples(updatedStakeHolders);
-
-    };
-
-    const getProjectManager = () => {
-        const curProject = Projects.find({_id: projectId}).fetch()[0];
-        setProject(curProject);
-        const changeManager = users.find(user => curProject.changeManagers.includes(user.value));
-        setChangeManager(changeManager);
-    };
-
-    const resetValues = () => {
-        let selectedActivity = data.find(item => item.name === activity.type) || {};
-        setActivityType({});
-        setDueDate(new Date());
-        setCompletedDate(null);
-        setDescription('');
-        setPerson(changeManager);
-        setTime('');
-        setPeoples(stakeHolders.map(item => item._id));
-        updateFilter('localStakeHolders', 'ids', stakeHolders.map(item => item._id));
-
-    };
-
-    const updateUsersList = () => {
-        Meteor.call(`users.getAllUsersInCompany`, {company: company}, (err, res) => {
-            if(err){
-                props.enqueueSnackbar(err.reason, {variant: 'error'});
-            }
-            if(res && res.length){
-                setUsers(res.map(user => {
-                    return {
-                        label: `${user.profile.firstName} ${user.profile.lastName}`,
-                        value: user._id,
-                        role: user.roles,
-                        email: user.emails
-                    }
-                }))
-            } else {
-                setUsers([])
-            }
-        })
-    };
-
-    useEffect(() => {
-        setOpen(edit || open);
-        updateUsersList();
-        if(isNew){
-            let updatedStakeHolders = local.changed ? local.ids : stakeHolders.map(item => item._id);
-            setPeoples(updatedStakeHolders);
-            updateFilter('localStakeHolders', 'ids', updatedStakeHolders);
-        }
-        if(edit && activity && activity.name){
-            setExpanded('panel1');
-            updateValues();
-        }
-        getProjectManager();
-
-    }, [props.company, stakeHolders, company, props.edit, props.activity, isNew, local]);
-
-    const handleChangePanel = panel => (event, isExpanded) => {
-        setExpanded(isExpanded ? panel : false);
-    };
-
-    const handleClickOpen = () => {
-        setIsNew(true);
-        setExpanded('panel1');
-        setOpen(true);
-    };
-    const handleClose = () => {
-        setName('');
-        setOpen(false);
-        setIsNew(false);
-        props.newActivity();
-        updateFilter('localStakeHolders', 'changed', false);
-        resetValues();
-        setShowModalDialog(false);
-        setIsUpdated(false);
-    };
-
-    const handleOpenModalDialog = () => {
-        if (isUpdated && !isNew) {
-            setShowModalDialog(true);
+  const sendNotificationEmail = (username,
+                                 activityType,
+                                 activityDueDate,
+                                 time,
+                                 activityName,
+                                 description,
+                                 stakeholders, currentProject, person, projectId, currentChangeManager) => {
+    const projectName = currentProject && currentProject.name;
+    const email = person ? (person && person.email[0].address) : (currentChangeManager && currentChangeManager.email[0].address);
+    if (description === undefined) {
+      description = ''
+    }
+    const fromEmail = email;
+    const activityHelpLink = `https://changeplan.herokuapp.com/projects/${projectId}/activities`
+    Meteor.call('sendEmail', email, fromEmail, username,
+      projectName,
+      activityType,
+      activityDueDate,
+      time,
+      activityName,
+      description,
+      stakeholders,
+      activityHelpLink, (error, result) => {
+        if (error) {
+          props.enqueueSnackbar(err.reason, {variant: 'error'});
         } else {
-            handleClose();
+          props.enqueueSnackbar('Email send successful', {variant: 'success'});
         }
-    };
+      });
+  };
 
-    const closeModalDialog = () => {
-        setShowModalDialog(false);
-    };
-
-    const createProject = (e) => {
-        e.preventDefault();
-        if(!(dueDate)){
-            props.enqueueSnackbar('Please fill all required fields', {variant: 'error'});
-            return false;
-        }
-        else if(!(activityType && activityType.name) && Array.isArray(stakeHolders)){
-            props.enqueueSnackbar('Please fill all required fields', {variant: 'error'});
-            return false;
-        }
-        let params = {
-            activity: {
-                name: activityType.buttonText,
-                type: activityType.name,
-                description,
-                owner: person && person.value,
-                dueDate,
-                completedAt: completedDate,
-                stakeHolders: peoples,
-                projectId,
-                step: 3,
-                time: Number(time)
-            }
-        };
-        if (completedDate) {
-            activity.completed = true;
-            params.activity.completed = activity.completed
-        };
-        let methodName = isNew ? 'activities.insert' : 'activities.update';
-        !isNew && (params.activity._id = activity._id);
-        Meteor.call(methodName, params, (err, res) => {
-            if(err){
-                props.enqueueSnackbar(err.reason, {variant: 'error'})
-            }
-            else{
-                handleClose();
-                props.enqueueSnackbar(`Activity ${isNew ? 'Added' : 'Updated'} Successfully.`, {variant: 'success'})
-            }
-
-        })
-
-    };
-
-    const handleDueDate = date => {
-        setDueDate(date);
-        setIsUpdated(true);
-        setDueDateOpen(false);
-    };
-
-    const handleEndingDate = date => {
-        if(!(endingDate < startingDate)){
-            setEndingDateOpen(false)
-        }
-        setCompletedDate(date);
-        setIsUpdated(true);
-        setEndingDateOpen(false);
-    };
-
-    const openDueDatePicker = () => {
-        setDueDateOpen(true)
-    };
-
-    const openCompletedDatePicker = () => {
-        setEndingDateOpen(true);
-    };
-
-    const handleTimeChange = (e) => {
-        setTime(Number(e.target.value));
-        setIsUpdated(true);
-    };
-
-    const updateUsers = (value) => {
-        setPerson(value)
-    };
-    const handleDescriptionChange = (e) => {
-        setDescription(e.target.value);
-        setIsUpdated(true);
-    };
-
-    function deleteActivity() {
-        setDeleteModal(true);
+  const updateValues = () => {
+    if (isNew) {
+      resetValues();
+      return false;
     }
-
-    function deleteActivityClose(deleted) {
-        setDeleteModal(false);
-        deleted === true && handleClose();
+    let selectedActivity = data.find(item => item.name === activity.type) || {};
+    setActivityType(selectedActivity);
+    setDueDate(activity.dueDate);
+    setCompletedDate(activity.completedAt);
+    setDescription(activity.description);
+    if (activity.personResponsible !== undefined) {
+      let obj = {
+        label: `${activity.personResponsible.profile.firstName} ${activity.personResponsible.profile.lastName}`,
+        value: activity.personResponsible._id,
+        email: activity.personResponsible.emails,
+      };
+      setPerson(obj);
     }
+    setTime(activity.time);
+    local.changed || updateFilter('localStakeHolders', 'ids', activity.stakeHolders);
+    if (local.changed) {
+      setIsUpdated(true)
+    }
+    let updatedStakeHolders = local.changed ? local.ids : activity.stakeHolders;
+    setPeoples(updatedStakeHolders);
+
+  };
+
+  const getProjectManager = () => {
+    const curProject = Projects.find({_id: projectId}).fetch()[0];
+    setProject(curProject);
+    const changeManager = users.find(user => curProject.changeManagers.includes(user.value));
+    setChangeManager(changeManager);
+  };
+
+  const resetValues = () => {
+    let selectedActivity = data.find(item => item.name === activity.type) || {};
+    setActivityType({});
+    setDueDate(new Date());
+    setCompletedDate(null);
+    setDescription('');
+    setPerson(changeManager);
+    setTime('');
+    setPeoples(stakeHolders.map(item => item._id));
+    updateFilter('localStakeHolders', 'ids', stakeHolders.map(item => item._id));
+
+  };
+
+  const updateUsersList = () => {
+    Meteor.call(`users.getAllUsersInCompany`, {company: company}, (err, res) => {
+      if (err) {
+        props.enqueueSnackbar(err.reason, {variant: 'error'});
+      }
+      if (res && res.length) {
+        setUsers(res.map(user => {
+          return {
+            label: `${user.profile.firstName} ${user.profile.lastName}`,
+            value: user._id,
+            role: user.roles,
+            email: user.emails
+          }
+        }))
+      } else {
+        setUsers([])
+      }
+    })
+  };
+
+  useEffect(() => {
+    setOpen(edit || open);
+    updateUsersList();
+    if (isNew) {
+      let updatedStakeHolders = local.changed ? local.ids : stakeHolders.map(item => item._id);
+      setPeoples(updatedStakeHolders);
+      updateFilter('localStakeHolders', 'ids', updatedStakeHolders);
+    }
+    if (edit && activity && activity.name) {
+      setExpanded(true);
+      updateValues();
+    }
+    getProjectManager();
+
+  }, [props.company, stakeHolders, company, props.edit, props.activity, isNew, local]);
+
+  const handleChangePanel = panel => (event, isExpanded) => {
+    setExpanded(isExpanded ? panel : false);
+  };
+
+  const handleClickOpen = () => {
+    setIsNew(true);
+    setExpanded(true);
+    setOpen(true);
+  };
+
+  const changeActivityType = (item) => {
+    setExpanded(false);
+    setActivityType(item);
+  };
+
+  const handleClose = () => {
+    setName('');
+    setOpen(false);
+    setIsNew(false);
+    props.newActivity();
+    updateFilter('localStakeHolders', 'changed', false);
+    resetValues();
+    setShowModalDialog(false);
+    setIsUpdated(false);
+  };
+
+  const handleOpenModalDialog = () => {
+    if (isUpdated && !isNew) {
+      setShowModalDialog(true);
+    } else {
+      handleClose();
+    }
+  };
+
+  const closeModalDialog = () => {
+    setShowModalDialog(false);
+  };
+
+  const createProject = (e) => {
+    e.preventDefault();
+    if (!(dueDate)) {
+      props.enqueueSnackbar('Please fill all required fields', {variant: 'error'});
+      return false;
+    } else if (!(activityType && activityType.name) && Array.isArray(stakeHolders)) {
+      props.enqueueSnackbar('Please fill all required fields', {variant: 'error'});
+      return false;
+    }
+    let params = {
+      activity: {
+        name: activityType.buttonText,
+        type: activityType.name,
+        description,
+        owner: person && person.value,
+        dueDate,
+        completedAt: completedDate,
+        stakeHolders: peoples,
+        projectId,
+        step: 3,
+        time: Number(time)
+      }
+    };
+    if (completedDate) {
+      activity.completed = true;
+      params.activity.completed = activity.completed
+    }
+    ;
+    let methodName = isNew ? 'activities.insert' : 'activities.update';
+    !isNew && (params.activity._id = activity._id);
+    Meteor.call(methodName, params, (err, res) => {
+      if (err) {
+        props.enqueueSnackbar(err.reason, {variant: 'error'})
+      } else {
+        handleClose();
+        props.enqueueSnackbar(`Activity ${isNew ? 'Added' : 'Updated'} Successfully.`, {variant: 'success'})
+      }
+
+    })
+
+  };
+
+  const handleDueDate = date => {
+    setDueDate(date);
+    setIsUpdated(true);
+    setDueDateOpen(false);
+  };
+
+  const handleEndingDate = date => {
+    if (!(endingDate < startingDate)) {
+      setEndingDateOpen(false)
+    }
+    setCompletedDate(date);
+    setIsUpdated(true);
+    setEndingDateOpen(false);
+  };
+
+  const openDueDatePicker = () => {
+    setDueDateOpen(true)
+  };
+
+  const openCompletedDatePicker = () => {
+    setEndingDateOpen(true);
+  };
+
+  const handleTimeChange = (e) => {
+    setTime(Number(e.target.value));
+    setIsUpdated(true);
+  };
+
+  const updateUsers = (value) => {
+    setPerson(value)
+  };
+  const handleDescriptionChange = (e) => {
+    setDescription(e.target.value);
+    setIsUpdated(true);
+  };
+
+  function deleteActivity() {
+    setDeleteModal(true);
+  }
+
+  function deleteActivityClose(deleted) {
+    setDeleteModal(false);
+    deleted === true && handleClose();
+  }
 
 
+  return (
+    <div className={classes.AddNewActivity}>
+      {
+        !list ? <Button variant="contained" className={classes.button} fullWidth={true} onClick={handleClickOpen}>
+          Add Activity
+        </Button> : ''
+      }
+      <Dialog onClose={handleOpenModalDialog} aria-labelledby="customized-dialog-title" open={open} maxWidth="md"
+              fullWidth={true}>
+        <DialogTitle id="customized-dialog-title" onClose={handleOpenModalDialog}>
+          {isNew ? 'Add' : 'Edit'} Activity
+        </DialogTitle>
+        <form onSubmit={createProject} noValidate>
+          <DialogContent dividers>
+            <div className={classes.root}>
+              <ExpansionPanel defaultExpanded expanded={expanded} onChange={handleChangePanel('panel1')}>
+                <ExpansionPanelSummary
+                  expandIcon={<ExpandMoreIcon/>}
+                  aria-controls="panel2bh-content"
+                  id="panel2bh-header"
+                >
+                  <Typography className={classes.heading}>Activity Type</Typography>
+                  <Typography className={classes.secondaryHeading}>
+                    {activityType.buttonText || ''}
+                    {activityType.iconSVG ? <SVGInline
+                      style={{position: 'absolute', marginTop: -8}}
+                      width="35px"
+                      height="35px"
+                      fill='#bbabd2'
+                      svg={activityType.iconSVG}
+                    /> : ''
+                    }
+                  </Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                  <Grid container justify="space-between" spacing={4}>
+                    {
+                      data.map((item, index) => {
+                        return <Tooltip title={item.helpText} key={index} enterDelay={1200}>
+                          <Grid item={true} xs={2} classes={classes1}
+                                style={{background: activityType.name === item.name ? '#dae0e5' : ''}} onClick={(e) => {
+                            changeActivityType(item);
+                          }}>
 
-    return (
-        <div className={classes.AddNewActivity}>
-            {
-                !list ? <Button variant="contained" className={classes.button} fullWidth={true} onClick={handleClickOpen}>
-                    Add Activity
-                </Button> : ''
-            }
-            <Dialog onClose={handleOpenModalDialog} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth={true}>
-                <DialogTitle id="customized-dialog-title" onClose={handleOpenModalDialog}>
-                    { isNew ? 'Add' : 'Edit' } Activity
-                </DialogTitle>
-                <form onSubmit={createProject} noValidate>
-                    <DialogContent dividers>
-                        <div className={classes.root}>
-                            <ExpansionPanel expanded={expanded === 'panel1'} onChange={handleChangePanel('panel1')}>
-                                <ExpansionPanelSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                    aria-controls="panel1bh-content"
-                                    id="panel1bh-header"
-                                >
-                                    <Typography className={classes.heading}>Date</Typography>
-                                    <Typography className={classes.secondaryHeading}>Due Date: {moment(dueDate).format('DD-MMM-YY')}</Typography>
-                                </ExpansionPanelSummary>
-                                <ExpansionPanelDetails>
-                                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                                        <Grid container justify="space-between" spacing={4}>
-                                            <Grid item xs={6} >
-                                                <KeyboardDatePicker
-                                                    fullWidth
-                                                    disableToolbar
-                                                    variant="inline"
-                                                    format="MM/dd/yyyy"
-                                                    margin="normal"
-                                                    id="date-picker-inline"
-                                                    label="Due Date"
-                                                    value={dueDate}
-                                                    autoOk={true}
-                                                    open={dueDateOpen}
-                                                    onClick={openDueDatePicker}
-                                                    onChange={handleDueDate}
-                                                    KeyboardButtonProps={{
-                                                        'aria-label': 'change date',
-                                                    }}
-                                                />
-                                            </Grid>
-                                            <Grid item xs={6} >
-                                                <KeyboardDatePicker
-                                                    disableToolbar
-                                                    fullWidth
-                                                    variant="inline"
-                                                    margin="normal"
-                                                    id="date-picker-dialog"
-                                                    label="Date Completed"
-                                                    format="MM/dd/yyyy"
-                                                    value={completedDate}
-                                                    autoOk={true}
-                                                    open={endingDateOpen}
-                                                    onClick={openCompletedDatePicker}
-                                                    onChange={handleEndingDate}
-                                                    KeyboardButtonProps={{
-                                                        'aria-label': 'change date',
-                                                    }}
-                                                />
-                                            </Grid>
-                                            <Grid item xs={6}>
-                                                <TextField
-                                                    margin="dense"
-                                                    id="time"
-                                                    label="Time Away from BAU (Minutes)"
-                                                    value={time}
-                                                    onChange={handleTimeChange}
-                                                    type="number"
-                                                    fullWidth
-                                                />
-                                            </Grid>
-                                        </Grid>
-                                    </MuiPickersUtilsProvider>
-                                </ExpansionPanelDetails>
-                            </ExpansionPanel>
-                            <ExpansionPanel expanded={expanded === 'panel2'} onChange={handleChangePanel('panel2')}>
-                                <ExpansionPanelSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                    aria-controls="panel2bh-content"
-                                    id="panel2bh-header"
-                                >
-                                    <Typography className={classes.heading}>Activity Type</Typography>
-                                    <Typography className={classes.secondaryHeading}>
-                                        {activityType.buttonText || 'Select Activity type'}
-                                        {activityType.iconSVG ? <SVGInline
-                                            style={{position: 'absolute', marginTop: -8}}
-                                            width="35px"
-                                            height="35px"
-                                            fill='#bbabd2'
-                                            svg={activityType.iconSVG}
-                                        /> : ''
-                                        }
-                                    </Typography>
-                                </ExpansionPanelSummary>
-                                <ExpansionPanelDetails>
-                                    <Grid container justify="space-between" spacing={4}>
-                                        {
-                                            data.map((item, index) => {
-                                                return <Tooltip title={item.helpText} key={index}>
-                                                    <Grid item={true} xs={2} classes={classes1} style={{background : activityType.name === item.name ? '#dae0e5' : '' }} onClick={(e) => { setActivityType(item); }}>
+                            <SVGInline
+                              width="35px"
+                              height="35px"
+                              fill='#bbabd2'
+                              svg={item.iconSVG}
+                            />
+                            <Typography className={classes.gridText}>
+                              {item.buttonText}
+                            </Typography>
+                          </Grid>
+                        </Tooltip>
+                      })
+                    }
+                  </Grid>
+                </ExpansionPanelDetails>
+              </ExpansionPanel>
+              <ExpansionPanel defaultExpanded>
+                <ExpansionPanelSummary
+                  expandIcon={<ExpandMoreIcon/>}
+                  aria-controls="panel1bh-content"
+                  id="panel1bh-header"
+                >
+                  <Typography className={classes.heading}>Date</Typography>
+                  <Typography className={classes.secondaryHeading}>Due
+                    Date: {moment(dueDate).format('DD-MMM-YY')}</Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                    <Grid container justify="space-between" spacing={4}>
+                      <Grid item xs={6}>
+                        <KeyboardDatePicker
+                          fullWidth
+                          disableToolbar
+                          variant="inline"
+                          format="MM/dd/yyyy"
+                          margin="normal"
+                          id="date-picker-inline"
+                          label="Due Date"
+                          value={dueDate}
+                          autoOk={true}
+                          open={dueDateOpen}
+                          onClick={openDueDatePicker}
+                          onChange={handleDueDate}
+                          KeyboardButtonProps={{
+                            'aria-label': 'change date',
+                          }}
+                        />
+                      </Grid>
+                      <Grid item xs={6}>
+                        <KeyboardDatePicker
+                          disableToolbar
+                          fullWidth
+                          variant="inline"
+                          margin="normal"
+                          id="date-picker-dialog"
+                          label="Date Completed"
+                          format="MM/dd/yyyy"
+                          value={completedDate}
+                          autoOk={true}
+                          open={endingDateOpen}
+                          onClick={openCompletedDatePicker}
+                          onChange={handleEndingDate}
+                          KeyboardButtonProps={{
+                            'aria-label': 'change date',
+                          }}
+                        />
+                      </Grid>
+                      <Grid item xs={6}>
+                        <TextField
+                          margin="dense"
+                          id="time"
+                          label="Time Away from BAU (Minutes)"
+                          value={time}
+                          onChange={handleTimeChange}
+                          type="number"
+                          fullWidth
+                        />
+                      </Grid>
+                    </Grid>
+                  </MuiPickersUtilsProvider>
+                </ExpansionPanelDetails>
+              </ExpansionPanel>
 
-                                                        <SVGInline
-                                                            width="35px"
-                                                            height="35px"
-                                                            fill='#bbabd2'
-                                                            svg={item.iconSVG}
-                                                        />
-                                                        <Typography className={classes.gridText}>
-                                                            {item.buttonText}
-                                                        </Typography>
-                                                    </Grid>
-                                                </Tooltip>
-                                            })
-                                        }
-                                    </Grid>
-                                </ExpansionPanelDetails>
-                            </ExpansionPanel>
-                            <ExpansionPanel expanded={expanded === 'panel3'} onChange={handleChangePanel('panel3')}>
-                                <ExpansionPanelSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                    aria-controls="panel3bh-content"
-                                    id="panel3bh-header"
-                                >
-                                    <Typography className={classes.heading}>Stakeholders</Typography>
-                                    <Typography className={classes.secondaryHeading}>
-                                        {peoples.length} of {stakeHolders.length}
-                                    </Typography>
-                                </ExpansionPanelSummary>
-                                <ExpansionPanelDetails>
-                                    <Grid container justify="center">
-                                        <SelectStakeHolders rows={stakeHolders} local={local}/>
-                                    </Grid>
-                                </ExpansionPanelDetails>
-                            </ExpansionPanel>
-                            <ExpansionPanel expanded={expanded === 'panel4'} onChange={handleChangePanel('panel4')}>
-                                <ExpansionPanelSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                    aria-controls="panel4bh-content"
-                                    id="panel4bh-header"
-                                >
-                                    <Typography className={classes.heading}>Description</Typography>
-                                    <Typography className={classes.secondaryHeading}>{
-                                        stringHelpers.limitCharacters(description, 36) || 'Add Notes or Instructions for the person responsible'
-                                    }</Typography>
-                                </ExpansionPanelSummary>
-                                <ExpansionPanelDetails>
-                                    <TextField
-                                        autoFocus
-                                        margin="dense"
-                                        id="description"
-                                        label="Description"
-                                        value={description}
-                                        onChange={handleDescriptionChange}
-                                        type="text"
-                                        fullWidth
-                                    />
-                                </ExpansionPanelDetails>
-                            </ExpansionPanel>
-                            <ExpansionPanel expanded={expanded === 'panal5'} onChange={handleChangePanel('panal5')}>
-                                <ExpansionPanelSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                    aria-controls="panal5bh-content"
-                                    id="panal5bh-header"
-                                >
-                                    <Typography className={classes.heading}>Person Responsible</Typography>
-                                    <Typography className={classes.secondaryHeading}>{ person ? `${person.label}` : (changeManager || {label: ''}).label }</Typography>
-                                </ExpansionPanelSummary>
-                                <ExpansionPanelDetails>
-                                    <Grid container justify="space-between" spacing={2}>
-                                        <Grid item={true} xs={7}>
-                                            <AutoComplete updateUsers={updateUsers} data={users} selectedValue={person} currentChangeManager={changeManager}/>
-                                        </Grid>
-                                        <Grid item={true} xs={5}>
-                                            <AddNewPerson company={company}/>
-                                        </Grid>
-                                    </Grid>
-                                </ExpansionPanelDetails>
-                                <Grid container
-                                      direction="row"
-                                      justify="flex-end"
-                                      alignItems="baseline">
-                                    <Button color="primary"
-                                            onClick={() => {sendNotificationEmail(person.label, activityType.name, activity.dueDate, time, activity.name, description, stakeHolders.length, currentProject, person, projectId, currentChangeManager)}}>
+              <ExpansionPanel defaultExpanded>
+                <ExpansionPanelSummary
+                  expandIcon={<ExpandMoreIcon/>}
+                  aria-controls="panel3bh-content"
+                  id="panel3bh-header"
+                >
+                  <Typography className={classes.heading}>Stakeholders targeted</Typography>
+                  <Typography className={classes.secondaryHeading}>
+                    {peoples.length} of {stakeHolders.length}
+                  </Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                  <Grid container justify="center">
+                    <SelectStakeHolders rows={stakeHolders} local={local} isImpacts={false} isBenefits={false}/>
+                  </Grid>
+                </ExpansionPanelDetails>
+              </ExpansionPanel>
+              <ExpansionPanel defaultExpanded>
+                <ExpansionPanelSummary
+                  expandIcon={<ExpandMoreIcon/>}
+                  aria-controls="panel4bh-content"
+                  id="panel4bh-header"
+                >
+                  <Typography className={classes.heading}>Description</Typography>
+                  <Typography className={classes.secondaryHeading}>{
+                    stringHelpers.limitCharacters(description, 36) || 'Add Notes or Instructions for the person responsible'
+                  }</Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                  <TextField
+                    margin="dense"
+                    id="description"
+                    label="Description"
+                    value={description}
+                    onChange={handleDescriptionChange}
+                    type="text"
+                    fullWidth
+                  />
+                </ExpansionPanelDetails>
+              </ExpansionPanel>
+              <ExpansionPanel defaultExpanded>
+                <ExpansionPanelSummary
+                  expandIcon={<ExpandMoreIcon/>}
+                  aria-controls="panal5bh-content"
+                  id="panal5bh-header"
+                >
+                  <Typography className={classes.heading}>Person Responsible</Typography>
+                  <Typography
+                    className={classes.secondaryHeading}>{person ? `${person.label}` : (changeManager || {label: ''}).label}</Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                  <Grid container justify="space-between" spacing={2}>
+                    <Grid item={true} xs={7}>
+                      <AutoComplete updateUsers={updateUsers} data={users} selectedValue={person}
+                                    currentChangeManager={changeManager}/>
+                    </Grid>
+                    <Grid item={true} xs={5}>
+                      <AddNewPerson company={company}/>
+                    </Grid>
+                  </Grid>
+                </ExpansionPanelDetails>
+                <Grid container
+                      direction="row"
+                      justify="flex-end"
+                      alignItems="baseline">
+                  <Button color="primary"
+                          onClick={() => {
+                            sendNotificationEmail(person.label, activityType.name, activity.dueDate, time, activity.name, description, stakeHolders.length, currentProject, person, projectId, currentChangeManager)
+                          }}>
 
-                                        Notify/Remind by email
-                                    </Button>
-                                </Grid>
-                            </ExpansionPanel>
-                        </div>
-                    </DialogContent>
-                    <DialogActions>
-                        {isNew ? <Button onClick={handleClose} color="secondary">
-                            cancel
-                        </Button> :
-                            <Button onClick={deleteActivity} color="secondary">
-                                Delete
-                            </Button>}
+                    Notify/Remind by email
+                  </Button>
+                </Grid>
+              </ExpansionPanel>
+            </div>
+          </DialogContent>
+          <DialogActions>
+            {isNew ? <Button onClick={handleClose} color="secondary">
+                cancel
+              </Button> :
+              <Button onClick={deleteActivity} color="secondary">
+                Delete
+              </Button>}
 
-                        <Button type="submit" color="primary">
-                            Save
-                        </Button>
-                    </DialogActions>
-                    <SaveChanges
-                      handleClose={handleClose}
-                      showModalDialog={showModalDialog}
-                      handleSave={createProject}
-                      closeModalDialog={closeModalDialog}
-                    />
-                </form>
-            </Dialog>
-            <DeleteActivity open={deleteModal} handleModalClose={deleteActivityClose} activity={activity}/>
-        </div>
-    );
+            <Button type="submit" color="primary">
+              Save
+            </Button>
+          </DialogActions>
+          <SaveChanges
+            handleClose={handleClose}
+            showModalDialog={showModalDialog}
+            handleSave={createProject}
+            closeModalDialog={closeModalDialog}
+          />
+        </form>
+      </Dialog>
+      <DeleteActivity open={deleteModal} handleModalClose={deleteActivityClose} activity={activity}/>
+    </div>
+  );
 }
 
 const AddActivityPage = withTracker(props => {
-    let local = LocalCollection.findOne({
-        name: 'localStakeHolders'
-    });
-    Meteor.subscribe('companies');
-    let company = Companies.findOne() || {};
-    let companyId = company._id || {};
-    Meteor.subscribe('peoples', companyId );
-    return {
-        stakeHolders: Peoples.find().fetch(),
-        local,
-        company,
-    };
+  let local = LocalCollection.findOne({
+    name: 'localStakeHolders'
+  });
+  Meteor.subscribe('companies');
+  let company = Companies.findOne() || {};
+  let companyId = company._id || {};
+  Meteor.subscribe('peoples', companyId);
+  return {
+    stakeHolders: Peoples.find().fetch(),
+    local,
+    company,
+  };
 })(withRouter(AddActivity));
 
 export default withSnackbar(AddActivityPage)
