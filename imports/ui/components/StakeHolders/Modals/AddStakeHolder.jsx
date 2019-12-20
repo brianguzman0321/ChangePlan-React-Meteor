@@ -86,6 +86,13 @@ const useStyles = makeStyles(theme => ({
     minHeight: '80vh',
     maxHeight: '80vh',
   },
+  menuItem: {
+    color: 'lightgray',
+  },
+  sampleCsv: {
+    textDecoration: 'none',
+    color: '#303f9f',
+  }
 }));
 
 const DialogTitle = withStyles(styles)(props => {
@@ -121,8 +128,8 @@ function AddStakeHolder(props) {
   const [role, setRole] = React.useState('');
   const [businessUnit, setBusinessUnit] = React.useState('');
   const [email, setEmail] = React.useState('');
-  const [supportLevel, setSupportLevel] = React.useState(null);
-  const [influenceLevel, setInfluenceLevel] = React.useState(null);
+  const [supportLevel, setSupportLevel] = React.useState(0);
+  const [influenceLevel, setInfluenceLevel] = React.useState(0);
   const [selectOpen, setSelectOpen] = React.useState(false);
   const [selectOpen1, setSelectOpen1] = React.useState(false);
   const [open, setOpen] = React.useState(false);
@@ -153,8 +160,8 @@ function AddStakeHolder(props) {
     setRole('');
     setBusinessUnit('');
     setEmail('');
-    setSupportLevel(null);
-    setInfluenceLevel(null);
+    setSupportLevel(0);
+    setInfluenceLevel(0);
     setOpen(true);
     setCsvfile('');
     setNotes('');
@@ -497,6 +504,19 @@ function AddStakeHolder(props) {
                   <Grid item xs={6}>
                     <TextField
                       // margin="dense"
+                      id="email"
+                      label="Email"
+                      value={email}
+                      onChange={handleEmailChange}
+                      required={true}
+                      type="email"
+                      fullWidth={true}
+                    />
+                  </Grid>
+                  <Grid item xs={6} />
+                  <Grid item xs={6}>
+                    <TextField
+                      // margin="dense"
                       id="role"
                       label="Role"
                       value={role}
@@ -522,19 +542,6 @@ function AddStakeHolder(props) {
                       fullWidth={true}
                     />
                   </Grid>
-                  <Grid item xs={6}>
-                    <TextField
-                      // margin="dense"
-                      id="email"
-                      label="Email"
-                      value={email}
-                      onChange={handleEmailChange}
-                      required={true}
-                      type="email"
-                      fullWidth={true}
-                    />
-                  </Grid>
-                  <Grid item xs={6} />
                   <Grid item xs={12}>
                     <TextField
                       // margin="dense"
@@ -566,7 +573,9 @@ function AddStakeHolder(props) {
                           name: 'role',
                           id: 'demo-controlled-open-select',
                         }}
+                        className={influenceLevel === 0 && classes.menuItem}
                       >
+                        <MenuItem value={0}>no-value</MenuItem>
                         <MenuItem value={1}>1</MenuItem>
                         <MenuItem value={2}>2</MenuItem>
                         <MenuItem value={3}>3</MenuItem>
@@ -596,7 +605,9 @@ function AddStakeHolder(props) {
                           name: 'role',
                           id: 'demo-controlled-open-select',
                         }}
+                        className={influenceLevel === 0 && classes.menuItem}
                       >
+                        <MenuItem value={0}>no-value</MenuItem>
                         <MenuItem value={1}>1</MenuItem>
                         <MenuItem value={2}>2</MenuItem>
                         <MenuItem value={3}>3</MenuItem>
@@ -641,6 +652,7 @@ function AddStakeHolder(props) {
                   <Button variant="raised" component="span" className={classes.button}>
                     Choose File
                   </Button>
+                  <a href="/branding/stakeholder_list.csv" download="stakeholder_list.csv" className={classes.sampleCsv}>Template.csv</a>
                   <Typography variant="h6">
                     &nbsp;&nbsp;{csvfile && csvfile.name}
                   </Typography>

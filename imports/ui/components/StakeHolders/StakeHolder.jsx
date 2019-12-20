@@ -53,7 +53,10 @@ const StakeHolder = (props) => {
         />
       </TableCell>}
       <TableCell align="left" component="th" id={labelId} scope="row" onClick={handleOpenModalDialog}>
-        {row.firstName} {row.lastName}
+        {row.firstName}
+      </TableCell>
+      <TableCell align="left" component="th" id={labelId} scope="row" onClick={handleOpenModalDialog}>
+        {row.lastName}
       </TableCell>
       {smallTable && <TableCell align="left" onClick={handleOpenModalDialog}>{row.email}</TableCell>}
       <TableCell align="left" onClick={handleOpenModalDialog}>{row.role}</TableCell>

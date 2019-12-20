@@ -79,7 +79,7 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function AddValue(props) {
-  let   { open, handleModalClose, project, index, editValue, stakeHolders, local } = props;
+  let {open, handleModalClose, project, indexBenefits, editValue, stakeHoldersBenefits, localBenefits} = props;
   const [name, setName] = React.useState('');
   const [expectedDateOpen, setExpectedDateOpen] = useState(false);
   const [peoples, setPeoples] = useState([]);
@@ -99,7 +99,7 @@ function AddValue(props) {
     handleModalClose(modalName);
     setName('');
     setExpectedDate(null);
-    updateFilter('localStakeHolders', 'changed', false);
+    updateFilter('localStakeHoldersBenefits', 'changed', false);
     setShowModalDialog(false);
     setIsUpdated(false);
   };
@@ -108,6 +108,10 @@ function AddValue(props) {
     if (isUpdated) {
       setShowModalDialog(true);
     }
+  };
+
+  const closeModalDialog = () => {
+    setShowModalDialog(false);
   };
 
   const handleExpectedDate = date => {
@@ -120,31 +124,27 @@ function AddValue(props) {
     setExpectedDateOpen(true)
   };
 
-  const closeModalDialog = () => {
-    setShowModalDialog(false);
-  };
-
   const updateValues = () => {
-    if (index !== '') {
-      const newStakeholders = benefits && benefits[index].stakeholders;
-      local.changed || updateFilter('localStakeHolders', 'ids', newStakeholders);
-      if (local.changed) {
+    if (indexBenefits!== '') {
+      const newStakeholders = benefits && benefits[indexBenefits].stakeholders;
+      localBenefits.changed || updateFilter('localStakeHoldersBenefits', 'ids', newStakeholders);
+      if (localBenefits.changed) {
         setIsUpdated(true)
       }
-      const newExpectedDate = benefits && benefits[index].expectedDate;
+      const newExpectedDate = benefits && benefits[indexBenefits].expectedDate;
       setExpectedDate(newExpectedDate);
-      let updatedStakeHolders = local.changed ? local.ids : newStakeholders;
+      let updatedStakeHolders = localBenefits.changed ? localBenefits.ids : newStakeholders;
       setPeoples(updatedStakeHolders);
     } else {
-      let updatedStakeHolders = local.changed ? local.ids : [];
+      let updatedStakeHolders = localBenefits.changed ? localBenefits.ids : [];
       setPeoples(updatedStakeHolders);
-      updateFilter('localStakeHolders', 'ids', updatedStakeHolders);
+      updateFilter('localStakeHoldersBenefits', 'ids', updatedStakeHolders);
     }
   };
 
   useEffect(() => {
     updateValues();
-  }, [benefits, index]);
+  }, [indexBenefits, stakeHoldersBenefits]);
 
   const createBenefits = () => {
     if (!(name)) {
@@ -158,8 +158,8 @@ function AddValue(props) {
     };
 
     let newBenefits = benefits;
-    if (index !== '') {
-      newBenefits[index] = benefitsObj;
+    if (indexBenefits !== '') {
+      newBenefits[indexBenefits] = benefitsObj;
       setBenefits(newBenefits);
     } else {
       newBenefits = project.benefits ? project.benefits.concat(benefitsObj) : [benefitsObj];
@@ -233,9 +233,9 @@ function AddValue(props) {
               <br/>
               <Typography className={classes.heading}>Stakeholders</Typography>
               <Typography className={classes.secondaryHeading}>
-                {peoples && peoples.length || 0} of {stakeHolders.length}
+                {peoples && peoples.length || 0} of {stakeHoldersBenefits.length}
               </Typography>
-              <SelectStakeHolders rows={stakeHolders} local={local}/>
+              <SelectStakeHolders rows={stakeHoldersBenefits} local={localBenefits} isImpacts={false} isBenefits={true}/>
               <br/>
               <br/>
               <br/>
@@ -271,16 +271,16 @@ function AddValue(props) {
 }
 
 const AddActivityPage = withTracker(props => {
-  let local = LocalCollection.findOne({
-    name: 'localStakeHolders'
+  let localBenefits = LocalCollection.findOne({
+    name: 'localStakeHoldersBenefits'
   });
   Meteor.subscribe('companies');
   let company = Companies.findOne() || {};
   let companyId = company._id || {};
   Meteor.subscribe('peoples', companyId);
   return {
-    stakeHolders: Peoples.find().fetch(),
-    local,
+    stakeHoldersBenefits: Peoples.find().fetch(),
+    localBenefits,
     company
   };
 })(withRouter(AddValue));
