@@ -47,6 +47,14 @@ export const insert = new ValidatedMethod({
             type: String,
             optional: true
         },
+        'company.activityColumns': {
+            type: Array,
+            optional: true
+        },
+        'company.activityColumns.$': {
+            type: String,
+            optional: true
+        },
     }).validator(),
     run({ company }) {
         company.owner = this.userId;
@@ -99,6 +107,14 @@ export const update = new ValidatedMethod({
             optional: true
         },
         'company.projects.$': {
+            type: String,
+            optional: true
+        },
+        'company.activityColumns': {
+            type: Array,
+            optional: true
+        },
+        'company.activityColumns.$': {
             type: String,
             optional: true
         },
