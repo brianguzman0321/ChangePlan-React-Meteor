@@ -17,8 +17,8 @@ import Select from '@material-ui/core/Select';
 import {withTracker} from "meteor/react-meteor-data";
 import {Companies} from "/imports/api/companies/companies";
 import {Templates} from "/imports/api/templates/templates";
-import NewTemplate from './Modals/CreateTemplate'; ////!!!!!!!!!!!!!!!!!!1
-import TemplateMenus from './TemplateMenus'; ///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+import NewTemplate from './Modals/CreateTemplate';
+import TemplateMenus from './TemplateMenus';
 import {Activities} from "../../../api/activities/activities";
 import {Peoples} from '../../../api/peoples/peoples';
 import ProjectNavBar from "../Projects/ProjectsNavBar";
@@ -302,7 +302,7 @@ function TemplateCard(props) {
             </IconButton>
           </Grid>
           <Grid item xs={4} className={(isAdmin || isSuperAdmin) && company ? classes.secondTab : ''}>
-            {((isSuperAdmin && selectedTab === 2) || (isAdmin && selectedTab === 1)) && company && <NewTemplate {...props} isAdmin={isAdmin} className={classes.createNewTemplate}/>}
+            <NewTemplate {...props} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} selectedTab={selectedTab} className={classes.createNewTemplate}/>
             <Typography color="textSecondary" variant="title" className={classes.sortBy}>
               Sort by
             </Typography>

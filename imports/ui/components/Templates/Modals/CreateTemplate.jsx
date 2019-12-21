@@ -129,7 +129,7 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function AddActivity(props) {
-  let {company, stakeHolders, local, match, edit, activity, isOpen, isAdmin, currentCompany} = props;
+  let {company, stakeHolders, local, match, edit, activity, isOpen, isAdmin, currentCompany, isSuperAdmin, selectedTab} = props;
   const [open, setOpen] = React.useState(edit || isOpen || false);
   const [deleteModal, setDeleteModal] = React.useState(false);
   const [age, setAge] = React.useState(5);
@@ -273,9 +273,10 @@ function AddActivity(props) {
 
   return (
     <div className={classes.AddNewActivity}>
+      {((isSuperAdmin && selectedTab === 2) || (isAdmin && selectedTab === 1)) && company &&
       <Button variant="contained" color="primary" onClick={handleClickOpen}>
         Create New Template
-      </Button>
+      </Button> }
       <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md"
               fullWidth={true}>
         <DialogTitle id="customized-dialog-title" onClose={handleClose}>
