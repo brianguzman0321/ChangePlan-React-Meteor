@@ -25,6 +25,10 @@ import EditProject from "/imports/ui/components/Projects/Models/EditProject";
 import {Companies} from "../../../api/companies/companies";
 import {Peoples} from "../../../api/peoples/peoples";
 import BenefitsModal from "./Modals/BenefitsModal";
+import {Templates} from "../../../api/templates/templates";
+import {withSnackbar} from "notistack";
+import ChangeTemplate from "./Modals/ChangeTemplate";
+
 
 const useStyles = makeStyles({
   root: {
@@ -121,22 +125,28 @@ const useStyles = makeStyles({
 });
 
 function Dashboard(props) {
-  let {match, project: currentProject,} = props;
-  let {projectId} = match.params;
+  let {match, project: currentProject, template: currentTemplate, currentCompany, companies, company} = props;
+  let {projectId, templateId} = match.params;
   const classes = useStyles();
   let {params} = props.match;
   const [project, setProject] = useState({});
+  const [template, setTemplate] = useState({});
   const [index, setIndex] = React.useState('');
+  const [type, setType] = useState(projectId && 'project' || templateId && 'template');
   const [impactIndex, setImpactIndex] = React.useState('');
   const [benefitsIndex, setBenefitsIndex] = React.useState('');
   const [editValue, setEditValue] = React.useState('');
   const [deleteValue, setDeleteValue] = React.useState('');
-  const [vision, setVision] = React.useState(project.vision || []);
-  const [objectives, setObjective] = React.useState(project.objectives || []);
+  const [vision, setVision] = React.useState(project.vision || template.vision || []);
+  const [objectives, setObjective] = React.useState(project.objectives || template.objectives || []);
   const [impacts, setImpacts] = React.useState([]);
-  const [risks, setRisks] = React.useState(project.risks || []);
+  const [risks, setRisks] = React.useState(project.risks || template.risks || []);
   const [benefits, setBenefits] = React.useState([]);
-  const [editProjectModal, setEditProjectModal] = React.useState(false);
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isChangeManager, setIsChangeManager] = useState(false);
+  const [currentCompanyId, setCompanyId] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
   const [modals, setModals] = React.useState({
     vision: false,
     delete: false,
@@ -146,11 +156,12 @@ function Dashboard(props) {
     risks: false,
   });
   let menus = config.menus;
-  if (!params.projectId) {
+  if (!(params.projectId || params.templateId)) {
     menus = []
   }
 
   const allowedValues = ['vision', 'delete', 'objectives', 'impacts', 'benefits', 'risks', 'edit'];
+
 
   const handleClose = (value) => {
     if (modals.edit) {
@@ -165,39 +176,51 @@ function Dashboard(props) {
   };
 
   const editVision = (index, value) => {
-    setIndex(index);
-    setEditValue(value);
-    handleClose('vision')
+    if ((isAdmin && template.companyId || isSuperAdmin) || (projectId !== undefined)) {
+      setIndex(index);
+      setEditValue(value);
+      handleClose('vision');
+    }
   };
 
   const editObjectives = (index, value) => {
-    setIndex(index);
-    setEditValue(value);
-    handleClose('objectives')
+    if ((isAdmin && template.companyId || isSuperAdmin) || (projectId !== undefined)) {
+      setIndex(index);
+      setEditValue(value);
+      handleClose('objectives');
+    }
   };
 
   const editImpacts = (index, value) => {
-    setImpactIndex(index);
-    setEditValue(value);
-    handleClose('impacts')
+    if ((isAdmin && template.companyId || isSuperAdmin) || (projectId !== undefined)) {
+      setImpactIndex(index);
+      setEditValue(value);
+      handleClose('impacts');
+    }
   };
 
   const editBenefits = (index, value) => {
-    setBenefitsIndex(index);
-    setEditValue(value);
-    handleClose('benefits')
+    if ((isAdmin && template.companyId || isSuperAdmin) || (projectId !== undefined)) {
+      setBenefitsIndex(index);
+      setEditValue(value);
+      handleClose('benefits');
+    }
   };
 
   const editRisks = (index, value) => {
-    setIndex(index);
-    setEditValue(value);
-    handleClose('risks')
+    if ((isAdmin && template.companyId || isSuperAdmin) || (projectId !== undefined)) {
+      setIndex(index);
+      setEditValue(value);
+      handleClose('risks');
+    }
   };
 
   const deleteEntity = (index, value) => {
-    setIndex(index);
-    setDeleteValue(value);
-    handleClose('delete')
+    if ((isAdmin && template.companyId || isSuperAdmin) || (projectId !== undefined)) {
+      setIndex(index);
+      setDeleteValue(value);
+      handleClose('delete')
+    }
   };
 
   const handleModalClose = obj => {
@@ -226,37 +249,90 @@ function Dashboard(props) {
     if (project && project.risks) {
       setRisks(project.risks)
     }
-
   };
 
-  function handleEditModalClose() {
-    console.log("I am running")
-    setEditProjectModal(false)
-  }
+  const checkRoles = () => {
+    setCompanyId(currentCompany._id);
+    const projectsCurCompany = Projects.find({companyId: currentCompany._id}).fetch();
+    if (projectsCurCompany) {
+      const userId = Meteor.userId();
+      const changeManagers = [...new Set([].concat.apply([], projectsCurCompany.map(project => project.changeManagers)))];
+      if (Roles.userIsInRole(userId, 'superAdmin')) {
+        setIsSuperAdmin(true);
+      } else if (company && company.admins.includes(userId)) {
+        setIsAdmin(true);
+        if ((template && (template.companyId !== currentCompanyId) && projectId === undefined)) {
+          setIsOpen(true);
+        } else if ((template && (template.companyId === currentCompanyId) && projectId !== undefined)) {
+          setIsOpen(false);
+        } else {
+          setIsOpen(false);
+        }
+      } else if (changeManagers.includes(userId)) {
+        setIsChangeManager(true);
+        if (projectId === undefined) {
+          setIsOpen(true);
+        }
+      }
+    } else {
+      if (Roles.userIsInRole(userId, 'superAdmin')) {
+        setIsSuperAdmin(true);
+      } else if (company && company.admins.includes(userId)) {
+        setIsAdmin(true);
+        if ((template && (template.companyId !== currentCompanyId) && projectId === undefined)) {
+          setIsOpen(true);
+        } else if ((template && (template.companyId === currentCompanyId) && projectId !== undefined)) {
+          setIsOpen(false);
+        } else {
+          setIsOpen(false);
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (currentCompany) {
+      checkRoles();
+    }
+  }, [currentCompany, template]);
 
   useEffect(() => {
     if (currentProject) {
       setProject(currentProject);
       updateValues(currentProject)
+    } else if (currentTemplate) {
+      setTemplate(currentTemplate);
+      updateValues(currentTemplate)
     }
-  }, [currentProject]);
+  }, [currentProject, currentTemplate]);
+
+  const handleOpenChangeTemplateModal = () => {
+    setIsOpen(false);
+  }
 
 
   return (
     <div>
       <VisionModal open={modals.vision} handleModalClose={handleModalClose} project={project} index={index}
-                   editValue={editValue}/>
+                   template={template}
+                   editValue={editValue} currentType={type}/>
       <ObjectiveModal open={modals.objectives} handleModalClose={handleModalClose} project={project} index={index}
-                      editValue={editValue}/>
-      <ImpactsModal open={modals.impacts} handleModalClose={handleModalClose} project={project}
+                      template={template}
+                      editValue={editValue} currentType={type}/>
+      <ImpactsModal open={modals.impacts} handleModalClose={handleModalClose} project={project} template={template}
                     indexImpact={impactIndex}
-                    editValue={editValue}/>
+                    editValue={editValue} currentType={type}/>
       <RisksModal open={modals.risks} handleModalClose={handleModalClose} project={project} index={index}
-                  editValue={editValue}/>
-      <BenefitsModal open={modals.benefits} handleModalClose={handleModalClose} project={project} indexBenefits={benefitsIndex}
-                     editValue={editValue}/>
+                  template={template}
+                  editValue={editValue} currentType={type}/>
+      <BenefitsModal open={modals.benefits} handleModalClose={handleModalClose} project={project}
+                     indexBenefits={benefitsIndex} template={template}
+                     editValue={editValue} currentType={type}/>
       <DeleteValue open={modals.delete} handleModalClose={handleModalClose} project={project} index={index}
-                   deleteValue={deleteValue}/>
+                   template={template}
+                   deleteValue={deleteValue} type={type}/>
+      <ChangeTemplate closeModalDialog={handleOpenChangeTemplateModal} showModalDialog={isOpen}/>
+
       <TopNavBar menus={menus} {...props} />
       <Grid
         container
@@ -287,14 +363,17 @@ function Dashboard(props) {
         >
           <Grid item xs={6}>
             <Typography variant="h4" className={classes.projectName}>
-              {project.name}
+              {type === 'project' ? project && project.name : template && template.name}
             </Typography>
+            {type === 'project' &&
             <Typography gutterBottom style={{marginTop: 5}}>
               <b>Start date:</b> {moment(project.startingDate).format('DD-MMM-YY')}
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <b>Due date:</b> {moment(project.endingDate).format('DD-MMM-YY')}
             </Typography>
+            }
           </Grid>
+          {type === 'project' && project &&
           <Grid item xs={4} style={{paddingLeft: 39}}>
             <Typography gutterBottom>
               <b>{project.changeManagers && project.changeManagers.length > 1 ? "Change managers" : "Change manager"}:</b>
@@ -308,10 +387,14 @@ function Dashboard(props) {
               {ManagersNames(project)}
             </Typography>
           </Grid>
+          }
+          {type === 'project' && project &&
           <Grid item xs={2} onClick={handleClose.bind(null, 'edit')}>
-            <EditProject open={modals.edit} handleModalClose={handleModalClose} project={project}
+            <EditProject open={modals.edit} handleModalClose={handleModalClose} project={project} template={template}
                          displayEditButton={true}/>
           </Grid>
+          }
+
         </Grid>
         <Grid
           container
@@ -329,17 +412,30 @@ function Dashboard(props) {
                 </Typography>
               </CardContent>
               <CardActions>
-                <Grid
-                  container
-                  direction="row"
-                  justify="flex-end"
-                  alignItems="baseline"
-                >
-                  <Button align="right" color="primary"
-                          onClick={() => props.history.push(`/projects/${projectId}/activities`)}>
-                    Activities Page
-                  </Button>
-                </Grid>
+                {type === 'project' ? project &&
+                  <Grid
+                    container
+                    direction="row"
+                    justify="flex-end"
+                    alignItems="baseline"
+                  >
+                    <Button align="right" color="primary"
+                            onClick={() => props.history.push(`/projects/${projectId}/activities`)}>
+                      Activities Page
+                    </Button>
+                  </Grid> : template &&
+                  <Grid
+                    container
+                    direction="row"
+                    justify="flex-end"
+                    alignItems="baseline"
+                  >
+                    <Button align="right" color="primary"
+                            onClick={() => props.history.push(`/templates/${templateId}/activities`)}>
+                      Activities Page
+                    </Button>
+                  </Grid>
+                }
               </CardActions>
             </Card>
           </Grid>
@@ -351,7 +447,7 @@ function Dashboard(props) {
                 </Typography>
               </CardContent>
               <CardActions>
-                <Grid
+                {type === 'project' ? project && <Grid
                   container
                   direction="row"
                   justify="flex-end"
@@ -361,7 +457,19 @@ function Dashboard(props) {
                           onClick={() => props.history.push(`/projects/${projectId}/stake-holders`)}>
                     Stakeholders Page
                   </Button>
-                </Grid>
+                </Grid> : template &&
+                  <Grid
+                    container
+                    direction="row"
+                    justify="flex-end"
+                    alignItems="baseline"
+                  >
+                    <Button align="right" color="primary"
+                            onClick={() => props.history.push(`/templates/${templateId}/stake-holders`)}>
+                      Stakeholders Page
+                    </Button>
+                  </Grid>
+                }
               </CardActions>
             </Card>
           </Grid>
@@ -370,7 +478,7 @@ function Dashboard(props) {
               <LinearProgress variant="determinate" color="primary" value={100}/>
               <CardContent>
                 <Typography className={classes.displayHeading} style={{marginBottom: 15}}>
-                  PROJECT INFORMATION
+                  {type === 'project' ? 'PROJECT ' : 'TEMPLATE '}INFORMATION
                 </Typography>
                 <Card>
                   <CardContent>
@@ -383,7 +491,6 @@ function Dashboard(props) {
                       <span className={classes.helpTipText}>What is the big picture vision for this project and how it will benefit the organisation?</span>
                     </Typography>
                     <Divider/>
-
                     {vision.map((v, i) => {
                       return <><Grid key={i}
                                      container
@@ -398,18 +505,19 @@ function Dashboard(props) {
                             {stringHelpers.limitCharacters(v, 112)}
                           </Typography>
                         </Grid>
-                        <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
-                          <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {
-                            editVision(i, v)
-                          }}>
-                            edit
-                          </Icon>
-                          <Icon fontSize="small" style={{marginRight: 6, cursor: 'pointer'}} onClick={(e) => {
-                            deleteEntity(i, 'vision')
-                          }}>
-                            delete
-                          </Icon>
-                        </Grid>
+                        {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || projectId !== undefined) ?
+                          <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
+                            <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {
+                              editVision(i, v)
+                            }}>
+                              edit
+                            </Icon>
+                            <Icon fontSize="small" style={{marginRight: 6, cursor: 'pointer'}} onClick={(e) => {
+                              deleteEntity(i, 'vision')
+                            }}>
+                              delete
+                            </Icon>
+                          </Grid> : <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}></Grid>}
                       </Grid>
                         <Divider/>
                       </>
@@ -417,10 +525,11 @@ function Dashboard(props) {
                     })}
 
                     <Divider/>
-                    <Button align="right" color="primary" variant="contained" fullWidth={true} style={{marginTop: 7}}
-                            onClick={handleClose.bind(null, 'vision')}>
-                      Add
-                    </Button>
+                    {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || projectId !== undefined) ?
+                      <Button align="right" color="primary" variant="contained" fullWidth={true} style={{marginTop: 7}}
+                              onClick={handleClose.bind(null, 'vision')}>
+                        Add
+                      </Button> : ''}
                   </CardContent>
                 </Card>
                 <br/>
@@ -450,18 +559,19 @@ function Dashboard(props) {
                             {stringHelpers.limitCharacters(v, 112)}
                           </Typography>
                         </Grid>
-                        <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
-                          <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {
-                            editObjectives(i, v)
-                          }}>
-                            edit
-                          </Icon>
-                          <Icon fontSize="small" style={{marginRight: 6, cursor: 'pointer'}} onClick={(e) => {
-                            deleteEntity(i, 'objectives')
-                          }}>
-                            delete
-                          </Icon>
-                        </Grid>
+                        {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || projectId !== undefined) ?
+                          <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
+                            <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {
+                              editObjectives(i, v)
+                            }}>
+                              edit
+                            </Icon>
+                            <Icon fontSize="small" style={{marginRight: 6, cursor: 'pointer'}} onClick={(e) => {
+                              deleteEntity(i, 'objectives')
+                            }}>
+                              delete
+                            </Icon>
+                          </Grid> : <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}></Grid>}
                       </Grid>
                         <Divider/>
                       </>
@@ -469,10 +579,12 @@ function Dashboard(props) {
                     })}
 
                     <Divider/>
-                    <Button align="right" color="primary" variant="contained" fullWidth={true} style={{marginTop: 7}}
-                            onClick={handleClose.bind(null, 'objectives')}>
-                      Add
-                    </Button>
+                    {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || projectId !== undefined) ?
+                      <Button align="right" color="primary" variant="contained" fullWidth={true} style={{marginTop: 7}}
+                              onClick={handleClose.bind(null, 'objectives')}>
+                        Add
+                      </Button> : ''}
+
                   </CardContent>
                 </Card>
                 <br/>
@@ -507,7 +619,6 @@ function Dashboard(props) {
                         <Typography className={classes.columnsHeadings} gutterBottom style={{fontWeight: 'bold'}}>
                           DESCRIPTION
                         </Typography>
-
                       </Grid>
                       <Grid item xs={1}>
                         <Typography className={classes.columnsHeadings} gutterBottom style={{fontWeight: 'bold'}}>
@@ -561,27 +672,29 @@ function Dashboard(props) {
                         }}>
                           {v.level.toUpperCase()}
                         </Grid>
-                        <Grid item xs={1} justify="flex-end" style={{display: 'flex'}}>
-                          <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {
-                            editImpacts(i, v)
-                          }}>
-                            edit
-                          </Icon>
-                          <Icon fontSize="small" style={{marginRight: 6, cursor: 'pointer'}} onClick={(e) => {
-                            deleteEntity(i, 'impacts')
-                          }}>
-                            delete
-                          </Icon>
-                        </Grid>
+                        {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || projectId !== undefined) ?
+                          <Grid item xs={1} justify="flex-end" style={{display: 'flex'}}>
+                            <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {
+                              editImpacts(i, v)
+                            }}>
+                              edit
+                            </Icon>
+                            <Icon fontSize="small" style={{marginRight: 6, cursor: 'pointer'}} onClick={(e) => {
+                              deleteEntity(i, 'impacts')
+                            }}>
+                              delete
+                            </Icon>
+                          </Grid> : <Grid item xs={1} justify="flex-end" style={{display: 'flex'}}></Grid>}
                       </Grid>
                         <Divider/>
                       </>
                     })}
                     <Divider/>
-                    <Button align="right" color="primary" variant="contained" fullWidth={true} style={{marginTop: 7}}
-                            onClick={handleClose.bind(null, 'impacts')}>
-                      Add
-                    </Button>
+                    {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || projectId !== undefined) ?
+                      <Button align="right" color="primary" variant="contained" fullWidth={true} style={{marginTop: 7}}
+                              onClick={handleClose.bind(null, 'impacts')}>
+                        Add
+                      </Button> : ''}
                   </CardContent>
                 </Card>
                 <br/>
@@ -647,18 +760,19 @@ function Dashboard(props) {
                         }}>
                           {v.stakeholders && v.stakeholders.length}
                         </Grid>
-                        <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
-                          <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {
-                            editBenefits(i, v)
-                          }}>
-                            edit
-                          </Icon>
-                          <Icon fontSize="small" style={{marginRight: 6, cursor: 'pointer'}} onClick={(e) => {
-                            deleteEntity(i, 'benefits')
-                          }}>
-                            delete
-                          </Icon>
-                        </Grid>
+                        {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || projectId !== undefined) ?
+                          <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
+                            <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {
+                              editBenefits(i, v)
+                            }}>
+                              edit
+                            </Icon>
+                            <Icon fontSize="small" style={{marginRight: 6, cursor: 'pointer'}} onClick={(e) => {
+                              deleteEntity(i, 'benefits')
+                            }}>
+                              delete
+                            </Icon>
+                          </Grid> : <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}></Grid>}
                       </Grid>
                         <Divider/>
                       </>
@@ -666,10 +780,12 @@ function Dashboard(props) {
                     })}
 
                     <Divider/>
-                    <Button align="right" color="primary" variant="contained" fullWidth={true} style={{marginTop: 7}}
-                            onClick={handleClose.bind(null, 'benefits')}>
-                      Add
-                    </Button>
+                    {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || projectId !== undefined) ?
+                      <Button align="right" color="primary" variant="contained" fullWidth={true} style={{marginTop: 7}}
+                              onClick={handleClose.bind(null, 'benefits')}>
+                        Add
+                      </Button> : ''}
+
                   </CardContent>
                 </Card>
                 <br/>
@@ -725,18 +841,20 @@ function Dashboard(props) {
                         }}>
                           {v.level.toUpperCase()}
                         </Grid>
-                        <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
-                          <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {
-                            editRisks(i, v)
-                          }}>
-                            edit
-                          </Icon>
-                          <Icon fontSize="small" style={{marginRight: 6, cursor: 'pointer'}} onClick={(e) => {
-                            deleteEntity(i, 'risks')
-                          }}>
-                            delete
-                          </Icon>
-                        </Grid>
+                        {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || projectId !== undefined) ?
+                          <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
+                            <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {
+                              editRisks(i, v)
+                            }}>
+                              edit
+                            </Icon>
+                            <Icon fontSize="small" style={{marginRight: 6, cursor: 'pointer'}} onClick={(e) => {
+                              deleteEntity(i, 'risks')
+                            }}>
+                              delete
+                            </Icon>
+                          </Grid>
+                          : <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}></Grid>}
                       </Grid>
                         <Divider/>
                       </>
@@ -744,10 +862,11 @@ function Dashboard(props) {
                     })}
 
                     <Divider/>
-                    <Button align="right" color="primary" variant="contained" fullWidth={true} style={{marginTop: 7}}
-                            onClick={handleClose.bind(null, 'risks')}>
-                      Add
-                    </Button>
+                    {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || projectId !== undefined) ?
+                      <Button align="right" color="primary" variant="contained" fullWidth={true} style={{marginTop: 7}}
+                              onClick={handleClose.bind(null, 'risks')}>
+                        Add
+                      </Button> : ''}
                   </CardContent>
                 </Card>
               </CardContent>
@@ -784,24 +903,33 @@ function ManagersNames(project) {
       return "-"
     }
   }
-
 }
 
 const DashboardPage = withTracker(props => {
   let {match} = props;
-  let {projectId} = match.params;
+  let {projectId, templateId} = match.params;
+  let userId = Meteor.userId();
+  Meteor.subscribe('companies.single');
   Meteor.subscribe('compoundActivities', projectId);
   Meteor.subscribe('compoundProject', projectId);
   Meteor.subscribe('companies');
+  Meteor.subscribe('templates');
   let company = Companies.findOne() || {};
   let companyId = company._id || {};
+  const companies = Companies.find({}).fetch();
+  const currentCompany = companies.find(company => company.peoples.includes(userId));
   Meteor.subscribe('peoples', companyId);
   return {
     project: Projects.findOne({_id: projectId}),
     company,
+    template: Templates.findOne({_id: templateId}),
+    companies: Companies.find({}).fetch(),
+    currentCompany,
   };
 })(withRouter(Dashboard));
 
-export default DashboardPage
+export default withSnackbar(DashboardPage)
+
+
 
 

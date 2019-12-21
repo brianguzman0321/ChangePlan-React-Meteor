@@ -66,7 +66,7 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function AddValue(props) {
-    let { company, open, handleModalClose, project, index, editValue } = props;
+    let { company, open, handleModalClose, project, index, editValue, template, currentType } = props;
     const [description, setDescription] = React.useState('');
     const [type, setType] = React.useState('');
     const [level, setLevel] = React.useState('');
@@ -105,31 +105,47 @@ function AddValue(props) {
             level,
             description: description
         };
-        if(index !== '' ){
-            project.risks[index] = riskObj;
-        }
-        else{
-            project.risks.push(riskObj);
-        }
-
-        delete project.changeManagerDetails;
-        delete project.managerDetails;
-        delete project.peoplesDetails;
-        let params = {
-            project
-
-        };
-        Meteor.call('projects.update', params, (err, res) => {
-            if(err){
-                props.enqueueSnackbar(err.reason, {variant: 'error'})
+        if (currentType === 'project') {
+            if(index !== '' ){
+                project.risks[index] = riskObj;
+            } else {
+                project.risks.push(riskObj);
             }
-            else{
-                handleClose();
-                setDescription('');
-                props.enqueueSnackbar('Project Updated Successfully.', {variant: 'success'})
+            delete project.changeManagerDetails;
+            delete project.managerDetails;
+            delete project.peoplesDetails;
+            let params = {
+                project
+            };
+            Meteor.call('projects.update', params, (err, res) => {
+                if (err) {
+                    props.enqueueSnackbar(err.reason, {variant: 'error'})
+                } else {
+                    handleClose();
+                    setDescription('');
+                    props.enqueueSnackbar('Project Updated Successfully.', {variant: 'success'})
+                }
+            })
+        } else if (currentType === 'template') {
+            if(index !== '' ){
+                template.risks[index] = riskObj;
+            } else {
+                template.risks.push(riskObj);
             }
+            let params = {
+                template
+            };
+            Meteor.call('templates.update', params, (err, res) => {
+                if (err) {
+                    props.enqueueSnackbar(err.reason, {variant: 'error'})
+                } else {
+                    handleClose();
+                    setDescription('');
+                    props.enqueueSnackbar('Template Updated Successfully.', {variant: 'success'})
+                }
+            })
+        }
 
-        })
 
     };
 

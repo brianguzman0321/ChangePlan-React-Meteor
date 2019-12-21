@@ -53,54 +53,47 @@ const DialogActions = withStyles(theme => ({
   },
 }))(MuiDialogActions);
 
-function DuplicateProject(props) {
-  let { open, handleClose, project, company } = props;
+function DuplicateTemplate(props) {
+  let { open, handleClose, template, company } = props;
   const [names, setNames] = React.useState('');
-  let newProjectId;
+  let newTemplateId;
 
   const handleChange = (e) => {
     setNames(e.target.value)
   };
 
-  const duplicateProject = () => {
+  const duplicateTemplate = () => {
     if (!names.length) {
       return;
     }
 
     const params = {
-      project: {
-        owner: project.owner,
-        changeManagers: [],
-        peoples: [],
+      template: {
+        owner: template.owner,
         stakeHolders: [],
-        managers: [],
-        vision: project.vision,
-        objectives: project.objectives,
-        impacts: project.impacts,
-        benefits: project.benefits,
-        risks: project.risks,
-        peopleCount: 0,
-        name: (names || 'Project copy').trim(),
-        startingDate: new Date(),
-        endingDate: new Date(),
-        companyId: company._id,
+        vision: template.vision,
+        objectives: template.objectives,
+        impacts: template.impacts,
+        benefits: template.benefits,
+        risks: template.risks,
+        name: (names || 'Template copy').trim(),
+        companyId: template.companyId,
       }
     };
 
-    Meteor.call('projects.insert', params, (error, result) => {
+    Meteor.call('templates.insert', params, (error, result) => {
       if (error) {
         return;
       }
-
       handleClose();
-      newProjectId = result;
+      newTemplateId = result;
       duplicateActivities();
     })
   };
-
+/// change params for Activities for templates
   const duplicateActivities = () => {
-    const projectId = project._id;
-    const activities = Activities.find({ projectId }).fetch();
+    const templateId = template._id;
+    const activities = Activities.find({ templateId }).fetch();
     activities.map(newActivity => {
       const paramsActivity = {
         activity: {
@@ -110,14 +103,13 @@ function DuplicateProject(props) {
           owner: newActivity.owner,
           dueDate: new Date(),
           stakeHolders: newActivity.stakeHolders,
-          projectId: newProjectId,
+          templateId: newTemplateId,
           step: newActivity.step,
           time: newActivity.time
         }
       };
       Meteor.call('activities.insert', paramsActivity, (error, result) => {
         if (error) {
-          console.log('--error-', error.response)
         } else {
           setNames('');
           handleClose();
@@ -130,22 +122,22 @@ function DuplicateProject(props) {
     <div>
       <Dialog open={open} onClose={() => handleClose()} maxWidth="md" fullWidth={true}>
         <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-          {"Duplicate Project"}
+          {"Duplicate Template"}
         </DialogTitle>
         <DialogContent dividers>
           <Grid container
             direction="row" >
             <Typography item variant="body1">
-              Resulting project name/s
+              Resulting template name/s
             </Typography>
           </Grid>
-          <TextField onChange={handleChange} id="name" type="text" label="Project name/s" />
+          <TextField onChange={handleChange} id="name" type="text" label="Template name/s" />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => handleClose()}>
             Cancel
           </Button>
-          <Button color="primary" onClick={duplicateProject}>
+          <Button color="primary" onClick={duplicateTemplate}>
             Create
           </Button>
         </DialogActions>
@@ -155,9 +147,9 @@ function DuplicateProject(props) {
 };
 
 export default withTracker(props => {
-  const { project: { _id: projectId } } = props;
-  Meteor.subscribe('compoundActivities', projectId);
+  const { template: { _id: templateId } } = props;
+  Meteor.subscribe('compoundActivities', templateId);
   return {
-    activities: Activities.find({ projectId }).fetch()
+    activities: Activities.find({ templateId }).fetch()
   };
-})(DuplicateProject);
+})(DuplicateTemplate);

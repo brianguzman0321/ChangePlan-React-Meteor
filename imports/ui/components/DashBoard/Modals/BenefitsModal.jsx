@@ -79,7 +79,7 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function AddValue(props) {
-  let {open, handleModalClose, project, indexBenefits, editValue, stakeHoldersBenefits, localBenefits} = props;
+  let {open, handleModalClose, project, indexBenefits, editValue, stakeHoldersBenefits, localBenefits, currentType, template} = props;
   const [name, setName] = React.useState('');
   const [expectedDateOpen, setExpectedDateOpen] = useState(false);
   const [peoples, setPeoples] = useState([]);
@@ -89,8 +89,12 @@ function AddValue(props) {
   const [expectedDate, setExpectedDate] = useState(null);
 
   useEffect(() => {
-    setBenefits(project.benefits)
-  }, [project.benefits]);
+    if (project && currentType === 'project') {
+      setBenefits(project.benefits)
+    } else if (template && currentType === 'template') {
+      setBenefits(template.benefits)
+    }
+  }, [project.benefits, template.benefits]);
 
   const classes = useStyles();
   const modalName = 'benefits';
@@ -151,39 +155,74 @@ function AddValue(props) {
       props.enqueueSnackbar('Please fill the required Field', {variant: 'error'});
       return false;
     }
-    let benefitsObj = {
-      expectedDate,
-      description: name,
-      stakeholders: peoples,
-    };
+    if (currentType === 'project') {
+      let benefitsObj = {
+        expectedDate,
+        description: name,
+        stakeholders: peoples,
+      };
 
-    let newBenefits = benefits;
-    if (indexBenefits !== '') {
-      newBenefits[indexBenefits] = benefitsObj;
-      setBenefits(newBenefits);
-    } else {
-      newBenefits = project.benefits ? project.benefits.concat(benefitsObj) : [benefitsObj];
-      setBenefits(newBenefits);
+      let newBenefits = benefits;
+      if (indexBenefits !== '') {
+        newBenefits[indexBenefits] = benefitsObj;
+        setBenefits(newBenefits);
+      } else {
+        newBenefits = project.benefits ? project.benefits.concat(benefitsObj) : [benefitsObj];
+        setBenefits(newBenefits);
+      }
+
+      delete project.changeManagerDetails;
+      delete project.managerDetails;
+      delete project.peoplesDetails;
+
+      let params = {
+        ...project,
+        benefits: newBenefits,
+      };
+
+      Meteor.call('projects.update', {project: params}, (err, res) => {
+        if (err) {
+          props.enqueueSnackbar(err.reason, {variant: 'error'})
+        } else {
+          handleClose();
+          setName('');
+          setExpectedDate(null);
+          props.enqueueSnackbar('Project Updated Successfully.', {variant: 'success'})
+        }
+      })
+    } else if (currentType === 'template') {
+      let benefitsObj = {
+        expectedDate,
+        description: name,
+        stakeholders: peoples,
+      };
+
+      let newBenefits = benefits;
+      if (indexBenefits !== '') {
+        newBenefits[indexBenefits] = benefitsObj;
+        setBenefits(newBenefits);
+      } else {
+        newBenefits = template.benefits ? template.benefits.concat(benefitsObj) : [benefitsObj];
+        setBenefits(newBenefits);
+      }
+
+      let params = {
+        ...template,
+        benefits: newBenefits,
+      };
+
+      Meteor.call('templates.update', {template: params}, (err, res) => {
+        if (err) {
+          props.enqueueSnackbar(err.reason, {variant: 'error'})
+        } else {
+          handleClose();
+          setName('');
+          setExpectedDate(null);
+          props.enqueueSnackbar('Template Updated Successfully.', {variant: 'success'})
+        }
+      })
     }
 
-    delete project.changeManagerDetails;
-    delete project.managerDetails;
-    delete project.peoplesDetails;
-    let params = {
-      ...project,
-      benefits: newBenefits,
-    };
-
-    Meteor.call('projects.update', {project: params}, (err, res) => {
-      if (err) {
-        props.enqueueSnackbar(err.reason, {variant: 'error'})
-      } else {
-        handleClose();
-        setName('');
-        setExpectedDate(null);
-        props.enqueueSnackbar('Project Updated Successfully.', {variant: 'success'})
-      }
-    })
   };
 
   const handleChange = (e) => {

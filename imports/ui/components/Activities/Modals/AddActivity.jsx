@@ -37,6 +37,7 @@ import DeleteActivity from './DeleteActivity';
 import SaveChanges from "../../Modals/SaveChanges";
 import {Projects} from "../../../../api/projects/projects";
 
+
 const styles = theme => ({
   root: {
     margin: 0,
@@ -90,7 +91,8 @@ const useStyles = makeStyles(theme => ({
     '&:hover': {
       background: '#f1753e',
       color: 'white'
-    }
+    },
+    boxShadow: 'none',
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
@@ -110,7 +112,7 @@ const useStyles = makeStyles(theme => ({
     top: theme.spacing(1),
     left: theme.spacing(1),
     width: 15,
-    height: 15
+    height: 15,
   },
   panelSummary: {
     background: 'red',
@@ -152,7 +154,7 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function AddActivity(props) {
-  let {company, stakeHolders, local, project, match, edit, activity, list, isOpen, currentChangeManager} = props;
+  let   { company, stakeHolders, local, project, match, edit, activity, list, isOpen, currentChangeManager, template, type } = props;
   const [open, setOpen] = useState(edit || isOpen || false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [time, setTime] = useState('');
@@ -176,7 +178,7 @@ function AddActivity(props) {
   const [isUpdated, setIsUpdated] = useState(false);
 
 
-  let {projectId} = match.params;
+  let {projectId, templateId} = match.params;
   const classes = useStyles();
   const classes1 = gridStyles();
 
@@ -240,10 +242,15 @@ function AddActivity(props) {
 
 
   const getProjectManager = () => {
-    const curProject = Projects.find({_id: projectId}).fetch()[0];
-    const changeManager = users.find(user => curProject.changeManagers.includes(user.value));
-    setProject(curProject);
-    setChangeManager(changeManager);
+    if (type === 'project') {
+      const curProject = Projects.find({_id: projectId}).fetch()[0];
+      setProject(curProject);
+      const changeManager = users.find(user => curProject.changeManagers.includes(user.value));
+      setChangeManager(changeManager);
+    } else {
+      setProject(template);
+      setChangeManager('');
+    }
   };
 
   const resetValues = () => {
@@ -335,6 +342,7 @@ function AddActivity(props) {
 
   const createProject = (e) => {
     e.preventDefault();
+    let params;
     if (!(dueDate)) {
       props.enqueueSnackbar('Please fill all required fields', {variant: 'error'});
       return false;
@@ -342,24 +350,42 @@ function AddActivity(props) {
       props.enqueueSnackbar('Please fill all required fields', {variant: 'error'});
       return false;
     }
-    let params = {
-      activity: {
-        name: activityType.buttonText,
-        type: activityType.name,
-        description,
-        owner: person && person.value,
-        dueDate,
-        completedAt: completedDate,
-        stakeHolders: peoples,
-        projectId,
-        step: 1,
-        time: Number(time)
+
+    if (type === 'project') {
+      params = {
+        activity: {
+          name: activityType.buttonText,
+          type: activityType.name,
+          description,
+          projectId: projectId,
+          owner: person && person.value,
+          dueDate,
+          completedAt: completedDate,
+          stakeHolders: peoples,
+          step: 1,
+          time: Number(time)
+        }
       }
-    };
+    } else if (type === 'template') {
+      params = {
+        activity: {
+          name: activityType.buttonText,
+          type: activityType.name,
+          description,
+          templateId: templateId,
+          owner: person && person.value,
+          dueDate,
+          completedAt: completedDate,
+          stakeHolders: peoples,
+          step: 1,
+          time: Number(time)
+        }
+      };
+    }
     if (completedDate) {
       activity.completed = true;
-      params.activity.completed = activity.completed
-    };
+      params.activity.completed = activity.completed;
+    }
     let methodName = isNew ? 'activities.insert' : 'activities.update';
     !isNew && (params.activity._id = activity._id);
     Meteor.call(methodName, params, (err, res) => {
@@ -369,9 +395,7 @@ function AddActivity(props) {
         handleClose();
         props.enqueueSnackbar(`Activity ${isNew ? 'Added' : 'Updated'} Successfully.`, {variant: 'success'})
       }
-
     })
-
   };
 
   const handleDueDate = date => {
@@ -393,8 +417,16 @@ function AddActivity(props) {
     setDueDateOpen(true)
   };
 
+  const closeDueDatePicker = () => {
+    setDueDateOpen(false)
+  };
+
   const openCompletedDatePicker = () => {
     setEndingDateOpen(true);
+  };
+
+  const closeCompletedDatePicker = () => {
+    setEndingDateOpen(false);
   };
 
   const handleTimeChange = (e) => {
@@ -436,6 +468,7 @@ function AddActivity(props) {
         <form onSubmit={createProject} noValidate>
           <DialogContent dividers>
             <div className={classes.root}>
+
               <ExpansionPanel defaultExpanded expanded={expanded} onChange={handleChangePanel('panel1')}>
                 <ExpansionPanelSummary
                   expandIcon={<ExpandMoreIcon/>}
@@ -482,6 +515,7 @@ function AddActivity(props) {
                 </ExpansionPanelDetails>
               </ExpansionPanel>
               <ExpansionPanel defaultExpanded>
+
                 <ExpansionPanelSummary
                   expandIcon={<ExpandMoreIcon/>}
                   aria-controls="panel1bh-content"
@@ -492,9 +526,9 @@ function AddActivity(props) {
                     Date: {moment(dueDate).format('DD-MMM-YY')}</Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
-                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                  <MuiPickersUtilsProvider utils={DateFnsUtils} >
                     <Grid container justify="space-between" spacing={4}>
-                      <Grid item xs={6}>
+                      <Grid item xs={6} >
                         <KeyboardDatePicker
                           fullWidth
                           disableToolbar
@@ -513,7 +547,7 @@ function AddActivity(props) {
                           }}
                         />
                       </Grid>
-                      <Grid item xs={6}>
+                      <Grid item xs={6} >
                         <KeyboardDatePicker
                           disableToolbar
                           fullWidth
@@ -547,6 +581,7 @@ function AddActivity(props) {
                   </MuiPickersUtilsProvider>
                 </ExpansionPanelDetails>
               </ExpansionPanel>
+
               <ExpansionPanel defaultExpanded>
                 <ExpansionPanelSummary
                   expandIcon={<ExpandMoreIcon/>}
@@ -593,7 +628,7 @@ function AddActivity(props) {
                   aria-controls="panal5bh-content"
                   id="panal5bh-header"
                 >
-                  <Typography className={classes.heading}>Person Responsible</Typography>
+                  <Typography className={classes.heading}>Activity owner</Typography>
                   <Typography
                     className={classes.secondaryHeading}>{person ? `${person.label}` : (changeManager || {label: ''}).label}</Typography>
                 </ExpansionPanelSummary>
@@ -608,18 +643,19 @@ function AddActivity(props) {
                     </Grid>
                   </Grid>
                 </ExpansionPanelDetails>
-                <Grid container
-                      direction="row"
-                      justify="flex-end"
-                      alignItems="baseline">
+                {type === 'project' && <Grid container
+                                             direction="row"
+                                             justify="flex-end"
+                                             alignItems="baseline">
+
                   <Button color="primary"
                           onClick={() => {
                             sendNotificationEmail(person.label, activityType.name, activity.dueDate, time, activity.name, description, stakeHolders.length, currentProject, person, projectId, currentChangeManager)
                           }}>
-
                     Notify/Remind by email
                   </Button>
                 </Grid>
+                }
               </ExpansionPanel>
             </div>
           </DialogContent>

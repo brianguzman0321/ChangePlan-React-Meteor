@@ -43,6 +43,11 @@ export const insert = new ValidatedMethod({
         },
         'activity.projectId': {
             type: String,
+            optional: true,
+        },
+        'activity.templateId': {
+          type: String,
+          optional: true,
         },
         'activity.stakeHolders': {
             type: Array,
@@ -108,6 +113,11 @@ export const update = new ValidatedMethod({
         },
         'activity.projectId': {
             type: String,
+            optional: true,
+        },
+        'activity.templateId': {
+            type: String,
+            optional: true,
         },
         'activity.stakeHolders': {
             type: Array,

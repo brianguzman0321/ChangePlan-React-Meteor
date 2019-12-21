@@ -89,7 +89,9 @@ const useStyles = makeStyles(theme => ({
     '&:hover': {
       background: '#53cbd0',
       color: 'white'
-    }
+
+    },
+    boxShadow: 'none',
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
@@ -102,7 +104,7 @@ const useStyles = makeStyles(theme => ({
   },
   gridText: {
     fontSize: theme.typography.pxToRem(12),
-    color: '#465563'
+    color: theme.palette.text.secondary,
   },
   avatar: {
     position: 'absolute',
@@ -151,7 +153,7 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function AddActivity(props) {
-  let {company, stakeHolders, local, project, match, edit, activity, list, isOpen, currentChangeManager} = props;
+  let {company, stakeHolders, local, project, match, edit, activity, list, isOpen, currentChangeManager, template, type} = props;
   const [open, setOpen] = React.useState(edit || false);
   const [deleteModal, setDeleteModal] = React.useState(false);
   const [time, setTime] = useState('');
@@ -177,8 +179,8 @@ function AddActivity(props) {
   const [showModalDialog, setShowModalDialog] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
 
+  let {projectId, templateId} = match.params;
 
-  let {projectId} = match.params;
   const classes = useStyles();
   const classes1 = gridStyles();
 
@@ -238,48 +240,6 @@ function AddActivity(props) {
     }
     let updatedStakeHolders = local.changed ? local.ids : activity.stakeHolders;
     setPeoples(updatedStakeHolders);
-
-  };
-
-
-  const getProjectManager = () => {
-    const curProject = Projects.find({_id: projectId}).fetch()[0];
-    setProject(curProject);
-    const changeManager = users.find(user => curProject.changeManagers.includes(user.value));
-    setChangeManager(changeManager);
-  };
-
-  const resetValues = () => {
-    let selectedActivity = data.find(item => item.name === activity.type) || {};
-    setActivityType({});
-    setDueDate(new Date());
-    setCompletedDate(null);
-    setDescription('');
-    setPerson(changeManager);
-    setTime('');
-    setPeoples(stakeHolders.map(item => item._id));
-    updateFilter('localStakeHolders', 'ids', stakeHolders.map(item => item._id));
-
-  };
-
-  const updateUsersList = () => {
-    Meteor.call(`users.getAllUsersInCompany`, {company: company}, (err, res) => {
-      if (err) {
-        props.enqueueSnackbar(err.reason, {variant: 'error'});
-      }
-      if (res && res.length) {
-        setUsers(res.map(user => {
-          return {
-            label: `${user.profile.firstName} ${user.profile.lastName}`,
-            value: user._id,
-            role: user.roles,
-            email: user.emails
-          }
-        }))
-      } else {
-        setUsers([])
-      }
-    })
   };
 
   useEffect(() => {
@@ -313,6 +273,39 @@ function AddActivity(props) {
     setActivityType(item);
   };
 
+  const updateUsersList = () => {
+    Meteor.call(`users.getAllUsersInCompany`, {company: company}, (err, res) => {
+        if (err) {
+          props.enqueueSnackbar(err.reason, {variant: 'error'});
+        }
+        if (res && res.length) {
+          setUsers(res.map(user => {
+            return {
+              label: `${user.profile.firstName} ${user.profile.lastName}`,
+              value: user._id,
+              role: user.roles,
+              email: user.emails
+            }
+          }))
+        } else {
+          setUsers([])
+        }
+      }
+    )
+  };
+
+  const getProjectManager = () => {
+    if (type === 'project') {
+      const curProject = Projects.find({_id: projectId}).fetch()[0];
+      setProject(curProject);
+      const changeManager = users.find(user => curProject.changeManagers.includes(user.value));
+      setChangeManager(changeManager);
+    } else {
+      setProject(template);
+      setChangeManager('');
+    }
+  };
+
   const handleClose = () => {
     setName('');
     setOpen(false);
@@ -322,6 +315,20 @@ function AddActivity(props) {
     resetValues();
     setShowModalDialog(false);
     setIsUpdated(false);
+  };
+
+
+  const resetValues = () => {
+    let selectedActivity = data.find(item => item.name === activity.type) || {};
+    setActivityType({});
+    setDueDate(new Date());
+    setCompletedDate(null);
+    setDescription('');
+    setPerson(changeManager);
+    setTime('');
+    setPeoples(stakeHolders.map(item => item._id));
+    updateFilter('localStakeHolders', 'ids', stakeHolders.map(item => item._id));
+
   };
 
   const handleOpenModalDialog = () => {
@@ -338,6 +345,7 @@ function AddActivity(props) {
 
   const createProject = (e) => {
     e.preventDefault();
+    let params;
     if (!(dueDate)) {
       props.enqueueSnackbar('Please fill all required fields', {variant: 'error'});
       return false;
@@ -345,25 +353,41 @@ function AddActivity(props) {
       props.enqueueSnackbar('Please fill all required fields', {variant: 'error'});
       return false;
     }
-    let params = {
-      activity: {
-        name: activityType.buttonText,
-        type: activityType.name,
-        description,
-        owner: person && person.value,
-        dueDate,
-        completedAt: completedDate,
-        stakeHolders: peoples,
-        projectId,
-        step: 2,
-        time: Number(time)
+    if (type === 'project') {
+      params = {
+        activity: {
+          name: activityType.buttonText,
+          type: activityType.name,
+          description,
+          projectId: projectId,
+          owner: person && person.value,
+          dueDate,
+          completedAt: completedDate,
+          stakeHolders: peoples,
+          step: 2,
+          time: Number(time)
+        }
       }
-    };
+    } else if (type === 'template') {
+      params = {
+        activity: {
+          name: activityType.buttonText,
+          type: activityType.name,
+          description,
+          templateId: templateId,
+          owner: person && person.value,
+          dueDate,
+          completedAt: completedDate,
+          stakeHolders: peoples,
+          step: 2,
+          time: Number(time)
+        }
+      };
+    }
     if (completedDate) {
       activity.completed = true;
-      params.activity.completed = activity.completed
+      params.activity.completed = activity.completed;
     }
-    ;
     let methodName = isNew ? 'activities.insert' : 'activities.update';
     !isNew && (params.activity._id = activity._id);
     Meteor.call(methodName, params, (err, res) => {
@@ -373,10 +397,9 @@ function AddActivity(props) {
         handleClose();
         props.enqueueSnackbar(`Activity ${isNew ? 'Added' : 'Updated'} Successfully.`, {variant: 'success'})
       }
-
     })
-
   };
+
 
   const handleDueDate = date => {
     setDueDate(date);
@@ -491,6 +514,7 @@ function AddActivity(props) {
                 </ExpansionPanelDetails>
               </ExpansionPanel>
               <ExpansionPanel defaultExpanded>
+
                 <ExpansionPanelSummary
                   expandIcon={<ExpandMoreIcon/>}
                   aria-controls="panel1bh-content"
@@ -596,13 +620,15 @@ function AddActivity(props) {
                   />
                 </ExpansionPanelDetails>
               </ExpansionPanel>
+
               <ExpansionPanel defaultExpanded>
                 <ExpansionPanelSummary
                   expandIcon={<ExpandMoreIcon/>}
                   aria-controls="panal5bh-content"
                   id="panal5bh-header"
                 >
-                  <Typography className={classes.heading}>Person Responsible</Typography>
+
+                  <Typography className={classes.heading}>Activity owner</Typography>
                   <Typography
                     className={classes.secondaryHeading}>{person ? `${person.label}` : (changeManager || {label: ''}).label}</Typography>
                 </ExpansionPanelSummary>
@@ -617,18 +643,18 @@ function AddActivity(props) {
                     </Grid>
                   </Grid>
                 </ExpansionPanelDetails>
-                <Grid container
-                      direction="row"
-                      justify="flex-end"
-                      alignItems="baseline">
+                {type === 'project' && <Grid container
+                                             direction="row"
+                                             justify="flex-end"
+                                             alignItems="baseline">
                   <Button color="primary"
                           onClick={() => {
                             sendNotificationEmail(person.label, activityType.name, activity.dueDate, time, activity.name, description, stakeHolders.length, currentProject, person, projectId, currentChangeManager)
                           }}>
-
                     Notify/Remind by email
                   </Button>
                 </Grid>
+                }
               </ExpansionPanel>
             </div>
           </DialogContent>

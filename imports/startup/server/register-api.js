@@ -15,12 +15,17 @@ import '/imports/api/peoples/peoples';
 import '/imports/api/peoples/server/publications.js';
 import '/imports/api/peoples/methods.js';
 
-//projects
+//activities
 import '/imports/api/activities/activities';
 import '/imports/api/activities/server/publications.js';
 import '/imports/api/activities/methods.js';
 
-//activities
+//templates
+import '/imports/api/templates/templates';
+import '/imports/api/templates/server/publications';
+import '/imports/api/templates/methods';
+
+//projects
 import '/imports/api/projects/projects';
 import '/imports/api/projects/server/publications.js';
 import '/imports/api/projects/methods.js';

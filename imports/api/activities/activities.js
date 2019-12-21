@@ -44,7 +44,13 @@ Activities.schema = new SimpleSchema({
     },
     projectId: {
         type: String,
-        label: 'project ID'
+        label: 'project ID',
+        optional: true,
+    },
+    templateId: {
+        type: String,
+        label: 'template ID',
+        optional: true,
     },
     stakeHolders: {
         type: Array,
