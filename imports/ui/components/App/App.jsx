@@ -117,7 +117,7 @@ function TopNavBar(props) {
   let { menus, projectExists, history, match } = props;
   let {projectId, templateId} = match.params;
   const [type, setType] = useState(templateId && 'template' ||  projectId && 'project');
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   let currentLocation = history.location.pathname.split("/");
   let currentNav = currentLocation[currentLocation.length - 1], selectedTab = 0;
   if(currentNav === '/'){
@@ -153,7 +153,7 @@ function TopNavBar(props) {
 
   const checkRole = () => {
     if (Roles.userIsInRole(Meteor.userId(), 'superAdmin')) {
-      setIsAdmin(true);
+      setIsSuperAdmin(true);
     }
   };
 
@@ -254,7 +254,7 @@ function TopNavBar(props) {
       onClose={handleMenuClose}
     >
       {
-        (projectExists || isAdmin) && <MenuItem onClick={changeRoute}>Settings</MenuItem>
+        (projectExists || isSuperAdmin) && <MenuItem onClick={changeRoute}>Settings</MenuItem>
       }
       <MenuItem onClick={logOut}>Logout</MenuItem>
     </Menu>

@@ -185,7 +185,7 @@ function AWARENESSCard(props) {
                 }
                 action={
                   <IconButton aria-label="settings" className={classes.info}
-                              disabled={(!(isAdmin && template && (template.companyId === company._id)) && (projectId === undefined))}
+                              disabled={(!(isAdmin && template && (template.companyId === company._id) || isSuperAdmin) && (projectId === undefined))}
                               onClick={(e) => {
                                 e.stopPropagation();
                                 completeActivity(activity)

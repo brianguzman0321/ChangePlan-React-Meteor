@@ -87,29 +87,32 @@ function StakeHolders(props) {
   };
 
   useEffect(() => {
+    checkRoles();
+  }, [currentCompany, company, template, project]);
+
+  useEffect(() => {
     if (currentCompany) {
-      checkRoles();
+      setCompanyId(currentCompany._id);
     }
-  }, [currentCompany, company]);
+  }, [currentCompany, template, project]);
 
   const checkRoles = () => {
-    setCompanyId(currentCompany._id);
-    const projectsCurCompany = Projects.find({companyId: currentCompany._id}).fetch();
-    if (projectsCurCompany) {
-      const userId = Meteor.userId();
-      const changeManagers = [...new Set([].concat.apply([], projectsCurCompany.map(project => project.changeManagers)))];
-      if (Roles.userIsInRole(userId, 'superAdmin')) {
-        setIsSuperAdmin(true);
-      } else if (company && company.admins.includes(userId)) {
-        setIsAdmin(true);
-      } else if (changeManagers.includes(userId)) {
-        setIsChangeManager(true);
-      }
-    } else {
-      if (Roles.userIsInRole(Meteor.userId(), 'superAdmin')) {
-        setIsSuperAdmin(true);
-      } else if (company && company.admins.includes(Meteor.userId())) {
-        setIsAdmin(true);
+    const userId = Meteor.userId();
+    if (Roles.userIsInRole(userId, 'superAdmin')) {
+      setIsSuperAdmin(true);
+    }
+
+    if (company && company.admins.includes(userId)) {
+      setIsAdmin(true);
+    }
+
+    if (currentCompany) {
+      const projectsCurCompany = Projects.find({companyId: currentCompany._id}).fetch();
+      if (projectsCurCompany) {
+        const changeManagers = [...new Set([].concat.apply([], projectsCurCompany.map(project => project.changeManagers)))];
+        if (changeManagers.includes(userId)) {
+          setIsChangeManager(true);
+        }
       }
     }
   };

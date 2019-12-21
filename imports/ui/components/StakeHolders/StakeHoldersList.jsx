@@ -264,7 +264,7 @@ export default function StakeHolderList(props) {
             aria-label="enhanced table"
           >
             <EnhancedTableHead
-              disabled={!((isAdmin && template && (template.companyId === company._id)) && (projectId === undefined))}
+              disabled={(!(isAdmin && template && (template.companyId === company._id) || isSuperAdmin) && (projectId === undefined))}
               classes={classes}
               style={{color: 'white'}}
               numSelected={selected.length}

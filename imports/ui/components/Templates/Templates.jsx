@@ -144,9 +144,7 @@ const useStyles = makeStyles(theme => ({
       paddingBottom: 0
     }
   },
-  notFound: {
-
-  },
+  notFound: {},
   noData: {
     display: 'flex',
     alignItems: 'center',
@@ -162,7 +160,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function TemplateCard(props) {
-  let {company, activities, currentCompany, companies, history: {push}, projects } = props;
+  let {company, activities, currentCompany, companies, history: {push}, projects} = props;
   const [templates, setTemplates] = useState([]);
   const [selectedTab, setSelectedTab] = useState(0);
   const [currentCompanyId, setCompanyId] = useState(null);
@@ -180,10 +178,10 @@ function TemplateCard(props) {
           break;
         case `/${currentCompany._id}/templates`:
           setSelectedTab(1);
-          setTemplates(props.templates.filter(template => template.companyId).map((template) => {
-          template.totalActivities = (activities.filter((activity) => activity.templateId === template._id) || []).length;
-          return template;
-        }));
+          setTemplates(props.templates.filter(template => template.companyId && template.companyId === currentCompany._id).map((template) => {
+            template.totalActivities = (activities.filter((activity) => activity.templateId === template._id) || []).length;
+            return template;
+          }));
           break;
         case '/templates':
           setSelectedTab(2);
@@ -194,6 +192,21 @@ function TemplateCard(props) {
           break;
         default:
           break;
+      } } else {
+        let currentNav = location.pathname;
+        switch (currentNav) {
+          case '/':
+            setSelectedTab(0);
+            break;
+          case '/templates':
+            setSelectedTab(2);
+            setTemplates(props.templates.filter(template => !template.companyId).map((template) => {
+              template.totalActivities = (activities.filter((activity) => activity.templateId === template._id) || []).length;
+              return template;
+            }));
+            break;
+          default:
+            break;
       }
     }
   }, [activities]);
@@ -226,33 +239,36 @@ function TemplateCard(props) {
     }
   }));
 
+  useEffect(() => {
+    if (currentCompany) {
+      setCompanyId(currentCompany._id);
+    }
+  }, [currentCompany, templates]);
+
   const checkRoles = () => {
-    setCompanyId(currentCompany._id);
-    const projectsCurCompany = Projects.find({companyId: currentCompany._id}).fetch();
-    if (projectsCurCompany) {
-      const userId = Meteor.userId();
-      const changeManagers = [...new Set([].concat.apply([], projectsCurCompany.map(project => project.changeManagers)))];
-      if (Roles.userIsInRole(userId, 'superAdmin')) {
-        setIsSuperAdmin(true);
-      } else if (company && company.admins.includes(userId)) {
-        setIsAdmin(true);
-      } else if (changeManagers.includes(userId)) {
-        setIsChangeManager(true);
-      }
-    } else {
-      if (Roles.userIsInRole(Meteor.userId(), 'superAdmin')) {
-        setIsSuperAdmin(true);
-      } else if (company && company.admins.includes(Meteor.userId())) {
-        setIsAdmin(true);
+    const userId = Meteor.userId();
+    if (Roles.userIsInRole(userId, 'superAdmin')) {
+      setIsSuperAdmin(true);
+    }
+
+    if (company && company.admins.includes(userId)) {
+      setIsAdmin(true);
+    }
+
+    if (currentCompany) {
+      const projectsCurCompany = Projects.find({companyId: currentCompany._id}).fetch();
+      if (projectsCurCompany) {
+        const changeManagers = [...new Set([].concat.apply([], projectsCurCompany.map(project => project.changeManagers)))];
+        if (changeManagers.includes(userId)) {
+          setIsChangeManager(true);
+        }
       }
     }
   };
 
   useEffect(() => {
-    if (currentCompany){
-      checkRoles();
-    }
-  }, [currentCompany]);
+    checkRoles();
+  }, [templates, currentCompany]);
 
   const classes = useStyles();
   const classes1 = useStyles1();
@@ -302,7 +318,8 @@ function TemplateCard(props) {
             </IconButton>
           </Grid>
           <Grid item xs={4} className={(isAdmin || isSuperAdmin) && company ? classes.secondTab : ''}>
-            <NewTemplate {...props} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} selectedTab={selectedTab} className={classes.createNewTemplate}/>
+            <NewTemplate {...props} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} selectedTab={selectedTab}
+                         className={classes.createNewTemplate}/>
             <Typography color="textSecondary" variant="title" className={classes.sortBy}>
               Sort by
             </Typography>
@@ -323,7 +340,8 @@ function TemplateCard(props) {
               </Select>
             </FormControl>
           </Grid>
-          <ProjectNavBar {...props} selectedTab={selectedTab} handleChange={changeTab} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager} currentCompanyId={currentCompanyId}/>
+          <ProjectNavBar {...props} selectedTab={selectedTab} handleChange={changeTab} isSuperAdmin={isSuperAdmin}
+                         isAdmin={isAdmin} isChangeManager={isChangeManager} currentCompanyId={currentCompanyId}/>
         </Grid>
         {templates.map((template, index) => {
           return <Grid item xs spacing={1} key={index} className={classes.grid}>
@@ -336,7 +354,8 @@ function TemplateCard(props) {
                   e.stopPropagation();
                   e.preventDefault();
                 }}
-                action={<TemplateMenus template={template} company={company} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin}/>}
+                action={<TemplateMenus template={template} company={company} isAdmin={isAdmin}
+                                       isSuperAdmin={isSuperAdmin}/>}
                 classes={classes1}
                 style={{cursor: "auto"}}
                 title={templateName(template.name)}
