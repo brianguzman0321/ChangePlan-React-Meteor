@@ -69,6 +69,15 @@ Companies.schema = new SimpleSchema({
             }
         },
         optional: true
+    },
+    activityColumns: {
+        type: Array,
+        label: 'Activity Columns Name',
+        defaultValue: ['AWARENESS', 'PREPAREDNESS', 'SUPPORT'],
+        optional: true,
+    },
+    'activityColumns.$': {
+        type: String,
     }
 });
 

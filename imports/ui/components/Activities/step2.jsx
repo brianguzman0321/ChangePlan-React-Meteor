@@ -20,6 +20,8 @@ import {data} from "/imports/activitiesContent.json";
 import {Companies} from "../../../api/companies/companies";
 import {Peoples} from "../../../api/peoples/peoples";
 import {Projects} from "../../../api/projects/projects";
+import Input from "@material-ui/core/Input";
+import {withSnackbar} from "notistack";
 
 var sActivity = {};
 
@@ -77,6 +79,9 @@ function AWARENESSCard(props) {
   let {activities, company, match, type, template, isSuperAdmin, isAdmin} = props;
   const classes = useStyles();
   const [edit, setEdit] = useState(false);
+  const [columnsName, setColumnsName] = useState('');
+  const [showInput, setShowInput] = useState(false);
+  const [nameTitle, setNameTitle] = useState(company.activityColumns && company.activityColumns[1] || '');
   const [changeManager, setChangeManager] = useState('');
   const [users, setUsers] = useState([]);
   let {projectId, templateId} = match.params;
@@ -121,6 +126,14 @@ function AWARENESSCard(props) {
     }
   };
 
+  const handleShowInput = () => {
+    setShowInput(true);
+  };
+
+  const handleChangeName = (e) => {
+    setColumnsName(e.target.value)
+  };
+
   const updateUsersList = () => {
     Meteor.call(`users.getAllUsersInCompany`, {company: company}, (err, res) => {
       if (err) {
@@ -141,6 +154,37 @@ function AWARENESSCard(props) {
     })
   };
 
+  const updateColumnsName = () => {
+    let allColumnsName
+    if (company.activityColumns) {
+      allColumnsName = company.activityColumns;
+      allColumnsName[1] = columnsName;
+    } else {
+      allColumnsName = ['', columnsName, '']
+    }
+    const params = {
+      company: {
+        _id: company._id,
+        name: company.name,
+        activityColumns: allColumnsName,
+      }
+    };
+    Meteor.call('companies.update', params, (err, res) => {
+      if (err) {
+        props.enqueueSnackbar(err.reason, {variant: 'error'});
+      } else {
+        props.enqueueSnackbar('Activity board column name changed successful', {variant: 'success'});
+      }
+      setShowInput(false);
+    })
+  };
+
+  useEffect(() => {
+    if (company.activityColumns && company.activityColumns[1]) {
+      setNameTitle(company.activityColumns[1])
+    }
+  }, [company]);
+
   useEffect(() => {
     updateUsersList();
     getProjectManager();
@@ -160,10 +204,17 @@ function AWARENESSCard(props) {
             <InfoOutlinedIcon className={classes.infoIcon}/>
           </IconButton>
         }
-        title={
-          <Typography variant="subtitle1">
-            PREPAREDNESS
-          </Typography>
+        title={showInput ?
+          <Input type="text" onChange={handleChangeName} onBlur={updateColumnsName} onKeyPress={(e) => {
+            (e.key === 'Enter' ? updateColumnsName(e.target.value) : null)
+          }}/> :
+          company.activityColumns && nameTitle !== '' ?
+            <Typography variant="subtitle1" onDoubleClick={handleShowInput}>
+              {nameTitle.toUpperCase()}
+            </Typography> :
+            <Typography variant="subtitle1" onDoubleClick={handleShowInput}>
+              PREPAREDNESS
+            </Typography>
         }
       />
 
@@ -248,4 +299,4 @@ export default withTracker(props => {
     local,
     company,
   };
-})(withRouter(AWARENESSCard));
+})(withRouter(withSnackbar(AWARENESSCard)));
