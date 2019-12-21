@@ -1,0 +1,21 @@
+.gantt-column-header{
+    text-align: left;
+    background: rgb(82,82,82);
+    color: white !important;
+    padding-left: 8px !important;
+}
+.completed-task {
+    border-width: 2px;
+    border-color:blue !important;
+}
+.grey-background {
+    background: lightgray !important;
+    border-style: outset;
+    border-width: 1px !important;
+    color: rgb(72,86, 100) !important;
+}
+.project-event {
+    background:white !important;
+    color:rgb(76, 75, 75) !important;
+    border: none !important;
+}
