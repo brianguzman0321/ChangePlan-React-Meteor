@@ -186,9 +186,9 @@ function ProjectCard(props) {
         setIsChangeManager(true);
       }
     } else {
-      if (Roles.userIsInRole(userId, 'superAdmin')) {
+      if (Roles.userIsInRole(Meteor.userId(), 'superAdmin')) {
         setIsSuperAdmin(true);
-      } else if (company && company.admins.includes(userId)) {
+      } else if (company && company.admins.includes(Meteor.userId())) {
         setIsAdmin(true);
       }
     }

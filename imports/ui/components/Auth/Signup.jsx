@@ -71,10 +71,8 @@ function Signup (props) {
             }else{
                 Meteor.call("sendVerificationLink", (error, response) => {
                     if (error) {
-                        console.log(error.reason);
                     } else {
                         let email = Meteor.user().emails[0].address;
-                        console.log(`Verification sent to ${email}!`, "success");
                     }
                 });
             }
