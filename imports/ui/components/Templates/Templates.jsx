@@ -16,13 +16,15 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import {withTracker} from "meteor/react-meteor-data";
 import {Companies} from "/imports/api/companies/companies";
-import {Projects} from "/imports/api/projects/projects";
-import NewProject from './Models/CreateProject';
-import ProjectMenus from './ProjectMenus';
+import {Templates} from "/imports/api/templates/templates";
+import NewTemplate from './Modals/CreateTemplate'; ////!!!!!!!!!!!!!!!!!!1
+import TemplateMenus from './TemplateMenus'; ///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 import {Activities} from "../../../api/activities/activities";
 import {Peoples} from '../../../api/peoples/peoples';
-import ProjectNavBar from "./ProjectsNavBar";
-import {Templates} from "../../../api/templates/templates";
+import ProjectNavBar from "../Projects/ProjectsNavBar";
+import TopNavBar from "../App/App";
+import config from "../../../utils/config";
+import {Projects} from "../../../api/projects/projects";
 
 
 const useStyles = makeStyles(theme => ({
@@ -35,7 +37,7 @@ const useStyles = makeStyles(theme => ({
     color: '#465563',
     cursor: 'pointer'
   },
-  newProject: {
+  newTemplate: {
     minHeight: 192,
     minWidth: 300,
     maxWidth: 295,
@@ -124,7 +126,7 @@ const useStyles = makeStyles(theme => ({
   secondTab: {
     display: 'flex'
   },
-  createNewProject: {
+  createNewTemplate: {
     flex: 1,
     marginLeft: 23
   },
@@ -142,7 +144,9 @@ const useStyles = makeStyles(theme => ({
       paddingBottom: 0
     }
   },
-  notFound: {},
+  notFound: {
+
+  },
   noData: {
     display: 'flex',
     alignItems: 'center',
@@ -157,20 +161,70 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function ProjectCard(props) {
-  let {projects, company, activities, currentCompany, history: {push}} = props;
+function TemplateCard(props) {
+  let {company, activities, currentCompany, companies, history: {push}, projects } = props;
+  const [templates, setTemplates] = useState([]);
   const [selectedTab, setSelectedTab] = useState(0);
   const [currentCompanyId, setCompanyId] = useState(null);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isChangeManager, setIsChangeManager] = useState(false);
 
-
   useEffect(() => {
     if (currentCompany) {
       setCompanyId(currentCompany._id);
+      let currentNav = location.pathname;
+      switch (currentNav) {
+        case '/':
+          setSelectedTab(0);
+          break;
+        case `/${currentCompany._id}/templates`:
+          setSelectedTab(1);
+          setTemplates(props.templates.filter(template => template.companyId).map((template) => {
+          template.totalActivities = (activities.filter((activity) => activity.templateId === template._id) || []).length;
+          return template;
+        }));
+          break;
+        case '/templates':
+          setSelectedTab(2);
+          setTemplates(props.templates.filter(template => !template.companyId).map((template) => {
+            template.totalActivities = (activities.filter((activity) => activity.templateId === template._id) || []).length;
+            return template;
+          }));
+          break;
+        default:
+          break;
+      }
     }
-  }, [currentCompany, projects]);
+  }, [activities]);
+
+
+  const changeTab = (value) => {
+    setSelectedTab(value);
+    switch (value) {
+      case 0: {
+        push(`/`);
+        break;
+      }
+      case 1: {
+        push(`/${currentCompanyId}/templates`);
+        break;
+      }
+      case 2: {
+        push(`/templates`);
+        break;
+      }
+      default:
+        break;
+    }
+  };
+
+  const useStyles1 = makeStyles(theme => ({
+    title: {
+      fontWeight: 1000,
+      fontSize: 16
+    }
+  }));
 
   const checkRoles = () => {
     setCompanyId(currentCompany._id);
@@ -195,69 +249,10 @@ function ProjectCard(props) {
   };
 
   useEffect(() => {
-    if (currentCompany) {
+    if (currentCompany){
       checkRoles();
     }
-  }, [projects]);
-
-  useEffect(() => {
-    let currentNav = location.pathname;
-    switch (currentNav) {
-      case '/':
-        setSelectedTab(0);
-        break;
-      case `/${currentCompanyId}/templates`:
-        setSelectedTab(1);
-        break;
-      case '/templates':
-        setSelectedTab(2);
-        break;
-      default:
-        break;
-    }
-  }, []);
-
-
-  const changeTab = (value) => {
-    setSelectedTab(value);
-    switch (value) {
-      case 0: {
-        push(`/`);
-        break;
-      }
-      case 1: {
-        push(`/${currentCompanyId}/templates`);
-        break;
-      }
-      case 2: {
-        push(`/templates`);
-        break;
-      }
-      default:
-        break;
-    }
-  };
-
-  if (projects && projects.length) {
-    projects = projects.map(project => {
-      const peoples = Peoples.find({
-        '_id': {
-          $in: project.stakeHolders
-        }
-      }).fetch();
-
-      return {
-        ...project,
-        stakeHolders: peoples.map(people => people._id),
-      }
-    });
-  }
-  const useStyles1 = makeStyles(theme => ({
-    title: {
-      fontWeight: 1000,
-      fontSize: 16
-    }
-  }));
+  }, [currentCompany]);
 
   const classes = useStyles();
   const classes1 = useStyles1();
@@ -265,34 +260,22 @@ function ProjectCard(props) {
   const [search, setSearch] = React.useState('');
   const [open, setOpen] = React.useState(false);
   const [totalActivities, setTotalActivities] = React.useState();
-  search || updateFilter('localProjects', 'search', '');
-
-  React.useEffect(() => {
-    if (!projects.length && !activities.length) {
-      return;
-    }
-    projects.forEach((project, i) => {
-      const projectActivities = activities.filter((activity) => activity.projectId === project._id) || [];
-
-      projects[i].totalActivities = projectActivities.length;
-    });
-  }, [projects, activities]);
 
   const handleChange = event => {
     setAge(event.target.value);
-    updateFilter('localProjects', 'sort', event.target.value);
   };
-  const selectProject = (project, e) => {
-    props.history.push(`/projects/${project._id}`)
+
+  const selectTemplate = (template, e) => {
+    props.history.push(`/templates/${template._id}`)
   };
 
   const searchFilter = event => {
     setSearch(event.target.value);
-    updateFilter('localProjects', 'search', event.target.value);
   };
 
   return (
     <>
+      <TopNavBar menus={[]} {...props} />
       <Grid
         container
         direction="row"
@@ -304,13 +287,13 @@ function ProjectCard(props) {
         <Grid container className={classes.searchContainer}>
           <Grid item xs={2}>
             <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
-              Projects
+              Templates
             </Typography>
           </Grid>
           <Grid item xs={4} className={classes.searchGrid}>
             <InputBase
               className={classes.input}
-              inputProps={{'aria-label': 'search by project name'}}
+              inputProps={{'aria-label': 'search by template name'}}
               onChange={searchFilter}
               value={search}
             />
@@ -319,7 +302,7 @@ function ProjectCard(props) {
             </IconButton>
           </Grid>
           <Grid item xs={4} className={(isAdmin || isSuperAdmin) && company ? classes.secondTab : ''}>
-            {(isAdmin || isSuperAdmin) && company && <NewProject {...props} className={classes.createNewProject}/>}
+            {((isSuperAdmin && selectedTab === 2) || (isAdmin && selectedTab === 1)) && company && <NewTemplate {...props} isAdmin={isAdmin} className={classes.createNewTemplate}/>}
             <Typography color="textSecondary" variant="title" className={classes.sortBy}>
               Sort by
             </Typography>
@@ -327,42 +310,36 @@ function ProjectCard(props) {
           <Grid item xs={2}>
             <FormControl className={classes.formControl}>
               <Select
-                style={{background: 'white'}}
                 value={age}
                 onChange={handleChange}
                 displayEmpty
                 name="age"
                 className={classes.selectEmpty}
               >
-                <MenuItem value="createdAt" classes={{root: classes.selected, selected: classes.selected}}>Date
-                  Added</MenuItem>
-                <MenuItem value="endingDate" classes={{root: classes.selected, selected: classes.selected}}>Date
-                  Due</MenuItem>
-                <MenuItem value="name" classes={{root: classes.selected, selected: classes.selected}}>Project
-                  Name</MenuItem>
-                <MenuItem value="stakeHolder" classes={{root: classes.selected, selected: classes.selected}}>Stakeholder
-                  Count</MenuItem>
+                <MenuItem value="createdAt">Date Added</MenuItem>
+                <MenuItem value="endingDate">Date Due</MenuItem>
+                <MenuItem value="name">Template Name</MenuItem>
+                <MenuItem value="stakeHolder">Stakeholder Count</MenuItem>
               </Select>
             </FormControl>
           </Grid>
-          <ProjectNavBar {...props} selectedTab={selectedTab} handleChange={changeTab} isSuperAdmin={isSuperAdmin}
-                         isAdmin={isAdmin} currentCompanyId={currentCompanyId} isChangeManager={isChangeManager}/>
+          <ProjectNavBar {...props} selectedTab={selectedTab} handleChange={changeTab} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager} currentCompanyId={currentCompanyId}/>
         </Grid>
-        {projects.map((project, index) => {
+        {templates.map((template, index) => {
           return <Grid item xs spacing={1} key={index} className={classes.grid}>
-            <Card className={classes.card} onClick={(e) => selectProject(project)}>
+            <Card className={classes.card} onClick={(e) => selectTemplate(template)}>
               <LinearProgress variant="determinate"
-                              value={project.totalActivities > 0 ? parseInt((100 * project.completedActivities) / project.totalActivities) : 0}
+                              value={template.totalActivities && template.totalActivities > 0 ? parseInt((100 * template.completedActivities) / templates.totalActivities) : 0}
                               color="primary"/>
               <CardHeader
                 onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
                 }}
-                action={<ProjectMenus project={project} company={company}/>}
+                action={<TemplateMenus template={template} company={company} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin}/>}
                 classes={classes1}
                 style={{cursor: "auto"}}
-                title={projectName(project.name)}
+                title={templateName(template.name)}
               />
               <CardContent className={classes.cardContent}>
                 <Grid container>
@@ -371,7 +348,7 @@ function ProjectCard(props) {
                       STAKEHOLDERS
                     </Typography>
                     <Typography className={classes.pos} color="textSecondary">
-                      {project.stakeHolders.length}
+                      {template.stakeHolders.length}
                     </Typography>
                   </Grid>
                   <Grid item xs={4} className={classes.activities}>
@@ -379,31 +356,18 @@ function ProjectCard(props) {
                       ACTIVITIES
                     </Typography>
                     <Typography className={classes.pos} color="textSecondary">
-                      {project.totalActivities}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={4}>
-                    <Typography className={classes.title} gutterBottom>
-                      DUE
-                    </Typography>
-                    <Typography className={classes.pos} color="textSecondary">
-                      {moment(project.endingDate).format('DD-MMM-YY')}
+                      {template.totalActivities}
                     </Typography>
                   </Grid>
 
                 </Grid>
-                <Typography variant="body2" component="p" className={classes.bottomText}>
-                  {project.changeManagers.length > 1 ? "CHANGE MANAGERS" : "CHANGE MANAGER"}
-                  <br/>
-                  {ChangeManagersNames(project)}
-                </Typography>
               </CardContent>
             </Card>
           </Grid>
         })
         }
       </Grid>
-      {!projects.length &&
+      {!templates.length &&
       <Grid
         container
         direction="row"
@@ -425,65 +389,52 @@ function ProjectCard(props) {
   );
 }
 
-function projectName(name) {
+
+function templateName(name) {
   if (typeof name === 'string') {
     return name.length < 53 ? name : `${name.slice(0, 50)}...`
   }
   return name
 }
 
-function ChangeManagersNames(project) {
-  if (project.changeManagerDetails) {
-    let changeManagers = project.changeManagerDetails.map(changeManager => {
-      return `${changeManager.profile.firstName} ${changeManager.profile.lastName}`
-    });
-    return changeManagers.join(", ")
-  }
-}
-
-function sortingFunc(projects, local) {
+/*function sortingFunc(templates, local) {
   switch (local.sort) {
     case 'endingDate': {
-      projects = projects.sort((a, b) => new Date(a.endingDate) - new Date(b.endingDate));
+      templates = templates.sort((a, b) => new Date(a.endingDate) - new Date(b.endingDate));
       break;
     }
     case 'createdAt': {
-      projects = projects.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+      templates = templates.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
       break;
     }
     case 'name': {
-      projects = projects.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+      templates = templates.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
       break;
     }
     case 'stakeHolders': {
-      projects = projects.sort((a, b) => a.stakeHolders.length - a.stakeHolders.length);
+      templates = templates.sort((a, b) => a.stakeHolders.length - a.stakeHolders.length);
       break;
     }
 
   }
-  return projects
-}
+  return templates
+}*/
 
 
-const ProjectsPage = withTracker(props => {
-  let local = LocalCollection.findOne({
-    name: 'localProjects'
-  });
+const TemplatesPage = withTracker(props => {
   let userId = Meteor.userId();
+  Meteor.subscribe('companies.single');
   const companies = Companies.find({}).fetch();
   const currentCompany = companies.find(company => company.peoples.includes(userId));
-  Meteor.subscribe('companies.single');
-  Meteor.subscribe('myProjects', null, {
-    sort: local.sort || {},
-    name: local.search
-  });
+  Meteor.subscribe('templates');
+  Meteor.subscribe('projects');
   return {
     company: Companies.findOne(),
     activities: Activities.find({}).fetch(),
-    projects: sortingFunc(Projects.find({}).fetch(), local),
+    templates: Templates.find({}).fetch(),
     companies: Companies.find({}).fetch(),
     currentCompany,
   };
-})(ProjectCard);
+})(TemplateCard);
 
-export default ProjectsPage;
+export default TemplatesPage;

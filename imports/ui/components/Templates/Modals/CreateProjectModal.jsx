@@ -11,6 +11,7 @@ import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from '@material-ui/icons/Close';
 import MuiDialogContent from "@material-ui/core/DialogContent/DialogContent";
 import MuiDialogActions from "@material-ui/core/DialogActions/DialogActions";
+import {withSnackbar} from "notistack";
 
 const styles = theme => ({
   root: {
@@ -53,8 +54,8 @@ const DialogActions = withStyles(theme => ({
   },
 }))(MuiDialogActions);
 
-function DuplicateProject(props) {
-  let { open, handleClose, project, company } = props;
+function CreateProjectModal(props) {
+  let { open, handleClose, template, company } = props;
   const [names, setNames] = React.useState('');
   let newProjectId;
 
@@ -62,45 +63,55 @@ function DuplicateProject(props) {
     setNames(e.target.value)
   };
 
-  const duplicateProject = () => {
+  const createProject = () => {
     if (!names.length) {
       return;
     }
-
+    let newBenefits = template.benefits;
+    newBenefits  = newBenefits.map(newBenefit => {
+      newBenefit.expectedDate = null;
+      return newBenefit;
+    });
+    let newImpacts = template.impacts;
+    newImpacts  = newImpacts.map(newImpact => {
+      newImpact.expectedDate = null;
+      return newImpact;
+    });
     const params = {
       project: {
-        owner: project.owner,
-        changeManagers: [],
-        peoples: [],
-        stakeHolders: [],
-        managers: [],
-        vision: project.vision,
-        objectives: project.objectives,
-        impacts: project.impacts,
-        benefits: project.benefits,
-        risks: project.risks,
-        peopleCount: 0,
-        name: (names || 'Project copy').trim(),
         startingDate: new Date(),
         endingDate: new Date(),
+        owner: Meteor.userId(),
+        stakeHolders: [],
+        vision: template.vision,
+        objectives: template.objectives,
+        impacts: newImpacts,
+        benefits: newBenefits,
+        risks: template.risks,
+        name: (names || 'Template copy').trim(),
         companyId: company._id,
       }
     };
 
-    Meteor.call('projects.insert', params, (error, result) => {
-      if (error) {
-        return;
+    Meteor.call('projects.insert', params, (err, res) => {
+      if (err) {
+        props.enqueueSnackbar(err.reason, {variant: 'error'})
       }
-
-      handleClose();
-      newProjectId = result;
+      newProjectId = res;
       duplicateActivities();
+      props.enqueueSnackbar('Project Create Successfully.', {variant: 'success'})
     })
+
   };
 
   const duplicateActivities = () => {
-    const projectId = project._id;
-    const activities = Activities.find({ projectId }).fetch();
+    const templateId = template._id;
+    const activities = Activities.find({ templateId: templateId }).fetch();
+    if (!activities.length) {
+      handleClose();
+      props.enqueueSnackbar('Project Create Successfully.', {variant: 'success'})
+      return;
+    }
     activities.map(newActivity => {
       const paramsActivity = {
         activity: {
@@ -108,16 +119,16 @@ function DuplicateProject(props) {
           type: newActivity.type,
           description: newActivity.description,
           owner: newActivity.owner,
-          dueDate: new Date(),
+          dueDate: newActivity.dueDate,
           stakeHolders: newActivity.stakeHolders,
           projectId: newProjectId,
           step: newActivity.step,
           time: newActivity.time
         }
       };
-      Meteor.call('activities.insert', paramsActivity, (error, result) => {
-        if (error) {
-          console.log('--error-', error.response)
+      Meteor.call('activities.insert', paramsActivity, (err, res) => {
+        if (err) {
+          console.log('---',err)
         } else {
           setNames('');
           handleClose();
@@ -130,7 +141,7 @@ function DuplicateProject(props) {
     <div>
       <Dialog open={open} onClose={() => handleClose()} maxWidth="md" fullWidth={true}>
         <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-          {"Duplicate Project"}
+          {"Create new project from template"}
         </DialogTitle>
         <DialogContent dividers>
           <Grid container
@@ -145,8 +156,8 @@ function DuplicateProject(props) {
           <Button onClick={() => handleClose()}>
             Cancel
           </Button>
-          <Button color="primary" onClick={duplicateProject}>
-            Create
+          <Button color="primary" onClick={createProject}>
+            Create project
           </Button>
         </DialogActions>
       </Dialog>
@@ -155,9 +166,9 @@ function DuplicateProject(props) {
 };
 
 export default withTracker(props => {
-  const { project: { _id: projectId } } = props;
-  Meteor.subscribe('compoundActivities', projectId);
+  const { template: { _id: templateId } } = props;
+  Meteor.subscribe('compoundActivitiesTemplates', templateId);
   return {
-    activities: Activities.find({ projectId }).fetch()
+    activities: Activities.find({ templateId }).fetch()
   };
-})(DuplicateProject);
+})(withSnackbar(CreateProjectModal));

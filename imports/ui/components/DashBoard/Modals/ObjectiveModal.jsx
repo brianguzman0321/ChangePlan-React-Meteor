@@ -62,7 +62,7 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function AddValue(props) {
-    let { open, handleModalClose, project, index, editValue } = props;
+    let { open, handleModalClose, project, index, editValue, template, currentType } = props;
     const [value, setValue] = React.useState(editValue);
     const [showModalDialog, setShowModalDialog] = useState(false);
     const [isUpdated, setIsUpdated] = useState(false);
@@ -89,36 +89,55 @@ function AddValue(props) {
     };
 
     const createProject = () => {
-        if(!(value)){
-            props.enqueueSnackbar('Please fill the required Field', {variant: 'error'});
-            return false;
-        }
-        if(index !== '' ){
-            project.objectives[index] = value;
-        }
-        else{
-            project.objectives.push(value);
-        }
-
-        delete project.changeManagerDetails;
-        delete project.managerDetails;
-        delete project.peoplesDetails;
-        let params = {
-            project
-
-        };
-        Meteor.call('projects.update', params, (err, res) => {
-            if(err){
-                props.enqueueSnackbar(err.reason, {variant: 'error'})
+        if (currentType === 'project') {
+            if (!(value)) {
+                props.enqueueSnackbar('Please fill the required Field', {variant: 'error'});
+                return false;
             }
-            else{
-                handleClose();
-                setValue('');
-                props.enqueueSnackbar('Project Updated Successfully.', {variant: 'success'})
+            if (index !== '' ) {
+                project.objectives[index] = value;
+            } else {
+                project.objectives.push(value);
             }
 
-        })
-
+            delete project.changeManagerDetails;
+            delete project.managerDetails;
+            delete project.peoplesDetails;
+            let params = {
+                project
+            };
+            Meteor.call('projects.update', params, (err, res) => {
+                if (err) {
+                    props.enqueueSnackbar(err.reason, {variant: 'error'})
+                } else {
+                    handleClose();
+                    setValue('');
+                    props.enqueueSnackbar('Project Updated Successfully.', {variant: 'success'})
+                }
+            })
+        } else if (currentType === 'template') {
+            if (!(value)) {
+                props.enqueueSnackbar('Please fill the required Field', {variant: 'error'});
+                return false;
+            }
+            if (index !== '' ) {
+                template.objectives[index] = value;
+            } else {
+                template.objectives.push(value);
+            }
+            let params = {
+                template
+            };
+            Meteor.call('templates.update', params, (err, res) => {
+                if(err){
+                    props.enqueueSnackbar(err.reason, {variant: 'error'})
+                } else {
+                    handleClose();
+                    setValue('');
+                    props.enqueueSnackbar('Templates Updated Successfully.', {variant: 'success'})
+                }
+            })
+        }
     };
 
     const handleChange = (e) => {

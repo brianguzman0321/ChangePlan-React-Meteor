@@ -26,9 +26,10 @@ const styles = theme => ({
 });
 
 const useStyles = makeStyles(theme => ({
-    createNewProject: {
+    createNewTemplate: {
         flex: 1,
-        marginLeft: 15,
+        marginTop: 2,
+        marginLeft: 15
     }
 }));
 
@@ -59,66 +60,52 @@ const DialogActions = withStyles(theme => ({
     },
 }))(MuiDialogActions);
 
-function DeleteValue(props) {
+function DeleteTemplate(props) {
 
-    let { company, open, handleModalClose, project, index, deleteValue, type, template } = props;
+    let { company, open, handleModalClose, template } = props;
     const classes = useStyles();
     const modalName = 'delete';
 
     const handleClose = () => {
         handleModalClose(modalName);
     };
-    const removeProject = () => {
-        if (type === 'project') {
-            delete project.changeManagerDetails;
-            delete project.managerDetails;
-            delete project.peoplesDetails;
-            let params = {
-                project
-            };
-            params.project[deleteValue].splice(index, 1);
-            Meteor.call('projects.update', params, (err, res) => {
-                if(err){
-                    props.enqueueSnackbar(err.reason, {variant: 'error'})
-                }
-                else{
-                    handleClose();
-                    props.enqueueSnackbar('Project Updated Successfully.', {variant: 'success'})
-                }
-            })
-        } else if (type === 'template') {
-            let params = {
-                template
-            };
-            params.template[deleteValue].splice(index, 1);
-            Meteor.call('templates.update', params, (err, res) => {
-                if(err){
-                    props.enqueueSnackbar(err.reason, {variant: 'error'})
-                }
-                else{
-                    handleClose();
-                    props.enqueueSnackbar('Template Updated Successfully.', {variant: 'success'})
-                }
-            })
-        }
+    const removeTemplate = () => {
+        let params = {
+            template: {
+                _id: template._id,
+
+            }
+        };
+        // сделано
+        Meteor.call('templates.remove', params, (err, res) => {
+            if(err){
+                props.enqueueSnackbar(err.reason, {variant: 'error'})
+            }
+            else{
+                handleClose();
+                props.enqueueSnackbar('Template Removed Successfully.', {variant: 'success'})
+            }
+
+        })
+
     };
 
     return (
-        <div className={classes.createNewProject}>
+        <div className={classes.createNewTemplate}>
             <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="sm" fullWidth={true}>
                 <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-                    Remove Value
+                    DeleteTemplate
                 </DialogTitle>
                 <DialogContent dividers>
                     <DialogContentText>
-                        Are you sure? This action can't be reversed.
+                        Are you sure you want to remove the template <strong>{template.name}</strong> and all related activities? This action can't be reversed.
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose} color="primary">
                         Cancel
                     </Button>
-                    <Button onClick={removeProject} color="secondary">
+                    <Button onClick={removeTemplate} color="secondary">
                         Delete
                     </Button>
                 </DialogActions>
@@ -127,4 +114,4 @@ function DeleteValue(props) {
     );
 }
 
-export default withSnackbar(DeleteValue)
+export default withSnackbar(DeleteTemplate)

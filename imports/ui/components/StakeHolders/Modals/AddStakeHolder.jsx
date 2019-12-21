@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
-import { withStyles, makeStyles } from '@material-ui/core/styles';
-import { withRouter } from 'react-router';
+import React, {useEffect} from "react";
+import {withStyles, makeStyles} from '@material-ui/core/styles';
+import {withRouter} from 'react-router';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
@@ -12,29 +12,30 @@ import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import Papa from 'papaparse'
 import TextField from '@material-ui/core/TextField';
-import { withSnackbar } from 'notistack';
+import {withSnackbar} from 'notistack';
 import 'date-fns';
 import Grid from "@material-ui/core/Grid/Grid";
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
-import { withTracker } from "meteor/react-meteor-data";
-import { Companies } from "/imports/api/companies/companies";
+import {withTracker} from "meteor/react-meteor-data";
+import {Companies} from "/imports/api/companies/companies";
 import PropTypes from 'prop-types';
 import SwipeableViews from 'react-swipeable-views';
-import { useTheme } from '@material-ui/core/styles';
+import {useTheme} from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
-import { Peoples } from '../../../../api/peoples/peoples';
+import {Peoples} from '../../../../api/peoples/peoples';
 import AddExistingStakeholder from "./AddExistingStakeholder";
-import { Projects } from '../../../../api/projects/projects'
+import {Projects} from '../../../../api/projects/projects'
 import AddStakeHoldersResults from "./AddStakeholdersResults";
+import {Templates} from "../../../../api/templates/templates";
 
 function TabPanel(props) {
-  const { children, value, index, ...other } = props;
+  const {children, value, index, ...other} = props;
 
   return (
     <Typography
@@ -96,13 +97,13 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const DialogTitle = withStyles(styles)(props => {
-  const { children, classes, onClose } = props;
+  const {children, classes, onClose} = props;
   return (
     <MuiDialogTitle disableTypography className={classes.root}>
       <Typography variant="h6">{children}</Typography>
       {onClose ? (
         <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
-          <CloseIcon />
+          <CloseIcon/>
         </IconButton>
       ) : null}
     </MuiDialogTitle>
@@ -148,8 +149,8 @@ function AddStakeHolder(props) {
   });
   const [openResultTable, setOpenResultTable] = React.useState(false);
 
-  let { company, match } = props;
-  let { projectId } = match.params;
+  let {company, match, type, template, project} = props;
+  let {projectId, templateId} = match.params;
   let both = false;
 
   const classes = useStyles();
@@ -186,17 +187,17 @@ function AddStakeHolder(props) {
   };
 
   const checkEmail = (stakeholderEmail) => {
-    const newStakeholder = Peoples.find({ email: stakeholderEmail, company: company._id }).fetch()[0];
-    setNewStakeholder({ ...newStakeholder });
+    const newStakeholder = Peoples.find({email: stakeholderEmail, company: company._id}).fetch()[0];
+    setNewStakeholder({...newStakeholder});
     if (newStakeholder) {
       setAgreedToAddModal(true);
     }
   };
 
   const checkManyEmail = (stakeholderEmail) => {
-    const newStakeholder = Peoples.find({ email: stakeholderEmail, company: company._id }).fetch();
+    const newStakeholder = Peoples.find({email: stakeholderEmail, company: company._id}).fetch();
 
-    setNewStakeholder({ ...newStakeholder });
+    setNewStakeholder({...newStakeholder});
     if (newStakeholder) {
       setAgreedToAddModal(true);
     }
@@ -212,7 +213,7 @@ function AddStakeHolder(props) {
     try {
       ext = file.name.match(/\.([^\.]+)$/)[1];
     } catch (e) {
-      props.enqueueSnackbar(`Unsupported file type. CSV only.`, { variant: 'error' });
+      props.enqueueSnackbar(`Unsupported file type. CSV only.`, {variant: 'error'});
       setCsvfile(undefined);
       return false;
     }
@@ -222,7 +223,7 @@ function AddStakeHolder(props) {
         setCsvfile(event.target.files[0]);
         break;
       default:
-        props.enqueueSnackbar(`Unsupported file type (${ext}). CSV only.`, { variant: 'error' });
+        props.enqueueSnackbar(`Unsupported file type (${ext}). CSV only.`, {variant: 'error'});
         setCsvfile(undefined);
     }
 
@@ -232,7 +233,7 @@ function AddStakeHolder(props) {
     var data = result.data;
 
     if (!(data && data.length)) {
-      props.enqueueSnackbar('No Valid Data Found', { variant: 'error' });
+      props.enqueueSnackbar('No Valid Data Found', {variant: 'error'});
       return false;
     }
 
@@ -286,38 +287,38 @@ function AddStakeHolder(props) {
 
       const allPeoples = Peoples.find({}).fetch();
       const peoplesEmails = peoples.map(people => people.email);
-      const currentProject = Projects.findOne({ _id: projectId });
+      const currentProject = Projects.findOne({_id: projectId});
 
       const addToProject = peoples.filter(people => (importedEmails.includes(people.email) && !currentProject.stakeHolders.includes(people._id)));
-      const addToBoth = data1.filter(({ email }) => !peoplesEmails.includes(email)).filter(people => allPeoples.find((_people) => _people.email === people.email) === -1);
+      const addToBoth = data1.filter(({email}) => !peoplesEmails.includes(email)).filter(people => allPeoples.find((_people) => _people.email === people.email) === -1);
 
-      let tempTableDate = { attached: [], new: [] };
+      let tempTableDate = {attached: [], new: []};
 
       currentProject.stakeHolders = [...currentProject.stakeHolders, ...addToProject.map(people => people._id)];
 
       setStakeHolderId(currentProject);
 
       if (addToProject.length) {
-        tempTableDate = { ...tempTableDate, attached: addToProject };
+        tempTableDate = {...tempTableDate, attached: addToProject};
 
         setTableData(tempTableDate);
         setAddConfirmation(true);
       }
 
       if (addToBoth.length) {
-        tempTableDate = { ...tempTableDate, new: addToBoth };
+        tempTableDate = {...tempTableDate, new: addToBoth};
         setTableData(tempTableDate);
-        insertManyStakeholders({ peoples: addToBoth }, tempTableDate);
+        insertManyStakeholders({peoples: addToBoth}, tempTableDate);
       }
 
       if (!addToBoth.length && !addToProject.length) {
-        props.enqueueSnackbar(`Nothing to add from this file.`, { variant: 'warning' });
+        props.enqueueSnackbar(`Nothing to add from this file.`, {variant: 'warning'});
         setLoading(false);
       }
     }
 
     if (csvUploadErrorMessage) {
-      props.enqueueSnackbar(`Upload Failed! ${csvUploadErrorMessage}`, { variant: 'error' });
+      props.enqueueSnackbar(`Upload Failed! ${csvUploadErrorMessage}`, {variant: 'error'});
       return false
     }
   };
@@ -326,11 +327,11 @@ function AddStakeHolder(props) {
     Meteor.call('peoples.insertMany', params, (err, res) => {
       setLoading(false);
       if (err) {
-        props.enqueueSnackbar(`Upload Aborted! ${err.reason}`, { variant: 'error' })
+        props.enqueueSnackbar(`Upload Aborted! ${err.reason}`, {variant: 'error'})
       } else {
         setOpen(false);
         setCsvfile(null);
-        props.enqueueSnackbar('StakeHolders Added Successfully.', { variant: 'success' });
+        props.enqueueSnackbar('StakeHolders Added Successfully.', {variant: 'success'});
         if (!tempTableDate.attached.length) {
           setOpenResultTable(true);
         }
@@ -340,7 +341,7 @@ function AddStakeHolder(props) {
 
   const importCSV = () => {
     if (!csvfile) {
-      props.enqueueSnackbar('No File Selected', { variant: 'error' });
+      props.enqueueSnackbar('No File Selected', {variant: 'error'});
       return false;
     }
     Papa.parse(csvfile, {
@@ -353,8 +354,8 @@ function AddStakeHolder(props) {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    const newStakeholder = Peoples.find({ email, company: company._id }).fetch()[0];
-    setNewStakeholder({ ...newStakeholder });
+    const newStakeholder = Peoples.find({email, company: company._id}).fetch()[0];
+    setNewStakeholder({...newStakeholder});
     if (newStakeholder) {
       setAgreedToAddModal(true);
     } else {
@@ -366,7 +367,7 @@ function AddStakeHolder(props) {
           businessUnit,
           email,
           notes,
-          projectId,
+          [type === 'project' ? 'projectId' : 'templateId']: type === 'project' ? projectId : templateId,
           company: company._id
         }
       };
@@ -374,10 +375,10 @@ function AddStakeHolder(props) {
       supportLevel && (params.people.supportLevel = supportLevel);
       Meteor.call('peoples.insert', params, (err, res) => {
         if (err) {
-          props.enqueueSnackbar(err.reason, { variant: 'error' })
+          props.enqueueSnackbar(err.reason, {variant: 'error'})
         } else {
           setOpen(false);
-          props.enqueueSnackbar('StakeHolder Added Successfully.', { variant: 'success' })
+          props.enqueueSnackbar('StakeHolder Added Successfully.', {variant: 'success'})
         }
 
       })
@@ -391,300 +392,315 @@ function AddStakeHolder(props) {
       };
       Meteor.call('projects.update', params, (error, result) => {
         if (error) {
-          props.enqueueSnackbar(err.reason, { variant: 'error' })
+          props.enqueueSnackbar(err.reason, {variant: 'error'})
         } else {
-          props.enqueueSnackbar('StakeHolder Added Successful.', { variant: 'success' });
+          props.enqueueSnackbar('StakeHolder Added Successful.', {variant: 'success'});
           setAddConfirmation(false);
           setOpen(false);
           setOpenResultTable(true);
         }
       });
-
     } else {
-      const currentProject = Projects.find({ _id: projectId }).fetch();
+      let methodName = 'projects.update';
+      let params = {};
+      if (type === 'project') {
+        const currentProject = Projects.find({_id: projectId}).fetch();
 
-      if (currentProject[0].stakeHolders.includes(stakeholder._id)) {
-        props.enqueueSnackbar('This StakeHolder was already added to current project.', { variant: 'warning' })
-        closeAgreedToAddModal();
-      } else {
-        currentProject[0].stakeHolders.push(stakeholder._id);
-        const params = {
-          project: currentProject[0]
-        };
-        Meteor.call('projects.update', params, (error, result) => {
-          if (error) {
-            props.enqueueSnackbar(err.reason, { variant: 'error' })
-          } else {
-            props.enqueueSnackbar('StakeHolder Added Successful.', { variant: 'success' });
-            closeAgreedToAddModal();
-            setOpen(false);
-          }
-        })
+        if (currentProject[0].stakeHolders.includes(stakeholder._id)) {
+          props.enqueueSnackbar('This StakeHolder was already added to current project.', {variant: 'warning'})
+          closeAgreedToAddModal();
+        } else {
+          currentProject[0].stakeHolders.push(stakeholder._id);
+          params = {
+            project: currentProject[0]
+          };
+        }
+
+      } else if (type === 'template') {
+        const currentTemplate = Templates.find({_id: templateId}).fetch();
+        if (currentTemplate[0].stakeHolders.includes(stakeholder._id)) {
+          props.enqueueSnackbar('This StakeHolder was already added to current project.', {variant: 'warning'})
+          closeAgreedToAddModal();
+        } else {
+        currentTemplate[0].stakeHolders.push(stakeholder._id);
+          params = {
+            template: currentTemplate[0]
+          };
+          methodName = 'templates.update'
       }
+      Meteor.call(methodName, params, (error, result) => {
+        if (error) {
+          props.enqueueSnackbar(err.reason, {variant: 'error'})
+        } else {
+          props.enqueueSnackbar('StakeHolder Added Successful.', {variant: 'success'});
+          closeAgreedToAddModal();
+          setOpen(false);
+        }
+      })
     }
-  };
-
-
-  function handleSelectClose() {
-    setSelectOpen(false);
   }
+};
 
-  function handleSelectOpen() {
-    setSelectOpen(true);
-  }
 
-  function handleSelectClose1() {
-    setSelectOpen1(false);
-  }
+function handleSelectClose() {
+  setSelectOpen(false);
+}
 
-  function handleSelectOpen1() {
-    setSelectOpen1(true);
-  }
+function handleSelectOpen() {
+  setSelectOpen(true);
+}
 
-  return (
-    <div className={classes.createNewProject}>
-      <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-        ADD/IMPORT
-      </Button>
-      <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth={true}
-        classes={{ paper: classes.dialogPaper }}>
-        <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-          Add/Import Stakeholders
-        </DialogTitle>
-        <DialogContent dividers>
-          <AppBar position="static" color="default">
-            <Tabs
-              value={value}
-              onChange={handleChangeValue}
-              indicatorColor="primary"
-              textColor="primary"
-              variant="fullWidth"
-              aria-label="full width tabs example"
-            >
-              <Tab label="INDIVIDUAL" {...a11yProps(0)} />
-              <Tab label="MULTIPLE VIA CSV" {...a11yProps(1)} />
-            </Tabs>
-          </AppBar>
-          <SwipeableViews
-            index={value}
-            onChangeIndex={handleChangeIndex}
+function handleSelectClose1() {
+  setSelectOpen1(false);
+}
+
+function handleSelectOpen1() {
+  setSelectOpen1(true);
+}
+
+return (
+  <div className={classes.createNewProject}>
+    <Button variant="outlined" color="primary" onClick={handleClickOpen}>
+      ADD/IMPORT
+    </Button>
+    <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth={true}
+            classes={{paper: classes.dialogPaper}}>
+      <DialogTitle id="customized-dialog-title" onClose={handleClose}>
+        Add/Import Stakeholders
+      </DialogTitle>
+      <DialogContent dividers>
+        <AppBar position="static" color="default">
+          <Tabs
+            value={value}
+            onChange={handleChangeValue}
+            indicatorColor="primary"
+            textColor="primary"
+            variant="fullWidth"
+            aria-label="full width tabs example"
           >
-            <form onSubmit={onSubmit}>
-              <TabPanel value={value} index={0}>
-                <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    <TextField
-                      autoFocus
-                      // margin="dense"
-                      id="firstName"
-                      label="First Name"
-                      value={firstName}
-                      onChange={(e) => {
-                        setFirstName(e.target.value)
-                      }}
-                      required={true}
-                      type="text"
-                      fullWidth={true}
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <TextField
-                      // margin="dense"
-                      id="lastName"
-                      label="Last Name"
-                      value={lastName}
-                      onChange={(e) => {
-                        setLastName(e.target.value)
-                      }}
-                      required={true}
-                      type="text"
-                      fullWidth={true}
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <TextField
-                      // margin="dense"
-                      id="email"
-                      label="Email"
-                      value={email}
-                      onChange={handleEmailChange}
-                      required={true}
-                      type="email"
-                      fullWidth={true}
-                    />
-                  </Grid>
-                  <Grid item xs={6} />
-                  <Grid item xs={6}>
-                    <TextField
-                      // margin="dense"
-                      id="role"
-                      label="Role"
-                      value={role}
-                      onChange={(e) => {
-                        setRole(e.target.value)
-                      }}
-                      required={true}
-                      type="text"
-                      fullWidth={true}
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <TextField
-                      // margin="dense"
-                      id="businessUnit"
-                      label="Business Unit"
-                      value={businessUnit}
-                      onChange={(e) => {
-                        setBusinessUnit(e.target.value)
-                      }}
-                      required={true}
-                      type="text"
-                      fullWidth={true}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      // margin="dense"
-                      id="notes"
-                      label="Notes"
-                      value={notes}
-                      onChange={(e) => {
-                        setNotes(e.target.value)
-                      }}
-                      type="text"
-                      fullWidth={true}
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <FormControl className={classes.formControl} fullWidth={true}>
-                      <InputLabel htmlFor="demo-controlled-open-select">Level Of Support</InputLabel>
-                      <Select
-                        id="role"
-                        label="role"
-                        fullWidth={true}
-                        open={selectOpen}
-                        onClose={handleSelectClose}
-                        onOpen={handleSelectOpen}
-                        value={supportLevel}
-                        onChange={(e) => {
-                          setSupportLevel(e.target.value)
-                        }}
-                        inputProps={{
-                          name: 'role',
-                          id: 'demo-controlled-open-select',
-                        }}
-                        className={influenceLevel === 0 && classes.menuItem}
-                      >
-                        <MenuItem value={0}>no-value</MenuItem>
-                        <MenuItem value={1}>1</MenuItem>
-                        <MenuItem value={2}>2</MenuItem>
-                        <MenuItem value={3}>3</MenuItem>
-                        <MenuItem value={4}>4</MenuItem>
-                        <MenuItem value={5}>5</MenuItem>
-                      </Select>
-                    </FormControl>
-                    <br />
-                    <br />
-                    <br />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <FormControl className={classes.formControl} fullWidth={true}>
-                      <InputLabel htmlFor="demo-controlled-open-select">Level Of Influence</InputLabel>
-                      <Select
-                        id="role"
-                        label="role"
-                        fullWidth={true}
-                        open={selectOpen1}
-                        onClose={handleSelectClose1}
-                        onOpen={handleSelectOpen1}
-                        value={influenceLevel}
-                        onChange={(e) => {
-                          setInfluenceLevel(e.target.value)
-                        }}
-                        inputProps={{
-                          name: 'role',
-                          id: 'demo-controlled-open-select',
-                        }}
-                        className={influenceLevel === 0 && classes.menuItem}
-                      >
-                        <MenuItem value={0}>no-value</MenuItem>
-                        <MenuItem value={1}>1</MenuItem>
-                        <MenuItem value={2}>2</MenuItem>
-                        <MenuItem value={3}>3</MenuItem>
-                        <MenuItem value={4}>4</MenuItem>
-                        <MenuItem value={5}>5</MenuItem>
-                      </Select>
-                    </FormControl>
-                    <br />
-                    <br />
-                    <br />
-                  </Grid>
-
+            <Tab label="INDIVIDUAL" {...a11yProps(0)} />
+            <Tab label="MULTIPLE VIA CSV" {...a11yProps(1)} />
+          </Tabs>
+        </AppBar>
+        <SwipeableViews
+          index={value}
+          onChangeIndex={handleChangeIndex}
+        >
+          <form onSubmit={onSubmit}>
+            <TabPanel value={value} index={0}>
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <TextField
+                    autoFocus
+                    // margin="dense"
+                    id="firstName"
+                    label="First Name"
+                    value={firstName}
+                    onChange={(e) => {
+                      setFirstName(e.target.value)
+                    }}
+                    required={true}
+                    type="text"
+                    fullWidth={true}
+                  />
                 </Grid>
-                <Divider />
-                <DialogActions>
+                <Grid item xs={6}>
+                  <TextField
+                    // margin="dense"
+                    id="lastName"
+                    label="Last Name"
+                    value={lastName}
+                    onChange={(e) => {
+                      setLastName(e.target.value)
+                    }}
+                    required={true}
+                    type="text"
+                    fullWidth={true}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    // margin="dense"
+                    id="email"
+                    label="Email"
+                    value={email}
+                    onChange={handleEmailChange}
+                    required={true}
+                    type="email"
+                    fullWidth={true}
+                  />
+                </Grid>
+                <Grid item xs={6} />
+                <Grid item xs={6}>
+                  <TextField
+                    // margin="dense"
+                    id="role"
+                    label="Role"
+                    value={role}
+                    onChange={(e) => {
+                      setRole(e.target.value)
+                    }}
+                    required={true}
+                    type="text"
+                    fullWidth={true}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    // margin="dense"
+                    id="businessUnit"
+                    label="Business Unit"
+                    value={businessUnit}
+                    onChange={(e) => {
+                      setBusinessUnit(e.target.value)
+                    }}
+                    required={true}
+                    type="text"
+                    fullWidth={true}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    // margin="dense"
+                    id="notes"
+                    label="Notes"
+                    value={notes}
+                    onChange={(e) => {
+                      setNotes(e.target.value)
+                    }}
+                    type="text"
+                    fullWidth={true}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <FormControl className={classes.formControl} fullWidth={true}>
+                    <InputLabel htmlFor="demo-controlled-open-select">Level Of Support</InputLabel>
+                    <Select
+                      id="role"
+                      label="role"
+                      fullWidth={true}
+                      open={selectOpen}
+                      onClose={handleSelectClose}
+                      onOpen={handleSelectOpen}
+                      value={supportLevel}
+                      onChange={(e) => {
+                        setSupportLevel(e.target.value)
+                      }}
+                      inputProps={{
+                        name: 'role',
+                        id: 'demo-controlled-open-select',
+                      }}
+                      className={influenceLevel === 0 && classes.menuItem}
+                    >
+                      <MenuItem value={0}>no-value</MenuItem>
+                      <MenuItem value={1}>1</MenuItem>
+                      <MenuItem value={2}>2</MenuItem>
+                      <MenuItem value={3}>3</MenuItem>
+                      <MenuItem value={4}>4</MenuItem>
+                      <MenuItem value={5}>5</MenuItem>
+                    </Select>
+                  </FormControl>
+                  <br />
+                  <br />
+                  <br />
+                </Grid>
+                <Grid item xs={6}>
+                  <FormControl className={classes.formControl} fullWidth={true}>
+                    <InputLabel htmlFor="demo-controlled-open-select">Level Of Influence</InputLabel>
+                    <Select
+                      id="role"
+                      label="role"
+                      fullWidth={true}
+                      open={selectOpen1}
+                      onClose={handleSelectClose1}
+                      onOpen={handleSelectOpen1}
+                      value={influenceLevel}
+                      onChange={(e) => {
+                        setInfluenceLevel(e.target.value)
+                      }}
+                      inputProps={{
+                        name: 'role',
+                        id: 'demo-controlled-open-select',
+                      }}
+                      className={influenceLevel === 0 && classes.menuItem}
+                    >
+                      <MenuItem value={0}>no-value</MenuItem>
+                      <MenuItem value={1}>1</MenuItem>
+                      <MenuItem value={2}>2</MenuItem>
+                      <MenuItem value={3}>3</MenuItem>
+                      <MenuItem value={4}>4</MenuItem>
+                      <MenuItem value={5}>5</MenuItem>
+                    </Select>
+                  </FormControl>
+                  <br />
+                  <br />
+                  <br />
+                </Grid>
+              </Grid>
+              <Divider />
+              <DialogActions>
 
-                  <Button onClick={handleClose} color="secondary">
-                    Cancel
-                  </Button>
-                  <Button color="primary" type="submit">
-                    Save
-                  </Button>
-                </DialogActions>
-              </TabPanel>
-            </form>
-            <TabPanel value={value} index={1}>
-              <div className="App">
-                <input
-                  accept="/csv/*"
-                  className={classes.input}
-                  style={{ display: 'none' }}
-                  ref={input => {
-                    this.filesInput = input;
-                  }}
-                  id="raised-button-file"
-                  type="file"
-                  name="file"
-                  placeholder={null}
-                  onChange={handleChangecsv}
-                />
-                <label htmlFor="raised-button-file">
-                  <Button variant="raised" component="span" className={classes.button}>
-                    Choose File
-                  </Button>
-                  <a href="/branding/stakeholder_list.csv" download="stakeholder_list.csv" className={classes.sampleCsv}>Template.csv</a>
-                  <Typography variant="h6">
-                    &nbsp;&nbsp;{csvfile && csvfile.name}
-                  </Typography>
-
-                </label>
-                <p />
-                <Button onClick={importCSV} disabled={loading} color="primary" variant="contained"> Upload </Button>
-              </div>
+                <Button onClick={handleClose} color="secondary">
+                  Cancel
+                </Button>
+                <Button color="primary" type="submit">
+                  Save
+                </Button>
+              </DialogActions>
             </TabPanel>
-          </SwipeableViews>
-        </DialogContent>
-      </Dialog>
-      <AddStakeHoldersResults tableData={tableData} showModalDialog={openResultTable}
-        closeModalDialog={() => setOpenResultTable(false)} />
-      <AddExistingStakeholder showModalDialog={agreedToAddModal}
-        stakeholder={stakeholder}
-        closeModalDialog={() => setAgreedToAddModal(false)}
-        handleSave={() => addExistingStakeholder(false)} />
-      <AddExistingStakeholder showModalDialog={addConfirmation}
-        isMulti={true}
-        stakeholder={stakeholder}
-        closeModalDialog={() => setAddConfirmation(false)}
-        handleSave={() => addExistingStakeholder(true)} />
-    </div>
-  );
+          </form>
+          <TabPanel value={value} index={1}>
+            <div className="App">
+              <input
+                accept="/csv/*"
+                className={classes.input}
+                style={{ display: 'none' }}
+                ref={input => {
+                  this.filesInput = input;
+                }}
+                id="raised-button-file"
+                type="file"
+                name="file"
+                placeholder={null}
+                onChange={handleChangecsv}
+              />
+              <label htmlFor="raised-button-file">
+                <Button variant="raised" component="span" className={classes.button}>
+                  Choose File
+                </Button>
+                <a href="/branding/stakeholder_list.csv" download="stakeholder_list.csv" className={classes.sampleCsv}>Template.csv</a>
+                <Typography variant="h6">
+                  &nbsp;&nbsp;{csvfile && csvfile.name}
+                </Typography>
+
+              </label>
+              <p />
+              <Button onClick={importCSV} disabled={loading} color="primary" variant="contained"> Upload </Button>
+            </div>
+          </TabPanel>
+        </SwipeableViews>
+      </DialogContent>
+    </Dialog>
+    <AddStakeHoldersResults tableData={tableData} showModalDialog={openResultTable}
+                            closeModalDialog={() => setOpenResultTable(false)}/>
+    <AddExistingStakeholder showModalDialog={agreedToAddModal}
+                            stakeholder={stakeholder}
+                            closeModalDialog={() => setAgreedToAddModal(false)}
+                            handleSave={() => addExistingStakeholder(false)}/>
+    <AddExistingStakeholder showModalDialog={addConfirmation}
+                            isMulti={true}
+                            stakeholder={stakeholder}
+                            closeModalDialog={() => setAddConfirmation(false)}
+                            handleSave={() => addExistingStakeholder(true)}/>
+  </div>
+);
 }
 
 const AddStakeHolderPage = withTracker(props => {
-  const { email } = props;
-  Meteor.subscribe('peoples', { email });
+  const {email} = props;
+  Meteor.subscribe('peoples', {email});
   return {
-    people: Peoples.find({ email }).fetch(),
+    people: Peoples.find({email}).fetch(),
     company: Companies.findOne(),
   };
 })(withRouter(AddStakeHolder));

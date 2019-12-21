@@ -95,7 +95,7 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function EditStakeHolder(props) {
-    let { stakeholder, open, close } = props;
+    let { stakeholder, open, close, isAdmin, isSuperAdmin, template, type, company, projectId } = props;
 
     const [firstName, setFirstName] = React.useState(stakeholder.firstName);
     const [lastName, setLastName] = React.useState(stakeholder.lastName);
@@ -154,8 +154,7 @@ function EditStakeHolder(props) {
         Meteor.call('projects.getStakeholderProjects', projectPrams, (err, res) => {
             if(err){
                 props.enqueueSnackbar(err.reason, {variant: 'error'})
-            }
-            else{
+            } else {
                 setStakeholderProjects(res);
             }
         });
@@ -243,7 +242,7 @@ function EditStakeHolder(props) {
                 <DialogContent dividers>
                     <Grid container spacing={2}>
                         <Grid item xs={6}>
-                            <TextField
+                            <TextField disabled={(!(isAdmin && template && (template.companyId === company._id) || isSuperAdmin) && (projectId === undefined))}
                                 autoFocus
                                 // margin="dense"
                                 id="firstName"
@@ -257,7 +256,7 @@ function EditStakeHolder(props) {
                             />
                         </Grid>
                         <Grid item xs={6}>
-                            <TextField
+                            <TextField disabled={(!(isAdmin && template && (template.companyId === company._id) || isSuperAdmin) && (projectId === undefined))}
                                 // margin="dense"
                                 id="lastName"
                                 label="Last Name"
@@ -270,7 +269,7 @@ function EditStakeHolder(props) {
                             />
                         </Grid>
                         <Grid item xs={6}>
-                            <TextField
+                            <TextField disabled={(!(isAdmin && template && (template.companyId === company._id) || isSuperAdmin) && (projectId === undefined))}
                                 // margin="dense"
                                 id="role"
                                 label="Role"
@@ -283,7 +282,7 @@ function EditStakeHolder(props) {
                             />
                         </Grid>
                         <Grid item xs={6}>
-                            <TextField
+                            <TextField disabled={(!(isAdmin && template && (template.companyId === company._id) || isSuperAdmin) && (projectId === undefined))}
                                 // margin="dense"
                                 id="businessUnit"
                                 label="Business Unit"
@@ -296,7 +295,7 @@ function EditStakeHolder(props) {
                             />
                         </Grid>
                         <Grid item xs={6}>
-                            <TextField
+                            <TextField disabled={(!(isAdmin && template && (template.companyId === company._id) || isSuperAdmin) && (projectId === undefined))}
                                 // margin="dense"
                                 id="email"
                                 label="Email"
@@ -309,7 +308,7 @@ function EditStakeHolder(props) {
                         </Grid>
                         <Grid item xs={6} />
                         <Grid item xs={12}>
-                            <TextField
+                            <TextField disabled={(!(isAdmin && template && (template.companyId === company._id) || isSuperAdmin) && (projectId === undefined))}
                                 // margin="dense"
                                 id="notes"
                                 label="Notes"
@@ -323,7 +322,7 @@ function EditStakeHolder(props) {
                         <Grid item xs={6}>
                             <FormControl className={classes.formControl} fullWidth={true}>
                                 <InputLabel htmlFor="demo-controlled-open-select">Level Of Support</InputLabel>
-                                <Select
+                                <Select disabled={(!(isAdmin && template && (template.companyId === company._id) || isSuperAdmin) && (projectId === undefined))}
                                     id="role"
                                     label="role"
                                     fullWidth={true}
@@ -352,7 +351,7 @@ function EditStakeHolder(props) {
                         <Grid item xs={6}>
                             <FormControl className={classes.formControl} fullWidth={true}>
                                 <InputLabel htmlFor="demo-controlled-open-select">Level Of Influence</InputLabel>
-                                <Select
+                                <Select disabled={(!(isAdmin && template && (template.companyId === company._id) || isSuperAdmin) && (projectId === undefined))}
                                     id="role"
                                     label="role"
                                     fullWidth={true}
@@ -431,12 +430,17 @@ function EditStakeHolder(props) {
                     </Card>
                 </DialogContent>
                 <DialogActions>
+                    {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || projectId !== undefined) ?
                     <Button onClick={isUpdated ? handleOpenModalDialog : () => close()} color="secondary">
                         Cancel
-                    </Button>
+                    </Button>:
+                      <Button onClick={() => close()} color="secondary">
+                          OK
+                      </Button> }
+                    {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || projectId !== undefined)?
                     <Button color="primary" type="submit">
                         Update
-                    </Button>
+                    </Button>  : ''}
                 </DialogActions>
                 <SaveChanges
                   handleClose={handleClose}

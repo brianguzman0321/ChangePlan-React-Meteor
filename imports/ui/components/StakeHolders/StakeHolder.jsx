@@ -6,7 +6,7 @@ import EditStakeHolderPage from './Modals/EditStakeHolder';
 import DeleteStakeHolder from './Modals/DeleteStakeHolder';
 
 const StakeHolder = (props) => {
-  const {row, isItemSelected, labelId, setRowSelected, deleteCell, selected, hideSelected = false, smallTable = false, index} = props;
+  const {row, isItemSelected, labelId, setRowSelected, deleteCell, selected, hideSelected = false, smallTable = false, index, isAdmin, isSuperAdmin, template, company, projectId} = props;
   const [showEditModalDialog, setShowEditModalDialog] = React.useState(false);
 
   const handleOpenModalDialog = () => {
@@ -45,11 +45,11 @@ const StakeHolder = (props) => {
       selected={isItemSelected}
     >
       {!hideSelected && <TableCell padding="checkbox">
-        <Checkbox
-          checked={isItemSelected}
-          onChange={event => handleClick(event, row._id)}
-          inputProps={{'aria-labelledby': labelId}}
-          color="default"
+        <Checkbox disabled={(!(isAdmin && template && (template.companyId === company._id)) && (projectId === undefined))}
+                  checked={isItemSelected}
+                  onChange={event => handleClick(event, row._id)}
+                  inputProps={{'aria-labelledby': labelId}}
+                  color="default"
         />
       </TableCell>}
       <TableCell align="left" component="th" id={labelId} scope="row" onClick={handleOpenModalDialog}>
@@ -67,14 +67,9 @@ const StakeHolder = (props) => {
         {/*<IconButton aria-label="edit" onClick={handleOpenModalDialog}>*/}
         {/*    <EditIcon />*/}
         {/*</IconButton>*/}
-        <EditStakeHolderPage stakeholder={row} open={showEditModalDialog} close={handleCloseModalDialog}/>
-        {/*<IconButton aria-label="edit" onClick={(event) => {deleteCell(event, row)}}>*/}
-        {/*<EditIcon />*/}
-        {/*</IconButton>*/}
-        <DeleteStakeHolder stakeholder={row}/>
-        {/*<IconButton aria-label="edit" onClick={(event) => {deleteCell(event, row)}}>*/}
-        {/*<DeleteIcon />*/}
-        {/*</IconButton>*/}
+        <EditStakeHolderPage projectId={projectId} stakeholder={row} open={showEditModalDialog} close={handleCloseModalDialog} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} template={template} company={company}/>
+        {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || projectId !== undefined) ?
+        <DeleteStakeHolder stakeholder={row}/> : ''}
       </TableCell>}
     </TableRow>
   )

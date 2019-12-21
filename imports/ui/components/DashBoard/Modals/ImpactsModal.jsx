@@ -81,8 +81,9 @@ const DialogActions = withStyles(theme => ({
   },
 }))(MuiDialogActions);
 
+
 function AddImpact(props) {
-  let { open, handleModalClose, project, indexImpact, editValue, stakeHoldersImpacts, localImpacts } = props;
+  let { open, handleModalClose, project, indexImpact, editValue, template, currentType, stakeHoldersImpacts, localImpacts } = props;
   const [name, setName] = React.useState('');
   const [expectedDateOpen, setExpectedDateOpen] = useState(false);
   const [peoples, setPeoples] = useState([]);
@@ -95,9 +96,14 @@ function AddImpact(props) {
   const [impacts, setImpacts] = useState([]);
   const [expectedDate, setExpectedDate] = useState(null);
 
+
   useEffect(() => {
-    setImpacts(project.impacts)
-  }, [project.impacts]);
+    if (project && currentType === 'project') {
+      setImpacts(project.impacts)
+    } else if (template && currentType === 'template') {
+      setImpacts(template.impacts)
+    }
+  }, [project.impacts, template.impacts]);
 
   const classes = useStyles();
   const modalName = 'impacts';
@@ -118,6 +124,7 @@ function AddImpact(props) {
       setShowModalDialog(true);
     }
   };
+
 
   const closeModalDialog = () => {
     setShowModalDialog(false);
@@ -169,6 +176,7 @@ function AddImpact(props) {
     };
 
     let newImpacts = impacts;
+    if (currentType === 'project') {
     if (indexImpact !== '') {
       newImpacts[indexImpact] = impactObj;
       setImpacts(newImpacts);
@@ -195,6 +203,32 @@ function AddImpact(props) {
         props.enqueueSnackbar('Project Updated Successfully.', {variant: 'success'})
       }
     })
+    } else if (currentType === 'template') {
+
+      if (indexImpact !== '') {
+        newImpacts[indexImpact] = impactObj;
+        setImpacts(newImpacts);
+      } else {
+        newImpacts = template.impacts ? template.impacts.concat(impactObj) : [impactObj];
+        setImpacts(newImpacts);
+      }
+
+      let params = {
+        ...template,
+        impacts: newImpacts,
+      };
+
+      Meteor.call('templates.update', {template: params}, (err, res) => {
+        if (err) {
+          props.enqueueSnackbar(err.reason, {variant: 'error'})
+        } else {
+          handleClose();
+          setName('');
+          setExpectedDate(null);
+          props.enqueueSnackbar('Template Updated Successfully.', {variant: 'success'})
+        }
+      })
+    }
   };
 
   const handleChange = (e) => {
@@ -219,7 +253,6 @@ function AddImpact(props) {
   function handleTypeOpen() {
     seTypeOpen(true);
   }
-
 
   function handleLevelOpen() {
     setLevelOpen(true);

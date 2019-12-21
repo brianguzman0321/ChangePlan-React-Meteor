@@ -22,6 +22,21 @@ Meteor.publishTransformed('compoundActivities', function (projectId) {
     });
 });
 
+Meteor.publishTransformed('compoundActivitiesTemplates', function (templateId) {
+
+    return Activities.find({
+        templateId: templateId
+    }).serverTransform({
+        'personResponsible': function (doc) {
+            return Meteor.users.findOne({_id: doc.owner}, {
+                fields: {
+                    services: 0, roles: 0
+                }
+            });
+        },
+    });
+});
+
 Meteor.publish('activities.single', function (id) {
     return Activities.find({
         owner: this.userId,
