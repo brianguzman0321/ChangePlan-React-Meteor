@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import {withTracker} from 'meteor/react-meteor-data';
@@ -45,21 +45,26 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const ProjectNavBar = ({history: {push, location}, handleChange, selectedTab, currentCompanyId, isChangeManager, isSuperAdmin, isAdmin, ...props}) => {
-
+  const [displayMenus, setDisplayMenus] = useState([]);
   const classes = useStyles();
-  let displayMenus = {};
-  if (isSuperAdmin) {
-    displayMenus = config.adminProjectsMenus.filter(item => item.show);
-  } else if (isChangeManager || isAdmin){
-    displayMenus = config.projectsMenus.filter(item => item.show);
-  } else {
-    displayMenus = [];
-  }
-  if (props.currentCompany && props.currentCompany.length > 0) {
-    currentCompanyId = props.currentCompany._id;
-  } else {
-    currentCompanyId = null;
-  }
+
+  useEffect(() => {
+    let selectedDisplayMenus = [];
+    if (isSuperAdmin) {
+      selectedDisplayMenus = config.adminProjectsMenus.filter(item => item.show);
+    } else if (isChangeManager || isAdmin){
+      selectedDisplayMenus = config.projectsMenus.filter(item => item.show);
+    } else {
+      selectedDisplayMenus = [];
+    }
+
+    setDisplayMenus(selectedDisplayMenus);
+    // if (props.currentCompany && props.currentCompany.length > 0) {
+    //   currentCompanyId = props.currentCompany._id;
+    // } else {
+    //   currentCompanyId = null;
+    // }
+  }, [isSuperAdmin, isAdmin, isChangeManager]);
 
   return (
     <div className={classes.root}>

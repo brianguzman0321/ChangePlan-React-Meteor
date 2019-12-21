@@ -19,7 +19,7 @@ import {withTracker} from "meteor/react-meteor-data";
 import DateFnsUtils from '@date-io/date-fns';
 import {
   MuiPickersUtilsProvider,
-  KeyboardDatePicker,
+  DatePicker,
 } from '@material-ui/pickers';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
@@ -36,6 +36,7 @@ import {withRouter} from 'react-router'
 import DeleteActivity from './DeleteActivity';
 import SaveChanges from "../../Modals/SaveChanges";
 import {Projects} from "../../../../api/projects/projects";
+import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 
 const styles = theme => ({
   root: {
@@ -85,6 +86,10 @@ const classes3 = withStyles(styles2);
 const useStyles = makeStyles(theme => ({
   AddNewActivity: {
     flex: 1,
+  },
+  datePicker: {
+    display: 'flex',
+    alignItems: 'center',
   },
   button: {
     background: '#bbabd2',
@@ -459,6 +464,10 @@ function AddActivity(props) {
     deleted === true && handleClose();
   }
 
+  const onCalendarClick = (id) => {
+    document.getElementById(id).click();
+  };
+
 
   return (
     <div className={classes.AddNewActivity}>
@@ -533,43 +542,49 @@ function AddActivity(props) {
                 <ExpansionPanelDetails>
                   <MuiPickersUtilsProvider utils={DateFnsUtils}>
                     <Grid container justify="space-between" spacing={4}>
-                      <Grid item xs={6}>
-                        <KeyboardDatePicker
-                          fullWidth
-                          disableToolbar
-                          variant="inline"
-                          format="MM/dd/yyyy"
-                          margin="normal"
-                          id="date-picker-inline"
-                          label="Due Date"
-                          value={dueDate}
-                          autoOk={true}
-                          open={dueDateOpen}
-                          onClick={openDueDatePicker}
-                          onChange={handleDueDate}
-                          KeyboardButtonProps={{
-                            'aria-label': 'change date',
-                          }}
-                        />
+                      <Grid item xs={6} className={classes.datePicker}>
+                        <Grid item xs={11}>
+                          <DatePicker
+                            fullWidth
+                            disableToolbar
+                            variant="inline"
+                            format="MM/dd/yyyy"
+                            margin="normal"
+                            id="date-picker-inline"
+                            label="Due Date"
+                            value={dueDate}
+                            autoOk={true}
+                            onChange={handleDueDate}
+                          />
+                        </Grid>
+                        <Grid item xs={1}>
+                          <IconButton aria-label="close" className={classes.closeButton}
+                                      onClick={() => onCalendarClick("date-picker-inline")}>
+                            <CalendarTodayIcon/>
+                          </IconButton>
+                        </Grid>
                       </Grid>
-                      <Grid item xs={6}>
-                        <KeyboardDatePicker
-                          disableToolbar
-                          fullWidth
-                          variant="inline"
-                          margin="normal"
-                          id="date-picker-dialog"
-                          label="Date Completed"
-                          format="MM/dd/yyyy"
-                          value={completedDate}
-                          autoOk={true}
-                          open={endingDateOpen}
-                          onClick={openCompletedDatePicker}
-                          onChange={handleEndingDate}
-                          KeyboardButtonProps={{
-                            'aria-label': 'change date',
-                          }}
-                        />
+                      <Grid item xs={6} className={classes.datePicker}>
+                        <Grid item xs={11}>
+                          <DatePicker
+                            disableToolbar
+                            fullWidth
+                            variant="inline"
+                            margin="normal"
+                            id="date-picker-dialog"
+                            label="Date Completed"
+                            format="MM/dd/yyyy"
+                            value={completedDate}
+                            autoOk={true}
+                            onChange={handleEndingDate}
+                          />
+                        </Grid>
+                        <Grid item xs={1}>
+                          <IconButton aria-label="close" className={classes.closeButton}
+                                      onClick={() => onCalendarClick("date-picker-dialog")}>
+                            <CalendarTodayIcon/>
+                          </IconButton>
+                        </Grid>
                       </Grid>
                       <Grid item xs={6}>
                         <TextField

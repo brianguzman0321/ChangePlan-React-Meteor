@@ -109,7 +109,6 @@ function CreateProjectModal(props) {
     const activities = Activities.find({ templateId: templateId }).fetch();
     if (!activities.length) {
       handleClose();
-      props.enqueueSnackbar('Project Create Successfully.', {variant: 'success'})
       return;
     }
     activities.map(newActivity => {

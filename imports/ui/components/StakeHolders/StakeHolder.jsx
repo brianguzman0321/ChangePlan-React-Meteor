@@ -45,7 +45,7 @@ const StakeHolder = (props) => {
       selected={isItemSelected}
     >
       {!hideSelected && <TableCell padding="checkbox">
-        <Checkbox disabled={(!(isAdmin && template && (template.companyId === company._id)) && (projectId === undefined))}
+        <Checkbox disabled={(!(isAdmin && template && (template.companyId === company._id) || isSuperAdmin) && (projectId === undefined))}
                   checked={isItemSelected}
                   onChange={event => handleClick(event, row._id)}
                   inputProps={{'aria-labelledby': labelId}}

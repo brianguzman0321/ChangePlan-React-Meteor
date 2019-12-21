@@ -252,49 +252,45 @@ function Dashboard(props) {
   };
 
   const checkRoles = () => {
-    setCompanyId(currentCompany._id);
-    const projectsCurCompany = Projects.find({companyId: currentCompany._id}).fetch();
-    if (projectsCurCompany) {
-      const userId = Meteor.userId();
-      const changeManagers = [...new Set([].concat.apply([], projectsCurCompany.map(project => project.changeManagers)))];
-      if (Roles.userIsInRole(userId, 'superAdmin')) {
-        setIsSuperAdmin(true);
-      } else if (company && company.admins.includes(userId)) {
-        setIsAdmin(true);
-        if ((template && (template.companyId !== currentCompanyId) && projectId === undefined)) {
-          setIsOpen(true);
-        } else if ((template && (template.companyId === currentCompanyId) && projectId !== undefined)) {
-          setIsOpen(false);
-        } else {
-          setIsOpen(false);
-        }
-      } else if (changeManagers.includes(userId)) {
-        setIsChangeManager(true);
-        if (projectId === undefined) {
-          setIsOpen(true);
-        }
+    const userId = Meteor.userId();
+    if (Roles.userIsInRole(userId, 'superAdmin')) {
+      setIsSuperAdmin(true);
+    }
+
+    if (company && company.admins && company.admins.includes(userId)) {
+      setIsAdmin(true);
+      if (!Roles.userIsInRole(userId, 'superAdmin') && (template && (template.companyId !== currentCompanyId) && projectId === undefined)) {
+        setIsOpen(true);
+      } else if ((template && (template.companyId === currentCompanyId) && projectId !== undefined)) {
+        setIsOpen(false);
+      } else {
+        setIsOpen(false);
       }
-    } else {
-      if (Roles.userIsInRole(Meteor.userId(), 'superAdmin')) {
-        setIsSuperAdmin(true);
-      } else if (company && company.admins.includes(Meteor.userId())) {
-        setIsAdmin(true);
-        if ((template && (template.companyId !== currentCompanyId) && projectId === undefined)) {
-          setIsOpen(true);
-        } else if ((template && (template.companyId === currentCompanyId) && projectId !== undefined)) {
-          setIsOpen(false);
-        } else {
-          setIsOpen(false);
+    }
+
+    if (currentCompany) {
+      const projectsCurCompany = Projects.find({companyId: currentCompany._id}).fetch();
+      if (projectsCurCompany) {
+        const changeManagers = [...new Set([].concat.apply([], projectsCurCompany.map(project => project.changeManagers)))];
+        if (changeManagers.includes(userId)) {
+          setIsChangeManager(true);
+          if (!Roles.userIsInRole(userId, 'superAdmin') && projectId === undefined) {
+            setIsOpen(true);
+          }
         }
       }
     }
   };
 
   useEffect(() => {
+    checkRoles();
+  }, [currentCompany, company, template, project]);
+
+  useEffect(() => {
     if (currentCompany) {
-      checkRoles();
+      setCompanyId(currentCompany._id);
     }
-  }, [currentCompany, template]);
+  }, [currentCompany, template, project]);
 
   useEffect(() => {
     if (currentProject) {
