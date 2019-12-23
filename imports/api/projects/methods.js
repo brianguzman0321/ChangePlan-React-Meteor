@@ -269,7 +269,6 @@ export const getStakeholderProjects = new ValidatedMethod({
   mixins: [LoggedInMixin],
   checkLoggedInError: {
     error: 'notLogged',
-    message: 'You need to be logged in to remove activity'
   },
   validate: new SimpleSchema({
     'project': {
@@ -305,5 +304,5 @@ if (Meteor.isServer) {
     connectionId() {
       return true;
     }
-  }, 5, 1000);
+  }, 10, 1000);
 }

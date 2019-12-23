@@ -13,7 +13,6 @@ export const getAllusers = new ValidatedMethod({
     mixins : [LoggedInMixin],
     checkLoggedInError: {
         error: 'notLogged',
-        message: 'You need to be logged in to create activity'
     },
     validate: null,
     run() {
@@ -32,7 +31,7 @@ export const updateRole = new ValidatedMethod({
     mixins : [LoggedInMixin],
     checkLoggedInError: {
         error: 'notLogged',
-        message: 'You need to be logged in to create activity'
+        message: 'You need to be logged in to update role'
     },
     validate: null,
     run({companyId, userId, role}) {
@@ -64,7 +63,7 @@ export const updateProjectRole = new ValidatedMethod({
     mixins : [LoggedInMixin],
     checkLoggedInError: {
         error: 'notLogged',
-        message: 'You need to be logged in to create activity'
+        message: 'You need to be logged in to update project'
     },
     validate: null,
     run({projectId, userId, role}) {
@@ -105,7 +104,7 @@ export const removeCompany = new ValidatedMethod({
     mixins : [LoggedInMixin],
     checkLoggedInError: {
         error: 'notLogged',
-        message: 'You need to be logged in to create activity'
+        message: 'You need to be logged in to remove company'
     },
     validate: null,
     run({companyId, userId}) {
@@ -126,7 +125,7 @@ export const removeProject = new ValidatedMethod({
     mixins : [LoggedInMixin],
     checkLoggedInError: {
         error: 'notLogged',
-        message: 'You need to be logged in to create activity'
+        message: 'You need to be logged in to remove project'
     },
     validate: null,
     run({projectId, userId}) {
@@ -148,7 +147,6 @@ export const getUsers = new ValidatedMethod({
     mixins : [LoggedInMixin],
     checkLoggedInError: {
         error: 'notLogged',
-        message: 'You need to be logged in to create activity'
     },
     validate: null,
     run({company, project}) {
@@ -179,7 +177,6 @@ export const getAllUsersInCompany = new ValidatedMethod({
     mixins : [LoggedInMixin],
     checkLoggedInError: {
         error: 'notLogged',
-        message: 'You need to be logged in to create activity'
     },
     validate: null,
     run({ company }) {
@@ -197,11 +194,6 @@ export const getAllUsersInCompany = new ValidatedMethod({
 
 export const getPersons = new ValidatedMethod({
     name: 'users.getPersons',
-    mixins : [LoggedInMixin],
-    checkLoggedInError: {
-        error: 'notLogged',
-        message: 'You need to be logged in to create activity'
-    },
     validate: null,
     run({company, project}) {
         return Meteor.users.find({
@@ -220,7 +212,7 @@ export const updateList = new ValidatedMethod({
     mixins : [LoggedInMixin],
     checkLoggedInError: {
         error: 'notLogged',
-        message: 'You need to be logged in to create activity'
+        message: 'You need to be logged in to update list project'
     },
     validate: null,
     run({userIds, company, project}) {
@@ -254,7 +246,7 @@ export const InviteNewUser = new ValidatedMethod({
     mixins : [LoggedInMixin],
     checkLoggedInError: {
         error: 'notLogged',
-        message: 'You need to be logged in to create activity'
+        message: 'You need to be logged in to invite new person'
     },
     validate: null,
     run({profile, email, company}) {
@@ -282,7 +274,7 @@ export const InviteNewProjectUser = new ValidatedMethod({
     mixins : [LoggedInMixin],
     checkLoggedInError: {
         error: 'notLogged',
-        message: 'You need to be logged in to create activity'
+        message: 'You need to be logged in to invite new project user'
     },
     validate: null,
     run({profile, email, company, project}) {

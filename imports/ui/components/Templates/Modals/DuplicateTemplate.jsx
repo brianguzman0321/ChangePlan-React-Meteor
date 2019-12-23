@@ -83,14 +83,15 @@ function DuplicateTemplate(props) {
 
     Meteor.call('templates.insert', params, (error, result) => {
       if (error) {
-        return;
+        props.enqueueSnackbar(error.response, {variant: 'error'})
       }
       handleClose();
       newTemplateId = result;
       duplicateActivities();
+      props.enqueueSnackbar('Template Create Successfully.', {variant: 'success'})
     })
   };
-/// change params for Activities for templates
+
   const duplicateActivities = () => {
     const templateId = template._id;
     const activities = Activities.find({ templateId }).fetch();
@@ -102,7 +103,7 @@ function DuplicateTemplate(props) {
           description: newActivity.description,
           owner: newActivity.owner,
           dueDate: new Date(),
-          stakeHolders: newActivity.stakeHolders,
+          stakeHolders: [],
           templateId: newTemplateId,
           step: newActivity.step,
           time: newActivity.time
@@ -110,12 +111,12 @@ function DuplicateTemplate(props) {
       };
       Meteor.call('activities.insert', paramsActivity, (error, result) => {
         if (error) {
-        } else {
-          setNames('');
-          handleClose();
+          props.enqueueSnackbar(error.reason, {variant: 'error'})
         }
       })
-    })
+    });
+    setNames('');
+    handleClose();
   };
 
   return (

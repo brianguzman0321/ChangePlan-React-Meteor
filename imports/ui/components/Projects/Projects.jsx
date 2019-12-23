@@ -250,6 +250,7 @@ function ProjectCard(props) {
       }
     });
   }
+
   const useStyles1 = makeStyles(theme => ({
     title: {
       fontWeight: 1000,
@@ -271,7 +272,6 @@ function ProjectCard(props) {
     }
     projects.forEach((project, i) => {
       const projectActivities = activities.filter((activity) => activity.projectId === project._id) || [];
-
       projects[i].totalActivities = projectActivities.length;
     });
   }, [projects, activities]);

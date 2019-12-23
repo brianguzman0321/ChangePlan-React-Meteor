@@ -23,10 +23,10 @@ const ChangeTemplate = ({ showModalDialog, closeModalDialog }) => {
         aria-describedby="customized-dialog-description"
         >
         <DialogTitle id="customized-dialog-title" onClose={() => closeModalDialog()}>
-          { "You don't have permissions to edit this template" }
+          { "This project template is read-only" }
         </DialogTitle>
         <DialogContentText id="customized-dialog-description" className={styles.dialogContent}>
-          Please create the project from this template if you wish to make changes.
+          Please duplicate it if you wish to use it and make changes.
         </DialogContentText>
         <DialogActions>
           <Button color="primary" onClick={ () => closeModalDialog() }>OK</Button>
