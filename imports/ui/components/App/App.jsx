@@ -15,6 +15,7 @@ import ProjectSelectMenu from '/imports/ui/components/utilityComponents/selectMe
 import config from "../../../utils/config";
 import {Projects} from "../../../api/projects/projects";
 import {Companies} from "../../../api/companies/companies";
+import {Meteor} from "meteor/meteor";
 
 const Brand = (handleChange1) => (
   <Link to='/' onClick={handleChange1.handleChange1}>
@@ -114,10 +115,12 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function TopNavBar(props) {
-  let { menus, projectExists, history, match } = props;
+  let { menus, projectExists, history, match, projects, company, currentCompany } = props;
   let {projectId, templateId} = match.params;
   const [type, setType] = useState(templateId && 'template' ||  projectId && 'project');
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isChangeManager, setIsChangeManager] = useState(false);
   let currentLocation = history.location.pathname.split("/");
   let currentNav = currentLocation[currentLocation.length - 1], selectedTab = 0;
   if(currentNav === '/'){
@@ -141,7 +144,7 @@ function TopNavBar(props) {
   }
   //if not supply menus hide by default
   if (!menus) {
-    menus = config.menus;
+    menus = [];
   }
   let displayMenus = menus.filter(item => item.show);
   const classes = useStyles();
@@ -152,8 +155,23 @@ function TopNavBar(props) {
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
   const checkRole = () => {
-    if (Roles.userIsInRole(Meteor.userId(), 'superAdmin')) {
+    const userId = Meteor.userId();
+    if (Roles.userIsInRole(userId, 'superAdmin')) {
       setIsSuperAdmin(true);
+    }
+
+    if (company && company.admins.includes(userId)) {
+      setIsAdmin(true);
+    }
+
+    if (currentCompany) {
+      const projectsCurCompany = Projects.find({companyId: currentCompany._id}).fetch();
+      if (projectsCurCompany) {
+        const changeManagers = [...new Set([].concat.apply([], projectsCurCompany.map(project => project.changeManagers)))];
+        if (changeManagers.includes(userId)) {
+          setIsChangeManager(true);
+        }
+      }
     }
   };
 
@@ -236,7 +254,7 @@ function TopNavBar(props) {
   }
 
   function makeRoute() {
-    if (Roles.userIsInRole(Meteor.userId(), 'superAdmin')) {
+    if (Roles.userIsInRole(Meteor.userId(), 'superAdmin') || isAdmin) {
       return '/admin/control-panel'
     }
     return 'control-panel'
@@ -254,7 +272,7 @@ function TopNavBar(props) {
       onClose={handleMenuClose}
     >
       {
-        (projectExists || isSuperAdmin) && <MenuItem onClick={changeRoute}>Settings</MenuItem>
+        (projectExists || isSuperAdmin || isAdmin) && <MenuItem onClick={changeRoute}>Settings</MenuItem>
       }
       <MenuItem onClick={logOut}>Logout</MenuItem>
     </Menu>
@@ -340,9 +358,17 @@ function TopNavBar(props) {
 
 const TopNavBarPage = withTracker(props => {
   Meteor.subscribe('projectExists');
+  let userId = Meteor.userId();
+  const companies = Companies.find({}).fetch();
+  const currentCompany = companies.find(company => company.peoples.includes(userId));
+  Meteor.subscribe('companies.single');
+  Meteor.subscribe('projects');
   const projectExists = Counter.get('projectExists');
   return {
+    company: Companies.findOne(),
     projectExists,
+    currentCompany,
+    projects: Projects.find({}).fetch(),
   }
 })(TopNavBar);
 

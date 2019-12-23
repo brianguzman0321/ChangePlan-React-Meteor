@@ -304,8 +304,10 @@ function AddActivity(props) {
     if (type === 'project') {
       const curProject = Projects.find({_id: projectId}).fetch()[0];
       setProject(curProject);
-      const changeManager = users.find(user => curProject.changeManagers.includes(user.value));
-      setChangeManager(changeManager);
+      if (curProject && curProject.changeManagers) {
+        const changeManager = users.find(user => curProject.changeManagers.includes(user.value));
+        setChangeManager(changeManager);
+      }
     } else {
       setProject(template);
       setChangeManager('');
@@ -314,13 +316,13 @@ function AddActivity(props) {
 
   const handleClose = () => {
     setName('');
-    setOpen(false);
     setIsNew(false);
     props.newActivity();
     updateFilter('localStakeHolders', 'changed', false);
     resetValues();
     setShowModalDialog(false);
     setIsUpdated(false);
+    setOpen(false);
   };
 
 
