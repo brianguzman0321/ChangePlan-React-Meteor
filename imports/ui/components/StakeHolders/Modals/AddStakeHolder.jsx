@@ -294,27 +294,28 @@ function AddStakeHolder(props) {
       currentProject.stakeHolders = [...currentProject.stakeHolders, ...addToProject.map(people => people._id)];
 
       setStakeHolderId(currentProject);
+      if (!csvUploadErrorMessage) {
+        if (addToProject.length && !addToBoth.length) {
+          tempTableDate = {...tempTableDate, attached: addToProject};
+          setTableData(tempTableDate);
+          setAddConfirmation(true);
+        }
+        if (addToBoth.length && !addToProject.length) {
+          tempTableDate = {...tempTableDate, new: addToBoth};
+          setTableData(tempTableDate);
+          insertManyStakeholders({peoples: addToBoth}, tempTableDate);
+        }
+        if (addToProject.length && addToBoth.length) {
+          tempTableDate = {...tempTableDate, attached: addToProject, new: addToBoth};
+          setTableData(tempTableDate);
+          setStakeholdersToBoth(addToBoth);
+          setAddConfirmation(true);
+        }
 
-      if (addToProject.length && !addToBoth.length) {
-        tempTableDate = {...tempTableDate, attached: addToProject};
-        setTableData(tempTableDate);
-        setAddConfirmation(true);
-      }
-      if (addToBoth.length && !addToProject.length) {
-        tempTableDate = {...tempTableDate, new: addToBoth};
-        setTableData(tempTableDate);
-        insertManyStakeholders({peoples: addToBoth}, tempTableDate);
-      }
-      if (addToProject.length && addToBoth.length) {
-        tempTableDate = {...tempTableDate, attached: addToProject, new: addToBoth};
-        setTableData(tempTableDate);
-        setStakeholdersToBoth(addToBoth);
-        setAddConfirmation(true);
-      }
-
-      if (!addToBoth.length && !addToProject.length) {
-        props.enqueueSnackbar(`Nothing to add from this file.`, {variant: 'warning'});
-        setLoading(false);
+        if (!addToBoth.length && !addToProject.length) {
+          props.enqueueSnackbar(`Nothing to add from this file.`, {variant: 'warning'});
+          setLoading(false);
+        }
       }
     }
 
@@ -324,7 +325,7 @@ function AddStakeHolder(props) {
     }
   };
 
-  const insertManyStakeholders = (params, tempTableDate) => {
+  const insertManyStakeholders = (params, tempTableDate = null) => {
     params.peoples.map(people => {
       return people['projectId'] = projectId
     });
