@@ -37,6 +37,8 @@ import {withRouter} from 'react-router'
 import DeleteActivity from './DeleteActivity';
 import SaveChanges from "../../Modals/SaveChanges";
 import {Projects} from "../../../../api/projects/projects";
+import {Templates} from "../../../../api/templates/templates";
+
 
 
 const styles = theme => ({
@@ -159,7 +161,7 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function AddActivity(props) {
-  let {company, stakeHolders, local, project, match, edit, activity, list, isOpen, currentChangeManager, template, type} = props;
+  let {company, stakeHolders, local, project, match, edit, activity, list, isOpen, currentChangeManager, template, type, stakeHoldersTemplate} = props;
   const [open, setOpen] = useState(edit || isOpen || false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [time, setTime] = useState('');
@@ -607,12 +609,12 @@ function AddActivity(props) {
                 >
                   <Typography className={classes.heading}>Stakeholders targeted</Typography>
                   <Typography className={classes.secondaryHeading}>
-                    {peoples.length} of {stakeHolders.length}
+                    {peoples.length} of {type === 'project' ? stakeHolders.length : stakeHoldersTemplate.length}
                   </Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                   <Grid container justify="center">
-                    <SelectStakeHolders rows={stakeHolders} local={local} isImpacts={false} isBenefits={false}/>
+                    <SelectStakeHolders rows={type === 'project' ? stakeHolders : stakeHoldersTemplate} local={local} isImpacts={false} isBenefits={false}/>
                   </Grid>
                 </ExpansionPanelDetails>
               </ExpansionPanel>
@@ -702,15 +704,34 @@ function AddActivity(props) {
 }
 
 const AddActivityPage = withTracker(props => {
+  let {match} = props;
+  let {projectId, templateId} = match.params;
   let local = LocalCollection.findOne({
     name: 'localStakeHolders'
   });
   Meteor.subscribe('companies');
   let company = Companies.findOne() || {};
   let companyId = company._id || {};
+  Meteor.subscribe('compoundProject', projectId);
+  Meteor.subscribe('templates');
   Meteor.subscribe('peoples', companyId);
+  let project = Projects.findOne({
+    _id: projectId
+  });
+  let template = Templates.findOne({_id: templateId});
   return {
-    stakeHolders: Peoples.find().fetch(),
+    project: Projects.findOne({_id: projectId}),
+    stakeHolders: Peoples.find({
+      _id: {
+        $in: project && project.stakeHolders || []
+      }
+    }).fetch(),
+    stakeHoldersTemplate: Peoples.find({
+      _id: {
+        $in: template && template.stakeHolders || []
+      }
+    }).fetch(),
+    template: Templates.findOne({_id: templateId}),
     local,
     company,
   };

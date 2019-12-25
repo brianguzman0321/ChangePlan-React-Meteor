@@ -17,13 +17,19 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import SaveChanges from "../../Modals/SaveChanges";
-import {KeyboardDatePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
+import {
+  MuiPickersUtilsProvider,
+  DatePicker,
+} from '@material-ui/pickers';
+import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 import DateFnsUtils from "@date-io/date-fns";
 import {withTracker} from "meteor/react-meteor-data";
 import SelectStakeHolders from "../../Activities/Modals/SelectStakeHolders";
 import {Companies} from "../../../../api/companies/companies";
 import {Peoples} from "../../../../api/peoples/peoples";
 import {withRouter} from "react-router";
+import {Templates} from "../../../../api/templates/templates";
+import {Projects} from "../../../../api/projects/projects";
 
 const styles = theme => ({
   root: {
@@ -51,6 +57,10 @@ const useStyles = makeStyles(theme => ({
   secondaryHeading: {
     fontSize: theme.typography.pxToRem(15),
     color: theme.palette.text.secondary,
+  },
+  datePicker: {
+    display: 'flex',
+    alignItems: 'center',
   },
 }));
 
@@ -83,7 +93,7 @@ const DialogActions = withStyles(theme => ({
 
 
 function AddImpact(props) {
-  let { open, handleModalClose, project, indexImpact, editValue, template, currentType, stakeHoldersImpacts, localImpacts } = props;
+  let {open, handleModalClose, project, indexImpact, editValue, template, currentType, stakeHoldersImpacts, localImpacts, stakeHoldersTemplate} = props;
   const [name, setName] = React.useState('');
   const [expectedDateOpen, setExpectedDateOpen] = useState(false);
   const [peoples, setPeoples] = useState([]);
@@ -177,32 +187,32 @@ function AddImpact(props) {
 
     let newImpacts = impacts;
     if (currentType === 'project') {
-    if (indexImpact !== '') {
-      newImpacts[indexImpact] = impactObj;
-      setImpacts(newImpacts);
-    } else {
-      newImpacts = project.impacts ? project.impacts.concat(impactObj) : [impactObj];
-      setImpacts(newImpacts);
-    }
-
-    delete project.changeManagerDetails;
-    delete project.managerDetails;
-    delete project.peoplesDetails;
-    let params = {
-      ...project,
-      impacts: newImpacts,
-    };
-
-    Meteor.call('projects.update', {project: params}, (err, res) => {
-      if (err) {
-        props.enqueueSnackbar(err.reason, {variant: 'error'})
+      if (indexImpact !== '') {
+        newImpacts[indexImpact] = impactObj;
+        setImpacts(newImpacts);
       } else {
-        handleClose();
-        setName('');
-        setExpectedDate(null);
-        props.enqueueSnackbar('Project Updated Successfully.', {variant: 'success'})
+        newImpacts = project.impacts ? project.impacts.concat(impactObj) : [impactObj];
+        setImpacts(newImpacts);
       }
-    })
+
+      delete project.changeManagerDetails;
+      delete project.managerDetails;
+      delete project.peoplesDetails;
+      let params = {
+        ...project,
+        impacts: newImpacts,
+      };
+
+      Meteor.call('projects.update', {project: params}, (err, res) => {
+        if (err) {
+          props.enqueueSnackbar(err.reason, {variant: 'error'})
+        } else {
+          handleClose();
+          setName('');
+          setExpectedDate(null);
+          props.enqueueSnackbar('Project Updated Successfully.', {variant: 'success'})
+        }
+      })
     } else if (currentType === 'template') {
 
       if (indexImpact !== '') {
@@ -262,6 +272,10 @@ function AddImpact(props) {
     setLevelOpen(false);
   }
 
+  const onCalendarClick = (id) => {
+    document.getElementById(id).click();
+  };
+
   useEffect(() => {
     setType(editValue.type);
     setLevel(editValue.level);
@@ -279,24 +293,30 @@ function AddImpact(props) {
           <Grid container spacing={2}>
             <Grid item xs={6}>
               <br/>
+              <br/>
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <KeyboardDatePicker
-                  fullWidth
-                  disableToolbar
-                  variant="inline"
-                  format="MM/dd/yyyy"
-                  margin="normal"
-                  id="date-picker-inline"
-                  label="Expected Date"
-                  value={expectedDate}
-                  autoOk={false}
-                  open={expectedDateOpen}
-                  onClick={openExpectedDatePicker}
-                  onChange={handleExpectedDate}
-                  KeyboardButtonProps={{
-                    'aria-label': 'change date',
-                  }}
-                />
+                <Grid item xs={12} className={classes.datePicker}>
+                  <Grid item xs={11}>
+                    <DatePicker
+                      fullWidth
+                      disableToolbar
+                      variant="inline"
+                      format="MM/dd/yyyy"
+                      margin="normal"
+                      id="date-picker-inline"
+                      label="Expected Date"
+                      value={expectedDate}
+                      autoOk={true}
+                      onChange={handleExpectedDate}
+                    />
+                  </Grid>
+                  <Grid item xs={1}>
+                    <IconButton aria-label="close" className={classes.closeButton}
+                                onClick={() => onCalendarClick("date-picker-inline")}>
+                      <CalendarTodayIcon/>
+                    </IconButton>
+                  </Grid>
+                </Grid>
               </MuiPickersUtilsProvider>
               <br/>
               <br/>
@@ -306,9 +326,9 @@ function AddImpact(props) {
               <br/>
               <Typography className={classes.heading}>Stakeholders</Typography>
               <Typography className={classes.secondaryHeading}>
-                {peoples && peoples.length || 0} of {stakeHoldersImpacts.length}
+                {peoples && peoples.length || 0} of {currentType === 'project' ? stakeHoldersImpacts.length : stakeHoldersTemplate.length}
               </Typography>
-              <SelectStakeHolders rows={stakeHoldersImpacts} local={localImpacts} isImpacts={true} isBenefits={false}/>
+              <SelectStakeHolders rows={currentType === 'project' ? stakeHoldersImpacts : stakeHoldersTemplate} local={localImpacts} isImpacts={true} isBenefits={false}/>
               <br/>
               <br/>
               <br/>
@@ -401,15 +421,33 @@ function AddImpact(props) {
 }
 
 const AddImpactPage = withTracker(props => {
+  let {match} = props;
+  let {projectId, templateId} = match.params;
   let localImpacts = LocalCollection.findOne({
     name: 'localStakeHoldersImpacts'
   });
+  Meteor.subscribe('compoundProject', projectId);
+  Meteor.subscribe('templates');
   Meteor.subscribe('companies');
+  Meteor.subscribe('templates');
   let company = Companies.findOne() || {};
   let companyId = company._id || {};
   Meteor.subscribe('peoples', companyId);
+  let project = Projects.findOne({
+    _id: projectId
+  });
+  let template = Templates.findOne({_id: templateId});
   return {
-    stakeHoldersImpacts: Peoples.find().fetch(),
+    stakeHoldersImpacts: Peoples.find({
+      _id: {
+        $in: project && project.stakeHolders || []
+      }
+    }).fetch(),
+    stakeHoldersTemplate: Peoples.find({
+      _id: {
+        $in: template && template.stakeHolders || []
+      }
+    }).fetch(),
     localImpacts,
     company
   };

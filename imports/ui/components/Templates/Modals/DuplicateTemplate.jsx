@@ -69,7 +69,6 @@ function DuplicateTemplate(props) {
 
     const params = {
       template: {
-        owner: template.owner,
         stakeHolders: [],
         vision: template.vision,
         objectives: template.objectives,

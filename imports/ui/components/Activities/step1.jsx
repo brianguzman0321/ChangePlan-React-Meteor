@@ -272,6 +272,7 @@ function AWARENESSCard(props) {
         }
         {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || projectId !== undefined) ?
           <AddActivity edit={edit}
+                       match={match}
                        currentChangeManager={changeManager}
                        project={currentProject}
                        template={template}

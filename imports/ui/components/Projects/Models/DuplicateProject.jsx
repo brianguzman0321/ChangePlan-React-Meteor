@@ -70,7 +70,6 @@ function DuplicateProject(props) {
 
     const params = {
       project: {
-        owner: project.owner,
         changeManagers: [],
         peoples: [],
         stakeHolders: [],

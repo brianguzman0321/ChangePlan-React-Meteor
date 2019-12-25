@@ -316,13 +316,13 @@ function Dashboard(props) {
                       template={template}
                       editValue={editValue} currentType={type}/>
       <ImpactsModal open={modals.impacts} handleModalClose={handleModalClose} project={project} template={template}
-                    indexImpact={impactIndex}
+                    indexImpact={impactIndex} match={match}
                     editValue={editValue} currentType={type}/>
       <RisksModal open={modals.risks} handleModalClose={handleModalClose} project={project} index={index}
                   template={template}
                   editValue={editValue} currentType={type}/>
       <BenefitsModal open={modals.benefits} handleModalClose={handleModalClose} project={project}
-                     indexBenefits={benefitsIndex} template={template}
+                     indexBenefits={benefitsIndex} template={template} match={match}
                      editValue={editValue} currentType={type}/>
       <DeleteValue open={modals.delete} handleModalClose={handleModalClose} project={project} index={index}
                    template={template}
