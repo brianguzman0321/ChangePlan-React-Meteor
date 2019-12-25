@@ -88,6 +88,11 @@ function StakeHolders(props) {
 
   useEffect(() => {
     checkRoles();
+    if (templateId) {
+      setType('template')
+    } else if (projectId) {
+      setType('project')
+    }
   }, [currentCompany, company, template, project]);
 
   useEffect(() => {
@@ -156,7 +161,7 @@ function StakeHolders(props) {
             : ''}
         </Grid>
         <StakeHolderList className={classes.stakeHoldersList} template={template} company={company}
-                         isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} projectId={projectId}
+                         isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} projectId={projectId} project={project}
                          rows={type === 'project' ? stakeHolders : stakeHoldersTemplate} type={type}/>
       </Grid>
 

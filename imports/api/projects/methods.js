@@ -304,5 +304,5 @@ if (Meteor.isServer) {
     connectionId() {
       return true;
     }
-  }, 10, 1000);
+  }, 20, 1000);
 }

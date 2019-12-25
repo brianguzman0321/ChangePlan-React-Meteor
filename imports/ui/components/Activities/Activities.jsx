@@ -177,7 +177,7 @@ function ActivitiesCard(props) {
               <AWARENESSCard activities={type === 'project' ?
                 props.activities.filter(activity => activity.step === 1) :
                 props.activitiesTemplate.filter(activity => activity.step === 1)}
-                             type={type}
+                             type={type} match={match}
                              template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}/>
             </Grid>
             <Grid item xs={12} md={4}>
@@ -186,7 +186,7 @@ function ActivitiesCard(props) {
                 props.activitiesTemplate.filter(activity => activity.step === 2)}
                          type={type}
                          template={template}
-                         isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}/>
+                         isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} match={match}/>
             </Grid>
             <Grid item xs={12} md={4}>
               <Step3Card activities={type === 'project' ?
@@ -194,11 +194,12 @@ function ActivitiesCard(props) {
                 props.activitiesTemplate.filter(activity => activity.step === 3)}
                          type={type}
                          template={template}
-                         isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}/>
+                         isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} match={match}/>
             </Grid>
           </Grid> :
           <ListView rows={type === 'project' ? props.activities : props.activitiesTemplate} addNew={addNew} type={type}
-                    isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} projectId={projectId} companyId={currentCompanyId} template={template}/>
+                    isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} projectId={projectId} companyId={currentCompanyId}
+                    template={template} match={match}/>
       }
 
     </div>

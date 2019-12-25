@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import {makeStyles} from '@material-ui/core/styles';
@@ -134,7 +134,7 @@ const useToolbarStyles = makeStyles(theme => ({
 
 const EnhancedTableToolbar = props => {
   const classes = useToolbarStyles();
-  const {numSelected, selected} = props;
+  const {numSelected, selected, type, project, template} = props;
 
   return (
     <Toolbar
@@ -147,7 +147,7 @@ const EnhancedTableToolbar = props => {
       </Typography>
       {numSelected > 0 ? (
         <Tooltip title="Delete">
-          <DeleteStakeHolder stakeholder={selected} multiple={true}/>
+          <DeleteStakeHolder stakeholder={selected} multiple={true} type={type} project={project} template={template}/>
         </Tooltip>
       ) : ''
         /*(
@@ -206,7 +206,7 @@ export default function StakeHolderList(props) {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [showEditModalDialog, setShowEditModalDialog] = React.useState(false);
-  let {rows, isAdmin, isSuperAdmin, template, company, projectId} = props;
+  let {rows, isAdmin, isSuperAdmin, template, company, projectId, project, type} = props;
 
   const handleRequestSort = (event, property) => {
     const isDesc = orderBy === property && order === 'desc';
@@ -222,6 +222,10 @@ export default function StakeHolderList(props) {
     }
     setSelected([]);
   };
+
+  useEffect(() => {
+    setSelected([]);
+  }, [project]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -255,7 +259,7 @@ export default function StakeHolderList(props) {
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar numSelected={selected.length} selected={selected}/>
+        <EnhancedTableToolbar numSelected={selected.length} selected={selected} type={type} project={project} template={template}/>
         <div className={classes.tableWrapper}>
           <Table
             className={classes.table}
@@ -290,6 +294,8 @@ export default function StakeHolderList(props) {
                       deleteCell={deleteCell}
                       selected={selected}
                       projectId={projectId}
+                      project={project}
+                      type={type}
                       template={template} company={company}
                       isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
                     />

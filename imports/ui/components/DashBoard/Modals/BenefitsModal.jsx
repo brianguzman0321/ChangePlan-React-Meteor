@@ -13,13 +13,16 @@ import {withSnackbar} from 'notistack';
 import 'date-fns';
 import Grid from "@material-ui/core/Grid/Grid";
 import SaveChanges from "../../Modals/SaveChanges";
-import {KeyboardDatePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
+import {DatePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
 import SelectStakeHolders from "../../Activities/Modals/SelectStakeHolders";
 import DateFnsUtils from "@date-io/date-fns";
 import {withTracker} from "meteor/react-meteor-data";
 import {Companies} from "../../../../api/companies/companies";
 import {Peoples} from "../../../../api/peoples/peoples";
 import {withRouter} from "react-router";
+import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
+import {Projects} from "../../../../api/projects/projects";
+import {Templates} from "../../../../api/templates/templates";
 
 
 const styles = theme => ({
@@ -48,6 +51,10 @@ const useStyles = makeStyles(theme => ({
   secondaryHeading: {
     fontSize: theme.typography.pxToRem(15),
     color: theme.palette.text.secondary,
+  },
+  datePicker: {
+    display: 'flex',
+    alignItems: 'center',
   },
 }));
 
@@ -79,7 +86,7 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function AddValue(props) {
-  let {open, handleModalClose, project, indexBenefits, editValue, stakeHoldersBenefits, localBenefits, currentType, template} = props;
+  let {open, handleModalClose, project, indexBenefits, editValue, stakeHoldersBenefits, localBenefits, currentType, template, stakeHoldersTemplate} = props;
   const [name, setName] = React.useState('');
   const [expectedDateOpen, setExpectedDateOpen] = useState(false);
   const [peoples, setPeoples] = useState([]);
@@ -230,6 +237,10 @@ function AddValue(props) {
     setIsUpdated(true);
   };
 
+  const onCalendarClick = (id) => {
+    document.getElementById(id).click();
+  };
+
   useEffect(() => {
     setName(editValue.description)
   }, [editValue]);
@@ -245,24 +256,30 @@ function AddValue(props) {
           <Grid container spacing={2}>
             <Grid item xs={6}>
               <br/>
+              <br/>
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <KeyboardDatePicker
-                  fullWidth
-                  disableToolbar
-                  variant="inline"
-                  format="MM/dd/yyyy"
-                  margin="normal"
-                  id="date-picker-inline"
-                  label="Expected Date"
-                  value={expectedDate}
-                  autoOk={false}
-                  open={expectedDateOpen}
-                  onClick={openExpectedDatePicker}
-                  onChange={handleExpectedDate}
-                  KeyboardButtonProps={{
-                    'aria-label': 'change date',
-                  }}
-                />
+                <Grid item xs={12} className={classes.datePicker}>
+                  <Grid item xs={11}>
+                    <DatePicker
+                      fullWidth
+                      disableToolbar
+                      variant="inline"
+                      format="MM/dd/yyyy"
+                      margin="normal"
+                      id="date-picker-inline"
+                      label="Expected Date"
+                      value={expectedDate}
+                      autoOk={true}
+                      onChange={handleExpectedDate}
+                    />
+                  </Grid>
+                  <Grid item xs={1}>
+                    <IconButton aria-label="close" className={classes.closeButton}
+                                onClick={() => onCalendarClick("date-picker-inline")}>
+                      <CalendarTodayIcon/>
+                    </IconButton>
+                  </Grid>
+                </Grid>
               </MuiPickersUtilsProvider>
               <br/>
               <br/>
@@ -272,9 +289,9 @@ function AddValue(props) {
               <br/>
               <Typography className={classes.heading}>Stakeholders</Typography>
               <Typography className={classes.secondaryHeading}>
-                {peoples && peoples.length || 0} of {stakeHoldersBenefits.length}
+                {peoples && peoples.length || 0} of {currentType === 'project' ? stakeHoldersBenefits.length : stakeHoldersTemplate.length}
               </Typography>
-              <SelectStakeHolders rows={stakeHoldersBenefits} local={localBenefits} isImpacts={false} isBenefits={true}/>
+              <SelectStakeHolders rows={currentType === 'project' ? stakeHoldersBenefits : stakeHoldersTemplate.length} local={localBenefits} isImpacts={false} isBenefits={true}/>
               <br/>
               <br/>
               <br/>
@@ -310,15 +327,34 @@ function AddValue(props) {
 }
 
 const AddActivityPage = withTracker(props => {
+  let {match} = props;
+  let {projectId, templateId} = match.params;
   let localBenefits = LocalCollection.findOne({
     name: 'localStakeHoldersBenefits'
   });
+  Meteor.subscribe('compoundProject', projectId);
+  Meteor.subscribe('templates');
   Meteor.subscribe('companies');
+  Meteor.subscribe('templates');
   let company = Companies.findOne() || {};
   let companyId = company._id || {};
   Meteor.subscribe('peoples', companyId);
+  let project = Projects.findOne({
+    _id: projectId
+  });
+  let template = Templates.findOne({_id: templateId});
+  Meteor.subscribe('peoples', companyId);
   return {
-    stakeHoldersBenefits: Peoples.find().fetch(),
+    stakeHoldersBenefits: Peoples.find({
+      _id: {
+        $in: project && project.stakeHolders || []
+      }
+    }).fetch(),
+    stakeHoldersTemplate: Peoples.find({
+      _id: {
+        $in: template && template.stakeHolders || []
+      }
+    }).fetch(),
     localBenefits,
     company
   };

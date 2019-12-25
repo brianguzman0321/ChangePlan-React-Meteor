@@ -73,20 +73,16 @@ function DeleteProject(props) {
         let params = {
             project: {
                 _id: project._id,
-
             }
         };
         Meteor.call('projects.remove', params, (err, res) => {
-            if(err){
+            if (err) {
                 props.enqueueSnackbar(err.reason, {variant: 'error'})
-            }
-            else{
+            } else {
                 handleClose();
                 props.enqueueSnackbar('Project Removed Successfully.', {variant: 'success'})
             }
-
         })
-
     };
 
     return (

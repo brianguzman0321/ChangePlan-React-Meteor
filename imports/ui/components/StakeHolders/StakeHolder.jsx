@@ -6,7 +6,7 @@ import EditStakeHolderPage from './Modals/EditStakeHolder';
 import DeleteStakeHolder from './Modals/DeleteStakeHolder';
 
 const StakeHolder = (props) => {
-  const {row, isItemSelected, labelId, setRowSelected, deleteCell, selected, hideSelected = false, smallTable = false, index, isAdmin, isSuperAdmin, template, company, projectId} = props;
+  const {row, isItemSelected, labelId, setRowSelected, deleteCell, selected, hideSelected = false, smallTable = false, index, isAdmin, isSuperAdmin, template, company, projectId, project, type} = props;
   const [showEditModalDialog, setShowEditModalDialog] = React.useState(false);
 
   const handleOpenModalDialog = () => {
@@ -45,19 +45,20 @@ const StakeHolder = (props) => {
       selected={isItemSelected}
     >
       {!hideSelected && <TableCell padding="checkbox">
-        <Checkbox disabled={(!(isAdmin && template && (template.companyId === company._id) || isSuperAdmin) && (projectId === undefined))}
-                  checked={isItemSelected}
-                  onChange={event => handleClick(event, row._id)}
-                  inputProps={{'aria-labelledby': labelId}}
-                  color="default"
+        <Checkbox
+          disabled={(!(isAdmin && template && (template.companyId === company._id) || isSuperAdmin) && (projectId === undefined))}
+          checked={isItemSelected}
+          onChange={event => handleClick(event, row._id)}
+          inputProps={{'aria-labelledby': labelId}}
+          color="default"
         />
       </TableCell>}
       <TableCell align="left" component="th" id={labelId} scope="row" onClick={handleOpenModalDialog}>
-        {row.firstName}
+        {smallTable ? `${row.firstName} ${row.lastName}` : row.firstName}
       </TableCell>
-      <TableCell align="left" component="th" id={labelId} scope="row" onClick={handleOpenModalDialog}>
+      {!smallTable && <TableCell align="left" component="th" id={labelId} scope="row" onClick={handleOpenModalDialog}>
         {row.lastName}
-      </TableCell>
+      </TableCell>}
       {smallTable && <TableCell align="left" onClick={handleOpenModalDialog}>{row.email}</TableCell>}
       <TableCell align="left" onClick={handleOpenModalDialog}>{row.role}</TableCell>
       <TableCell align="left" onClick={handleOpenModalDialog}>{row.businessUnit}</TableCell>
@@ -67,9 +68,11 @@ const StakeHolder = (props) => {
         {/*<IconButton aria-label="edit" onClick={handleOpenModalDialog}>*/}
         {/*    <EditIcon />*/}
         {/*</IconButton>*/}
-        <EditStakeHolderPage projectId={projectId} stakeholder={row} open={showEditModalDialog} close={handleCloseModalDialog} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} template={template} company={company}/>
+        <EditStakeHolderPage projectId={projectId} stakeholder={row} open={showEditModalDialog}
+                             close={handleCloseModalDialog} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin}
+                             template={template} company={company}/>
         {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || projectId !== undefined) ?
-        <DeleteStakeHolder stakeholder={row}/> : ''}
+          <DeleteStakeHolder stakeholder={row} project={project} type={type} template={template}/> : ''}
       </TableCell>}
     </TableRow>
   )

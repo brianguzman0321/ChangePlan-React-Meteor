@@ -4,7 +4,7 @@ import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogActions from "@material-ui/core/DialogActions";
-import { makeStyles } from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import StakeHolder from "../StakeHolder";
@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(3),
   },
   head: {
-    background : 'red'
+    background: 'red'
   },
   paper: {
     width: '100%',
@@ -68,15 +68,15 @@ const EnhancedTableHead = () => {
           <TableCell style={{color: 'white'}}
                      key={i}
                      align='left'
-          > { headCell }
+          > {headCell}
           </TableCell>
         ))}
       </TableRow>
     </TableHead>
   );
-}
+};
 
-const AddStakeHoldersResults = ({showModalDialog, tableData, closeModalDialog }) => {
+const AddStakeHoldersResults = ({showModalDialog, tableData, closeModalDialog}) => {
   const styles = useStyles();
   const tableRows = Object.values(tableData);
   let stakeHolders = [];
@@ -86,14 +86,14 @@ const AddStakeHoldersResults = ({showModalDialog, tableData, closeModalDialog })
   return (
     <div>
       <Dialog
-        open={ showModalDialog }
+        open={showModalDialog}
         classes={{paper: styles.dialogPaper}}
         aria-labelledby="customized-dialog-title"
         aria-describedby="customized-dialog-description"
-        onClose={ () => closeModalDialog() }>
+        onClose={() => closeModalDialog()}>
         <DialogTitle id="customized-dialog-title" onClose={() => closeModalDialog()}>
-          { tableData.new.length ? `${tableData.new.length} new stakeholders added \n` : ''}
-          { tableData.attached.length ? `${tableData.attached.length} Stakeholders added that are also attached to other projects: \n` : ''}
+          {tableData.new.length ? `${tableData.new.length} new stakeholders added \n` : ''}
+          {tableData.attached.length ? `${tableData.attached.length} Stakeholders added that are also attached to other projects: \n` : ''}
         </DialogTitle>
         <DialogContent id="customized-dialog-description" className={styles.dialogContent}>
           <Table
@@ -104,15 +104,15 @@ const AddStakeHoldersResults = ({showModalDialog, tableData, closeModalDialog })
             {EnhancedTableHead()}
             <TableBody>
               {stakeHolders.map((row, index) => {
-                  return (
-                    <StakeHolder
-                      key={index}
-                      smallTable={true}
-                      row={row}
-                      hideSelected={true}
-                    />
-                  );
-                })}
+                return (
+                  <StakeHolder
+                    key={index}
+                    smallTable={true}
+                    row={row}
+                    hideSelected={true}
+                  />
+                );
+              })}
             </TableBody>
           </Table>
         </DialogContent>
