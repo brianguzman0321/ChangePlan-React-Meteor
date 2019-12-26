@@ -192,21 +192,22 @@ function TemplateCard(props) {
           break;
         default:
           break;
-      } } else {
-        let currentNav = location.pathname;
-        switch (currentNav) {
-          case '/':
-            setSelectedTab(0);
-            break;
-          case '/templates':
-            setSelectedTab(2);
-            setTemplates(props.templates.filter(template => !template.companyId).map((template) => {
-              template.totalActivities = (activities.filter((activity) => activity.templateId === template._id) || []).length;
-              return template;
-            }));
-            break;
-          default:
-            break;
+      }
+    } else {
+      let currentNav = location.pathname;
+      switch (currentNav) {
+        case '/':
+          setSelectedTab(0);
+          break;
+        case '/templates':
+          setSelectedTab(2);
+          setTemplates(props.templates.filter(template => !template.companyId).map((template) => {
+            template.totalActivities = (activities.filter((activity) => activity.templateId === template._id) || []).length;
+            return template;
+          }));
+          break;
+        default:
+          break;
       }
     }
   }, [activities]);
@@ -340,6 +341,13 @@ function TemplateCard(props) {
               </Select>
             </FormControl>
           </Grid>
+        </Grid>
+        <Grid container
+              direction="row"
+              justify="flex-start"
+              alignItems="center"
+              className={classes.gridContainer}
+              spacing={0}>
           <ProjectNavBar {...props} selectedTab={selectedTab} handleChange={changeTab} isSuperAdmin={isSuperAdmin}
                          isAdmin={isAdmin} isChangeManager={isChangeManager} currentCompanyId={currentCompanyId}/>
         </Grid>

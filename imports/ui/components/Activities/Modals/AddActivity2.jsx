@@ -363,7 +363,7 @@ function AddActivity(props) {
     setShowModalDialog(false);
   };
 
-  const createProject = (e) => {
+  const createProject = (e, isMail = true) => {
     e.preventDefault();
     let params;
     if (!(dueDate)) {
@@ -375,7 +375,7 @@ function AddActivity(props) {
       props.enqueueSnackbar('Please fill all required fields', {variant: 'error'});
       return false;
     }
-    if (!showNotification) {
+    if (!isMail || !isNew) {
       if (type === 'project') {
         params = {
           activity: {
@@ -501,7 +501,8 @@ function AddActivity(props) {
 
   const handleCloseNotification = (e) => {
     setShowNotification(false);
-    createProject(e);
+    const isMail = false;
+    createProject(e, isMail);
   };
 
   return (
@@ -750,16 +751,18 @@ const AddActivityPage = withTracker(props => {
   let local = LocalCollection.findOne({
     name: 'localStakeHolders'
   });
-  Meteor.subscribe('companies');
-  let company = Companies.findOne() || {};
-  let companyId = company._id || {};
   Meteor.subscribe('compoundProject', projectId);
   Meteor.subscribe('templates');
-  Meteor.subscribe('peoples', companyId);
+  Meteor.subscribe('companies');
+  Meteor.subscribe('templates');
   let project = Projects.findOne({
     _id: projectId
   });
   let template = Templates.findOne({_id: templateId});
+  let companyProjectId = project && project.companyId;
+  let companyTemplateId = template && template.companyId;
+  let company = Companies.findOne({_id: companyProjectId || companyTemplateId}) || {};
+  Meteor.subscribe('peoples',companyProjectId || companyTemplateId);
   return {
     project: Projects.findOne({_id: projectId}),
     stakeHolders: Peoples.find({

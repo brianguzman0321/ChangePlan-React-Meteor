@@ -96,7 +96,7 @@ Project objectives:
     ${objectives ? objectives.map(item => `<li>${item}</li>`).join('') : 'have no objectives yet'}
 </ul>
 <p class="lead" style="font-family: Helvetica,Arial,sans-serif; font-size: 19px; line-height: 27px; color: rgb(75, 75, 75); display: block; margin-top: 40px; margin-bottom: 30px; text-align: left;">
-For more information please contact the project’s change manager/s ${currentChangeManagers ? currentChangeManagers.map(item => `${item.profile.firstName} ${item.profile.lastName} (${item.emails[0].address}) `) : ''}.
+For more information please contact the project’s change manager/s${currentChangeManagers ? currentChangeManagers.map(item => ` ${item.profile.firstName} ${item.profile.lastName} (${item.emails[0].address})`) : '.'}.
 </p>
 <img alt="Change Plan Activity" src="https://changeplan.co/wp-content/uploads/images/Change-Plan-Activity.png" height="141" width="200">
 </td>

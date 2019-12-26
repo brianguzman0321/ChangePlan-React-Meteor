@@ -176,7 +176,7 @@ function Dashboard(props) {
   };
 
   const editVision = (index, value) => {
-    if ((isAdmin && template.companyId || isSuperAdmin) || (projectId !== undefined)) {
+    if ((isAdmin && template.companyId || isSuperAdmin) || (type === 'project' && (project && (isAdmin || isChangeManager)))) {
       setIndex(index);
       setEditValue(value);
       handleClose('vision');
@@ -184,7 +184,7 @@ function Dashboard(props) {
   };
 
   const editObjectives = (index, value) => {
-    if ((isAdmin && template.companyId || isSuperAdmin) || (projectId !== undefined)) {
+    if ((isAdmin && template.companyId || isSuperAdmin) || (type === 'project' && (project && (isAdmin || isChangeManager)))) {
       setIndex(index);
       setEditValue(value);
       handleClose('objectives');
@@ -192,7 +192,7 @@ function Dashboard(props) {
   };
 
   const editImpacts = (index, value) => {
-    if ((isAdmin && template.companyId || isSuperAdmin) || (projectId !== undefined)) {
+    if ((isAdmin && template.companyId || isSuperAdmin) || (type === 'project' && (project && (isAdmin || isChangeManager)))) {
       setImpactIndex(index);
       setEditValue(value);
       handleClose('impacts');
@@ -200,7 +200,7 @@ function Dashboard(props) {
   };
 
   const editBenefits = (index, value) => {
-    if ((isAdmin && template.companyId || isSuperAdmin) || (projectId !== undefined)) {
+    if ((isAdmin && template.companyId || isSuperAdmin) || (type === 'project' && (project && (isAdmin || isChangeManager)))) {
       setBenefitsIndex(index);
       setEditValue(value);
       handleClose('benefits');
@@ -208,7 +208,7 @@ function Dashboard(props) {
   };
 
   const editRisks = (index, value) => {
-    if ((isAdmin && template.companyId || isSuperAdmin) || (projectId !== undefined)) {
+    if ((isAdmin && template.companyId || isSuperAdmin) || (type === 'project' && (project && (isAdmin || isChangeManager)))) {
       setIndex(index);
       setEditValue(value);
       handleClose('risks');
@@ -216,7 +216,7 @@ function Dashboard(props) {
   };
 
   const deleteEntity = (index, value) => {
-    if ((isAdmin && template.companyId || isSuperAdmin) || (projectId !== undefined)) {
+    if ((isAdmin && template.companyId || isSuperAdmin) || (type === 'project' && (project && (isAdmin || isChangeManager)))) {
       setIndex(index);
       setDeleteValue(value);
       handleClose('delete')
@@ -384,7 +384,7 @@ function Dashboard(props) {
             </Typography>
           </Grid>
           }
-          {type === 'project' && project &&
+          {type === 'project' && (project && (isSuperAdmin || isAdmin || isChangeManager)) &&
           <Grid item xs={2} onClick={handleClose.bind(null, 'edit')}>
             <EditProject open={modals.edit} handleModalClose={handleModalClose} project={project} template={template}
                          displayEditButton={true}/>
@@ -501,7 +501,7 @@ function Dashboard(props) {
                             {stringHelpers.limitCharacters(v, 112)}
                           </Typography>
                         </Grid>
-                        {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || projectId !== undefined) ?
+                        {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || type === 'project' && (project && (isAdmin || isChangeManager))) ?
                           <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
                             <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {
                               editVision(i, v)
@@ -521,7 +521,7 @@ function Dashboard(props) {
                     })}
 
                     <Divider/>
-                    {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || projectId !== undefined) ?
+                    {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || type === 'project' && (project && (isAdmin || isChangeManager))) ?
                       <Button align="right" color="primary" variant="contained" fullWidth={true} style={{marginTop: 7}}
                               onClick={handleClose.bind(null, 'vision')}>
                         Add
@@ -555,7 +555,7 @@ function Dashboard(props) {
                             {stringHelpers.limitCharacters(v, 112)}
                           </Typography>
                         </Grid>
-                        {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || projectId !== undefined) ?
+                        {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || type === 'project' && (project && (isAdmin || isChangeManager))) ?
                           <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
                             <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {
                               editObjectives(i, v)
@@ -575,7 +575,7 @@ function Dashboard(props) {
                     })}
 
                     <Divider/>
-                    {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || projectId !== undefined) ?
+                    {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || type === 'project' && (project && (isAdmin || isChangeManager))) ?
                       <Button align="right" color="primary" variant="contained" fullWidth={true} style={{marginTop: 7}}
                               onClick={handleClose.bind(null, 'objectives')}>
                         Add
@@ -668,7 +668,7 @@ function Dashboard(props) {
                         }}>
                           {v.level.toUpperCase()}
                         </Grid>
-                        {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || projectId !== undefined) ?
+                        {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || type === 'project' && (project && (isAdmin || isChangeManager))) ?
                           <Grid item xs={1} justify="flex-end" style={{display: 'flex'}}>
                             <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {
                               editImpacts(i, v)
@@ -686,7 +686,7 @@ function Dashboard(props) {
                       </>
                     })}
                     <Divider/>
-                    {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || projectId !== undefined) ?
+                    {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || type === 'project' && (project && (isAdmin || isChangeManager))) ?
                       <Button align="right" color="primary" variant="contained" fullWidth={true} style={{marginTop: 7}}
                               onClick={handleClose.bind(null, 'impacts')}>
                         Add
@@ -756,7 +756,7 @@ function Dashboard(props) {
                         }}>
                           {v.stakeholders && v.stakeholders.length}
                         </Grid>
-                        {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || projectId !== undefined) ?
+                        {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || type === 'project' && (project && (isAdmin || isChangeManager))) ?
                           <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
                             <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {
                               editBenefits(i, v)
@@ -776,7 +776,7 @@ function Dashboard(props) {
                     })}
 
                     <Divider/>
-                    {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || projectId !== undefined) ?
+                    {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || type === 'project' && (project && (isAdmin || isChangeManager))) ?
                       <Button align="right" color="primary" variant="contained" fullWidth={true} style={{marginTop: 7}}
                               onClick={handleClose.bind(null, 'benefits')}>
                         Add
@@ -837,7 +837,7 @@ function Dashboard(props) {
                         }}>
                           {v.level.toUpperCase()}
                         </Grid>
-                        {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || projectId !== undefined) ?
+                        {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || type === 'project' && (project && (isAdmin || isChangeManager))) ?
                           <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
                             <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {
                               editRisks(i, v)
@@ -858,7 +858,7 @@ function Dashboard(props) {
                     })}
 
                     <Divider/>
-                    {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || projectId !== undefined) ?
+                    {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || type === 'project' && (project && (isAdmin || isChangeManager))) ?
                       <Button align="right" color="primary" variant="contained" fullWidth={true} style={{marginTop: 7}}
                               onClick={handleClose.bind(null, 'risks')}>
                         Add
@@ -905,7 +905,7 @@ const DashboardPage = withTracker(props => {
   let {match} = props;
   let {projectId, templateId} = match.params;
   let userId = Meteor.userId();
-  Meteor.subscribe('companies.single');
+  // Meteor.subscribe('companies.single');
   Meteor.subscribe('compoundActivities', projectId);
   Meteor.subscribe('compoundProject', projectId);
   Meteor.subscribe('companies');
