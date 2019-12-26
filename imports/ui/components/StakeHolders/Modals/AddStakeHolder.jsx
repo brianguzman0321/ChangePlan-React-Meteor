@@ -150,8 +150,7 @@ function AddStakeHolder(props) {
   });
   const [openResultTable, setOpenResultTable] = React.useState(false);
 
-  let {company, match, type} = props;
-  let {projectId, templateId} = match.params;
+  let {company, type, projectId, templateId} = props;
   let both = false;
 
   const classes = useStyles();
@@ -709,7 +708,6 @@ const AddStakeHolderPage = withTracker(props => {
   Meteor.subscribe('peoples', {email});
   return {
     people: Peoples.find({email}).fetch(),
-    company: Companies.findOne(),
   };
 })(withRouter(AddStakeHolder));
 

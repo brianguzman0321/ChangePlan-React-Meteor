@@ -156,7 +156,7 @@ function StakeHolders(props) {
           </Grid>
           {((isAdmin && template && (template.companyId === currentCompanyId)) || isSuperAdmin || projectId !== undefined) ?
             <Grid item xs={4} className={classes.secondTab}>
-              <AddStakeHolder type={type}/>
+              <AddStakeHolder type={type} company={company} projectId={projectId} templateId={templateId}/>
             </Grid>
             : ''}
         </Grid>
