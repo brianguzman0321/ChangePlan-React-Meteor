@@ -430,13 +430,14 @@ const AddImpactPage = withTracker(props => {
   Meteor.subscribe('templates');
   Meteor.subscribe('companies');
   Meteor.subscribe('templates');
-  let company = Companies.findOne() || {};
-  let companyId = company._id || {};
-  Meteor.subscribe('peoples', companyId);
   let project = Projects.findOne({
     _id: projectId
   });
+  let company = Companies.findOne() || {};
   let template = Templates.findOne({_id: templateId});
+  let companyProjectId = project && project.companyId;
+  let companyTemplateId = template && template.companyId;
+  Meteor.subscribe('peoples',companyProjectId || companyTemplateId);
   return {
     stakeHoldersImpacts: Peoples.find({
       _id: {

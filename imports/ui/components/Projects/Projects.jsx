@@ -236,7 +236,8 @@ function ProjectCard(props) {
     }
   };
 
-  if (projects && projects.length) {
+
+/*  if (projects && projects.length) {
     projects = projects.map(project => {
       const peoples = Peoples.find({
         '_id': {
@@ -249,7 +250,7 @@ function ProjectCard(props) {
         stakeHolders: peoples.map(people => people._id),
       }
     });
-  }
+  }*/
 
   const useStyles1 = makeStyles(theme => ({
     title: {
@@ -262,8 +263,6 @@ function ProjectCard(props) {
   const classes1 = useStyles1();
   const [age, setAge] = React.useState('endingDate');
   const [search, setSearch] = React.useState('');
-  const [open, setOpen] = React.useState(false);
-  const [totalActivities, setTotalActivities] = React.useState();
   search || updateFilter('localProjects', 'search', '');
 
   React.useEffect(() => {
@@ -273,6 +272,7 @@ function ProjectCard(props) {
     projects.forEach((project, i) => {
       const projectActivities = activities.filter((activity) => activity.projectId === project._id) || [];
       projects[i].totalActivities = projectActivities.length;
+
     });
   }, [projects, activities]);
 
@@ -317,7 +317,7 @@ function ProjectCard(props) {
             </IconButton>
           </Grid>
           <Grid item xs={4} className={(isAdmin || isSuperAdmin) && company ? classes.secondTab : ''}>
-            {(isAdmin || isSuperAdmin) && company && <NewProject {...props} className={classes.createNewProject}/>}
+            {(isAdmin || isSuperAdmin || isChangeManager) && company && <NewProject {...props} className={classes.createNewProject}/>}
             <Typography color="textSecondary" variant="title" className={classes.sortBy}>
               Sort by
             </Typography>
@@ -343,6 +343,13 @@ function ProjectCard(props) {
               </Select>
             </FormControl>
           </Grid>
+        </Grid>
+        <Grid container
+              direction="row"
+              justify="flex-start"
+              alignItems="center"
+              className={classes.gridContainer}
+              spacing={0}>
           <ProjectNavBar {...props} selectedTab={selectedTab} handleChange={changeTab} isSuperAdmin={isSuperAdmin}
                          isAdmin={isAdmin} currentCompanyId={currentCompanyId} isChangeManager={isChangeManager}/>
         </Grid>
@@ -377,7 +384,7 @@ function ProjectCard(props) {
                       ACTIVITIES
                     </Typography>
                     <Typography className={classes.pos} color="textSecondary">
-                      {project.totalActivities}
+                      {project.totalActivities || 0}
                     </Typography>
                   </Grid>
                   <Grid item xs={4}>

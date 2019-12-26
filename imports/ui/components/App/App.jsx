@@ -159,11 +159,9 @@ function TopNavBar(props) {
     if (Roles.userIsInRole(userId, 'superAdmin')) {
       setIsSuperAdmin(true);
     }
-
     if (company && company.admins.includes(userId)) {
       setIsAdmin(true);
     }
-
     if (currentCompany) {
       const projectsCurCompany = Projects.find({companyId: currentCompany._id}).fetch();
       if (projectsCurCompany) {
@@ -254,10 +252,10 @@ function TopNavBar(props) {
   }
 
   function makeRoute() {
-    if (Roles.userIsInRole(Meteor.userId(), 'superAdmin') || isAdmin) {
+    if (Roles.userIsInRole(Meteor.userId(), 'superAdmin')) {
       return '/admin/control-panel'
     }
-    return 'control-panel'
+    return '/control-panel'
   }
 
   const menuId = 'primary-search-account-menu';
@@ -361,11 +359,11 @@ const TopNavBarPage = withTracker(props => {
   let userId = Meteor.userId();
   const companies = Companies.find({}).fetch();
   const currentCompany = companies.find(company => company.peoples.includes(userId));
-  Meteor.subscribe('companies.single');
+  Meteor.subscribe('companies');
   Meteor.subscribe('projects');
   const projectExists = Counter.get('projectExists');
   return {
-    company: Companies.findOne(),
+    company: Companies.findOne({peoples: userId}),
     projectExists,
     currentCompany,
     projects: Projects.find({}).fetch(),

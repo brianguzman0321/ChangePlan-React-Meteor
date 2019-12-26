@@ -10,10 +10,6 @@ import { Projects } from "/imports/api/projects/projects";
 
 export const getAllusers = new ValidatedMethod({
     name: 'users.getAllusers',
-    mixins : [LoggedInMixin],
-    checkLoggedInError: {
-        error: 'notLogged',
-    },
     validate: null,
     run() {
         return Meteor.users.find({
@@ -144,10 +140,6 @@ export const removeProject = new ValidatedMethod({
 
 export const getUsers = new ValidatedMethod({
     name: 'users.getUsers',
-    mixins : [LoggedInMixin],
-    checkLoggedInError: {
-        error: 'notLogged',
-    },
     validate: null,
     run({company, project}) {
         if(project){
@@ -174,10 +166,6 @@ export const getUsers = new ValidatedMethod({
 
 export const getAllUsersInCompany = new ValidatedMethod({
     name: 'users.getAllUsersInCompany',
-    mixins : [LoggedInMixin],
-    checkLoggedInError: {
-        error: 'notLogged',
-    },
     validate: null,
     run({ company }) {
         if(company ){
