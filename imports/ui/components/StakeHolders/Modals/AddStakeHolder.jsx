@@ -266,12 +266,10 @@ function AddStakeHolder(props) {
     });
 
     const importedEmails = data1.map(csvRow => csvRow.email) || [];
-
     if (importedEmails.length && project.companyId) {
       const peoples = Peoples.find({
         company: project.companyId
       }).fetch();
-
       const allPeoples = Peoples.find({}).fetch();
       const peoplesEmails = peoples.map(people => people.email);
       const currentProject = Projects.findOne({_id: projectId});
@@ -290,8 +288,8 @@ function AddStakeHolder(props) {
       delete currentProject.managerDetails;
 
       currentProject.stakeHolders = [...currentProject.stakeHolders, ...addToProject.map(people => people._id)];
-
       setStakeHolderId(currentProject);
+
       if (!csvUploadErrorMessage) {
         if (addToProject.length && !addToBoth.length) {
           tempTableDate = {...tempTableDate, attached: addToProject};
@@ -339,7 +337,7 @@ function AddStakeHolder(props) {
       } else {
         setOpen(false);
         setCsvfile(null);
-        if (!tempTableDate.attached.length) {
+        if (tempTableDate.attached && !tempTableDate.attached.length) {
           setOpenResultTable(true);
           props.enqueueSnackbar('StakeHolders Added Successfully.', {variant: 'success'});
         }
@@ -708,8 +706,10 @@ function AddStakeHolder(props) {
 }
 
 const AddStakeHolderPage = withTracker(props => {
-  const {email} = props;
-  Meteor.subscribe('peoples', {email});
+  const {email, project} = props;
+  Meteor.subscribe('findByEmail', email);
+  Meteor.subscribe('findAllPeoples');
+  Meteor.subscribe('peoples', project.companyId);
   return {
     people: Peoples.find({email}).fetch(),
   };

@@ -15,6 +15,10 @@ Meteor.publish('peoples', function (companyId, params) {
     return Peoples.find(query, {sort: {}});
 });
 
+Meteor.publish('findAllPeoples', function () {
+    return Peoples.find({})
+});
+
 Meteor.publish('findByEmail', function (email) {
   return Peoples.find({
       email: email,
