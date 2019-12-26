@@ -324,7 +324,7 @@ function AddStakeHolder(props) {
     }
   };
 
-  const insertManyStakeholders = (params, tempTableDate = null) => {
+  const insertManyStakeholders = (params, tempTableDate = {}) => {
     params.peoples.map(people => {
       return people['projectId'] = projectId
     });

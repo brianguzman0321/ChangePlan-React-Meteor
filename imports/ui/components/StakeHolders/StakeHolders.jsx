@@ -71,7 +71,7 @@ function StakeHolders(props) {
   let menus = config.menus;
   const [search, setSearch] = React.useState('');
   const classes = useStyles();
-  let {match, project, template, stakeHoldersTemplate, stakeHolders, company, currentCompany} = props;
+  let {match, project, template, stakeHoldersTemplate, stakeHolders, company, } = props;
   let {projectId, templateId} = match.params;
   project = project || {};
   template = template || {};
@@ -93,13 +93,13 @@ function StakeHolders(props) {
     } else if (projectId) {
       setType('project')
     }
-  }, [currentCompany, company, template, project]);
+  }, [company, template, project]);
 
   useEffect(() => {
-    if (currentCompany) {
-      setCompanyId(currentCompany._id);
+    if (company) {
+      setCompanyId(company._id);
     }
-  }, [currentCompany, template, project]);
+  }, [company, template, project]);
 
   const checkRoles = () => {
     const userId = Meteor.userId();
@@ -107,12 +107,12 @@ function StakeHolders(props) {
       setIsSuperAdmin(true);
     }
 
-    if (company && company.admins.includes(userId)) {
+    if (company && company.admins && company.admins.includes(userId)) {
       setIsAdmin(true);
     }
 
-    if (currentCompany) {
-      const projectsCurCompany = Projects.find({companyId: currentCompany._id}).fetch();
+    if (company) {
+      const projectsCurCompany = Projects.find({companyId: company._id}).fetch();
       if (projectsCurCompany) {
         const changeManagers = [...new Set([].concat.apply([], projectsCurCompany.map(project => project.changeManagers)))];
         if (changeManagers.includes(userId)) {
@@ -180,19 +180,16 @@ const StakeHoldersPage = withTracker(props => {
   Meteor.subscribe('compoundProject', projectId);
   Meteor.subscribe('templates');
   Meteor.subscribe('projects');
-  const companies = Companies.find({}).fetch();
-  const currentCompany = companies.find(company => company.peoples.includes(userId));
-  let company = Companies.findOne() || {};
   let project = Projects.findOne({
     _id: projectId
   });
+  let companyId = project && project.companyId || {}
+  let company = Companies.findOne({_id: companyId}) || {};
   let template = Templates.findOne({_id: templateId});
-  let companyId = company._id || {};
   Meteor.subscribe('peoples', companyId, {
     name: local.search
   });
   return {
-    company: Companies.findOne(),
     stakeHolders: Peoples.find({
       _id: {
         $in: project && project.stakeHolders || []
@@ -206,7 +203,7 @@ const StakeHoldersPage = withTracker(props => {
     project: Projects.findOne({_id: projectId}),
     template: Templates.findOne({_id: templateId}),
     companies: Companies.find({}).fetch(),
-    currentCompany,
+    company,
   };
 })(withRouter(StakeHolders));
 
