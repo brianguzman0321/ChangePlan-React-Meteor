@@ -12,7 +12,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const AddExistingStakeholder = ({showModalDialog, stakeholder, handleSave, closeModalDialog, isMulti}) => {
+const AddExistingStakeholder = ({showModalDialog, stakeholder, handleSave, closeModalDialog, isMulti, count}) => {
   const styles = useStyles();
 
   return (
@@ -25,10 +25,12 @@ const AddExistingStakeholder = ({showModalDialog, stakeholder, handleSave, close
         <DialogTitle id="customized-dialog-title" onClose={() => closeModalDialog()}>
           {"Add already existing Stakeholder?"}
         </DialogTitle>
-        <DialogContentText id="customized-dialog-description" className={styles.dialogContent}>
-          {isMulti ? `There are a records for the stakeholders already in the system. Add this stakeholders to the project?` :
-            stakeholder && `There is a record for the stakeholder ${stakeholder.firstName} ${stakeholder.lastName} (${stakeholder.email}) already in the system. Add this stakeholder to the project?`}
-        </DialogContentText>
+        {isMulti ? <DialogContentText id="customized-dialog-description" className={styles.dialogContent}>
+          {count.new.length > 0 ? `${count.new.length} new Stakeholders added. ${count.attached.length} Stakeholders added that are also attached to other projects. Add these stakeholders to the project?` :
+            `${count.attached.length} Stakeholders added that are also attached to other projects. Add these stakeholders to the project?`}
+        </DialogContentText> : <DialogContentText id="customized-dialog-description" className={styles.dialogContent}>
+        {stakeholder && `There is a record for the stakeholder ${stakeholder.firstName} ${stakeholder.lastName} (${stakeholder.email}) already in the system. Add this stakeholder to the project?`}
+      </DialogContentText>}
         <DialogActions>
           <Button type="submit" color="primary" onClick={() => handleSave()}>Yes</Button>
           <Button color="secondary" onClick={() => closeModalDialog()}>No</Button>

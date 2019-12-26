@@ -156,7 +156,7 @@ function StakeHolders(props) {
           </Grid>
           {((isAdmin && template && (template.companyId === currentCompanyId)) || isSuperAdmin || projectId !== undefined) ?
             <Grid item xs={4} className={classes.secondTab}>
-              <AddStakeHolder type={type} company={company} projectId={projectId} templateId={templateId}/>
+              <AddStakeHolder type={type} company={company} projectId={projectId} templateId={templateId} project={project}/>
             </Grid>
             : ''}
         </Grid>
@@ -183,10 +183,11 @@ const StakeHoldersPage = withTracker(props => {
   let project = Projects.findOne({
     _id: projectId
   });
-  let companyId = project && project.companyId || {}
-  let company = Companies.findOne({_id: companyId}) || {};
   let template = Templates.findOne({_id: templateId});
-  Meteor.subscribe('peoples', companyId, {
+  let companyProjectId = project && project.companyId;
+  let companyTemplateId = template && template.companyId;
+  let companyTemplate = Companies.findOne({_id: companyTemplateId});
+  Meteor.subscribe('peoples', companyProjectId, {
     name: local.search
   });
   return {
@@ -203,7 +204,7 @@ const StakeHoldersPage = withTracker(props => {
     project: Projects.findOne({_id: projectId}),
     template: Templates.findOne({_id: templateId}),
     companies: Companies.find({}).fetch(),
-    company,
+    company: Companies.findOne({_id: companyProjectId}),
   };
 })(withRouter(StakeHolders));
 

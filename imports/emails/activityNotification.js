@@ -1,7 +1,5 @@
 const activityNotification = ({
-                                targetName,
-                                fromEmail,
-                                username,
+                                name,
                                 projectName,
                                 activityType,
                                 activityDueDate,
@@ -10,6 +8,8 @@ const activityNotification = ({
                                 description,
                                 stakeholders,
                                 activityHelpLink,
+                                vision, objectives,
+                                currentChangeManagers
                               }) => `
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html><head><title>Activity notification</title></head>
@@ -29,7 +29,7 @@ const activityNotification = ({
 <table class="column" style="min-width: 100%; width: 100%;" border="0" cellpadding="0" cellspacing="0">
 <tbody>
 <tr>
-<td class="column_cell px pt_xs pb_0 logo_c tc" style="padding: 8px 16px 0pt; vertical-align: top; width: 100%; min-width: 100%; font-family: Helvetica,Arial,sans-serif; font-size: 16px; line-height: 100%; color: rgb(97, 97, 97); text-align: center;"><a href="https://www.changeplan.co" style="text-decoration: none; line-height: inherit; color: rgb(55, 194, 239);" target="_blank"><img alt="Change Plan" src="https://www.changeplan.co/wp-content/uploads/images/changeplan-logo.png" style="border: 0px none ; clear: both; line-height: 100%; text-decoration: none;" height="35" width="200"></a></td>
+<td class="column_cell px pt_xs pb_0 logo_c tc" style="padding: 8px 16px 0pt; vertical-align: top; width: 100%; min-width: 100%; font-family: Helvetica,Arial,sans-serif; font-size: 16px; line-height: 100%; color: rgb(97, 97, 97); text-align: center;"><a href="https://www.changeplan.co" style="text-decoration: none; line-height: inherit; color: rgb(55, 194, 239);" target="_blank"><img alt="Change Plan" src="https://www.changeplan.co/wp-content/uploads/images/changeplan-logo.png" style="border: 0px none ; clear: both; line-height: 100%; text-decoration: none;" height="35" width="250"></a></td>
 </tr>
 </tbody>
 </table>
@@ -62,21 +62,42 @@ const activityNotification = ({
 <tr>
 <td class="column_cell px pte tc" style="padding: 32px 16px 16px; vertical-align: top; width: 100%; min-width: 100%; font-family: Helvetica,Arial,sans-serif; font-size: 16px; line-height: 23px; color: rgb(97, 97, 97); text-align: center;">
 <div style="text-align: center;"></div>
-<p class="lead" style="font-family: Helvetica,Arial,sans-serif; font-size: 19px; line-height: 27px; color: rgb(75, 75, 75); display: block; margin-top: 0px; margin-bottom: 16px; text-align: center;">Good
-news.</p>
+<p class="lead" style="font-family: Helvetica,Arial,sans-serif; font-size: 19px; line-height: 27px; color: rgb(75, 75, 75); display: block; margin-top: 0px; margin-bottom: 16px; text-align: center;">
+Hi ${name},
+</p>
 <p class="lead" style="font-family: Helvetica,Arial,sans-serif; font-size: 19px; line-height: 27px; color: rgb(75, 75, 75); display: block; margin-top: 0px; margin-bottom: 16px; text-align: left;"></p>
-<p class="lead" style="font-family: Helvetica,Arial,sans-serif; font-size: 19px; line-height: 27px; color: rgb(75, 75, 75); display: block; margin-top: 0px; margin-bottom: 16px; text-align: left;">You've been assigned a change management activity for the project ${projectName}<br>
+<p class="lead" style="font-family: Helvetica,Arial,sans-serif; font-size: 19px; line-height: 27px; color: rgb(75, 75, 75); display: block; margin-top: 0px; margin-bottom: 16px; text-align: left;">
+You've been assigned a change management activity for the project "${projectName}"
+<br>
 </p>
 <p class="lead" style="font-family: Helvetica,Arial,sans-serif; font-size: 19px; line-height: 27px; color: rgb(75, 75, 75); display: block; margin-top: 0px; margin-bottom: 16px; text-align: left;">
+
 Activity type: ${activityType}<br>
 Due date: ${activityDueDate}<br>
 Duration (time away from BAU): ${time}<br>
 Activity: ${activityName}<br>
 Description: ${description}<br>
 Stakeholders targeted: ${stakeholders}</p>
-<p class="lead" style="font-family: Helvetica,Arial,sans-serif; font-size: 19px; line-height: 27px; color: rgb(75, 75, 75); display: block; margin-top: 40px; margin-bottom: 30px; text-align: left;">If
-you have any questions about this activity, please email ${username} at
-${fromEmail}.</p>
+<a class="lead" href=${activityHelpLink} style="font-family: Helvetica,Arial,sans-serif; font-size: 19px; line-height: 27px; color: rgb(75, 75, 75); display: block; margin-top: 0px; margin-bottom: 16px; text-align: left;">
+"View activity details in ChangePlan"</a>
+<p class="lead" style="font-family: Helvetica,Arial,sans-serif; font-size: 19px; line-height: 27px; color: rgb(75, 75, 75); display: block; margin-top: 0px; margin-bottom: 16px; text-align: left;">
+This activity supports the project ${projectName}
+</p>
+<p class="lead" style="font-family: Helvetica,Arial,sans-serif; font-size: 19px; line-height: 27px; color: rgb(75, 75, 75); display: block; margin-top: 0px; margin-bottom: 1px; text-align: left;">
+Project visions:
+</p>
+<ul class="visions" style="text-align: left; font-family: Helvetica,Arial,sans-serif; font-size: 19px; line-height: 27px;  margin-top: 5px; color: rgb(75, 75, 75);">
+    ${vision !==[] ? vision.map(item => `<li>${item}</li>`).join('') : 'have no visions yet'}
+</ul>
+<p class="lead" style="font-family: Helvetica,Arial,sans-serif; font-size: 19px; line-height: 27px; color: rgb(75, 75, 75); display: block; margin-top: 0px; margin-bottom: 1px; text-align: left;">
+Project objectives:
+</p>
+<ul class="objectives" style="text-align: left; font-family: Helvetica,Arial,sans-serif; font-size: 19px; line-height: 27px; margin-top: 5px; color: rgb(75, 75, 75);"> 
+    ${objectives ? objectives.map(item => `<li>${item}</li>`).join('') : 'have no objectives yet'}
+</ul>
+<p class="lead" style="font-family: Helvetica,Arial,sans-serif; font-size: 19px; line-height: 27px; color: rgb(75, 75, 75); display: block; margin-top: 40px; margin-bottom: 30px; text-align: left;">
+For more information please contact the project’s change manager/s ${currentChangeManagers ? currentChangeManagers.map(item => `${item.profile.firstName} ${item.profile.lastName} (${item.emails[0].address}) `) : ''}.
+</p>
 <img alt="Change Plan Activity" src="https://changeplan.co/wp-content/uploads/images/Change-Plan-Activity.png" height="141" width="200">
 </td>
 </tr>
@@ -109,11 +130,12 @@ ${fromEmail}.</p>
 <tbody>
 <tr>
 <td class="column_cell px tc" style="padding: 16px; vertical-align: top; width: 100%; min-width: 100%; font-family: Helvetica,Arial,sans-serif; font-size: 16px; line-height: 23px; color: rgb(97, 97, 97); text-align: center;">
-<p class="mb_xxs" style="margin: 20px 0pt 4px; padding: 0pt; color: rgb(62, 72, 77); font-weight: bold; font-size: 18px; line-height: 42px;">Learn
-more<br>
+<p style="font-family:Helvetica,Arial,sans-serif;font-size: 18px;line-height:27px;color:rgb(75,75,75);display:block;margin-top:10px;margin-bottom:10px;text-align: center;">
+ChangePlan is the single-source-of-truth for enterprise change management.
 </p>
-<p class="lead" style="font-family: Helvetica,Arial,sans-serif; font-size: 16px; line-height: 20px; color: rgb(75, 75, 75); display: block; margin-top: 0px; margin-bottom: 5px; text-align: center;">${activityName}</p>
-<p class="lead" style="font-family: Helvetica,Arial,sans-serif; font-size: 16px; line-height: 20px; color: rgb(75, 75, 75); display: block; margin-top: 0px; margin-bottom: 5px; text-align: center;">${activityHelpLink}</p>
+<p style="font-family:Helvetica,Arial,sans-serif;font-size: 16px;line-height:27px;color:rgb(75,75,75);display:block;margin-top:0;margin-bottom:0;text-align: center;">
+<a href="http://www.changeplan.co">www.changeplan.co</a>
+</p>
 </td>
 </tr>
 </tbody>
@@ -161,7 +183,7 @@ more<br>
 <tr>
 <td class="email_body email_end tc" style="vertical-align: top; line-height: 100%; text-align: center; padding-left: 16px; padding-right: 16px; padding-bottom: 32px; background-color: rgb(219, 229, 234); font-size: 0pt ! important;"><!-- [if (mso)|(IE)]><table width="632" border="0" cellspacing="0" cellpadding="0" align="center" style="vertical-align:top;width:632px;Margin:0 auto;"><tbody><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
 <div class="email_container" style="margin: 0pt auto; font-size: 0pt; width: 100%; vertical-align: top; max-width: 632px; text-align: center; line-height: inherit; min-width: 0pt ! important;">
-<p class="mb_xxs" style="font-family: Helvetica,Arial,sans-serif; font-size: 16px; line-height: 23px; color: rgb(167, 177, 182); display: block; margin-top: 30px; margin-bottom: 30px; text-align: center;">�2018
+<p class="mb_xxs" style="font-family: Helvetica,Arial,sans-serif; font-size: 16px; line-height: 23px; color: rgb(167, 177, 182); display: block; margin-top: 30px; margin-bottom: 30px; text-align: center;">�2019
 Change Plan</p>
 <table class="content_section" style="min-width: 100%; width: 100%;" border="0" cellpadding="0" cellspacing="0">
 </table>

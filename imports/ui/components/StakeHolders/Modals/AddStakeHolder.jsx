@@ -150,7 +150,7 @@ function AddStakeHolder(props) {
   });
   const [openResultTable, setOpenResultTable] = React.useState(false);
 
-  let {company, type, projectId, templateId} = props;
+  let {company, type, projectId, templateId, project} = props;
   let both = false;
 
   const classes = useStyles();
@@ -187,7 +187,7 @@ function AddStakeHolder(props) {
   };
 
   const checkEmail = (stakeholderEmail) => {
-    const newStakeholder = Peoples.find({email: stakeholderEmail, company: company._id}).fetch()[0];
+    const newStakeholder = Peoples.find({email: stakeholderEmail, company: project.companyId}).fetch()[0];
     setNewStakeholder({...newStakeholder});
     if (newStakeholder) {
       setAgreedToAddModal(true);
@@ -258,8 +258,7 @@ function AddStakeHolder(props) {
         businessUnit: doc['Business Unit'],
         email: doc['Email'],
         notes: doc['Notes'],
-        company: company._id,
-        projectId
+        company: project.companyId,
       };
       doc['Level of Influence'] && (paramsObj.influenceLevel = Number(doc['Level of Influence']));
       doc['Level of support'] && (paramsObj.supportLevel = Number(doc['Level of support']));
@@ -268,9 +267,9 @@ function AddStakeHolder(props) {
 
     const importedEmails = data1.map(csvRow => csvRow.email) || [];
 
-    if (importedEmails.length && company) {
+    if (importedEmails.length && project.companyId) {
       const peoples = Peoples.find({
-        company: company._id
+        company: project.companyId
       }).fetch();
 
       const allPeoples = Peoples.find({}).fetch();
@@ -328,6 +327,11 @@ function AddStakeHolder(props) {
     params.peoples.map(people => {
       return people['projectId'] = projectId
     });
+    if (params.peoples.forEach(people => people.company === undefined)) {
+      params.peoples.map(people => {
+        return people['company'] = project.companyId
+      });
+    };
     Meteor.call('peoples.insertMany', params, (err, res) => {
       setLoading(false);
       if (err) {
@@ -358,7 +362,7 @@ function AddStakeHolder(props) {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    const newStakeholder = Peoples.find({email, company: company._id}).fetch()[0];
+    const newStakeholder = Peoples.find({email, company: project.companyId}).fetch()[0];
     setNewStakeholder({...newStakeholder});
     if (newStakeholder) {
       setAgreedToAddModal(true);
@@ -372,7 +376,7 @@ function AddStakeHolder(props) {
           email,
           notes,
           [type === 'project' ? 'projectId' : 'templateId']: type === 'project' ? projectId : templateId,
-          company: company._id
+          company: project.companyId
         }
       };
       influenceLevel && (params.people.influenceLevel = influenceLevel);
@@ -691,11 +695,11 @@ function AddStakeHolder(props) {
       <AddStakeHoldersResults tableData={tableData} showModalDialog={openResultTable}
                               closeModalDialog={() => setOpenResultTable(false)}/>
       <AddExistingStakeholder showModalDialog={agreedToAddModal}
-                              stakeholder={stakeholder}
+                              stakeholder={stakeholder} count={{}}
                               closeModalDialog={() => setAgreedToAddModal(false)}
                               handleSave={() => addExistingStakeholder(false)}/>
       <AddExistingStakeholder showModalDialog={addConfirmation}
-                              isMulti={true}
+                              isMulti={true} count={tableData}
                               stakeholder={stakeholder}
                               closeModalDialog={() => setAddConfirmation(false)}
                               handleSave={() => addExistingStakeholder(true)}/>
