@@ -159,7 +159,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function ProjectCard(props) {
-  let {projects, company, activities, currentCompany, history: {push}} = props;
+  let {projects, company, activities, currentCompany, templates, history: {push}} = props;
   const [selectedTab, setSelectedTab] = useState(0);
   const [currentCompanyId, setCompanyId] = useState(null);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
@@ -274,7 +274,7 @@ function ProjectCard(props) {
       projects[i].totalActivities = projectActivities.length;
 
     });
-  }, [projects, activities]);
+  }, [activities]);
 
   const handleChange = event => {
     setAge(event.target.value);
@@ -350,7 +350,7 @@ function ProjectCard(props) {
               alignItems="center"
               className={classes.gridContainer}
               spacing={0}>
-          <ProjectNavBar {...props} selectedTab={selectedTab} handleChange={changeTab} isSuperAdmin={isSuperAdmin}
+          <ProjectNavBar {...props} selectedTab={selectedTab} handleChange={changeTab} templates={templates} isSuperAdmin={isSuperAdmin}
                          isAdmin={isAdmin} currentCompanyId={currentCompanyId} isChangeManager={isChangeManager}/>
         </Grid>
         {projects.map((project, index) => {
@@ -475,17 +475,19 @@ const ProjectsPage = withTracker(props => {
     name: 'localProjects'
   });
   let userId = Meteor.userId();
+  Meteor.subscribe('companies');
   const companies = Companies.find({}).fetch();
   const currentCompany = companies.find(company => company.peoples.includes(userId));
-  Meteor.subscribe('companies.single');
   Meteor.subscribe('myProjects', null, {
     sort: local.sort || {},
     name: local.search
   });
+  Meteor.subscribe('templates');
   return {
-    company: Companies.findOne(),
+    templates: Templates.find({}).fetch(),
+    company: Companies.findOne({_id: currentCompany && currentCompany._id}),
     activities: Activities.find({}).fetch(),
-    projects: sortingFunc(Projects.find({}).fetch(), local),
+    projects: sortingFunc(Projects.find().fetch(), local),
     companies: Companies.find({}).fetch(),
     currentCompany,
   };

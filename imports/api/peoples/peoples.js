@@ -45,7 +45,8 @@ Peoples.schema = new SimpleSchema({
     },
     company: {
         type: String,
-        label: 'stake holder company'
+        label: 'stake holder company',
+        optional: true,
     },
     businessUnit: {
         type: String,

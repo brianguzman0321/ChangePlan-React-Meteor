@@ -36,6 +36,7 @@ export const insert = new ValidatedMethod({
     },
     'people.company': {
       type: String,
+      optional: true,
     },
     'people.businessUnit': {
       type: String,

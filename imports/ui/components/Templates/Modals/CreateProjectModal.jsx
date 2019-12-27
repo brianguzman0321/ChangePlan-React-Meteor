@@ -70,11 +70,13 @@ function CreateProjectModal(props) {
     let newBenefits = template.benefits;
     newBenefits  = newBenefits.map(newBenefit => {
       newBenefit.expectedDate = null;
+      newBenefit.stakeholders = [];
       return newBenefit;
     });
     let newImpacts = template.impacts;
     newImpacts  = newImpacts.map(newImpact => {
       newImpact.expectedDate = null;
+      newImpact.stakeholders = [];
       return newImpact;
     });
     const params = {
@@ -119,7 +121,7 @@ function CreateProjectModal(props) {
           description: newActivity.description,
           owner: newActivity.owner,
           dueDate: newActivity.dueDate,
-          stakeHolders: newActivity.stakeHolders,
+          stakeHolders: [],
           projectId: newProjectId,
           step: newActivity.step,
           time: newActivity.time

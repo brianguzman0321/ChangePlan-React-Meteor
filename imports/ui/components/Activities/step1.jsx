@@ -79,7 +79,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function AWARENESSCard(props) {
-  let {activities, company, match, type, template, isSuperAdmin, isAdmin} = props;
+  let {activities, company, match, type, template, isSuperAdmin, isAdmin, isChangeManager, project, isManager} = props;
   const classes = useStyles();
   const [edit, setEdit] = React.useState(false);
   const [columnsName, setColumnsName] = useState('');
@@ -117,7 +117,9 @@ function AWARENESSCard(props) {
   }
 
   const handleShowInput = () => {
-    setShowInput(true);
+    if ((isAdmin && type === 'project')) {
+      setShowInput(true);
+    }
   };
 
   const handleChangeName = (e) => {
@@ -207,11 +209,13 @@ function AWARENESSCard(props) {
           </IconButton>
         }
         title={showInput ?
-          <Input type="text" onChange={handleChangeName} onBlur={updateColumnsName} onKeyPress={(e) => {(e.key === 'Enter' ? updateColumnsName(e.target.value) : null)}}/> :
+          <Input type="text" onChange={handleChangeName} onBlur={updateColumnsName} onKeyPress={(e) => {
+            (e.key === 'Enter' ? updateColumnsName(e.target.value) : null)
+          }}/> :
           company.activityColumns && nameTitle !== '' ?
-          <Typography variant="subtitle1" onDoubleClick={handleShowInput}>
-            {nameTitle.toUpperCase()}
-          </Typography> :
+            <Typography variant="subtitle1" onDoubleClick={handleShowInput}>
+              {nameTitle.toUpperCase()}
+            </Typography> :
             <Typography variant="subtitle1" onDoubleClick={handleShowInput}>
               AWARENESS
             </Typography>
@@ -270,15 +274,13 @@ function AWARENESSCard(props) {
           </Card>
         })
         }
-        {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || projectId !== undefined) ?
-          <AddActivity edit={edit}
-                       match={match}
+          <AddActivity edit={edit} match={match}
                        currentChangeManager={changeManager}
-                       project={currentProject}
-                       template={template}
-                       type={type}
-                       activity={sActivity}
-                       newActivity={() => setEdit(false)}/> : ''}
+                       isChangeManager={isChangeManager} isManager={isManager}
+                       isAdmin={isAdmin} isSuperAdmin={isSuperAdmin}
+                       project={currentProject} template={template}
+                       type={type} activity={sActivity}
+                       newActivity={() => setEdit(false)}/>
       </CardContent>
     </Card>
   );

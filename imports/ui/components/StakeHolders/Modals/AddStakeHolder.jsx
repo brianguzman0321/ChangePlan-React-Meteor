@@ -150,7 +150,7 @@ function AddStakeHolder(props) {
   });
   const [openResultTable, setOpenResultTable] = React.useState(false);
 
-  let {company, type, projectId, templateId, project} = props;
+  let {company, type, projectId, templateId, project, template} = props;
   let both = false;
 
   const classes = useStyles();
@@ -187,10 +187,17 @@ function AddStakeHolder(props) {
   };
 
   const checkEmail = (stakeholderEmail) => {
-    const newStakeholder = Peoples.find({email: stakeholderEmail, company: project.companyId}).fetch()[0];
-    setNewStakeholder({...newStakeholder});
-    if (newStakeholder) {
-      setAgreedToAddModal(true);
+    const allPeoples = Peoples.find({}).fetch();
+    const checkAllPeoples = allPeoples.find(people => people.email === stakeholderEmail);
+    const newStakeholder = Peoples.findOne({email: stakeholderEmail, company: project.companyId});
+    if (checkAllPeoples && newStakeholder) {
+      setNewStakeholder({...newStakeholder});
+      if (newStakeholder) {
+        setAgreedToAddModal(true);
+      }
+    }
+    if (checkAllPeoples && !newStakeholder){
+      props.enqueueSnackbar(`This Stakeholder already exists in another company`, {variant: 'warning'});
     }
   };
 
@@ -258,21 +265,41 @@ function AddStakeHolder(props) {
         businessUnit: doc['Business Unit'],
         email: doc['Email'],
         notes: doc['Notes'],
-        company: project.companyId,
+        // company: project.companyId,
       };
       doc['Level of Influence'] && (paramsObj.influenceLevel = Number(doc['Level of Influence']));
       doc['Level of support'] && (paramsObj.supportLevel = Number(doc['Level of support']));
       return paramsObj
     });
 
+
+
     const importedEmails = data1.map(csvRow => csvRow.email) || [];
-    if (importedEmails.length && project.companyId) {
-      const peoples = Peoples.find({
-        company: project.companyId
-      }).fetch();
+
+    if (importedEmails.length && (project.companyId || template)) {
+      let peoples = {};
+      let currentProject = {};
+      if (type === 'project') {
+        peoples = Peoples.find({
+          company: project.companyId
+        }).fetch();
+      } else if (type === 'template') {
+        peoples = Peoples.find({
+          company: template.companyId || ''
+        }).fetch();
+      }
+
       const allPeoples = Peoples.find({}).fetch();
       const peoplesEmails = peoples.map(people => people.email);
-      const currentProject = Projects.findOne({_id: projectId});
+
+      if (type === 'project') {
+        currentProject = Projects.findOne({_id: projectId});
+        delete currentProject.peoplesDetails;
+        delete currentProject.changeManagerDetails;
+        delete currentProject.managerDetails;
+      } else if (type === 'template') {
+        currentProject = Templates.findOne({_id: templateId});
+      }
 
       const addToProject = peoples.filter(people => (importedEmails.includes(people.email) && !currentProject.stakeHolders.includes(people._id)));
 
@@ -282,10 +309,6 @@ function AddStakeHolder(props) {
         });
 
       let tempTableDate = {attached: [], new: []};
-
-      delete currentProject.peoplesDetails;
-      delete currentProject.changeManagerDetails;
-      delete currentProject.managerDetails;
 
       currentProject.stakeHolders = [...currentProject.stakeHolders, ...addToProject.map(people => people._id)];
       setStakeHolderId(currentProject);
@@ -322,14 +345,25 @@ function AddStakeHolder(props) {
   };
 
   const insertManyStakeholders = (params, tempTableDate = {}) => {
-    params.peoples.map(people => {
-      return people['projectId'] = projectId
-    });
-    if (params.peoples.forEach(people => people.company === undefined)) {
+    if (type === 'project') {
       params.peoples.map(people => {
-        return people['company'] = project.companyId
+        return people['projectId'] = projectId
       });
-    };
+      if (params.peoples.forEach(people => people.company === undefined)) {
+        params.peoples.map(people => {
+          return people['company'] = project.companyId
+        });
+      }
+    } else if (type === 'template') {
+      params.peoples.map(people => {
+        return people['templateId'] = templateId
+      });
+      if (params.peoples.forEach(people => people.company === undefined)) {
+        params.peoples.map(people => {
+          return people['company'] = template && template.companyId || ''
+        });
+      }
+    }
     Meteor.call('peoples.insertMany', params, (err, res) => {
       setLoading(false);
       if (err) {
@@ -343,7 +377,7 @@ function AddStakeHolder(props) {
         }
       }
     });
-  }
+  };
 
   const importCSV = () => {
     if (!csvfile) {
@@ -360,10 +394,16 @@ function AddStakeHolder(props) {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    const newStakeholder = Peoples.find({email, company: project.companyId}).fetch()[0];
-    setNewStakeholder({...newStakeholder});
-    if (newStakeholder) {
-      setAgreedToAddModal(true);
+    const allPeoples = Peoples.find({}).fetch();
+    const checkAllPeoples = allPeoples.find(people => people.email === email);
+    const newStakeholder = Peoples.findOne({email, company: project.companyId});
+    if (checkAllPeoples && newStakeholder) {
+      setNewStakeholder({...newStakeholder});
+      if (newStakeholder) {
+        setAgreedToAddModal(true);
+      }
+    } else if (checkAllPeoples && !newStakeholder){
+      props.enqueueSnackbar(`This Stakeholder already exists in another company`, {variant: 'warning'});
     } else {
       let params = {
         people: {
@@ -374,7 +414,7 @@ function AddStakeHolder(props) {
           email,
           notes,
           [type === 'project' ? 'projectId' : 'templateId']: type === 'project' ? projectId : templateId,
-          company: project.companyId
+          company: type === 'project' ? project.companyId : (template.companyId || '')
         }
       };
       influenceLevel && (params.people.influenceLevel = influenceLevel);
@@ -392,10 +432,20 @@ function AddStakeHolder(props) {
 
   const addExistingStakeholder = (isMulti = false) => {
     if (isMulti) {
-      const params = {
-        project: stakeHolderId,
-      };
-      Meteor.call('projects.update', params, (error, result) => {
+      let params = {};
+      let methodName = '';
+      if (type === 'project') {
+        params = {
+          project: stakeHolderId,
+        };
+        methodName = 'projects.update';
+      } else if (type === 'template') {
+        params = {
+          template: stakeHolderId,
+        };
+        methodName = 'templates.update';
+      }
+      Meteor.call(methodName, params, (error, result) => {
         if (error) {
           props.enqueueSnackbar(err.reason, {variant: 'error'})
         } else {
@@ -407,8 +457,6 @@ function AddStakeHolder(props) {
         }
       });
     } else {
-      let methodName = 'projects.update';
-      let params = {};
       if (type === 'project') {
         const currentProject = Projects.findOne({_id: projectId});
 
@@ -421,32 +469,41 @@ function AddStakeHolder(props) {
           closeAgreedToAddModal();
         } else {
           currentProject.stakeHolders.push(stakeholder._id);
-          params = {
+          const params = {
             project: currentProject
           };
+          Meteor.call('projects.update', params, (error, result) => {
+            if (error) {
+              props.enqueueSnackbar(err.reason, {variant: 'error'})
+            } else {
+              props.enqueueSnackbar('StakeHolder Added Successful.', {variant: 'success'});
+              closeAgreedToAddModal();
+              setOpen(false);
+            }
+          })
         }
       } else if (type === 'template') {
-        const currentTemplate = Templates.find({_id: templateId}).fetch();
-        if (currentTemplate[0].stakeHolders.includes(stakeholder._id)) {
+        const currentTemplate = Templates.findOne({_id: templateId});
+        if (currentTemplate.stakeHolders.includes(stakeholder._id)) {
           props.enqueueSnackbar('This StakeHolder was already added to current project.', {variant: 'warning'})
           closeAgreedToAddModal();
         } else {
-          currentTemplate[0].stakeHolders.push(stakeholder._id);
-          params = {
-            template: currentTemplate[0]
+          currentTemplate.stakeHolders.push(stakeholder._id);
+          const params = {
+            template: currentTemplate
           };
-          methodName = 'templates.update'
+          Meteor.call('templates.update', params, (error, result) => {
+            if (error) {
+              props.enqueueSnackbar(err.reason, {variant: 'error'})
+            } else {
+              props.enqueueSnackbar('StakeHolder Added Successful.', {variant: 'success'});
+              closeAgreedToAddModal();
+              setOpen(false);
+            }
+          });
         }
       }
-      Meteor.call(methodName, params, (error, result) => {
-        if (error) {
-          props.enqueueSnackbar(err.reason, {variant: 'error'})
-        } else {
-          props.enqueueSnackbar('StakeHolder Added Successful.', {variant: 'success'});
-          closeAgreedToAddModal();
-          setOpen(false);
-        }
-      })
+
     }
   };
 

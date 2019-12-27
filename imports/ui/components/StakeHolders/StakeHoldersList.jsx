@@ -206,7 +206,7 @@ export default function StakeHolderList(props) {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [showEditModalDialog, setShowEditModalDialog] = React.useState(false);
-  let {rows, isAdmin, isSuperAdmin, template, company, projectId, project, type} = props;
+  let {rows, isAdmin, isSuperAdmin, isManager, isChangeManager, template, company, projectId, project, type} = props;
 
   const handleRequestSort = (event, property) => {
     const isDesc = orderBy === property && order === 'desc';
@@ -268,7 +268,7 @@ export default function StakeHolderList(props) {
             aria-label="enhanced table"
           >
             <EnhancedTableHead
-              disabled={(!(isAdmin && template && (template.companyId === company._id) || isSuperAdmin) && (projectId === undefined))}
+              disabled={(!(isAdmin && template && (template.companyId === company._id) || isSuperAdmin) && (projectId === undefined)) || isManager}
               classes={classes}
               style={{color: 'white'}}
               numSelected={selected.length}
@@ -296,8 +296,8 @@ export default function StakeHolderList(props) {
                       projectId={projectId}
                       project={project}
                       type={type}
-                      template={template} company={company}
-                      isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
+                      template={template} company={company} isChangeManager={isChangeManager}
+                      isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isManager={isManager}
                     />
                   );
                 })}
