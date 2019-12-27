@@ -161,7 +161,10 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function AddActivity(props) {
-  let {company, stakeHolders, local, project, match, edit, activity, list, isOpen, currentChangeManager, template, type, stakeHoldersTemplate} = props;
+  let {
+    company, stakeHolders, local, project, match, edit, activity, list, isOpen, currentChangeManager,
+    template, type, stakeHoldersTemplate, isSuperAdmin, isAdmin, isChangeManager, isManager
+  } = props;
   const [open, setOpen] = useState(edit || isOpen || false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [time, setTime] = useState('');
@@ -504,8 +507,10 @@ function AddActivity(props) {
 
   return (
     <div className={classes.AddNewActivity}>
-      {
-        !list ? <Button variant="contained" className={classes.button} fullWidth={true} onClick={handleClickOpen}>
+      {!list && (!((isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
+        || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
+        || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin))) ?
+        <Button variant="contained" className={classes.button} fullWidth={true} onClick={handleClickOpen}>
           Add Activity
         </Button> : ''
       }
@@ -518,7 +523,14 @@ function AddActivity(props) {
           <DialogContent dividers>
             <div className={classes.root}>
 
-              <ExpansionPanel defaultExpanded expanded={expanded} onChange={handleChangePanel('panel1')}>
+              <ExpansionPanel defaultExpanded
+                              expanded={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
+                              || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
+                              || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin) ? false : expanded}
+                              onChange={handleChangePanel('panel1')}
+                              disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
+                              || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
+                              || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}>
                 <ExpansionPanelSummary
                   expandIcon={<ExpandMoreIcon/>}
                   aria-controls="panel2bh-content"
@@ -541,7 +553,7 @@ function AddActivity(props) {
                   <Grid container justify="space-between" spacing={4}>
                     {
                       data.map((item, index) => {
-                        return <Tooltip title={item.helpText} key={index} enterDelay={1200}>
+                        return <Tooltip title={item.helpText} key={index} enterDelay={600}>
                           <Grid item={true} xs={2} classes={classes1}
                                 style={{background: activityType.name === item.name ? '#dae0e5' : ''}} onClick={(e) => {
                             changeActivityType(item);
@@ -563,8 +575,10 @@ function AddActivity(props) {
                   </Grid>
                 </ExpansionPanelDetails>
               </ExpansionPanel>
-              <ExpansionPanel defaultExpanded>
 
+              <ExpansionPanel defaultExpanded disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
+              || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
+              || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}>
                 <ExpansionPanelSummary
                   expandIcon={<ExpandMoreIcon/>}
                   aria-controls="panel1bh-content"
@@ -584,6 +598,9 @@ function AddActivity(props) {
                             disableToolbar
                             variant="inline"
                             format="MM/dd/yyyy"
+                            disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
+                            || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
+                            || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}
                             margin="normal"
                             id="date-picker-inline"
                             label="Due Date"
@@ -594,6 +611,9 @@ function AddActivity(props) {
                         </Grid>
                         <Grid item xs={1}>
                           <IconButton aria-label="close" className={classes.closeButton}
+                                      disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
+                                      || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
+                                      || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}
                                       onClick={() => onCalendarClick("date-picker-inline")}>
                             <CalendarTodayIcon/>
                           </IconButton>
@@ -607,6 +627,9 @@ function AddActivity(props) {
                             variant="inline"
                             margin="normal"
                             id="date-picker-dialog"
+                            disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
+                            || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
+                            || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}
                             label="Date Completed"
                             format="MM/dd/yyyy"
                             value={completedDate}
@@ -616,6 +639,9 @@ function AddActivity(props) {
                         </Grid>
                         <Grid item xs={1}>
                           <IconButton aria-label="close" className={classes.closeButton}
+                                      disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
+                                      || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
+                                      || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}
                                       onClick={() => onCalendarClick("date-picker-dialog")}>
                             <CalendarTodayIcon/>
                           </IconButton>
@@ -625,6 +651,9 @@ function AddActivity(props) {
                         <TextField
                           margin="dense"
                           id="time"
+                          disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
+                          || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
+                          || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}
                           label="Time Away from BAU (Minutes)"
                           value={time}
                           onChange={handleTimeChange}
@@ -637,7 +666,13 @@ function AddActivity(props) {
                 </ExpansionPanelDetails>
               </ExpansionPanel>
 
-              <ExpansionPanel defaultExpanded>
+              <ExpansionPanel
+                defaultExpanded={!((isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
+                  || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
+                  || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin))}
+                disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
+                || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
+                || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}>
                 <ExpansionPanelSummary
                   expandIcon={<ExpandMoreIcon/>}
                   aria-controls="panel3bh-content"
@@ -655,7 +690,14 @@ function AddActivity(props) {
                   </Grid>
                 </ExpansionPanelDetails>
               </ExpansionPanel>
-              <ExpansionPanel defaultExpanded>
+
+              <ExpansionPanel
+                defaultExpanded={!((isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
+                  || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
+                  || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin))}
+                disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
+                || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
+                || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}>
                 <ExpansionPanelSummary
                   expandIcon={<ExpandMoreIcon/>}
                   aria-controls="panel4bh-content"
@@ -678,7 +720,14 @@ function AddActivity(props) {
                   />
                 </ExpansionPanelDetails>
               </ExpansionPanel>
-              <ExpansionPanel defaultExpanded>
+
+              <ExpansionPanel
+                defaultExpanded={!((isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
+                  || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
+                  || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin))}
+                disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
+                || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
+                || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}>
                 <ExpansionPanelSummary
                   expandIcon={<ExpandMoreIcon/>}
                   aria-controls="panal5bh-content"
@@ -719,11 +768,15 @@ function AddActivity(props) {
             {isNew ? <Button onClick={handleClose} color="secondary">
                 cancel
               </Button> :
-              <Button onClick={deleteActivity} color="secondary">
+              <Button onClick={deleteActivity} color="secondary" disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
+              || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
+              || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}>
                 Delete
               </Button>}
             {isNew ? <Button color="primary" onClick={() => setShowNotification(true)}>Save</Button> :
-              <Button type="submit" color="primary">
+              <Button type="submit" color="primary" disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
+              || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
+              || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}>
                 Save
               </Button>}
           </DialogActions>
@@ -760,7 +813,7 @@ const AddActivityPage = withTracker(props => {
   let companyProjectId = project && project.companyId;
   let companyTemplateId = template && template.companyId;
   let company = Companies.findOne({_id: companyProjectId || companyTemplateId}) || {};
-  Meteor.subscribe('peoples',companyProjectId || companyTemplateId);
+  Meteor.subscribe('peoples', companyProjectId || companyTemplateId);
   return {
     project: Projects.findOne({_id: projectId}),
     stakeHolders: Peoples.find({

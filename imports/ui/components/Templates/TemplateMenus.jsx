@@ -73,11 +73,11 @@ export default function SimpleMenu(props) {
         onClose={handleClose}
       >
         <MenuItem onClick={handleClose.bind(null, 'edit')}
-                  disabled={!((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin)}>Edit</MenuItem>
+                  disabled={!((isAdmin && template && company && (template.companyId === company._id)) || isSuperAdmin)}>Edit</MenuItem>
         <MenuItem onClick={handleOpenDuplicateModal}
-                  disabled={!((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin)}>Duplicate</MenuItem>
+                  disabled={!((isAdmin && template && company && (template.companyId === company._id)) || isSuperAdmin)}>Duplicate</MenuItem>
         <MenuItem onClick={handleClose.bind(null, 'delete')}
-                  disabled={!((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin)}>Delete</MenuItem>
+                  disabled={!((isAdmin && template && company && (template.companyId === company._id)) || isSuperAdmin)}>Delete</MenuItem>
         <MenuItem onClick={handleOpenCreateProjectModal}>Create new project from template</MenuItem>
       </Menu>
       <DeleteTemplate open={modals.delete} handleModalClose={handleModalClose} template={template}/>

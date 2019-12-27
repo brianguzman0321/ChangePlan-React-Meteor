@@ -79,6 +79,7 @@ function ActivitiesCard(props) {
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isChangeManager, setIsChangeManager] = useState(false);
+  const [isManager, setIsManager] = useState(false);
   const [currentCompanyId, setCompanyId] = useState(null);
 
   useEffect(() => {
@@ -96,17 +97,24 @@ function ActivitiesCard(props) {
     if (Roles.userIsInRole(userId, 'superAdmin')) {
       setIsSuperAdmin(true);
     }
-
-    if (company && company.admins.includes(userId)) {
+    if (currentCompany && currentCompany.admins.includes(userId)) {
       setIsAdmin(true);
     }
-
     if (currentCompany) {
       const projectsCurCompany = Projects.find({companyId: currentCompany._id}).fetch();
       if (projectsCurCompany) {
         const changeManagers = [...new Set([].concat.apply([], projectsCurCompany.map(project => project.changeManagers)))];
         if (changeManagers.includes(userId)) {
           setIsChangeManager(true);
+        }
+      }
+    }
+    if (currentCompany) {
+      const projectsCurCompany = Projects.find({companyId: currentCompany._id}).fetch();
+      if (projectsCurCompany) {
+        const managers = [...new Set([].concat.apply([], projectsCurCompany.map(project => project.managers)))];
+        if (managers.includes(userId)) {
+          setIsManager(true);
         }
       }
     }
@@ -178,27 +186,34 @@ function ActivitiesCard(props) {
                 props.activities.filter(activity => activity.step === 1) :
                 props.activitiesTemplate.filter(activity => activity.step === 1)}
                              type={type} match={match}
-                             template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}/>
+                             template={template} i
+                             sSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
+                             isChangeManager={isChangeManager} isManager={isManager}
+                             project={project}/>
             </Grid>
             <Grid item xs={12} md={4}>
               <Step2Card activities={type === 'project' ?
                 props.activities.filter(activity => activity.step === 2) :
                 props.activitiesTemplate.filter(activity => activity.step === 2)}
-                         type={type}
-                         template={template}
-                         isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} match={match}/>
+                         type={type} template={template}
+                         isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
+                         isChangeManager={isChangeManager} isManager={isManager}
+                         project={project} match={match}/>
             </Grid>
             <Grid item xs={12} md={4}>
               <Step3Card activities={type === 'project' ?
                 props.activities.filter(activity => activity.step === 3) :
                 props.activitiesTemplate.filter(activity => activity.step === 3)}
-                         type={type}
-                         template={template}
-                         isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} match={match}/>
+                         type={type} template={template}
+                         isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
+                         isChangeManager={isChangeManager} isManager={isManager}
+                         project={project} match={match}/>
             </Grid>
           </Grid> :
           <ListView rows={type === 'project' ? props.activities : props.activitiesTemplate} addNew={addNew} type={type}
-                    isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} projectId={projectId} companyId={currentCompanyId}
+                    isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
+                    isChangeManager={isChangeManager} isManager={isManager}
+                    project={project} projectId={projectId} companyId={currentCompanyId}
                     template={template} match={match}/>
       }
 
@@ -211,13 +226,21 @@ const ActivitiesPage = withTracker(props => {
   let {match} = props;
   let {projectId, templateId} = match.params;
   let userId = Meteor.userId();
-  Meteor.subscribe('companies.single');
-  const companies = Companies.find({}).fetch();
-  const currentCompany = companies.find(company => company.peoples.includes(userId));
-  Meteor.subscribe('compoundActivities', projectId);
-  Meteor.subscribe('compoundActivitiesTemplate', templateId);
+  let currentCompany = {};
   Meteor.subscribe('projects');
   Meteor.subscribe('templates');
+  const project = Projects.findOne({_id: projectId});
+  const template = Templates.findOne({_id: templateId});
+  Meteor.subscribe('companies');
+  const companies = Companies.find({}).fetch();
+  const company = Companies.findOne({_id: project && project.companyId || template && template.companyId});
+  if (!company) {
+    currentCompany = companies.find(_company => _company.peoples.includes(userId));
+  } else {
+    currentCompany = company;
+  }
+  Meteor.subscribe('compoundActivities', projectId);
+  Meteor.subscribe('compoundActivitiesTemplate', templateId);
   return {
     activities: Activities.find().fetch(),
     template: Templates.findOne({_id: templateId}),
@@ -225,7 +248,7 @@ const ActivitiesPage = withTracker(props => {
     activitiesTemplate: Activities.find({templateId: templateId}).fetch(),
     templates: Templates.find({}).fetch(),
     companies: Companies.find({}).fetch(),
-    company: Companies.findOne(),
+    company,
     currentCompany,
   };
 })(withRouter(ActivitiesCard));

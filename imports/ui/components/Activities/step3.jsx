@@ -77,7 +77,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function AWARENESSCard(props) {
-  let {activities, company, match, type, template, isSuperAdmin, isAdmin} = props;
+  let {activities, company, match, type, template, isSuperAdmin, isAdmin, isChangeManager, project, isManager} = props;
   const classes = useStyles();
   const [edit, setEdit] = useState(false);
   const [changeManager, setChangeManager] = useState('');
@@ -128,7 +128,9 @@ function AWARENESSCard(props) {
   };
 
   const handleShowInput = () => {
-    setShowInput(true);
+    if ((isAdmin && type === 'project')) {
+      setShowInput(true);
+    }
   };
 
   const handleChangeName = (e) => {
@@ -273,15 +275,16 @@ function AWARENESSCard(props) {
             </Card>
           })
         }
-        {((isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || projectId !== undefined) ?
           <AddActivity edit={edit}
                        match={match}
                        currentChangeManager={changeManager}
                        project={currentProject}
+                       isChangeManager={isChangeManager} isManager={isManager}
+                       isAdmin={isAdmin} isSuperAdmin={isSuperAdmin}
                        activity={sActivity}
                        type={type}
                        activity={sActivity}
-                       newActivity={() => setEdit(false)}/> : ''}
+                       newActivity={() => setEdit(false)}/>
       </CardContent>
     </Card>
   );

@@ -456,7 +456,7 @@ const TemplatesPage = withTracker(props => {
   Meteor.subscribe('templates');
   Meteor.subscribe('projects');
   return {
-    company: Companies.findOne(),
+    company: Companies.findOne({_id: currentCompany && currentCompany._id}),
     activities: Activities.find({}).fetch(),
     templates: Templates.find({}).fetch(),
     companies: Companies.find({}).fetch(),

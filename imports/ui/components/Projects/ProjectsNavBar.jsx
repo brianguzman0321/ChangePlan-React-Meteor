@@ -44,27 +44,24 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const ProjectNavBar = ({history: {push, location}, handleChange, selectedTab, currentCompanyId, isChangeManager, isSuperAdmin, isAdmin, ...props}) => {
+const ProjectNavBar = ({history: {push, location}, handleChange, selectedTab, currentCompanyId, isChangeManager, isSuperAdmin, isAdmin, templates, ...props}) => {
   const [displayMenus, setDisplayMenus] = useState([]);
   const classes = useStyles();
 
   useEffect(() => {
     let selectedDisplayMenus = [];
-    if (isSuperAdmin) {
+    let countTemplates = templates && templates.filter(template => template.companyId === currentCompanyId);
+    if ((isSuperAdmin || ((isChangeManager && countTemplates && !countTemplates.length) && !isSuperAdmin && !isAdmin) && !isAdmin)) {
       selectedDisplayMenus = config.adminProjectsMenus.filter(item => item.show);
-    } else if (isChangeManager || isAdmin){
+    }
+    if (!isSuperAdmin && (isAdmin || (isChangeManager && countTemplates && countTemplates.length > 0) && !isAdmin && !isSuperAdmin)) {
       selectedDisplayMenus = config.projectsMenus.filter(item => item.show);
-    } else {
+    }
+    if (!isSuperAdmin && !isAdmin && !isChangeManager) {
       selectedDisplayMenus = [];
     }
-
     setDisplayMenus(selectedDisplayMenus);
-    // if (props.currentCompany && props.currentCompany.length > 0) {
-    //   currentCompanyId = props.currentCompany._id;
-    // } else {
-    //   currentCompanyId = null;
-    // }
-  }, [isSuperAdmin, isAdmin, isChangeManager]);
+  }, [isSuperAdmin, isAdmin, isChangeManager, templates]);
 
   return (
     <div className={classes.root}>

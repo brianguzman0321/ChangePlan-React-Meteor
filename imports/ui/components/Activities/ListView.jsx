@@ -202,7 +202,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function StakeHolderList(props) {
-  let {rows, addNew, type, isSuperAdmin, template, companyId, isAdmin, projectId, match} = props;
+  let {rows, addNew, type, isSuperAdmin, template, companyId, isAdmin, projectId, match, project, isChangeManager, isManager} = props;
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
@@ -363,15 +363,12 @@ function StakeHolderList(props) {
           onChangeRowsPerPage={handleChangeRowsPerPage}
         />
       </Paper>
-      {(isAdmin && template && (template.companyId === companyId)) || isSuperAdmin ?
         <AddActivity edit={edit} activity={sActivity} newActivity={() => setEdit(false)} list={true} isOpen={addNew}
-                     type={type} template={template} match={match}/> : null}
-      {(isAdmin && template && (template.companyId === companyId)) || isSuperAdmin ?
+                     type={type} template={template} match={match}/>
         <AddActivity2 edit={edit2} activity={sActivity} newActivity={() => setEdit2(false)} list={true} type={type}
-                      template={template} match={match}/> : null}
-      {(isAdmin && template && (template.companyId === companyId)) || isSuperAdmin ?
+                      template={template} match={match}/>
         <AddActivity3 edit={edit3} activity={sActivity} newActivity={() => setEdit3(false)} list={true}
-                      type={type} template={template} match={match}/> : null}
+                      type={type} template={template} match={match}/>
 
     </div>
   );

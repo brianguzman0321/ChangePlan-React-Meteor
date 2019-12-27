@@ -15,8 +15,6 @@ import TopNavBar from '/imports/ui/components/App/App';
 import config from '/imports/utils/config';
 import StakeHolderList from './StakeHoldersList'
 import AddStakeHolder from './Modals/AddStakeHolder';
-import AddActivity from "../Activities/Modals/AddActivity2";
-import Step3Card from "../Activities/step3";
 
 
 const useStyles = makeStyles(theme => ({
@@ -71,7 +69,7 @@ function StakeHolders(props) {
   let menus = config.menus;
   const [search, setSearch] = React.useState('');
   const classes = useStyles();
-  let {match, project, template, stakeHoldersTemplate, stakeHolders, company, } = props;
+  let {match, project, template, stakeHoldersTemplate, stakeHolders, company, currentCompany} = props;
   let {projectId, templateId} = match.params;
   project = project || {};
   template = template || {};
@@ -79,6 +77,7 @@ function StakeHolders(props) {
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isChangeManager, setIsChangeManager] = useState(false);
+  const [isManager, setIsManager] = useState(false);
   const [currentCompanyId, setCompanyId] = useState(null);
 
   const searchFilter = event => {
@@ -93,13 +92,13 @@ function StakeHolders(props) {
     } else if (projectId) {
       setType('project')
     }
-  }, [company, template, project]);
+  }, [currentCompany, template, project]);
 
   useEffect(() => {
-    if (company) {
-      setCompanyId(company._id);
+    if (currentCompany) {
+      setCompanyId(currentCompany._id);
     }
-  }, [company, template, project]);
+  }, [currentCompany, template, project]);
 
   const checkRoles = () => {
     const userId = Meteor.userId();
@@ -107,16 +106,20 @@ function StakeHolders(props) {
       setIsSuperAdmin(true);
     }
 
-    if (company && company.admins && company.admins.includes(userId)) {
+    if (currentCompany && currentCompany.admins && currentCompany.admins.includes(userId)) {
       setIsAdmin(true);
     }
 
-    if (company) {
-      const projectsCurCompany = Projects.find({companyId: company._id}).fetch();
+    if (currentCompany) {
+      const projectsCurCompany = Projects.find({companyId: currentCompany._id}).fetch();
       if (projectsCurCompany) {
         const changeManagers = [...new Set([].concat.apply([], projectsCurCompany.map(project => project.changeManagers)))];
-        if (changeManagers.includes(userId)) {
+        if (!Roles.userIsInRole(userId, 'superAdmin') && changeManagers.includes(userId)) {
           setIsChangeManager(true);
+        }
+        const managers = [...new Set([].concat.apply([], projectsCurCompany.map(project => project.managers)))];
+        if (!Roles.userIsInRole(userId, 'superAdmin') && managers.includes(userId)) {
+          setIsManager(true);
         }
       }
     }
@@ -154,14 +157,14 @@ function StakeHolders(props) {
               <SearchIcon/>
             </IconButton>
           </Grid>
-          {((isAdmin && template && (template.companyId === currentCompanyId)) || isSuperAdmin || projectId !== undefined) ?
+          {((isAdmin && template && (template.companyId === currentCompanyId)) || isSuperAdmin || (type === 'project' && (project && ( isAdmin || isChangeManager)))) ?
             <Grid item xs={4} className={classes.secondTab}>
-              <AddStakeHolder type={type} company={company} projectId={projectId} templateId={templateId} project={project}/>
+              <AddStakeHolder type={type} company={currentCompany} projectId={projectId} templateId={templateId} project={project} template={template}/>
             </Grid>
             : ''}
         </Grid>
-        <StakeHolderList className={classes.stakeHoldersList} template={template} company={company}
-                         isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} projectId={projectId} project={project}
+        <StakeHolderList className={classes.stakeHoldersList} template={template} company={currentCompany} isChangeManager={isChangeManager}
+                         isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isManager={isManager} projectId={projectId} project={project}
                          rows={type === 'project' ? stakeHolders : stakeHoldersTemplate} type={type}/>
       </Grid>
 
@@ -176,6 +179,7 @@ const StakeHoldersPage = withTracker(props => {
     name: 'localPeoples'
   });
   let userId = Meteor.userId();
+  let currentCompany = {};
   Meteor.subscribe('companies');
   Meteor.subscribe('compoundProject', projectId);
   Meteor.subscribe('templates');
@@ -184,12 +188,13 @@ const StakeHoldersPage = withTracker(props => {
     _id: projectId
   });
   let template = Templates.findOne({_id: templateId});
-  let companyProjectId = project && project.companyId;
-  let companyTemplateId = template && template.companyId;
-  let companyTemplate = Companies.findOne({_id: companyTemplateId});
-  Meteor.subscribe('peoples', companyProjectId, {
+  const companies = Companies.find({}).fetch();
+  const company = Companies.findOne({_id: project && project.companyId || (template && template.companyId || '')});
+  currentCompany = company;
+  Meteor.subscribe('peoples', currentCompany && currentCompany._id, {
     name: local.search
   });
+  Meteor.subscribe('findAllPeoples');
   return {
     stakeHolders: Peoples.find({
       _id: {
@@ -204,7 +209,8 @@ const StakeHoldersPage = withTracker(props => {
     project: Projects.findOne({_id: projectId}),
     template: Templates.findOne({_id: templateId}),
     companies: Companies.find({}).fetch(),
-    company: Companies.findOne({_id: companyProjectId}),
+    company,
+    currentCompany,
   };
 })(withRouter(StakeHolders));
 
