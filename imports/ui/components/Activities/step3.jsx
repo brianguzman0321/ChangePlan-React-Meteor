@@ -158,7 +158,7 @@ function AWARENESSCard(props) {
   };
 
   const updateColumnsName = () => {
-    let allColumnsName
+    let allColumnsName;
     if (company.activityColumns) {
       allColumnsName = company.activityColumns;
       allColumnsName[2] = columnsName;
