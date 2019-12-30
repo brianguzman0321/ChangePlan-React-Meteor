@@ -189,7 +189,7 @@ function AddActivity(props) {
   const [users, setUsers] = React.useState([]);
   const [name, setName] = React.useState('');
   const [description, setDescription] = React.useState('');
-  const [person, setPerson] = React.useState('');
+  const [person, setPerson] = useState(null);
   const [peoples, setPeoples] = React.useState(stakeHolders.map(item => item._id));
   const [activityType, setActivityType] = React.useState({});
   const [startingDate, setStartingDate] = React.useState(new Date());
@@ -223,9 +223,9 @@ function AddActivity(props) {
     const name = person && person.firstName;
     const email = person ? (person && person.email[0].address) : (currentChangeManagers && currentChangeManagers.emails[0].address);
     if (description === undefined) {
-      description = ''
+      description = '';
     }
-    const activityHelpLink = `https://changeplan.herokuapp.com/projects/${projectId}/activities`
+    const activityHelpLink = `https://changeplan.herokuapp.com/projects/${projectId}/activities`;
     Meteor.call('sendEmail', email, name,
       projectName,
       activityType,
@@ -280,6 +280,7 @@ function AddActivity(props) {
         if (curProject.changeManagers) {
           const newChangeManager = users.find(user => curProject.changeManagers.includes(user.value));
           setChangeManager(newChangeManager);
+          setPerson(newChangeManager);
         }
         if (curProject.vision) {
           setVision(curProject.vision)
@@ -300,7 +301,7 @@ function AddActivity(props) {
     setDueDate(new Date());
     setCompletedDate(null);
     setDescription('');
-    setPerson(changeManager);
+    setPerson(person);;
     setTime('');
     setPeoples(stakeHolders.map(item => item._id));
     updateFilter('localStakeHolders', 'ids', stakeHolders.map(item => item._id));
@@ -335,13 +336,12 @@ function AddActivity(props) {
       let updatedStakeHolders = local.changed ? local.ids : stakeHolders.map(item => item._id);
       setPeoples(updatedStakeHolders);
       updateFilter('localStakeHolders', 'ids', updatedStakeHolders);
+      getProjectManager();
     }
     if (edit && activity && activity.name) {
       setExpanded(true);
       updateValues();
     }
-    getProjectManager();
-
   }, [props.company, stakeHolders, company, props.edit, props.activity, isNew, local]);
 
   const handleChangePanel = panel => (event, isExpanded) => {
@@ -380,6 +380,16 @@ function AddActivity(props) {
 
   const closeModalDialog = () => {
     setShowModalDialog(false);
+  };
+
+  const handleShowNotification = () => {
+    if (!dueDate) {
+      props.enqueueSnackbar('Please fill all required fields', {variant: 'error'});
+    } else if (!(activityType && activityType.name) && Array.isArray(stakeHolders)) {
+      props.enqueueSnackbar('Please fill all required fields', {variant: 'error'});
+    } else {
+      setShowNotification(true)
+    }
   };
 
   const createProject = (e, isMail = true) => {
@@ -787,7 +797,7 @@ function AddActivity(props) {
                 Delete
               </Button>
             }
-            {isNew ? <Button color="primary" onClick={() => setShowNotification(true)}>Save</Button> :
+            {isNew ? <Button color="primary" onClick={() => handleShowNotification()}>Save</Button> :
               <Button type="submit" color="primary" disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
               || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
               || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}>

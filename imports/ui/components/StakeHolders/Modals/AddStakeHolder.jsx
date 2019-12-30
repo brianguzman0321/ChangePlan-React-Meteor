@@ -196,7 +196,7 @@ function AddStakeHolder(props) {
         setAgreedToAddModal(true);
       }
     }
-    if (checkAllPeoples && !newStakeholder){
+    if (checkAllPeoples && !newStakeholder) {
       props.enqueueSnackbar(`This Stakeholder already exists in another company`, {variant: 'warning'});
     }
   };
@@ -271,7 +271,6 @@ function AddStakeHolder(props) {
       doc['Level of support'] && (paramsObj.supportLevel = Number(doc['Level of support']));
       return paramsObj
     });
-
 
 
     const importedEmails = data1.map(csvRow => csvRow.email) || [];
@@ -349,20 +348,16 @@ function AddStakeHolder(props) {
       params.peoples.map(people => {
         return people['projectId'] = projectId
       });
-      if (params.peoples.forEach(people => people.company === undefined)) {
-        params.peoples.map(people => {
-          return people['company'] = project.companyId
-        });
-      }
+      params.peoples.map(people => {
+        return people['company'] = project.companyId
+      });
     } else if (type === 'template') {
       params.peoples.map(people => {
         return people['templateId'] = templateId
       });
-      if (params.peoples.forEach(people => people.company === undefined)) {
-        params.peoples.map(people => {
-          return people['company'] = template && template.companyId || ''
-        });
-      }
+      params.peoples.map(people => {
+        return people['company'] = template && template.companyId || ''
+      });
     }
     Meteor.call('peoples.insertMany', params, (err, res) => {
       setLoading(false);
@@ -402,7 +397,7 @@ function AddStakeHolder(props) {
       if (newStakeholder) {
         setAgreedToAddModal(true);
       }
-    } else if (checkAllPeoples && !newStakeholder){
+    } else if (checkAllPeoples && !newStakeholder) {
       props.enqueueSnackbar(`This Stakeholder already exists in another company`, {variant: 'warning'});
     } else {
       let params = {
@@ -417,6 +412,12 @@ function AddStakeHolder(props) {
           company: type === 'project' ? project.companyId : (template.companyId || '')
         }
       };
+      project && project.companyId && (params.people.company = project.companyId);
+      if (template && template.companyId) {
+        params.people.company = template.companyId
+      } else if (!project && template && !template.companyId) {
+        params.people.company = '';
+      }
       influenceLevel && (params.people.influenceLevel = influenceLevel);
       supportLevel && (params.people.supportLevel = supportLevel);
       Meteor.call('peoples.insert', params, (err, res) => {

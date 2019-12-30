@@ -6,12 +6,17 @@ import ControlledOpenSelect from './selectionModal'
 import ProjectsSettingsPage from './projects'
 
 function ProjectsControlPanel(props) {
-    if (!props.currentCompany){
-        return <div></div>
-    }
-    useEffect(() => {
-    });
+    let {projects, currentCompany} = props;
 
+    useEffect(()=> {
+        if (projects && currentCompany) {
+            projects.filter(project => project.companyId === currentCompany._id)
+        }
+    }, [currentCompany]);
+
+    if (!props.currentCompany){
+        return <div/>
+    }
 
     return (
         <div>
@@ -20,7 +25,7 @@ function ProjectsControlPanel(props) {
                     <ControlledOpenSelect {...props} title="Projects" entity="Project" entities={props.projects} localCollection="localProjects" id="projectId"/> : ''
             }
             <br/>
-            <ProjectsSettingsPage {...props} />
+            <ProjectsSettingsPage {...props} projects={projects} />
         </div>
 
     );
@@ -37,10 +42,14 @@ const ProjectsControlPanelPage = withTracker(props => {
 
     const currentCompany = Companies.findOne({_id: local.companyId});
     const currentProject = Projects.findOne({_id: local1.projectId});
-
+    const allProjects = Projects.find({}).fetch();
+    let projects = {};
+    if (currentCompany) {
+        projects = allProjects.filter(project => project.companyId === currentCompany._id);
+    }
     return {
         companies: Companies.find({}).fetch(),
-        projects: Projects.find({}).fetch(),
+        projects,
         currentCompany,
         currentProject
     };

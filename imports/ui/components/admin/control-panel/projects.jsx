@@ -1,17 +1,18 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {Meteor} from "meteor/meteor";
 import MaterialTable from "material-table";
 import {withTracker} from "meteor/react-meteor-data";
 import { Projects } from "../../../../api/projects/projects";
 import { withSnackbar } from 'notistack';
 import UserSelectionModal from "../../utilityComponents/userSelectionModal";
-
+import NotificationModal from "../../Activities/Modals/NotificationModal";
 
 function ProjectsSettings(props) {
     if (!props.currentProject){
-        return <div></div>
+        return <div/>
     }
     let userId = Meteor.userId();
+    const [showNotification, setShowNotification] = useState(false);
     let filterIds = [userId];
     let lookup = {};
     if(Roles.userIsInRole(Meteor.userId(), 'superAdmin')){
@@ -23,6 +24,7 @@ function ProjectsSettings(props) {
     lookup.manager = 'Manager';
     lookup.noRole = 'No Role';
     const [project, setProject] = React.useState({});
+    const [changeManager, setChangeManager] = useState({});
     const [users, setUsers] = React.useState([]);
     const [state, setState] = React.useState({
         columns: [
@@ -51,6 +53,27 @@ function ProjectsSettings(props) {
 
     }
 
+    const handleCloseNotification = () => {
+        setShowNotification(false);
+    };
+
+
+    const handleSendNotification = () => {
+        const email = changeManager.email;
+        const name = changeManager.firstName;
+        const projectName = props.currentProject.name;
+        const projectHelpLink = `https://changeplan.herokuapp.com/projects/${props.currentProject._id}/`;
+        Meteor.call('sendProjectEmail', email, name,
+          projectName, projectHelpLink,  (error, result) => {
+              if (error) {
+                  props.enqueueSnackbar(error.reason, {variant: 'error'});
+              } else {
+                  props.enqueueSnackbar('Email send successful', {variant: 'success'});
+              }
+          });
+        handleCloseNotification();
+    };
+
     const updateUsersList = () => {
         if(props.currentCompany && props.currentProject){
             Meteor.call(`users.getUsers`, {
@@ -64,7 +87,9 @@ function ProjectsSettings(props) {
                     setUsers(res.map(user => {
                         return {
                             label: `${user.profile.firstName} ${user.profile.lastName}`,
-                            value: user._id
+                            value: user._id,
+                            email: user.emails[0].address,
+                            firstName: user.profile.firstName,
                         }
                     }))
                 }
@@ -99,6 +124,9 @@ function ProjectsSettings(props) {
     return (
         <div>
             <UserSelectionModal options={users} {...props} updateUsersList={updateUsersList} title="Project"/>
+            <NotificationModal handleClose={handleCloseNotification} showModalDialog={showNotification}
+                               handleSend={handleSendNotification} isProject={true}
+            />
             <br />
             {
                 props.currentProject ?
@@ -165,6 +193,10 @@ function ProjectsSettings(props) {
                                             data[data.indexOf(oldData)] = newData;
                                             setState({...state, data});
                                             props.enqueueSnackbar('User Role Updated Successfully.', {variant: 'success'})
+                                            if (params.role === 'changeManager') {
+                                                setChangeManager(newData);
+                                                setShowNotification(true);
+                                            }
                                         }
 
                                     })
