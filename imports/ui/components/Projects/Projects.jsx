@@ -178,7 +178,6 @@ function ProjectCard(props) {
     if (Roles.userIsInRole(userId, 'superAdmin')) {
       setIsSuperAdmin(true);
     }
-
     if (company && company.admins.includes(userId)) {
       setIsAdmin(true);
     }
@@ -316,8 +315,8 @@ function ProjectCard(props) {
               <SearchIcon/>
             </IconButton>
           </Grid>
-          <Grid item xs={4} className={(isAdmin || isSuperAdmin) && company ? classes.secondTab : ''}>
-            {(isAdmin || isSuperAdmin || isChangeManager) && company && <NewProject {...props} className={classes.createNewProject}/>}
+          <Grid item xs={4} className={(isAdmin || isSuperAdmin || isChangeManager) ? classes.secondTab : null}>
+            {(isAdmin || isSuperAdmin || isChangeManager) && <NewProject {...props} className={classes.createNewProject}/>}
             <Typography color="textSecondary" variant="title" className={classes.sortBy}>
               Sort by
             </Typography>
