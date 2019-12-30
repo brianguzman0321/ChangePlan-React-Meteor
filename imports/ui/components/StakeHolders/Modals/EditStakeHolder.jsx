@@ -96,7 +96,6 @@ const DialogActions = withStyles(theme => ({
 
 function EditStakeHolder(props) {
     let { stakeholder, open, close, isAdmin, isSuperAdmin, isManager, isChangeManager, project, template, type, company, projectId, } = props;
-    console.log('---', props)
     const [firstName, setFirstName] = React.useState(stakeholder.firstName);
     const [lastName, setLastName] = React.useState(stakeholder.lastName);
     const [role, setRole] = React.useState(stakeholder.role);

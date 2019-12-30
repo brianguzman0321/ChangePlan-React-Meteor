@@ -28,6 +28,7 @@ import { Peoples } from '/imports/api/peoples/peoples'
 import { Companies } from '/imports/api/companies/companies'
 import  AutoComplete from '/imports/ui/components/utilityComponents/AutoCompleteInline'
 import { withRouter } from 'react-router'
+import AddNewPerson from "../../Activities/Modals/AddNewPerson";
 
 const styles = theme => ({
     root: {
@@ -399,8 +400,11 @@ function AddActivity(props) {
                                 </ExpansionPanelSummary>
                                 <ExpansionPanelDetails>
                                     <Grid container justify="space-between" spacing={2}>
-                                        <Grid item={true} xs={12}>
+                                        <Grid item={true} xs={7}>
                                             <AutoComplete updateUsers={updateUsers} data={users} selectedValue={person} multiple={true}/>
+                                        </Grid>
+                                        <Grid item={true} xs={5}>
+                                            <AddNewPerson company={company}/>
                                         </Grid>
                                     </Grid>
                                 </ExpansionPanelDetails>

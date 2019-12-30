@@ -345,7 +345,7 @@ export default function IntegrationReactSelect(props) {
                             shrink: true,
                         },
                     }}
-                    defaultValue={props.currentChangeManager}
+                    defaultValue={props.selectedValue || props.currentChangeManager}
                     placeholder="Select Person"
                     options={props.data}
                     components={components}

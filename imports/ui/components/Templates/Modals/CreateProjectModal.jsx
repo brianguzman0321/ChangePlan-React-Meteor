@@ -67,6 +67,7 @@ function CreateProjectModal(props) {
     if (!names.length) {
       return;
     }
+    let userId = Meteor.userId();
     let newBenefits = template.benefits;
     newBenefits  = newBenefits.map(newBenefit => {
       newBenefit.expectedDate = null;
@@ -83,7 +84,8 @@ function CreateProjectModal(props) {
       project: {
         startingDate: new Date(),
         endingDate: new Date(),
-        owner: Meteor.userId(),
+        owner: userId,
+        changeManager: userId,
         stakeHolders: [],
         vision: template.vision,
         objectives: template.objectives,

@@ -12,7 +12,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const SendNotification = ({ showModalDialog, handleClose, handleSend }) => {
+const SendNotification = ({ showModalDialog, handleClose, handleSend, isProject = false }) => {
   const styles = useStyles();
 
   return (
@@ -26,10 +26,10 @@ const SendNotification = ({ showModalDialog, handleClose, handleSend }) => {
           { "Send Email" }
         </DialogTitle>
         <DialogContentText id="customized-dialog-description" className={styles.dialogContent}>
-          Notify the Activity owner via email?
+          {isProject ? 'Notify the Change Manager via email?' : 'Notify the Activity owner via email?'}
         </DialogContentText>
         <DialogActions>
-          <Button type="submit" color="primary" onClick={ (e) => handleSend(e) }>Yes</Button>
+          <Button type="submit" color="primary" onClick={ (e) => handleSend (e)}>Yes</Button>
           <Button color="secondary" onClick={ (e) => handleClose(e) }>No</Button>
         </DialogActions>
       </Dialog>
