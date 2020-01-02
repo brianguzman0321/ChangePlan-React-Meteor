@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import moment from "moment";
+import moment from 'moment';
 import 'dhtmlx-gantt/codebase/dhtmlxgantt.css';
 import "./Gantt.css";
 const gantt = window.gantt;
@@ -118,8 +118,14 @@ const handleDownload = (exportType) => {
 export { handleDownload, zoom_tasks, handleImportData }
 
 export default Gantt = props => {
+  const debouncedDrag = task => props.updateTaskByDrag({
+    id: task['id'],
+    dueDate: new Date(moment(task['start_date'], 'DD/MM/YYYY')),
+    updatedAt: new Date(),
+  });
+
   useEffect(() => {
-    const { tasks, dateUnit, setActivityId, setEdit, updateTaskByDrag } = props;
+    const { tasks, dateUnit, setActivityId, setEdit } = props;
     if(
       Roles.userIsInRole(Meteor.userId(), 'manager') ||
       Roles.userIsInRole(Meteor.userId(), 'activityOwner')
@@ -169,16 +175,12 @@ export default Gantt = props => {
       setActivityId(id);
       setEdit(true);
     });
-    gantt.attachEvent("onTaskDrag", function(id, mode, task, original){
+    gantt.attachEvent("onTaskDrag", _.debounce(function(id, mode, task, original){
       //any custom logic here
       if (mode === 'move') {
-        updateTaskByDrag({
-          id: task['id'],
-          dueDate: new Date(moment(task['start_date'], 'DD/MM/YYYY')),
-          updatedAt: new Date(),
-        });
+        debouncedDrag(task);
       }
-    });
+    }, 500));
 
     gantt.config.tooltip_timeout = 2000;
 
