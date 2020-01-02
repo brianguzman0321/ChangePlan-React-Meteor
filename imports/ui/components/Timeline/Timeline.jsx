@@ -18,12 +18,13 @@ import { Activities } from '/imports/api/activities/activities';
 import { Projects } from '/imports/api/projects/projects';
 
 //Importing DHTMLX Modules
-import Gantt, { zoom_tasks, handleImportData } from './Gantt/index.js';
-import ExportDialog from './ExportDialog/ExportDialog';
+import Gantt, { zoom_tasks, handleImportData, handleDownload } from './Gantt/index.js';
+import ExportDialog from './Dialog/ExportDialog';
+import ImportDialog from './Dialog/ImportDialog';
 import TopNavBar from '/imports/ui/components/App/App';
 import AddActivity from '/imports/ui/components/Activities/Modals/AddActivity';
 
-import { useStyles, changeManagersNames, handleDownload } from './utils';
+import { useStyles, changeManagersNames } from './utils';
 import { dateUnit, colors } from './constants';
 
 function Timeline(props){
@@ -34,6 +35,7 @@ function Timeline(props){
   const [viewMode, setViewMode] = useState(0);
   const [zoomMode, setZoomMode] = useState(0);
   const [isExporting, setIsExporting] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
   const [exportType, setExportType] = useState(0);
   const [edit, setEdit] = useState(false);
   const [data, setData] = useState({ data: [] });
@@ -138,21 +140,11 @@ function Timeline(props){
           <Grid className={classes.flexBox}>
             <Button 
               color="primary"
-              onClick={() => document.getElementById("import-button").click()}
+              onClick={() => setIsImporting(true)}
             >
               Import
-              <input 
-                type="file"
-                accept=".xlsx, .xls, .mpp,.xml, text/xml, application/xml, application/vnd.ms-project, application/msproj, application/msproject, application/x-msproject, application/x-ms-project, application/x-dos_ms_project, application/mpp, zz-application/zz-winassoc-mpp" 
-                onChange={() => {
-                  let file = document.getElementById("import-button").files[0];
-                  handleImportData(file);
-                }}
-                style={{ display: "none" }}
-                id="import-button"
-              />
             </Button>
-            <Button 
+            <Button
               color="primary" 
               onClick={() => setIsExporting(true)}
               style={{ marginLeft: "20px" }}
@@ -192,6 +184,11 @@ function Timeline(props){
           exportType={exportType}
           setExportType={setExportType}
           handleDownload={handleDownload}
+        />
+        <ImportDialog
+          isImporting={isImporting}
+          setIsImporting={setIsImporting}
+          handleImportData={handleImportData}
         />
         {/* {(isAdmin && template && (template.companyId === companyId)) || isSuperAdmin ? */}
         <AddActivity

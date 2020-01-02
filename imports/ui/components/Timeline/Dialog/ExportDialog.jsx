@@ -57,7 +57,7 @@ export default function ExportDialog ({
       fullWidth={true}
     >
       <DialogTitle id="customized-dialog-title" onClose={() => setIsExporting(false)}>
-        Export events
+        <Typography variant="h5">Export events</Typography>
       </DialogTitle>
       <DialogContent dividers>
         <Typography gutterBottom>Instruction text!</Typography>
@@ -72,13 +72,18 @@ export default function ExportDialog ({
         >
           {
             ['MS Excel .xls', 'MS Project .mpp', 'PDF document', 'PNG image'].map((menuTitle, idx) =>
-              <MenuItem key={`menu-${idx}`} value={idx}>MS Project .mpp</MenuItem>
+              <MenuItem key={`menu-${idx}`} value={idx}>{menuTitle}</MenuItem>
             )
           }
         </Select>
       </DialogContent>
       <DialogActions>
-        <Button autoFocus onClick={() => handleDownload(exportType)} color="primary" >
+        <Button
+          autoFocus
+          onClick={() => handleDownload(exportType)}
+          color="primary"
+          variant="contained"
+        >
           Download
         </Button>
       </DialogActions>
