@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import moment from "moment";
 import 'dhtmlx-gantt/codebase/dhtmlxgantt.css';
 import "./Gantt.css";
 const gantt = window.gantt;
@@ -64,8 +65,7 @@ const handleImportData = (file) => {
         gantt.clearAll();
         len = project.length;
         for(i = 0; i < len; i ++)
-          project[i].start_date = moment(project[i].start_date).format("DD-MM-YYYY");
-        console.log("Imported Data:", project);          
+          project[i].start_date = moment(project[i].start_date).format("DD-MM-YYYY");          
         gantt.parse({ data: project });
       }
     });
@@ -73,15 +73,14 @@ const handleImportData = (file) => {
     gantt.importFromMSProject({
       data: file,
       callback: function(project) {
-          console.log("Imported Data:", project);
-          if(project){
-            gantt.clearAll();
-            if (project.config.duration_unit) {
-                gantt.config.duration_unit = project.config.duration_unit;
-            }                    
-            data = {project}
-          }
+        if(project){
+          gantt.clearAll();
+          if (project.config.duration_unit) {
+              gantt.config.duration_unit = project.config.duration_unit;
+          }                    
+          data = {project}
         }
+      }
     });
   }
 };
@@ -120,12 +119,11 @@ export { handleDownload, zoom_tasks, handleImportData }
 
 export default Gantt = props => {
   useEffect(() => {
-    const { tasks, dateUnit, setActivityId, setEdit } = props;
-    console.log("Events for display", tasks);
+    const { tasks, dateUnit, setActivityId, setEdit, updateTaskByDrag } = props;
     if(
       Roles.userIsInRole(Meteor.userId(), 'manager') ||
       Roles.userIsInRole(Meteor.userId(), 'activityOwner')
-    ) {  
+    ) {
       gantt.config.drag_resize = false;
       gantt.config.drag_move = false;
     }
@@ -171,14 +169,20 @@ export default Gantt = props => {
       setActivityId(id);
       setEdit(true);
     });
+    gantt.attachEvent("onTaskDrag", function(id, mode, task, original){
+      //any custom logic here
+      updateTaskByDrag({
+        id: task['id'],
+        dueDate: new Date(moment(task['start_date'], 'DD/MM/YYYY')),
+        updatedAt: new Date(),
+      });
+    });
 
     gantt.config.tooltip_timeout = 2000;
 
-    console.log("Tasks:", tasks);
     gantt.parse(tasks);
   });
 
-  console.error('click-ganttele');
   return (
     <div
       ref={(input) => { this.ganttContainer = input; }}
