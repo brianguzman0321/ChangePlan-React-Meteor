@@ -31,7 +31,6 @@ import { dateUnit, colors } from './constants';
 function Timeline(props){
   let {match, projects, activities } = props;
   let {projectId, templateId} = match.params;
-  console.error('activities', activities);
 
   const classes = useStyles();
   const [viewMode, setViewMode] = useState(0);
@@ -61,14 +60,12 @@ function Timeline(props){
       if (err) {
         props.enqueueSnackbar(err.reason, {variant: 'error'})
       } else {
-        handleClose();
-        props.enqueueSnackbar(`Activity Updated Successfully.`, {variant: 'success'})
+        // props.enqueueSnackbar(`Activity Updated Successfully.`, {variant: 'success'})
       }
     });
   }
 
   useEffect(() => {
-    console.log("timeline-props", props);
     let tempData = [];
     let i;
 

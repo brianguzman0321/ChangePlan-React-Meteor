@@ -171,11 +171,13 @@ export default Gantt = props => {
     });
     gantt.attachEvent("onTaskDrag", function(id, mode, task, original){
       //any custom logic here
-      updateTaskByDrag({
-        id: task['id'],
-        dueDate: new Date(moment(task['start_date'], 'DD/MM/YYYY')),
-        updatedAt: new Date(),
-      });
+      if (mode === 'move') {
+        updateTaskByDrag({
+          id: task['id'],
+          dueDate: new Date(moment(task['start_date'], 'DD/MM/YYYY')),
+          updatedAt: new Date(),
+        });
+      }
     });
 
     gantt.config.tooltip_timeout = 2000;
