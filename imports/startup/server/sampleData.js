@@ -141,3 +141,29 @@ if (superAdmin2 && superAdmin2._id) {
     });
   }
 }
+
+let superAdmin3 = Meteor.users.findOne({
+  'emails.address': 'nikita@gmail.com'
+});
+if(superAdmin3 && superAdmin3._id) {
+  Roles.addUsersToRoles(superAdmin3._id, 'superAdmin', Roles.GLOBAL_GROUP);
+  if(!Companies.findOne()){
+      console.log("No Companies Exists");
+      companyId = Companies.insert({
+          owner: superAdmin3._id,
+          name: "AppBakerZ",
+          peoples: [superAdmin3._id]
+      })
+  }
+  if(!Projects.findOne()){
+      console.log("No Projects Exists");
+      projectId = Projects.insert({
+          owner: superAdmin3._id,
+          name: 'Change Plan Development',
+          companyId: companyId,
+          peoples: [superAdmin3._id],
+          startingDate: new Date(),
+          endingDate: new Date()
+      })
+  }
+}
