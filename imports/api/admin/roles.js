@@ -94,4 +94,3 @@ export const AddNewPerson = new ValidatedMethod({
         return userId;
     }
 });
-
