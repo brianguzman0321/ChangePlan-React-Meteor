@@ -3,6 +3,10 @@
     background: rgb(82,82,82);
     color: white !important;
     padding-left: 8px !important;
+    width: 120px !important;
+}
+.gantt_cell {
+    width: 120px !important;
 }
 .completed-task {
     border-width: 2px;
