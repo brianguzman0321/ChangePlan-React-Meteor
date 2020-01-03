@@ -101,7 +101,7 @@ const Gantt = props => {
     }
 
     gantt.config.columns = [
-      { name:"eventType", label: "Event type", align:"left" },
+      { name: "eventType", label: "Event type", align:"left" },
       { name: "stakeholders", label: "Stakeholders" },
       { name: "owner", label: "Owner" }
     ];
