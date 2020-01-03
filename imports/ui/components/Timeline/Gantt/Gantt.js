@@ -1,58 +1,9 @@
 import React, { useEffect } from 'react';
 import moment from 'moment';
+// import { gantt } from 'dhtmlx-gantt';
 import 'dhtmlx-gantt/codebase/dhtmlxgantt.css';
 import "./Gantt.css";
 const gantt = window.gantt;
-
-const zoom_tasks = dateUnit => {
-  switch(dateUnit){
-    case "quarter":
-      gantt.config.scales = [
-        {
-          unit: "day",
-          step: 1,
-          format: "%d, %M",
-        },
-        {
-          unit: "quarter",
-          step: 1,
-          format: date => {
-            var dateToStr = gantt.date.date_to_str("%M %Y");
-            var endDate = gantt.date.add(gantt.date.add(date, 3, "month"), -1, "day");
-            return dateToStr(date) + " - " + dateToStr(endDate);
-          },
-        }
-      ];
-      gantt.config.scale_height = 50;
-    break;
-    case "day":
-      gantt.config.scales = [
-        {unit: "day", step: 1, format: "%d %M"}
-      ];
-      gantt.config.scale_height = 27;
-    break;
-    case "week":
-      var weekScaleTemplate = date => {
-        var dateToStr = gantt.date.date_to_str("%d %M");
-        var endDate = gantt.date.add(gantt.date.add(date, 1, "week"), -1, "day");
-        return dateToStr(date) + " - " + dateToStr(endDate);
-      };
-      gantt.config.scales = [
-          {unit: "week", step: 1, format: weekScaleTemplate},
-          {unit: "day", step: 1, format: "%D"}
-      ];
-      gantt.config.scale_height = 50;
-    break;
-    case "month":
-      gantt.config.scales = [
-        {unit: "month", step: 1, format: "%F, %Y"},
-        {unit: "day", step: 1, format: "%D, %j"}
-      ];
-      gantt.config.scale_height = 50;
-    break;
-  }
-  // set_scale_units();
-}
 
 const handleImportData = (file) => {
   const type = file.name.split('.').pop();
@@ -115,17 +66,18 @@ const handleDownload = (exportType) => {
   }
 };
 
-export { handleDownload, zoom_tasks, handleImportData }
+export { handleDownload, handleImportData }
 
 export default Gantt = props => {
-  const debouncedDrag = task => props.updateTaskByDrag({
+  const { tasks, scaleText, setActivityId, setEdit, updateTaskByDrag } = props;
+
+  const debouncedDrag = task => updateTaskByDrag({
     id: task['id'],
     dueDate: new Date(moment(task['start_date'], 'DD/MM/YYYY')),
     updatedAt: new Date(),
   });
 
   useEffect(() => {
-    const { tasks, dateUnit, setActivityId, setEdit } = props;
     if(
       Roles.userIsInRole(Meteor.userId(), 'manager') ||
       Roles.userIsInRole(Meteor.userId(), 'activityOwner')
@@ -134,43 +86,31 @@ export default Gantt = props => {
       gantt.config.drag_move = false;
     }
 
-    gantt.init(this.ganttContainer);
     gantt.config.columns = [
-      {
-        name:"eventType", label: "Event type", align:"left"
-      },
-      {
-        name: "stakeholders", label: "Stakeholders"
-      },
-      {
-        name: "owner", label: "Owner"
-      }
+      { name:"eventType", label: "Event type", align:"left" },
+      { name: "stakeholders", label: "Stakeholders" },
+      { name: "owner", label: "Owner" }
     ];
-    gantt.templates.grid_header_class = function(columnName, column){
-      return "gantt-column-header";
-    };
-    gantt.templates.grid_row_class = function(start, end, task){
-      return "grey-background";
-    }
-    gantt.templates.task_class = function(start, end, task) {
+    gantt.config.tooltip_timeout = 2000;
+
+    // Gantt Template Styling //////////////////////
+    gantt.templates.grid_header_class = (columnName, column) => "gantt-column-header";
+    gantt.templates.grid_row_class = (start, end, task) => "grey-background";
+    gantt.templates.task_class = (start, end, task) => {
       if(task.completed) return "completed-task";
       return "";
     }
-    gantt.templates.scale_cell_class = function(date){
-      return "grey-background";
-    }
-    gantt.templates.rightside_text = function(start, end, task) {
-      if(task.type == gantt.config.types.milestone) {
-        return task.eventType;
-      }
-    }
-    gantt.templates.tooltip_text = function(start, end, task) {
+    gantt.templates.scale_cell_class = date => "grey-background";
+    gantt.templates.rightside_text = (start, end, task) => task.type == gantt.config.types.milestone && task.eventType;
+    gantt.templates.tooltip_text = (start, end, task) => {
       const { description } = task;
       if(description && description.length > 20)
         return description.slice(0,20) + "...";
       return description;
     };
+    ////////////////////////////////////////////////
 
+    // Events
     gantt.attachEvent("onTaskClick", function(id, e) {
       setActivityId(id);
       setEdit(true);
@@ -181,11 +121,60 @@ export default Gantt = props => {
         debouncedDrag(task);
       }
     }, 500));
+    ////////
 
-    gantt.config.tooltip_timeout = 2000;
-
+    gantt.init(this.ganttContainer);
     gantt.parse(tasks);
-  });
+  }, []);
+
+  useEffect(() => gantt.parse(tasks), [tasks]);
+
+  useEffect(() => {
+    switch(scaleText){
+      case "quarter":
+        gantt.config.scales = [
+          { unit: "month", step: 1, format: "%M" },
+          { unit: "quarter", step: 1, format: date => {
+              var dateToStr = gantt.date.date_to_str("%M, %Y");
+              var endDate = gantt.date.add(gantt.date.add(date, 3, "month"), -1, "day");
+              return dateToStr(date) + " - " + dateToStr(endDate);
+            },
+          }
+        ];
+        gantt.config.scale_height = 50;
+        gantt.config.min_column_width = 90;
+      break;
+      case "day":
+        gantt.config.scales = [
+          {unit: "day", step: 1, format: "%d %M"}
+        ];
+        gantt.config.scale_height = 27;
+        gantt.config.min_column_width = 80;
+      break;
+      case "week":
+        var weekScaleTemplate = date => {
+          var dateToStr = gantt.date.date_to_str("%d %M");
+          var endDate = gantt.date.add(gantt.date.add(date, 1, "week"), -1, "day");
+          return dateToStr(date) + " - " + dateToStr(endDate);
+        };
+        gantt.config.scales = [
+            {unit: "week", step: 1, format: weekScaleTemplate},
+            {unit: "day", step: 1, format: "%j %D"}
+        ];
+        gantt.config.scale_height = 50;
+        gantt.config.min_column_width = 50;
+      break;
+      case "month":
+        gantt.config.scales = [
+          {unit: "month", step: 1, format: "%F, %Y"},
+          {unit: "week", step: 1, format: "Week #%W"}
+        ];
+        gantt.config.scale_height = 50;
+        gantt.config.min_column_width = 120;
+      break;
+    }
+    gantt.render();
+  }, [scaleText]);
 
   return (
     <div

@@ -19,14 +19,14 @@ import { Activities } from '/imports/api/activities/activities';
 import { Projects } from '/imports/api/projects/projects';
 
 //Importing DHTMLX Modules
-import Gantt, { zoom_tasks, handleImportData, handleDownload } from './Gantt/index.js';
+import Gantt, { handleImportData, handleDownload } from './Gantt/index.js';
 import ExportDialog from './Dialog/ExportDialog';
 import ImportDialog from './Dialog/ImportDialog';
 import TopNavBar from '/imports/ui/components/App/App';
 import AddActivity from '/imports/ui/components/Activities/Modals/AddActivity';
 
 import { useStyles, changeManagersNames } from './utils';
-import { dateUnit, colors } from './constants';
+import { scaleTypes, colors } from './constants';
 
 function Timeline(props){
   let {match, projects, activities } = props;
@@ -34,18 +34,13 @@ function Timeline(props){
 
   const classes = useStyles();
   const [viewMode, setViewMode] = useState(0);
-  const [zoomMode, setZoomMode] = useState(0);
+  const [zoomMode, setZoomMode] = useState(1);
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
   const [exportType, setExportType] = useState(0);
   const [edit, setEdit] = useState(false);
   const [data, setData] = useState({ data: [] });
   const [activityId, setActivityId] = useState(null);
-
-  const handleChangeZoomMode = (event, newValue) => {
-    zoom_tasks(dateUnit[newValue]);
-    setZoomMode(newValue);
-  };
 
   const updateTaskByDrag = (updatedTask) => {
     const validActivity = activities.find(item => item['_id'] === updatedTask['id']);
@@ -171,16 +166,15 @@ function Timeline(props){
             </Button>
             <Tabs
               value={zoomMode}
-              onChange={handleChangeZoomMode}
+              onChange={(e, newValue) => setZoomMode(newValue)}
               indicatorColor="primary"
               textColor="primary"
-              aria-label="icon tabs example"
               style={{
                 marginLeft: "20px",
                 background: "white",
               }}
             >
-              {dateUnit.map((unit, idx) =>
+              {scaleTypes.map((unit, idx) =>
                 <Tab
                   key={`date-unit-tab-${idx}`}
                   className={classes.activityTab}
@@ -192,7 +186,7 @@ function Timeline(props){
         </Grid>
         <Gantt
           tasks={data}
-          dateUnit={dateUnit}
+          scaleText={scaleTypes[zoomMode]}
           setActivityId={setActivityId}
           setEdit={setEdit}
           updateTaskByDrag={updateTaskByDrag}
