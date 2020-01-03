@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import moment from 'moment';
+import {withSnackbar} from 'notistack';
 // import { gantt } from 'dhtmlx-gantt';
 import 'dhtmlx-gantt/codebase/dhtmlxgantt.css';
 import "./Gantt.css";
@@ -68,14 +69,27 @@ const handleDownload = (exportType) => {
 
 export { handleDownload, handleImportData }
 
-export default Gantt = props => {
-  const { tasks, scaleText, setActivityId, setEdit, updateTaskByDrag } = props;
+const Gantt = props => {
+  this.savedTask = {};
+  const { tasks, scaleText, setActivityId, setEdit, activities } = props;
 
-  const debouncedDrag = task => updateTaskByDrag({
-    id: task['id'],
-    dueDate: new Date(moment(task['start_date'], 'DD/MM/YYYY')),
-    updatedAt: new Date(),
-  });
+  const updateTaskByDrag = (savedActivities, updatedTask) => {
+    const validActivity = savedActivities.find(item => item['_id'] === updatedTask['id']);
+    if (!validActivity) return;
+
+    let params = {};
+    params.activity = validActivity;
+    params.activity['dueDate'] = updatedTask.start_date;
+    params.activity['updatedAt'] = updatedTask.end_date;
+
+    Meteor.call('activities.update', params, (err, res) => {
+      if (err) {
+        props.enqueueSnackbar(err.reason, {variant: 'error'})
+      } else {
+        props.enqueueSnackbar(`Activity Updated Successfully.`, {variant: 'success'})
+      }
+    });
+  }
 
   useEffect(() => {
     if(
@@ -115,17 +129,21 @@ export default Gantt = props => {
       setActivityId(id);
       setEdit(true);
     });
-    gantt.attachEvent("onTaskDrag", _.debounce(function(id, mode, task, original){
+    // FIXME: This is a temporary solution
+    gantt.activities = activities;
+    gantt.attachEvent("onAfterTaskDrag", (id, mode, e) => {
       //any custom logic here
-      if (mode === 'move') {
-        debouncedDrag(task);
+      var updatedTask = gantt.getTask(id);
+      if (mode === 'move' && updatedTask !== this.savedTask) {
+        this.savedTask = updatedTask;
+        updateTaskByDrag(gantt.activities, updatedTask);
       }
-    }, 500));
+    });
     ////////
 
     gantt.init(this.ganttContainer);
     gantt.parse(tasks);
-  }, []);
+  });
 
   useEffect(() => gantt.parse(tasks), [tasks]);
 
@@ -183,3 +201,5 @@ export default Gantt = props => {
     />
   )
 };
+
+export default withSnackbar(Gantt);
