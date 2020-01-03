@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import { withRouter } from 'react-router';
 import { withTracker } from "meteor/react-meteor-data";
-import {withSnackbar} from 'notistack';
 import moment from "moment";
 
 import Tabs from '@material-ui/core/Tabs';
@@ -41,24 +40,6 @@ function Timeline(props){
   const [edit, setEdit] = useState(false);
   const [data, setData] = useState({ data: [] });
   const [activityId, setActivityId] = useState(null);
-
-  const updateTaskByDrag = (updatedTask) => {
-    const validActivity = activities.find(item => item['_id'] === updatedTask['id']);
-    if (!validActivity) return;
-
-    let params = {};
-    params.activity = validActivity;
-    params.activity['dueDate'] = updatedTask.dueDate;
-    params.activity['updatedAt'] = updatedTask.updatedAt;
-
-    Meteor.call('activities.update', params, (err, res) => {
-      if (err) {
-        props.enqueueSnackbar(err.reason, {variant: 'error'})
-      } else {
-        // props.enqueueSnackbar(`Activity Updated Successfully.`, {variant: 'success'})
-      }
-    });
-  }
 
   useEffect(() => {
     let tempData = [];
@@ -189,7 +170,7 @@ function Timeline(props){
           scaleText={scaleTypes[zoomMode]}
           setActivityId={setActivityId}
           setEdit={setEdit}
-          updateTaskByDrag={updateTaskByDrag}
+          activities={activities}
         />
         <ExportDialog
           isExporting={isExporting}
@@ -232,4 +213,4 @@ const TimelinePage = withTracker(props => {
   };
 })(withRouter(Timeline));
 
-export default withSnackbar(TimelinePage);
+export default TimelinePage;
