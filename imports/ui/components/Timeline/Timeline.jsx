@@ -36,10 +36,12 @@ function Timeline(props){
   const [zoomMode, setZoomMode] = useState(1);
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
-  const [exportType, setExportType] = useState(0);
+  const [exportType, setExportType] = useState(null);
   const [edit, setEdit] = useState(false);
   const [data, setData] = useState({ data: [] });
   const [activityId, setActivityId] = useState(null);
+  console.error('activities', activities);
+  console.error('projects', projects);
 
   useEffect(() => {
     let tempData = [];
@@ -56,7 +58,9 @@ function Timeline(props){
         duration: 1,
         color: colors.activity[activities[i].step-1],
         stakeholders: activities[i].stakeHolders.length,
-        owner: activities[i].owner,
+        owner: activities[i].owner && activities[i].personResponsible
+          ? `${activities[i].personResponsible.profile.firstName} ${activities[i].personResponsible.profile.lastName}`
+          : null,
         completed: activities[i].completed,
         description: activities[i].description,
       })
@@ -64,7 +68,7 @@ function Timeline(props){
 
     if(projects[0]) {
       let owner = changeManagersNames(projects[0]);
-      let impacts = projects[0] ? projects[0].impacts:[];
+      let impacts = projects[0] ? projects[0].impacts : [];
       for(i = 0; i < impacts.length; i ++) {
         tempData.push({
           id: `impacts #${i}`, 

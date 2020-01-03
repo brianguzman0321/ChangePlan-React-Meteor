@@ -19,3 +19,7 @@
     color:rgb(76, 75, 75) !important;
     border: none !important;
 }
+.gantt_task_content {
+    color: #000 !important;
+    overflow: initial !important;
+}
