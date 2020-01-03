@@ -10,9 +10,12 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
+// import FormControl from '@material-ui/core/FormControl';
+// import InputLabel from '@material-ui/core/InputLabel';
 import CloseIcon from '@material-ui/icons/Close';
 
 import { styles, useStyles } from '../utils';
+// import './ExportDialog.css';
 
 const DialogTitle = withStyles(styles)(props => {
   const { children, classes, onClose, ...other } = props;
@@ -63,7 +66,7 @@ export default function ExportDialog ({
         <Typography gutterBottom>Instruction text!</Typography>
         <Typography gutterBottom display="inline">Export to </Typography>
         <Select
-          label="Select type here"
+          label="Select file type"
           id="demo-simple-select-placeholder-label"
           className={classes.selectEmpty + " " + classes.selectExportType}
           displayEmpty
@@ -71,7 +74,7 @@ export default function ExportDialog ({
           onChange={({ target: { value } }) => setExportType(value)}
         >
           {
-            ['MS Excel .xls', 'MS Project .mpp', 'PDF document', 'PNG image'].map((menuTitle, idx) =>
+            ['MS Excel .xls', 'MS Project .xml', 'PDF document', 'PNG image'].map((menuTitle, idx) =>
               <MenuItem key={`menu-${idx}`} value={idx}>{menuTitle}</MenuItem>
             )
           }

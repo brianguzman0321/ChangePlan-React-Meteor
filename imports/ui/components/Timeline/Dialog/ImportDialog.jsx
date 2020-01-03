@@ -81,7 +81,7 @@ export default function ImportDialog ({
       </Tabs>
       <DialogContent dividers>
         <Typography gutterBottom>Instruction text!</Typography>
-        <p>{importType === 0 ? 'Download sample.mpp' : 'Download sample.xls'}</p>
+        <p>{importType === 0 ? 'Download sample.xml' : 'Download sample.xls'}</p>
         <br />
         {file && file.name && <Typography gutterBottom>{file.name}</Typography>}
       </DialogContent>
