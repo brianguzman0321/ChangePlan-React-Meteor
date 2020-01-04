@@ -27,3 +27,16 @@
     color: #000 !important;
     overflow: initial !important;
 }
+.task_left {
+    display: none !important;
+}
+.task_right {
+    display: none !important;
+}
+.gantt_task_progress_wrapper {
+    display: none !important;
+}
+.gantt_task_line
+.gantt_task_progress_drag {
+    display: none !important;
+}
