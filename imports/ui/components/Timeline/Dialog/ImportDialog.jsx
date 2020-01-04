@@ -10,6 +10,10 @@ import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import AppBar from '@material-ui/core/AppBar';
+import SwipeableViews from 'react-swipeable-views';
+import FormControl from '@material-ui/core/FormControl';
+import Grid from "@material-ui/core/Grid/Grid";
 import CloseIcon from '@material-ui/icons/Close';
 
 import { styles, useStyles } from '../utils';
@@ -68,53 +72,57 @@ export default function ImportDialog ({
       >
         <Typography variant="h5">Import events</Typography>
       </DialogTitle>
-      <Tabs
-        value={importType}
-        onChange={(e, newValue) => setImportType(newValue)}
-        indicatorColor="primary"
-        textColor="primary"
-        variant="fullWidth"
-        aria-label="action tabs example"
-      >
-        <Tab label="MS Project" id="action-tab-0"/>
-        <Tab label="Excel" id="action-tab-1"/>
-      </Tabs>
       <DialogContent dividers>
+        <AppBar position="static" color="default">
+          <Tabs
+            value={importType}
+            onChange={(e, newValue) => setImportType(newValue)}
+            indicatorColor="primary"
+            textColor="primary"
+            variant="fullWidth"
+            aria-label="action tabs example"
+          >
+            <Tab label="MS Project" id="action-tab-0"/>
+            <Tab label="Excel" id="action-tab-1"/>
+          </Tabs> 
+        </AppBar>
         <Typography gutterBottom>Instruction text!</Typography>
-        <p>{importType === 0 ? 'Download sample.xml' : 'Download sample.xls'}</p>
+        <a
+          href={`/branding/${importType === 0 ? 'download_sam.xml' : 'download_sam.xls'}`}
+          download={importType === 0 ? 'Download sample.xml' : 'Download sample.xls'}
+          className={classes.sampleCsv}
+        >{importType === 0 ? 'Download sample.xml' : 'Download sample.xls'}</a>
         <br />
-        {file && file.name && <Typography gutterBottom>{file.name}</Typography>}
       </DialogContent>
-      <DialogActions>
-        <Button
-          color="primary"
-          variant="outlined"
-          onClick={() => document.getElementById("import-button").click()}
-        >
-          CHOOSE FILE
-          <input
-            type="file"
-            accept={importTypes}
-            onChange={() => {
-              let fileData = document.getElementById("import-button").files[0];
-              if(fileData && fileData.name) {
-                setFile(fileData);
-                setDisabled(false);
-              }
-            }}
-            style={{ display: "none" }}
-            id="import-button"
-          />
-        </Button>
-        <Button
-          color="primary"
-          disabled={disabled}
-          variant="contained"
-          onClick={() => {if(file) handleImportData(file)}}
-        >
-          UPLOAD
-        </Button>
-      </DialogActions>
+      <Button
+        color="primary"
+        variant="outlined"
+        onClick={() => document.getElementById("import-button").click()}
+      >
+        CHOOSE FILE
+        <input
+          type="file"
+          accept={importTypes}
+          onChange={() => {
+            let fileData = document.getElementById("import-button").files[0];
+            if(fileData && fileData.name) {
+              setFile(fileData);
+              setDisabled(false);
+            }
+          }}
+          style={{ display: "none" }}
+          id="import-button"
+        />
+      </Button>
+      {file && file.name && <Typography variant="h6">&nbsp;{file.name}</Typography>}
+      <Button
+        color="primary"
+        disabled={disabled}
+        variant="contained"
+        onClick={() => {if(file) handleImportData(file)}}
+      >
+        UPLOAD
+      </Button>
     </Dialog>
   );
 }

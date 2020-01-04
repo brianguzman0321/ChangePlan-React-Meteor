@@ -61,11 +61,15 @@ export const useStyles = makeStyles(theme => ({
     marginLeft: "20px",
   },
   exportDialog: {
-    padding: "20px 30px",
-    width: "800px !important",
+    alignItems: 'end',
+    paddingLeft: 20,
   },
   flexBox: {
     display: "flex",
+  },
+  sampleCsv: {
+    textDecoration: 'none',
+    color: '#303f9f',
   }
 }));
 

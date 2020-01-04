@@ -80,16 +80,14 @@ export default function ExportDialog ({
           }
         </Select>
       </DialogContent>
-      <DialogActions>
-        <Button
-          autoFocus
-          onClick={() => handleDownload(exportType)}
-          color="primary"
-          variant="contained"
-        >
-          Download
-        </Button>
-      </DialogActions>
+      <Button
+        autoFocus
+        onClick={() => handleDownload(exportType)}
+        color="primary"
+        variant="contained"
+      >
+        Download
+      </Button>
     </Dialog>
   );
 }
