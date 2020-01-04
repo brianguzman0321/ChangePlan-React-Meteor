@@ -72,7 +72,7 @@ export default function ImportDialog ({
       >
         <Typography variant="h5">Import events</Typography>
       </DialogTitle>
-      <DialogContent dividers>
+      <DialogContent>
         <AppBar position="static" color="default">
           <Tabs
             value={importType}
@@ -86,43 +86,51 @@ export default function ImportDialog ({
             <Tab label="Excel" id="action-tab-1"/>
           </Tabs> 
         </AppBar>
-        <Typography gutterBottom>Instruction text!</Typography>
-        <a
-          href={`/branding/${importType === 0 ? 'download_sam.xml' : 'download_sam.xls'}`}
-          download={importType === 0 ? 'Download sample.xml' : 'Download sample.xls'}
-          className={classes.sampleCsv}
-        >{importType === 0 ? 'Download sample.xml' : 'Download sample.xls'}</a>
-        <br />
+        <div className={classes.instructionText}>
+          <br/><br/>
+          <Typography gutterBottom>Instruction text!</Typography>
+          <a
+            href={`/branding/${importType === 0 ? 'download_sam.xml' : 'download_sam.xls'}`}
+            download={importType === 0 ? 'Download sample.xml' : 'Download sample.xls'}
+            className={classes.sampleCsv}
+          >{importType === 0 ? 'Download sample.xml' : 'Download sample.xls'}</a>
+          <br />
+        </div>
       </DialogContent>
-      <Button
-        color="primary"
-        variant="outlined"
-        onClick={() => document.getElementById("import-button").click()}
-      >
-        CHOOSE FILE
-        <input
-          type="file"
-          accept={importTypes}
-          onChange={() => {
-            let fileData = document.getElementById("import-button").files[0];
-            if(fileData && fileData.name) {
-              setFile(fileData);
-              setDisabled(false);
-            }
-          }}
-          style={{ display: "none" }}
-          id="import-button"
-        />
-      </Button>
-      {file && file.name && <Typography variant="h6">&nbsp;{file.name}</Typography>}
-      <Button
-        color="primary"
-        disabled={disabled}
-        variant="contained"
-        onClick={() => {if(file) handleImportData(file)}}
-      >
-        UPLOAD
-      </Button>
+      <div className={classes.instructionText}>
+        <Button
+          color="primary"
+          variant="outlined"
+          className={classes.uploadButton}
+          onClick={() => document.getElementById("import-button").click()}
+        >
+          CHOOSE FILE
+          <input
+            type="file"
+            accept={importTypes}
+            onChange={() => {
+              let fileData = document.getElementById("import-button").files[0];
+              if(fileData && fileData.name) {
+                setFile(fileData);
+                setDisabled(false);
+              }
+            }}
+            style={{ display: "none" }}
+            id="import-button"
+          />
+        </Button>
+        {file && file.name && <Typography variant="h6">&nbsp;{file.name}</Typography>}
+        <Button
+          color="primary"
+          disabled={disabled}
+          variant="contained"
+          className={classes.uploadButton}
+          onClick={() => {if(file) handleImportData(file)}}
+        >
+          UPLOAD
+        </Button>
+        <br/>
+      </div>
     </Dialog>
   );
 }
