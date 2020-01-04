@@ -62,32 +62,38 @@ export default function ExportDialog ({
       <DialogTitle id="customized-dialog-title" onClose={() => setIsExporting(false)}>
         <Typography variant="h5">Export events</Typography>
       </DialogTitle>
-      <DialogContent dividers>
-        <Typography gutterBottom>Instruction text!</Typography>
-        <Typography gutterBottom display="inline">Export to </Typography>
-        <Select
-          label="Select file type"
-          id="demo-simple-select-placeholder-label"
-          className={classes.selectEmpty + " " + classes.selectExportType}
-          displayEmpty
-          value={exportType}
-          onChange={({ target: { value } }) => setExportType(value)}
-        >
-          {
-            ['MS Excel .xls', 'MS Project .xml', 'PDF document', 'PNG image'].map((menuTitle, idx) =>
-              <MenuItem key={`menu-${idx}`} value={idx}>{menuTitle}</MenuItem>
-            )
-          }
-        </Select>
+      <DialogContent>
+        <div className={classes.instructionTextExport}>
+          <br/>
+          <Typography gutterBottom>Instruction text!</Typography>
+          <br/>
+          <Typography gutterBottom display="inline">Export to </Typography>
+          <Select
+            label="Select file type"
+            id="demo-simple-select-placeholder-label"
+            className={classes.selectEmpty + " " + classes.selectExportType}
+            displayEmpty
+            value={exportType}
+            onChange={({ target: { value } }) => setExportType(value)}
+          >
+            {
+              ['MS Excel .xls', 'MS Project .xml', 'PDF document', 'PNG image'].map((menuTitle, idx) =>
+                <MenuItem key={`menu-${idx}`} value={idx}>{menuTitle}</MenuItem>
+              )
+            }
+          </Select>
+        </div><br/>
       </DialogContent>
       <Button
         autoFocus
+        className={classes.uploadButtonExport}
         onClick={() => handleDownload(exportType)}
         color="primary"
         variant="contained"
       >
         Download
       </Button>
+      <br/>
     </Dialog>
   );
 }

@@ -70,6 +70,23 @@ export const useStyles = makeStyles(theme => ({
   sampleCsv: {
     textDecoration: 'none',
     color: '#303f9f',
+  },
+  instructionText: {
+    marginLeft: 50,
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  instructionTextExport: {
+    marginLeft: 50,
+  },
+  uploadButton: {
+    width: 200,
+    marginBottom: 20,
+  },
+  uploadButtonExport: {
+    width: 200,
+    marginBottom: 20,
+    marginLeft: 50,
   }
 }));
 
