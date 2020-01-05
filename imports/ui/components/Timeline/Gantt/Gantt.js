@@ -119,6 +119,7 @@ const Gantt = props => {
       console.error('start', start);
       console.error('end', end);
       console.error('task', task);
+      return 'aaaaa';
     };
     // gantt.templates.rightside_text = (start, end, task) => task.type == gantt.config.types.milestone && task.eventType;
     gantt.templates.tooltip_text = (start, end, task) => {
