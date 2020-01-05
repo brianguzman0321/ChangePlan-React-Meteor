@@ -17,7 +17,7 @@ import Grid from "@material-ui/core/Grid/Grid";
 import CloseIcon from '@material-ui/icons/Close';
 
 import { styles, useStyles } from '../utils';
-import { importTypes } from '../constants';
+import { importTypes, INSTRUCTION_TEXT } from '../constants';
 
 const DialogTitle = withStyles(styles)(props => {
   const { children, classes, onClose, ...other } = props;
@@ -88,7 +88,7 @@ export default function ImportDialog ({
         </AppBar>
         <div className={classes.instructionText}>
           <br/><br/>
-          <Typography gutterBottom>Instruction text!</Typography>
+          <Typography gutterBottom>{INSTRUCTION_TEXT['import']}</Typography>
           <a
             href={`/branding/${importType === 0 ? 'download_sam.xml' : 'download_sam.xls'}`}
             download={importType === 0 ? 'Download sample.xml' : 'Download sample.xls'}

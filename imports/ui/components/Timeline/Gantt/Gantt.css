@@ -40,3 +40,8 @@
 .gantt_task_progress_drag {
     display: none !important;
 }
+
+.gantt_layout_cell .gantt_hor_scroll {
+    position: fixed;
+    bottom: 0px;
+}

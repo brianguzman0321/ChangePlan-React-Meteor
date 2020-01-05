@@ -15,6 +15,7 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 
 import { styles, useStyles } from '../utils';
+import { INSTRUCTION_TEXT } from '../constants';
 // import './ExportDialog.css';
 
 const DialogTitle = withStyles(styles)(props => {
@@ -65,7 +66,7 @@ export default function ExportDialog ({
       <DialogContent>
         <div className={classes.instructionTextExport}>
           <br/>
-          <Typography gutterBottom>Instruction text!</Typography>
+          <Typography gutterBottom>{INSTRUCTION_TEXT['export']}</Typography>
           <br/>
           <Typography gutterBottom display="inline">Export to </Typography>
           <Select
