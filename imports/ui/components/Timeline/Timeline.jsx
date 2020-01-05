@@ -40,8 +40,6 @@ function Timeline(props){
   const [edit, setEdit] = useState(false);
   const [data, setData] = useState({ data: [] });
   const [activityId, setActivityId] = useState(null);
-  console.error('activities', activities);
-  console.error('projects', projects);
 
   useEffect(() => {
     let tempData = [];

@@ -115,13 +115,10 @@ const Gantt = props => {
       return "";
     }
     gantt.templates.scale_cell_class = date => "grey-background";
-    gantt.templates.rightside_text = (start, end, task) => {
-      console.error('start', start);
-      console.error('end', end);
-      console.error('task', task);
-      return 'aaaaa';
-    };
-    // gantt.templates.rightside_text = (start, end, task) => task.type == gantt.config.types.milestone && task.eventType;
+    // gantt.templates.rightside_text = (start, end, task) => {
+    //   // return 'aaaaa';
+    // };
+    gantt.templates.rightside_text = (start, end, task) => task.type == gantt.config.types.milestone && task.eventType;
     gantt.templates.tooltip_text = (start, end, task) => {
       const { description } = task;
       if(description && description.length > 20)
