@@ -154,7 +154,9 @@ const Gantt = props => {
     switch(scaleText){
       case "quarter":
         gantt.config.scales = [
-          { unit: "month", step: 1, format: "%M" },
+          {
+            unit: "month", step: 1, format: "%M",
+          },
           { unit: "quarter", step: 1, format: date => {
               var dateToStr = gantt.date.date_to_str("%M, %Y");
               var endDate = gantt.date.add(gantt.date.add(date, 3, "month"), -1, "day");
