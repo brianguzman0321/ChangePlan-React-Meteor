@@ -535,14 +535,11 @@ function AddActivity(props) {
         <form onSubmit={createProject} noValidate>
           <DialogContent dividers>
             <div className={classes.root}>
-              <ExpansionPanel defaultExpanded
-                              expanded={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
-                              || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
-                              || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin) ? false : expanded}
-                              onChange={handleChangePanel('panel1')}
-                              disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
-                              || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
-                              || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}>
+              <ExpansionPanel
+                onChange={handleChangePanel('panel1')}
+                disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
+                || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
+                || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}>
                 <ExpansionPanelSummary
                   expandIcon={<ExpandMoreIcon/>}
                   aria-controls="panel2bh-content"
@@ -588,7 +585,7 @@ function AddActivity(props) {
                 </ExpansionPanelDetails>
               </ExpansionPanel>
 
-              <ExpansionPanel defaultExpanded disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
+              <ExpansionPanel disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
               || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
               || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}>
                 <ExpansionPanelSummary
@@ -679,9 +676,6 @@ function AddActivity(props) {
               </ExpansionPanel>
 
               <ExpansionPanel
-                defaultExpanded={!((isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
-                  || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
-                  || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin))}
                 disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
                 || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
                 || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}>
@@ -704,9 +698,6 @@ function AddActivity(props) {
               </ExpansionPanel>
 
               <ExpansionPanel
-                defaultExpanded={!((isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
-                  || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
-                  || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin))}
                 disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
                 || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
                 || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}>
@@ -734,9 +725,6 @@ function AddActivity(props) {
               </ExpansionPanel>
 
               <ExpansionPanel
-                defaultExpanded={!((isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
-                  || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
-                  || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin))}
                 disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
                 || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
                 || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}>

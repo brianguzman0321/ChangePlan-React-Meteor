@@ -126,10 +126,6 @@ const useStyles = makeStyles(theme => ({
     root: {
       background: 'red'
     }
-  },
-  dialogPaper: {
-    minHeight: '90vh',
-    maxHeight: '90vh',
   }
 }));
 
@@ -526,7 +522,7 @@ function AddActivity(props) {
         </Button> : ''
       }
       <Dialog onClose={handleOpenModalDialog} aria-labelledby="customized-dialog-title" open={open} maxWidth="md"
-              fullWidth={true} classes={{paper: classes.dialogPaper}}>
+              fullWidth={true}>
         <DialogTitle id="customized-dialog-title" onClose={handleOpenModalDialog}>
           {isNew ? 'Add' : 'Edit'} Activity
         </DialogTitle>
@@ -534,14 +530,14 @@ function AddActivity(props) {
           <DialogContent dividers>
             <div className={classes.root}>
 
-              <ExpansionPanel defaultExpanded
-                              expanded={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
-                              || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
-                              || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin) ? false : expanded}
-                              onChange={handleChangePanel('panel1')}
-                              disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
-                              || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
-                              || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}>
+            {/* expanded={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
+                || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
+                || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin) ? false : expanded} */}
+              <ExpansionPanel
+                onChange={handleChangePanel('panel1')}
+                disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
+                || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
+                || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}>
                 <ExpansionPanelSummary
                   expandIcon={<ExpandMoreIcon/>}
                   aria-controls="panel2bh-content"
@@ -587,7 +583,7 @@ function AddActivity(props) {
                 </ExpansionPanelDetails>
               </ExpansionPanel>
 
-              <ExpansionPanel defaultExpanded disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
+              <ExpansionPanel disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
               || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
               || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}>
                 <ExpansionPanelSummary
@@ -677,10 +673,10 @@ function AddActivity(props) {
                 </ExpansionPanelDetails>
               </ExpansionPanel>
 
-              <ExpansionPanel
-                defaultExpanded={!((isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
+              {/* defaultExpanded={!((isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
                   || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
-                  || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin))}
+                  || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin))} */}
+              <ExpansionPanel
                 disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
                 || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
                 || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}>
@@ -703,9 +699,6 @@ function AddActivity(props) {
               </ExpansionPanel>
 
               <ExpansionPanel
-                defaultExpanded={!((isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
-                  || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
-                  || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin))}
                 disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
                 || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
                 || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}>
@@ -733,9 +726,6 @@ function AddActivity(props) {
               </ExpansionPanel>
 
               <ExpansionPanel
-                defaultExpanded={!((isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
-                  || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
-                  || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin))}
                 disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
                 || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
                 || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}>
