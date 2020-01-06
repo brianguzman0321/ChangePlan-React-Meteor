@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { withStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
@@ -10,8 +9,8 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
-// import FormControl from '@material-ui/core/FormControl';
-// import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
 import CloseIcon from '@material-ui/icons/Close';
 
 import { styles, useStyles } from '../utils';
@@ -36,6 +35,7 @@ const DialogContent = withStyles(theme => ({
     padding: theme.spacing(2),
   },
 }))(MuiDialogContent);
+
 const DialogActions = withStyles(theme => ({
   root: {
     margin: 0,
@@ -43,7 +43,7 @@ const DialogActions = withStyles(theme => ({
   },
 }))(MuiDialogActions);
 
-export default function ExportDialog ({
+export default function ExportDialog({
   isExporting,
   setIsExporting,
   exportType,
@@ -65,25 +65,28 @@ export default function ExportDialog ({
       </DialogTitle>
       <DialogContent>
         <div className={classes.instructionTextExport}>
-          <br/>
+          <br />
           <Typography gutterBottom>{INSTRUCTION_TEXT['export']}</Typography>
-          <br/>
+          <br />
           <Typography gutterBottom display="inline">Export to </Typography>
-          <Select
-            label="Select file type"
-            id="demo-simple-select-placeholder-label"
-            className={classes.selectEmpty + " " + classes.selectExportType}
-            displayEmpty
-            value={exportType}
-            onChange={({ target: { value } }) => setExportType(value)}
-          >
-            {
-              ['MS Excel .xls', 'MS Project .xml', 'PDF document', 'PNG image'].map((menuTitle, idx) =>
-                <MenuItem key={`menu-${idx}`} value={idx}>{menuTitle}</MenuItem>
-              )
-            }
-          </Select>
-        </div><br/>
+          <FormControl className={classes.formControl}>
+            <InputLabel id="demo-simple-select-label" className={classes.placeholder}>Select file type</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              className={classes.selectEmpty + " " + classes.selectExportType}
+              displayEmpty
+              value={exportType}
+              onChange={({ target: { value } }) => setExportType(value)}
+            >
+              {
+                ['MS Excel .xlsx', 'MS Project .xml', 'PDF document', 'PNG image'].map((menuTitle, idx) =>
+                  <MenuItem key={`menu-${idx}`} value={idx}>{menuTitle}</MenuItem>
+                )
+              }
+            </Select>
+          </FormControl>
+        </div><br />
       </DialogContent>
       <Button
         autoFocus
@@ -94,7 +97,7 @@ export default function ExportDialog ({
       >
         Download
       </Button>
-      <br/>
+      <br />
     </Dialog>
   );
 }

@@ -87,7 +87,18 @@ export const useStyles = makeStyles(theme => ({
     width: 200,
     marginBottom: 20,
     marginLeft: 50,
-  }
+  },
+  formControl: {
+    marginTop: '-20px',
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+  placeholder: {
+    marginLeft: '20px'
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2),
+  },
 }));
 
 export function changeManagersNames({ changeManagerDetails }) {

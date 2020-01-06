@@ -197,7 +197,8 @@ function TopNavBar(props) {
   }
 
   function changeRoute(route) {
-    props.history.push(makeRoute())
+    window.location.reload(false);
+    props.history.push(makeRoute());
   }
 
   function handleChange1(event, value) {
