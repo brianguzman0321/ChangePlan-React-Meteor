@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-
 import { withStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
@@ -15,7 +14,6 @@ import SwipeableViews from 'react-swipeable-views';
 import FormControl from '@material-ui/core/FormControl';
 import Grid from "@material-ui/core/Grid/Grid";
 import CloseIcon from '@material-ui/icons/Close';
-
 import { styles, useStyles } from '../utils';
 import { importTypes, INSTRUCTION_TEXT } from '../constants';
 
@@ -90,10 +88,10 @@ export default function ImportDialog ({
           <br/><br/>
           <Typography gutterBottom>{INSTRUCTION_TEXT['import']}</Typography>
           <a
-            href={`/branding/${importType === 0 ? 'download_sam.xml' : 'download_sam.xls'}`}
-            download={importType === 0 ? 'Download sample.xml' : 'Download sample.xls'}
+            href={`/branding/${importType === 0 ? 'sample_events.xml' : 'sample_events.xlsx'}`}
+            download={importType === 0 ? 'Download sample_events.xml' : 'Download sample_events.xlsx'}
             className={classes.sampleCsv}
-          >{importType === 0 ? 'Download sample.xml' : 'Download sample.xls'}</a>
+          >{importType === 0 ? 'Download sample_events.xml' : 'Download sample_events.xlsx'}</a>
           <br />
         </div>
       </DialogContent>
@@ -109,11 +107,11 @@ export default function ImportDialog ({
             type="file"
             accept={importTypes}
             onChange={() => {
-              let fileData = document.getElementById("import-button").files[0];
-              if(fileData && fileData.name) {
-                setFile(fileData);
-                setDisabled(false);
-              }
+               let fileData = document.getElementById("import-button").files[0];
+               if(fileData && fileData.name) {
+                 setFile(fileData);
+                 setDisabled(false);
+               }
             }}
             style={{ display: "none" }}
             id="import-button"

@@ -70,7 +70,7 @@ const handleDownload = (exportType) => {
 export { handleDownload, handleImportData }
 
 const Gantt = props => {
-  this.savedTask = {};
+  savedTask = {};
   const { tasks, scaleText, setActivityId, setEdit, activities } = props;
 
   const updateTaskByDrag = (savedActivities, updatedTask) => {
@@ -137,14 +137,14 @@ const Gantt = props => {
     gantt.attachEvent("onAfterTaskDrag", (id, mode, e) => {
       //any custom logic here
       var updatedTask = gantt.getTask(id);
-      if (mode === 'move' && updatedTask !== this.savedTask) {
-        this.savedTask = updatedTask;
+      if (mode === 'move' && updatedTask !== savedTask) {
+        savedTask = updatedTask;
         updateTaskByDrag(gantt.activities, updatedTask);
       }
     });
     ////////
 
-    gantt.init(this.ganttContainer);
+    gantt.init(ganttContainer);
     gantt.parse(tasks);
   });
 
@@ -199,9 +199,11 @@ const Gantt = props => {
     gantt.render();
   }, [scaleText]);
 
+  console.error('tasks', tasks);
+
   return (
     <div
-      ref={(input) => { this.ganttContainer = input; }}
+      ref={(input) => { ganttContainer = input; }}
       style={{ width: '100%', height: '700px', marginTop: '30px' }}
     />
   )
