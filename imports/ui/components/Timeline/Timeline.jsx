@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { withRouter } from 'react-router';
 import { withTracker } from "meteor/react-meteor-data";
 import moment from "moment";
@@ -27,9 +27,9 @@ import AddActivity from '/imports/ui/components/Activities/Modals/AddActivity';
 import { useStyles, changeManagersNames } from './utils';
 import { scaleTypes, colors } from './constants';
 
-function Timeline(props){
-  let {match, projects, activities } = props;
-  let {projectId, templateId} = match.params;
+function Timeline(props) {
+  let { match, projects, activities } = props;
+  let { projectId, templateId } = match.params;
 
   const classes = useStyles();
   const [viewMode, setViewMode] = useState(0);
@@ -43,36 +43,73 @@ function Timeline(props){
 
   useEffect(() => {
     let tempData = [];
-    let i;
+    let i, j;
+    let min_date, max_date;
 
-    for(i = 0; i < activities.length; i ++) {
+    for (i = 0; i < activities.length; i++) {
       let type = activities[i].type;
       const defaultSteps = ["Awareness", "Preparedness", "Support"];
+      if (i === 0) {
+        min_date = activities[0].dueDate;
+        max_date = activities[0].dueDate;
+      } else {
+        min_date = activities[i].dueDate < min_date ? activities[i].dueDate : min_date;
+        max_date = activities[i].dueDate > max_date ? activities[i].dueDate : max_date;
+      }
       tempData.push({
         id: activities[i]._id,
-        eventType:activities[i].label || defaultSteps[activities[i].step-1],
+        eventType: activities[i].label || defaultSteps[activities[i].step - 1],
         text: type[0].toUpperCase() + type.slice(1),
-        start_date: moment(activities[i].dueDate).format("DD-MM-YYYY"), 
+        start_date: moment(activities[i].dueDate).format("DD-MM-YYYY"),
         duration: 1,
-        color: colors.activity[activities[i].step-1],
+        color: colors.activity[activities[i].step - 1],
         stakeholders: activities[i].stakeHolders.length,
         owner: activities[i].owner && activities[i].personResponsible
           ? `${activities[i].personResponsible.profile.firstName} ${activities[i].personResponsible.profile.lastName}`
           : null,
         completed: activities[i].completed,
         description: activities[i].description,
-      })
+      });
+    }
+    if (activities.length > 0) {
+      min_date = moment(min_date).format('DD-MM-YYYY');
+      max_date = moment(max_date).format('DD-MM-YYYY');
+      tempData.unshift({
+        id: 888,
+        eventType: 'Project Start',
+        text: 'Project Start',
+        start_date: min_date,
+        duration: 1,
+        color: 'grey',
+        stakeholders: '',
+        owner: '',
+        completed: false,
+        description: '',
+      });
+
+      tempData.push({
+        id: 999,
+        eventType: 'Project End',
+        text: 'Project End',
+        start_date: max_date,
+        duration: 1,
+        color: 'grey',
+        stakeholders: '',
+        owner: '',
+        completed: false,
+        description: '',
+      });
     }
 
-    if(projects[0]) {
+    if (projects[0]) {
       let owner = changeManagersNames(projects[0]);
       let impacts = projects[0] ? projects[0].impacts : [];
-      for(i = 0; i < impacts.length; i ++) {
+      for (i = 0; i < impacts.length; i++) {
         tempData.push({
-          id: `impacts #${i}`, 
+          id: `impacts #${i}`,
           eventType: 'Impact',
           text: `Impact: ${impacts[i].type}`,
-          start_date: moment(impacts[i].expectedDate).format("DD-MM-YYYY"), 
+          start_date: moment(impacts[i].expectedDate).format("DD-MM-YYYY"),
           duration: 1,
           color: colors.impact,
           stakeholders: impacts[i].stakeholders.length,
@@ -81,13 +118,13 @@ function Timeline(props){
         })
       }
 
-      let benefits = projects[0] ? projects[0].benefits:[];
-      for(i = 0; i < benefits.length; i ++) {
+      let benefits = projects[0] ? projects[0].benefits : [];
+      for (i = 0; i < benefits.length; i++) {
         tempData.push({
           id: `benefits #${i}`,
           eventType: 'Benefit',
           text: 'Stakeholder benefit',
-          start_date: moment(benefits[i].dueDate).format("DD-MM-YYYY"), 
+          start_date: moment(benefits[i].dueDate).format("DD-MM-YYYY"),
           duration: 1,
           color: colors.benefit,
           stakeholders: benefits[i].stakeholders.length,
@@ -96,8 +133,8 @@ function Timeline(props){
         })
       }
     }
-    if(!_.isEqual(data.data, tempData))
-      setData({data: tempData});
+    if (!_.isEqual(data.data, tempData))
+      setData({ data: tempData });
   }, [props]);
 
   return (
@@ -129,19 +166,19 @@ function Timeline(props){
               aria-label="icon tabs example"
               style={{ background: "white" }}
             >
-              <Tab className={classes.activityTab} label={<div className={classes.iconTab}><ViewColumnIcon/>&nbsp; Gantt</div>}/>
-              <Tab className={classes.activityTab} label={<div className={classes.iconTab}><ListIcon/>&nbsp; List</div>}/>
+              <Tab className={classes.activityTab} label={<div className={classes.iconTab}><ViewColumnIcon />&nbsp; Gantt</div>} />
+              <Tab className={classes.activityTab} label={<div className={classes.iconTab}><ListIcon />&nbsp; List</div>} />
             </Tabs>
           </Grid>
           <Grid className={classes.flexBox}>
-            <Button 
+            <Button
               color="primary"
               onClick={() => setIsImporting(true)}
             >
               Import
             </Button>
             <Button
-              color="primary" 
+              color="primary"
               onClick={() => setIsExporting(true)}
               style={{ marginLeft: "20px" }}
             >
@@ -210,8 +247,8 @@ const TimelinePage = withTracker(props => {
   //     name: local.search
   // });
   return {
-      activities : Activities.find().fetch(),
-      projects  : Projects.find(projectId).fetch(),
+    activities: Activities.find().fetch(),
+    projects: Projects.find(projectId).fetch(),
   };
 })(withRouter(Timeline));
 
