@@ -106,7 +106,7 @@ const Gantt = props => {
       { name: "stakeholders", label: "Stakeholders" },
       { name: "owner", label: "Owner" }
     ];
-    gantt.config.tooltip_timeout = 500;
+    gantt.config.tooltip_timeout = 200;
 
     // Gantt Template Styling //////////////////////
     gantt.templates.grid_header_class = (columnName, column) => "gantt-column-header";
@@ -155,14 +155,14 @@ const Gantt = props => {
     switch(scaleText){
       case "quarter":
         gantt.config.scales = [
-          {
-            unit: "month", step: 1, format: "%M",
-          },
           { unit: "quarter", step: 1, format: date => {
               var dateToStr = gantt.date.date_to_str("%M, %Y");
               var endDate = gantt.date.add(gantt.date.add(date, 3, "month"), -1, "day");
               return dateToStr(date) + " - " + dateToStr(endDate);
             },
+          },
+          {
+            unit: "month", step: 1, format: "%M",
           }
         ];
         gantt.config.scale_height = 50;
@@ -172,7 +172,7 @@ const Gantt = props => {
         gantt.config.scales = [
           {unit: "day", step: 1, format: "%d %M"}
         ];
-        gantt.config.scale_height = 27;
+        gantt.config.scale_height = 50;
         gantt.config.min_column_width = 80;
       break;
       case "week":
