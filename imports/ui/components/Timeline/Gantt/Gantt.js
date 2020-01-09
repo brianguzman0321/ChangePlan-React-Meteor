@@ -165,14 +165,14 @@ const Gantt = props => {
             unit: "month", step: 1, format: "%M",
           }
         ];
-        gantt.config.scale_height = 50;
+        gantt.config.scale_height = 40;
         gantt.config.min_column_width = 90;
       break;
       case "day":
         gantt.config.scales = [
           {unit: "day", step: 1, format: "%d %M"}
         ];
-        gantt.config.scale_height = 50;
+        gantt.config.scale_height = 40;
         gantt.config.min_column_width = 80;
       break;
       case "week":
@@ -185,7 +185,7 @@ const Gantt = props => {
             {unit: "week", step: 1, format: weekScaleTemplate},
             {unit: "day", step: 1, format: "%j %D"}
         ];
-        gantt.config.scale_height = 50;
+        gantt.config.scale_height = 40;
         gantt.config.min_column_width = 50;
       break;
       case "month":
@@ -193,7 +193,7 @@ const Gantt = props => {
           {unit: "month", step: 1, format: "%F, %Y"},
           {unit: "week", step: 1, format: "Week #%W"}
         ];
-        gantt.config.scale_height = 50;
+        gantt.config.scale_height = 40;
         gantt.config.min_column_width = 120;
       break;
     }
@@ -205,7 +205,7 @@ const Gantt = props => {
   return (
     <div
       ref={(input) => { ganttContainer = input; }}
-      style={{ width: '100%', height: '700px', marginTop: '30px' }}
+      style={{ width: '100%', height: '680px', marginTop: '30px' }}
     />
   )
 };
