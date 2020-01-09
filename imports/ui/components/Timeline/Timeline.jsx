@@ -43,19 +43,12 @@ function Timeline(props) {
 
   useEffect(() => {
     let tempData = [];
-    let i, j;
-    let min_date, max_date;
-
+    let i ;
+    let startingDate = projects[0] ? projects[0].startingDate : new Date();
+    let dueDate = projects[0] ? projects[0].endingDate : new Date();
     for (i = 0; i < activities.length; i++) {
       let type = activities[i].type;
       const defaultSteps = ["Awareness", "Preparedness", "Support"];
-      if (i === 0) {
-        min_date = activities[0].dueDate;
-        max_date = activities[0].dueDate;
-      } else {
-        min_date = activities[i].dueDate < min_date ? activities[i].dueDate : min_date;
-        max_date = activities[i].dueDate > max_date ? activities[i].dueDate : max_date;
-      }
       tempData.push({
         id: activities[i]._id,
         eventType: activities[i].label || defaultSteps[activities[i].step - 1],
@@ -72,13 +65,11 @@ function Timeline(props) {
       });
     }
     if (activities.length > 0) {
-      min_date = moment(min_date).format('DD-MM-YYYY');
-      max_date = moment(max_date).format('DD-MM-YYYY');
       tempData.unshift({
         id: 888,
         eventType: 'Project Start',
         text: 'Project Start',
-        start_date: min_date,
+        start_date: moment(startingDate).format('DD-MM-YYYY'),
         duration: 1,
         color: 'grey',
         stakeholders: '',
@@ -91,7 +82,7 @@ function Timeline(props) {
         id: 999,
         eventType: 'Project End',
         text: 'Project End',
-        start_date: max_date,
+        start_date: moment(dueDate).format('DD-MM-YYYY'),
         duration: 1,
         color: 'grey',
         stakeholders: '',
@@ -136,7 +127,7 @@ function Timeline(props) {
     if (!_.isEqual(data.data, tempData))
       setData({ data: tempData });
   }, [props]);
-
+  
   return (
     <div>
       <TopNavBar menus={config.menus} {...props} />
@@ -253,7 +244,7 @@ const TimelinePage = withTracker(props => {
   // });
   return {
     activities: Activities.find().fetch(),
-    projects: Projects.find(projectId).fetch(),
+    projects: Projects.find(projectId).fetch()
   };
 })(withRouter(Timeline));
 
