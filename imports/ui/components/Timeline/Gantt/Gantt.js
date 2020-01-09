@@ -163,7 +163,7 @@ const Gantt = props => {
           },
           {
             unit: "month", step: 1, format: "%M",
-          }
+          },
         ];
         gantt.config.scale_height = 40;
         gantt.config.min_column_width = 90;
