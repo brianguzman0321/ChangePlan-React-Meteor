@@ -23,8 +23,6 @@ import ExportDialog from './Dialog/ExportDialog';
 import ImportDialog from './Dialog/ImportDialog';
 import TopNavBar from '/imports/ui/components/App/App';
 import AddActivity from '/imports/ui/components/Activities/Modals/AddActivity';
-import AddActivity2 from '/imports/ui/components/Activities/Modals/AddActivity2';
-import AddActivity3 from '/imports/ui/components/Activities/Modals/AddActivity3';
 
 import { useStyles, changeManagersNames } from './utils';
 import { scaleTypes, colors } from './constants';
