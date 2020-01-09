@@ -232,6 +232,11 @@ function Timeline(props) {
           isOpen={false}
           type={templateId && 'template' || projectId && 'project'}
           match={match}
+          expandAccordian1={false}
+          expandAccordian2={false}
+          expandAccordian3={false}
+          expandAccordian4={false}
+          expandAccordian5={false}
         />
       </Grid>
     </div>
