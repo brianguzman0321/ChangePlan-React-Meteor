@@ -200,7 +200,7 @@ const Gantt = props => {
     gantt.render();
   }, [scaleText]);
 
-  console.error('tasks', tasks);
+  
 
   return (
     <div
