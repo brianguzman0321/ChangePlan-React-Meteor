@@ -106,7 +106,7 @@ const Gantt = props => {
       { name: "stakeholders", label: "Stakeholders" },
       { name: "owner", label: "Owner" }
     ];
-    gantt.config.tooltip_timeout = 500;
+    gantt.config.tooltip_timeout = 200;
 
     // Gantt Template Styling //////////////////////
     gantt.templates.grid_header_class = (columnName, column) => "gantt-column-header";
