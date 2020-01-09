@@ -23,9 +23,12 @@ import ExportDialog from './Dialog/ExportDialog';
 import ImportDialog from './Dialog/ImportDialog';
 import TopNavBar from '/imports/ui/components/App/App';
 import AddActivity from '/imports/ui/components/Activities/Modals/AddActivity';
+import AddActivity2 from '/imports/ui/components/Activities/Modals/AddActivity2';
+import AddActivity3 from '/imports/ui/components/Activities/Modals/AddActivity3';
 
 import { useStyles, changeManagersNames } from './utils';
 import { scaleTypes, colors } from './constants';
+
 
 function Timeline(props) {
   let { match, projects, activities } = props;
@@ -40,15 +43,17 @@ function Timeline(props) {
   const [edit, setEdit] = useState(false);
   const [data, setData] = useState({ data: [] });
   const [activityId, setActivityId] = useState(null);
+  const [activity, setActivity] = useState({});
+  const [eventType, setEventType] = useState('');
 
   useEffect(() => {
     let tempData = [];
     let i ;
+    const defaultSteps = ["Awareness", "Preparedness", "Support"];
     let startingDate = projects[0] ? projects[0].startingDate : new Date();
     let dueDate = projects[0] ? projects[0].endingDate : new Date();
     for (i = 0; i < activities.length; i++) {
       let type = activities[i].type;
-      const defaultSteps = ["Awareness", "Preparedness", "Support"];
       tempData.push({
         id: activities[i]._id,
         eventType: activities[i].label || defaultSteps[activities[i].step - 1],
@@ -126,7 +131,16 @@ function Timeline(props) {
     }
     if (!_.isEqual(data.data, tempData))
       setData({ data: tempData });
+
   }, [props]);
+
+  useEffect(() => {
+    const defaultSteps = ["Awareness", "Preparedness", "Support"];
+    const activity = activities.find(({ _id }) => _id === activityId) || {};
+    setActivity(activity);
+    setEventType(activity.label || defaultSteps[activity.step - 1]);
+  }, [activityId])
+
   
   return (
     <div>
@@ -215,9 +229,9 @@ function Timeline(props) {
           handleImportData={handleImportData}
         />
         {/* {(isAdmin && template && (template.companyId === companyId)) || isSuperAdmin ? */}
-        <AddActivity
+        {(eventType==="Awareness") ? (<AddActivity
           edit={edit}
-          activity={activities.find(({ _id }) => _id === activityId) || {}}
+          activity={activity}
           newActivity={() => setEdit(false)}
           list={true}
           isOpen={false}
@@ -228,7 +242,35 @@ function Timeline(props) {
           expandAccordian3={false}
           expandAccordian4={false}
           expandAccordian5={false}
-        />
+        />) : null}
+        {(eventType==="Preparedness") ? (<AddActivity2
+          edit={edit}
+          activity={activity}
+          newActivity={() => setEdit(false)}
+          list={true}
+          isOpen={false}
+          type={templateId && 'template' || projectId && 'project'}
+          match={match}
+          expandAccordian1={false}
+          expandAccordian2={false}
+          expandAccordian3={false}
+          expandAccordian4={false}
+          expandAccordian5={false}
+        />) : null}
+        {(eventType==="Support") ? (<AddActivity3
+          edit={edit}
+          activity={activity}
+          newActivity={() => setEdit(false)}
+          list={true}
+          isOpen={false}
+          type={templateId && 'template' || projectId && 'project'}
+          match={match}
+          expandAccordian1={false}
+          expandAccordian2={false}
+          expandAccordian3={false}
+          expandAccordian4={false}
+          expandAccordian5={false}
+        />) : null}
       </Grid>
     </div>
   )
