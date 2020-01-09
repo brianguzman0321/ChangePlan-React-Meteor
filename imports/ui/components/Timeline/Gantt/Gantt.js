@@ -92,7 +92,6 @@ const Gantt = props => {
   }
 
   useEffect(() => {
-    console.log({tasks});
     if(
       Roles.userIsInRole(Meteor.userId(), 'manager') ||
       Roles.userIsInRole(Meteor.userId(), 'activityOwner')
