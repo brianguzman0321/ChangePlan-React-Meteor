@@ -38,6 +38,10 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(2),
   },
   topTexts: {
+    [theme.breakpoints.only('md')]: {
+      paddingRight: theme.spacing(2),
+      paddingLeft: theme.spacing(2),
+    },
     paddingRight: theme.spacing(4),
     paddingLeft: theme.spacing(4),
     color: '#465563',
@@ -213,7 +217,6 @@ function TopNavBar(props) {
           break;
         case 2:
           props.history.push(`/projects/${projectId}/activities`);
-
           break;
         case 3:
           props.history.push(`/projects/${projectId}/stake-holders`);
@@ -231,7 +234,7 @@ function TopNavBar(props) {
         props.history.push(`/templates/${templateId}`);
         break;
       case 1:
-        props.history.push(`/templates/${templateId}/timeline`)
+        props.history.push(`/templates/${templateId}/timeline`);
         break;
       case 2:
         props.history.push(`/templates/${templateId}/activities`);

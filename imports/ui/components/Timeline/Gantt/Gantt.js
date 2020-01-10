@@ -76,9 +76,9 @@ const Gantt = props => {
   const updateTaskByDrag = (savedActivities, updatedTask) => {
     const validActivity = savedActivities.find(item => item['_id'] === updatedTask['id']);
     if (!validActivity) return;
-
     let params = {};
     params.activity = validActivity;
+    delete params.activity.personResponsible;
     params.activity['dueDate'] = updatedTask.start_date;
     params.activity['updatedAt'] = updatedTask.end_date;
 

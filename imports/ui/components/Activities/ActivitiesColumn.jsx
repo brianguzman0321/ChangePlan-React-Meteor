@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from "react";
-import {makeStyles} from '@material-ui/core/styles';
+import {makeStyles, withStyles} from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardContent from '@material-ui/core/CardContent';
+import MuiCardContent from '@material-ui/core/CardContent';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
+import MuiCardHeader from '@material-ui/core/CardHeader';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
@@ -25,6 +25,21 @@ import {withSnackbar} from "notistack";
 
 
 var sActivity = {};
+
+const CardHeader = withStyles({
+  root: {
+    padding: '5px 10px 10px 10px',
+  },
+  avatar: {
+      marginRight: '8px'
+  }
+})(MuiCardHeader);
+
+const CardContent = withStyles({
+  root: {
+    padding: '8px'
+  }
+})(MuiCardContent);
 
 const useStyles = makeStyles(theme => ({
   cardAwareness: {
@@ -146,12 +161,13 @@ const useStyles = makeStyles(theme => ({
   },
   cardContent: {
     boxShadow: 'none',
+    padding: '8px',
   },
   floatRight: {
     float: 'right'
   },
   cardHeader: {
-    paddingBottom: 0
+    paddingBottom: 0,
   }
 }));
 
@@ -345,22 +361,22 @@ function ActivitiesColumn(props) {
                 </IconButton>
               }
               title={
-                <Typography variant="subtitle1">
+                <Typography variant="body2" style={{fontSize: '13px'}}>
                   {activity.name}
                 </Typography>
               }
             />
 
             <CardContent className={classes.innerCardContent}>
-              <Typography variant="body2" color="textSecondary" component="p">
+              <Typography variant="body2" style={{fontSize: '13px'}} color="textSecondary" component="p">
                 {stringHelpers.limitCharacters(activity.description, 50)}
               </Typography>
               <br/>
               <Grid container justify="space-between">
-                <Typography variant="body2" color="textSecondary" component="p">
+                <Typography variant="body2" style={{fontSize: '13px'}} color="textSecondary" component="p">
                   {moment(activity.dueDate).format('DD MMM')}
                 </Typography>
-                <Typography variant="body2" color="textSecondary" component="p">
+                <Typography variant="body2" style={{fontSize: '13px'}} color="textSecondary" component="p">
                   {activity.personResponsible !== undefined ? `${activity.personResponsible.profile.firstName} ${activity.personResponsible.profile.lastName}` : ''}
                 </Typography>
               </Grid>

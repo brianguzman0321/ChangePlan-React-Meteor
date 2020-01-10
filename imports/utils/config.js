@@ -2,7 +2,7 @@ export default config = {
   menus: [
     {
       show: true,
-      name: 'dashboard',
+      name: 'project',
       value: 0,
     },
     {
@@ -12,7 +12,7 @@ export default config = {
     },
     {
       show: true,
-      name: 'activities',
+      name: 'phases',
       value: 2,
     },
     {
