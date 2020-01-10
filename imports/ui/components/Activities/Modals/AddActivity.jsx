@@ -159,7 +159,7 @@ const DialogActions = withStyles(theme => ({
 function AddActivity(props) {
   let {
     company, stakeHolders, local, project, match, edit, activity, list, isOpen, currentChangeManager,
-    template, type, stakeHoldersTemplate, isSuperAdmin, isAdmin, isChangeManager, isManager, expandAccordian1, expandAccordian2, expandAccordian3, expandAccordian4, expandAccordian5
+    template, type, stakeHoldersTemplate, isSuperAdmin, isAdmin, isChangeManager, isManager, expandAccordian
   } = props;
   const [open, setOpen] = useState(edit || isOpen || false);
   const [deleteModal, setDeleteModal] = useState(false);
@@ -181,11 +181,11 @@ function AddActivity(props) {
   const [endingDate, setEndingDate] = useState(new Date());
   const [endingDateOpen, setEndingDateOpen] = useState(false);
   const [dueDateOpen, setDueDateOpen] = useState(false);
-  const [expanded1, setExpanded1] = useState(expandAccordian1);
-  const [expanded2, setExpanded2] = useState(expandAccordian2);
-  const [expanded3, setExpanded3] = useState(expandAccordian3);
-  const [expanded4, setExpanded4] = useState(expandAccordian4);
-  const [expanded5, setExpanded5] = useState(expandAccordian5);
+  const [expanded1, setExpanded1] = useState(expandAccordian);
+  const [expanded2, setExpanded2] = useState(expandAccordian);
+  const [expanded3, setExpanded3] = useState(expandAccordian);
+  const [expanded4, setExpanded4] = useState(expandAccordian);
+  const [expanded5, setExpanded5] = useState(expandAccordian);
   const [showModalDialog, setShowModalDialog] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
@@ -322,11 +322,11 @@ function AddActivity(props) {
       getProjectManager();
     }
     if (edit && activity && activity.name) {
-      setExpanded1(expandAccordian1);
-      setExpanded2(expandAccordian2);
-      setExpanded3(expandAccordian3);
-      setExpanded4(expandAccordian4);
-      setExpanded5(expandAccordian5);
+      setExpanded1(expandAccordian);
+      setExpanded2(expandAccordian);
+      setExpanded3(expandAccordian);
+      setExpanded4(expandAccordian);
+      setExpanded5(expandAccordian);
       updateValues();
     }
   }, [props.company, stakeHolders, company, props.edit, props.activity, isNew, local]);
@@ -545,7 +545,7 @@ function AddActivity(props) {
                 || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
                 || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin) ? false : expanded} */}
               <ExpansionPanel
-                square expanded={expanded1 === 'panel1'}
+                square expanded={expanded1}
                 onChange={handleChangePanel('panel1')}
                 disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
                 || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
@@ -596,7 +596,7 @@ function AddActivity(props) {
               </ExpansionPanel>
 
               <ExpansionPanel 
-               square expanded={expanded2 === 'panel2'}
+               square expanded={expanded2}
                onChange={handleChangePanel('panel2')}
               disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
               || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
@@ -692,7 +692,7 @@ function AddActivity(props) {
                   || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
                   || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin))} */}
               <ExpansionPanel
-                square expanded={expanded3 === 'panel3'}
+                square expanded={expanded3}
                 onChange={handleChangePanel('panel3')}
                 disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
                 || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
@@ -716,7 +716,7 @@ function AddActivity(props) {
               </ExpansionPanel>
 
               <ExpansionPanel
-                square expanded={expanded4 === 'panel4'}
+                square expanded={expanded4}
                 onChange={handleChangePanel('panel4')}
                 disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
                 || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
@@ -745,7 +745,7 @@ function AddActivity(props) {
               </ExpansionPanel>
 
               <ExpansionPanel
-                square expanded={expanded5 === 'panel5'}
+                square expanded={expanded5}
                 onChange={handleChangePanel('panel5')}
                 disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
                 || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)

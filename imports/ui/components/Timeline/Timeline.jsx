@@ -237,11 +237,7 @@ function Timeline(props) {
           isOpen={false}
           type={templateId && 'template' || projectId && 'project'}
           match={match}
-          expandAccordian1={false}
-          expandAccordian2={false}
-          expandAccordian3={false}
-          expandAccordian4={false}
-          expandAccordian5={false}
+          expandAccordian={false}
         />) : null}
         {(eventType==="Preparedness") ? (<AddActivity2
           edit={edit}
@@ -251,11 +247,7 @@ function Timeline(props) {
           isOpen={false}
           type={templateId && 'template' || projectId && 'project'}
           match={match}
-          expandAccordian1={false}
-          expandAccordian2={false}
-          expandAccordian3={false}
-          expandAccordian4={false}
-          expandAccordian5={false}
+          expandAccordian={false}
         />) : null}
         {(eventType==="Support") ? (<AddActivity3
           edit={edit}
@@ -265,11 +257,7 @@ function Timeline(props) {
           isOpen={false}
           type={templateId && 'template' || projectId && 'project'}
           match={match}
-          expandAccordian1={false}
-          expandAccordian2={false}
-          expandAccordian3={false}
-          expandAccordian4={false}
-          expandAccordian5={false}
+          expandAccordian={false}
         />) : null}
       </Grid>
     </div>
