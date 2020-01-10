@@ -274,6 +274,7 @@ function AWARENESSCard(props) {
           </Card>
         })
         }
+        
           <AddActivity edit={edit} match={match}
                        currentChangeManager={changeManager}
                        isChangeManager={isChangeManager} isManager={isManager}
