@@ -284,11 +284,7 @@ function AWARENESSCard(props) {
                        activity={sActivity}
                        template={template}
                        type={type}
-                       expandAccordian1={'panel1'}
-                       expandAccordian2={'panel2'}
-                       expandAccordian3={'panel3'}
-                       expandAccordian4={'panel4'}
-                       expandAccordian5={'panel5'}
+                       expandAccordian={true}
                        newActivity={() => setEdit(false)}/>
       </CardContent>
     </Card>

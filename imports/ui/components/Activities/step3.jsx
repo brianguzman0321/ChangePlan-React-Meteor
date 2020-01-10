@@ -283,11 +283,7 @@ function AWARENESSCard(props) {
                        isAdmin={isAdmin} isSuperAdmin={isSuperAdmin}
                        activity={sActivity}
                        type={type}
-                       expandAccordian1={'panel1'}
-                       expandAccordian2={'panel2'}
-                       expandAccordian3={'panel3'}
-                       expandAccordian4={'panel4'}
-                       expandAccordian5={'panel5'}
+                       expandAccordian={true}
                        activity={sActivity}
                        newActivity={() => setEdit(false)}/>
       </CardContent>
