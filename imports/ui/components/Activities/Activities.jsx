@@ -287,7 +287,7 @@ const ActivitiesPage = withTracker(props => {
   Meteor.subscribe('compoundActivities', projectId);
   Meteor.subscribe('compoundActivitiesTemplate', templateId);
   return {
-    activities: Activities.find().fetch(),
+    activities: Activities.find({projectId: projectId || templateId}).fetch(),
     template: Templates.findOne({_id: templateId}),
     activitiesProject: Activities.find({projectId: projectId}).fetch(),
     activitiesTemplate: Activities.find({templateId: templateId}).fetch(),
