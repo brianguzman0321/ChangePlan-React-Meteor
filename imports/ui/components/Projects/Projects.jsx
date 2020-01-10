@@ -29,8 +29,6 @@ import {Meteor} from "meteor/meteor";
 const useStyles = makeStyles(theme => ({
   card: {
     minHeight: 192,
-    minWidth: 300,
-    maxWidth: 295,
     marginTop: 23,
     marginLeft: 30,
     color: '#465563',
@@ -135,7 +133,11 @@ const useStyles = makeStyles(theme => ({
   },
   grid: {
     margin: -5,
-    marginTop: 5
+    marginTop: 5,
+    [theme.breakpoints.only('lg')]: {
+      maxWidth: '24.5%',
+      flexBasis: '25%',
+    },
   },
   cardContent: {
     paddingTop: 0,
@@ -165,7 +167,6 @@ function ProjectCard(props) {
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isChangeManager, setIsChangeManager] = useState(false);
-
 
   useEffect(() => {
     if (currentCompany) {
@@ -236,20 +237,20 @@ function ProjectCard(props) {
   };
 
 
-/*  if (projects && projects.length) {
-    projects = projects.map(project => {
-      const peoples = Peoples.find({
-        '_id': {
-          $in: project.stakeHolders
-        }
-      }).fetch();
+  /*  if (projects && projects.length) {
+      projects = projects.map(project => {
+        const peoples = Peoples.find({
+          '_id': {
+            $in: project.stakeHolders
+          }
+        }).fetch();
 
-      return {
-        ...project,
-        stakeHolders: peoples.map(people => people._id),
-      }
-    });
-  }*/
+        return {
+          ...project,
+          stakeHolders: peoples.map(people => people._id),
+        }
+      });
+    }*/
 
   const useStyles1 = makeStyles(theme => ({
     title: {
@@ -316,7 +317,8 @@ function ProjectCard(props) {
             </IconButton>
           </Grid>
           <Grid item xs={4} className={(isAdmin || isSuperAdmin || isChangeManager) ? classes.secondTab : null}>
-            {(isAdmin || isSuperAdmin || isChangeManager) && <NewProject {...props} className={classes.createNewProject}/>}
+            {(isAdmin || isSuperAdmin || isChangeManager) &&
+            <NewProject {...props} className={classes.createNewProject}/>}
             <Typography color="textSecondary" variant="title" className={classes.sortBy}>
               Sort by
             </Typography>
@@ -349,63 +351,69 @@ function ProjectCard(props) {
               alignItems="center"
               className={classes.gridContainer}
               spacing={0}>
-          <ProjectNavBar {...props} selectedTab={selectedTab} handleChange={changeTab} templates={templates} isSuperAdmin={isSuperAdmin}
+          <ProjectNavBar {...props} selectedTab={selectedTab} handleChange={changeTab} templates={templates}
+                         isSuperAdmin={isSuperAdmin}
                          isAdmin={isAdmin} currentCompanyId={currentCompanyId} isChangeManager={isChangeManager}/>
         </Grid>
-        {projects.map((project, index) => {
-          return <Grid item xs spacing={1} key={index} className={classes.grid}>
-            <Card className={classes.card} onClick={(e) => selectProject(project)}>
-              <LinearProgress variant="determinate"
-                              value={project.totalActivities > 0 ? parseInt((100 * project.completedActivities) / project.totalActivities) : 0}
-                              color="primary"/>
-              <CardHeader
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                }}
-                action={<ProjectMenus project={project} company={company}/>}
-                classes={classes1}
-                style={{cursor: "auto"}}
-                title={projectName(project.name)}
-              />
-              <CardContent className={classes.cardContent}>
-                <Grid container>
-                  <Grid item xs={4}>
-                    <Typography className={classes.title} gutterBottom>
-                      STAKEHOLDERS
-                    </Typography>
-                    <Typography className={classes.pos} color="textSecondary">
-                      {project.stakeHolders.length}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={4} className={classes.activities}>
-                    <Typography className={classes.title} gutterBottom>
-                      ACTIVITIES
-                    </Typography>
-                    <Typography className={classes.pos} color="textSecondary">
-                      {project.totalActivities || 0}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={4}>
-                    <Typography className={classes.title} gutterBottom>
-                      DUE
-                    </Typography>
-                    <Typography className={classes.pos} color="textSecondary">
-                      {moment(project.endingDate).format('DD-MMM-YY')}
-                    </Typography>
-                  </Grid>
+        <Grid container
+              direction="row"
+              justify="flex-start"
+              alignItems="flex-start">
+          {projects.map((project, index) => {
+            return <Grid item xs={12} md={4} sm={6} lg={2} xl={2} key={index} className={classes.grid}>
+              <Card className={classes.card} onClick={(e) => selectProject(project)}>
+                <LinearProgress variant="determinate"
+                                value={project.totalActivities > 0 ? parseInt((100 * project.completedActivities) / project.totalActivities) : 0}
+                                color="primary"/>
+                <CardHeader
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                  }}
+                  action={<ProjectMenus project={project} company={company}/>}
+                  classes={classes1}
+                  style={{cursor: "auto"}}
+                  title={projectName(project.name)}
+                />
+                <CardContent className={classes.cardContent}>
+                  <Grid container>
+                    <Grid item xs={4}>
+                      <Typography className={classes.title} gutterBottom>
+                        STAKEHOLDERS
+                      </Typography>
+                      <Typography className={classes.pos} color="textSecondary">
+                        {project.stakeHolders.length}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={4} className={classes.activities}>
+                      <Typography className={classes.title} gutterBottom>
+                        ACTIVITIES
+                      </Typography>
+                      <Typography className={classes.pos} color="textSecondary">
+                        {project.totalActivities || 0}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={4}>
+                      <Typography className={classes.title} gutterBottom>
+                        DUE
+                      </Typography>
+                      <Typography className={classes.pos} color="textSecondary">
+                        {moment(project.endingDate).format('DD-MMM-YY')}
+                      </Typography>
+                    </Grid>
 
-                </Grid>
-                <Typography variant="body2" component="p" className={classes.bottomText}>
-                  {project.changeManagers.length > 1 ? "CHANGE MANAGERS" : "CHANGE MANAGER"}
-                  <br/>
-                  {ChangeManagersNames(project)}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        })
-        }
+                  </Grid>
+                  <Typography variant="body2" component="p" className={classes.bottomText}>
+                    {project.changeManagers.length > 1 ? "CHANGE MANAGERS" : "CHANGE MANAGER"}
+                    <br/>
+                    {ChangeManagersNames(project)}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          })
+          }
+        </Grid>
       </Grid>
       {!projects.length &&
       <Grid

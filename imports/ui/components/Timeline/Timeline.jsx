@@ -29,15 +29,19 @@ import AddActivity3 from '/imports/ui/components/Activities/Modals/AddActivity3'
 import {useStyles, changeManagersNames} from './utils';
 import {scaleTypes, colors} from './constants';
 import AddActivities from "../Activities/Modals/AddActivities";
+import ListView from "../Activities/ListView";
+import {Templates} from "../../../api/templates/templates";
+import {Companies} from "../../../api/companies/companies";
 
 
 function Timeline(props) {
-  let {match, projects, activities} = props;
+  let {match, projects, activities, currentCompany, template, project, company} = props;
   let {projectId, templateId} = match.params;
 
   const classes = useStyles();
   const [viewMode, setViewMode] = useState(0);
   const [zoomMode, setZoomMode] = useState(1);
+  const [type, setType] = useState(templateId && 'template' || projectId && 'project');
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
   const [exportType, setExportType] = useState(null);
@@ -46,6 +50,50 @@ function Timeline(props) {
   const [activityId, setActivityId] = useState(null);
   const [activity, setActivity] = useState({});
   const [eventType, setEventType] = useState('');
+  const [currentCompanyId, setCompanyId] = useState(null);
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isChangeManager, setIsChangeManager] = useState(false);
+  const [isManager, setIsManager] = useState(false);
+
+
+  useEffect(() => {
+    checkRoles();
+  }, [currentCompany, company, template, project]);
+
+  useEffect(() => {
+    if (currentCompany) {
+      setCompanyId(currentCompany._id);
+    }
+  }, [currentCompany, template, project]);
+
+  const checkRoles = () => {
+    const userId = Meteor.userId();
+    if (Roles.userIsInRole(userId, 'superAdmin')) {
+      setIsSuperAdmin(true);
+    }
+    if (currentCompany && currentCompany.admins.includes(userId)) {
+      setIsAdmin(true);
+    }
+    if (currentCompany) {
+      const projectsCurCompany = Projects.find({companyId: currentCompany._id}).fetch();
+      if (projectsCurCompany) {
+        const changeManagers = [...new Set([].concat.apply([], projectsCurCompany.map(project => project.changeManagers)))];
+        if (changeManagers.includes(userId)) {
+          setIsChangeManager(true);
+        }
+      }
+    }
+    if (currentCompany) {
+      const projectsCurCompany = Projects.find({companyId: currentCompany._id}).fetch();
+      if (projectsCurCompany) {
+        const managers = [...new Set([].concat.apply([], projectsCurCompany.map(project => project.managers)))];
+        if (managers.includes(userId)) {
+          setIsManager(true);
+        }
+      }
+    }
+  };
 
   useEffect(() => {
     let tempData = [];
@@ -140,7 +188,7 @@ function Timeline(props) {
     const activity = activities.find(({_id}) => _id === activityId) || {};
     setActivity(activity);
     setEventType(activity.label || defaultSteps[activity.step - 1]);
-  }, [activityId])
+  }, [activityId]);
 
 
   return (
@@ -178,6 +226,7 @@ function Timeline(props) {
                    label={<div className={classes.iconTab}><ListIcon/>&nbsp; List</div>}/>
             </Tabs>
           </Grid>
+          {viewMode === 0 &&
           <Grid className={classes.flexBox}>
             <Button
               color="primary"
@@ -211,28 +260,31 @@ function Timeline(props) {
               )}
             </Tabs>
           </Grid>
+          }
         </Grid>
-        <Gantt
-          tasks={data}
-          scaleText={scaleTypes[zoomMode]}
-          setActivityId={setActivityId}
-          setEdit={setEdit}
-          activities={activities}
-        />
-        <ExportDialog
+        {viewMode === 0 ?
+          <Grid container>
+          <Gantt
+            tasks={data}
+            scaleText={scaleTypes[zoomMode]}
+            setActivityId={setActivityId}
+            setEdit={setEdit}
+            activities={activities}
+          />
+          <ExportDialog
           isExporting={isExporting}
           setIsExporting={setIsExporting}
           exportType={exportType}
           setExportType={setExportType}
           handleDownload={handleDownload}
-        />
-        <ImportDialog
+          />
+          <ImportDialog
           isImporting={isImporting}
           setIsImporting={setIsImporting}
           handleImportData={handleImportData}
-        />
+          />
         {/* {(isAdmin && template && (template.companyId === companyId)) || isSuperAdmin ? */}
-        <AddActivities
+          <AddActivities
           edit={edit}
           step={(eventType === "Awareness") ? 1 : (eventType === "Preparedness") ? 2 : (eventType === "Support") ? 3 : null}
           activity={activity}
@@ -243,7 +295,14 @@ function Timeline(props) {
           match={match}
           expandAccordian={false}
           color={eventType === "Awareness" ? '#f1753e' : eventType === "Preparedness" ? '#53cbd0' : eventType === "Support" ? '#bbabd2' : null}
-        />
+          />
+          </Grid> :
+          <ListView rows={type === 'project' ? props.activities : props.activitiesTemplate} addNew={false} type={type}
+          isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
+          isChangeManager={isChangeManager} isManager={isManager}
+          project={project} projectId={projectId} companyId={currentCompanyId}
+          template={template} match={match}/>
+        }
       </Grid>
     </div>
   )
@@ -251,15 +310,37 @@ function Timeline(props) {
 
 const TimelinePage = withTracker(props => {
   let {match} = props;
-  let {projectId} = match.params;
+  let {projectId, templateId} = match.params;
+  let userId = Meteor.userId();
+  let currentCompany = {};
+  Meteor.subscribe('projects');
+  Meteor.subscribe('templates');
+  const project = Projects.findOne({_id: projectId});
+  const template = Templates.findOne({_id: templateId});
+  Meteor.subscribe('companies');
+  const companies = Companies.find({}).fetch();
+  const company = Companies.findOne({_id: project && project.companyId || template && template.companyId});
+  if (!company) {
+    currentCompany = companies.find(_company => _company.peoples.includes(userId));
+  } else {
+    currentCompany = company;
+  }
   Meteor.subscribe('compoundActivities', projectId);
+  Meteor.subscribe('compoundActivitiesTemplate', templateId);
   // Meteor.subscribe('myProjects', null, {
   //     sort: local.sort || {},
   //     name: local.search
   // });
   return {
-    activities: Activities.find().fetch(),
-    projects: Projects.find(projectId).fetch()
+    activities: Activities.find({projectId: projectId || templateId}).fetch(),
+    template: Templates.findOne({_id: templateId}),
+    projects: Projects.find(projectId).fetch(),
+    activitiesProject: Activities.find({projectId: projectId}).fetch(),
+    activitiesTemplate: Activities.find({templateId: templateId}).fetch(),
+    templates: Templates.find({}).fetch(),
+    companies: Companies.find({}).fetch(),
+    company,
+    currentCompany,
   };
 })(withRouter(Timeline));
 

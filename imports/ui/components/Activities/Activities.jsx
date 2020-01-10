@@ -21,7 +21,7 @@ import {Templates} from "../../../api/templates/templates";
 import {Projects} from "../../../api/projects/projects";
 import {Companies} from "../../../api/companies/companies";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   root: {
     // flexGrow: 1,
     // maxWidth: 400,
@@ -59,6 +59,24 @@ const useStyles = makeStyles({
     color: '#465563',
     marginLeft: 24,
   },
+  gridColumn: {
+    [theme.breakpoints.only('xl')]: {
+      flexBasis: '19.5%',
+      maxWidth: '20%',
+    },
+    [theme.breakpoints.only('lg')]: {
+        flexBasis: '19.5%',
+        maxWidth: '20%',
+      },
+    [theme.breakpoints.only('md')]: {
+      flexBasis: '48.8%',
+      maxWidth: '49%',
+    },
+    [theme.breakpoints.only('sm')]: {
+      flexBasis: '48%',
+      maxWidth: '49%',
+    },
+  },
   gridContainer: {
     // marginBottom: 15,
     overFlow: 'hidden'
@@ -66,7 +84,7 @@ const useStyles = makeStyles({
   topBar: {
     marginTop: 13,
   }
-});
+}));
 
 function ActivitiesCard(props) {
   let {match, project, template, company, currentCompany} = props;
@@ -75,8 +93,6 @@ function ActivitiesCard(props) {
   template = template || {};
   const classes = useStyles();
   const [type, setType] = useState(templateId && 'template' || projectId && 'project');
-  const [value, setIndex] = React.useState(0);
-  const [addNew, setAddNew] = React.useState(false);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isChangeManager, setIsChangeManager] = useState(false);
@@ -122,9 +138,6 @@ function ActivitiesCard(props) {
   };
 
 
-  const handleChange = (event, newValue) => {
-    setIndex(newValue);
-  };
   let menus = config.menus;
   return (
     <div>
@@ -145,53 +158,23 @@ function ActivitiesCard(props) {
         >
           <Grid item xs={3} md={7}>
             <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
-              Activities
+              Phases
             </Typography>
           </Grid>
           <Grid item xs={3} md={2}>
-            {false && <Button variant="outlined" color="primary" onClick={(e) => setAddNew(true)}>
-              Add Activity
-            </Button>
+            {false
             }
-          </Grid>
-          <Grid item xs={6} md={3}>
-            <Tabs
-              value={value}
-              onChange={handleChange}
-              indicatorColor="primary"
-              textColor="primary"
-              aria-label="icon tabs example"
-            >
-              <Tab className={classes.activityTab} label={<>
-                <div className={classes.iconTab}><ViewColumnIcon/>&nbsp; Board</div>
-              </>}/>
-              <Tab className={classes.activityTab} label={<>
-                <div className={classes.iconTab}><ListIcon/>&nbsp; List</div>
-              </>}/>
-            </Tabs>
           </Grid>
         </Grid>
       </Grid>
-      {
-        value === 0 ?
           <Grid
             container
             direction="row"
             justify="space-around"
             alignItems="flex-start"
             spacing={0}
-            /*style={{paddingRight: 20}}*/
           >
-            {/*<Grid item xs={12} md={2}>
-              <AWARENESSCard activities={type === 'project' ?
-                props.activities.filter(activity => activity.step === 1) :
-                props.activitiesTemplate.filter(activity => activity.step === 1)}
-                             type={type} match={match}
-                             template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
-                             isChangeManager={isChangeManager} isManager={isManager}
-                             project={project}/>
-            </Grid>*/}
-            <Grid item xs={12} md={5} sm={5} lg={2}>
+            <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
               <ActivitiesColumn activities={type === 'project' ?
                 props.activities : props.activitiesTemplate}
                                 name='Awareness' step={1} color='#f1753e'
@@ -200,7 +183,7 @@ function ActivitiesCard(props) {
                                 isChangeManager={isChangeManager} isManager={isManager}
                                 project={project}/>
             </Grid>
-            <Grid item xs={12} md={5} sm={5} lg={2}>
+            <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
               <ActivitiesColumn activities={type === 'project' ?
                 props.activities : props.activitiesTemplate}
                                 name='Interest' step={4} color='#8BC34A'
@@ -209,7 +192,7 @@ function ActivitiesCard(props) {
                                 isChangeManager={isChangeManager} isManager={isManager}
                                 project={project}/>
             </Grid>
-            <Grid item xs={12} md={5} sm={5} lg={2}>
+            <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
               <ActivitiesColumn activities={type === 'project' ?
                 props.activities : props.activitiesTemplate}
                                 step={5} name='Understanding' color='#03A9F4'
@@ -218,7 +201,7 @@ function ActivitiesCard(props) {
                                 isChangeManager={isChangeManager} isManager={isManager}
                                 project={project}/>
             </Grid>
-            <Grid item xs={12} md={5} sm={5} lg={2}>
+            <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
               <ActivitiesColumn activities={type === 'project' ?
                 props.activities : props.activitiesTemplate}
                                 name='Preparedness' step={2} color='#53cbd0'
@@ -227,7 +210,7 @@ function ActivitiesCard(props) {
                                 isChangeManager={isChangeManager} isManager={isManager}
                                 project={project}/>
             </Grid>
-            <Grid item xs={12} md={5} sm={5} lg={2}>
+            <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
               <ActivitiesColumn activities={type === 'project' ?
                 props.activities : props.activitiesTemplate}
                                 step={3} name='Support' color='#bbabd2'
@@ -236,31 +219,7 @@ function ActivitiesCard(props) {
                                 isChangeManager={isChangeManager} isManager={isManager}
                                 project={project}/>
             </Grid>
-            {/*<Grid item xs={12} md={2}>
-              <Step2Card activities={type === 'project' ?
-                props.activities.filter(activity => activity.step === 2) :
-                props.activitiesTemplate.filter(activity => activity.step === 2)}
-                         type={type} template={template}
-                         isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
-                         isChangeManager={isChangeManager} isManager={isManager}
-                         project={project} match={match}/>
-            </Grid>
-            <Grid item xs={12} md={2}>
-              <Step3Card activities={type === 'project' ?
-                props.activities.filter(activity => activity.step === 3) :
-                props.activitiesTemplate.filter(activity => activity.step === 3)}
-                         type={type} template={template}
-                         isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
-                         isChangeManager={isChangeManager} isManager={isManager}
-                         project={project} match={match}/>
-            </Grid>*/}
-          </Grid> :
-          <ListView rows={type === 'project' ? props.activities : props.activitiesTemplate} addNew={addNew} type={type}
-                    isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
-                    isChangeManager={isChangeManager} isManager={isManager}
-                    project={project} projectId={projectId} companyId={currentCompanyId}
-                    template={template} match={match}/>
-      }
+          </Grid>
 
     </div>
   )
@@ -287,9 +246,8 @@ const ActivitiesPage = withTracker(props => {
   Meteor.subscribe('compoundActivities', projectId);
   Meteor.subscribe('compoundActivitiesTemplate', templateId);
   return {
-    activities: Activities.find({projectId: projectId || templateId}).fetch(),
+    activities: Activities.find({projectId: projectId}).fetch(),
     template: Templates.findOne({_id: templateId}),
-    activitiesProject: Activities.find({projectId: projectId}).fetch(),
     activitiesTemplate: Activities.find({templateId: templateId}).fetch(),
     templates: Templates.find({}).fetch(),
     companies: Companies.find({}).fetch(),

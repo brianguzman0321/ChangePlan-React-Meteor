@@ -346,7 +346,7 @@ function Dashboard(props) {
       >
         <Grid item xs={12}>
           <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
-            Dashboard
+            Project
           </Typography>
         </Grid>
         <Grid
@@ -399,75 +399,6 @@ function Dashboard(props) {
           className={classes.firstRow}
           spacing={0}
         >
-          <Grid item xs={6}>
-            <Card className={classes.firstRowCard}>
-              <CardContent>
-                <Typography className={classes.displayHeading} gutterBottom>
-                  Change management activities
-                </Typography>
-              </CardContent>
-              <CardActions>
-                {type === 'project' ? project &&
-                  <Grid
-                    container
-                    direction="row"
-                    justify="flex-end"
-                    alignItems="baseline"
-                  >
-                    <Button align="right" color="primary"
-                            onClick={() => props.history.push(`/projects/${projectId}/activities`)}>
-                      Activities Page
-                    </Button>
-                  </Grid> : template &&
-                  <Grid
-                    container
-                    direction="row"
-                    justify="flex-end"
-                    alignItems="baseline"
-                  >
-                    <Button align="right" color="primary"
-                            onClick={() => props.history.push(`/templates/${templateId}/activities`)}>
-                      Activities Page
-                    </Button>
-                  </Grid>
-                }
-              </CardActions>
-            </Card>
-          </Grid>
-          <Grid item xs={6}>
-            <Card className={classes.firstRowCard}>
-              <CardContent>
-                <Typography className={classes.displayHeading} gutterBottom>
-                  Stakeholders
-                </Typography>
-              </CardContent>
-              <CardActions>
-                {type === 'project' ? project && <Grid
-                  container
-                  direction="row"
-                  justify="flex-end"
-                  alignItems="baseline"
-                >
-                  <Button align="right" color="primary"
-                          onClick={() => props.history.push(`/projects/${projectId}/stake-holders`)}>
-                    Stakeholders Page
-                  </Button>
-                </Grid> : template &&
-                  <Grid
-                    container
-                    direction="row"
-                    justify="flex-end"
-                    alignItems="baseline"
-                  >
-                    <Button align="right" color="primary"
-                            onClick={() => props.history.push(`/templates/${templateId}/stake-holders`)}>
-                      Stakeholders Page
-                    </Button>
-                  </Grid>
-                }
-              </CardActions>
-            </Card>
-          </Grid>
           <Grid item xs={12}>
             <Card className={classes.firstRowCard} style={{background: '#f5f5f5'}}>
               <LinearProgress variant="determinate" color="primary" value={100}/>

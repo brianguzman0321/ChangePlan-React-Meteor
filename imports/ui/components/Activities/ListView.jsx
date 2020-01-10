@@ -203,7 +203,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function StakeHolderList(props) {
-  let {rows, addNew, type, isSuperAdmin, template, companyId, isAdmin, projectId, match, project, isChangeManager, isManager} = props;
+  let {rows, addNew, type, isSuperAdmin, template, companyId, isAdmin, projectId, match } = props;
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
@@ -213,10 +213,6 @@ function StakeHolderList(props) {
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [edit, setEdit] = React.useState(addNew || false);
   const [step, setStep] = React.useState(0);
-  const [edit2, setEdit2] = React.useState(false);
-  const [edit3, setEdit3] = React.useState(false);
-  const [edit4, setEdit4] = React.useState(false);
-  const [edit5, setEdit5] = React.useState(false);
 
   const handleRequestSort = (event, property) => {
     const isDesc = orderBy === property && order === 'desc';

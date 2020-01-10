@@ -15,7 +15,12 @@ const useStyles = makeStyles(theme => ({
     formControl: {
         minWidth: 65,
         color: '#465563',
-        width: 300,
+        [theme.breakpoints.up('md')]: {
+            width: 300,
+        },
+        [theme.breakpoints.down('md')]: {
+            width: 200,
+        },
     },
     topTexts: {
         color : '#465563',
