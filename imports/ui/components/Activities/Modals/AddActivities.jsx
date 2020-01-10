@@ -8,6 +8,7 @@ import MuiDialogContent from '@material-ui/core/DialogContent';
 import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
+import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import {withSnackbar} from 'notistack';
@@ -36,9 +37,9 @@ import {withRouter} from 'react-router'
 import DeleteActivity from './DeleteActivity';
 import SaveChanges from "../../Modals/SaveChanges";
 import {Projects} from "../../../../api/projects/projects";
-import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 import {Templates} from "../../../../api/templates/templates";
 import NotificationModal from "./NotificationModal";
+
 
 const styles = theme => ({
   root: {
@@ -68,6 +69,7 @@ const gridStyles = makeStyles(theme => ({
     // background: '#dae0e5'
   }
 }));
+
 const styles2 = {
   root: {
     cursor: 'pointer',
@@ -82,9 +84,6 @@ const styles2 = {
   }
 };
 
-const classes3 = withStyles(styles2);
-
-
 const useStyles = makeStyles(theme => ({
   AddNewActivity: {
     flex: 1,
@@ -93,7 +92,44 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
   },
-  button: {
+  buttonAwareness: {
+    background: '#f1753e',
+    color: 'white',
+    '&:hover': {
+      background: '#f1753e',
+      color: 'white'
+    },
+    boxShadow: 'none',
+  },
+  buttonInterest: {
+    background: '#8BC34A',
+    color: 'white',
+    '&:hover': {
+      background: '#8BC34A',
+      color: 'white'
+    },
+    boxShadow: 'none',
+  },
+  buttonUnderstanding: {
+    background: '#29B6F6',
+    color: 'white',
+    '&:hover': {
+      background: '#29B6F6',
+      color: 'white'
+    },
+    boxShadow: 'none',
+  },
+  buttonPreparedness: {
+    background: '#53cbd0',
+    color: 'white',
+    '&:hover': {
+      background: '#53cbd0',
+      color: 'white'
+
+    },
+    boxShadow: 'none',
+  },
+  buttonSupport: {
     background: '#bbabd2',
     color: 'white',
     '&:hover': {
@@ -113,14 +149,7 @@ const useStyles = makeStyles(theme => ({
   },
   gridText: {
     fontSize: theme.typography.pxToRem(12),
-    color: theme.palette.text.secondary,
-  },
-  avatar: {
-    position: 'absolute',
-    top: theme.spacing(1),
-    left: theme.spacing(1),
-    width: 15,
-    height: 15
+    color: '#465563'
   },
   panelSummary: {
     background: 'red',
@@ -157,31 +186,27 @@ const DialogActions = withStyles(theme => ({
   },
 }))(MuiDialogActions);
 
-function AddActivity(props) {
+function AddActivities(props) {
   let {
-    company, stakeHolders, local, project, match, edit, activity, list, currentChangeManager,
-    template, type, stakeHoldersTemplate, isSuperAdmin, isAdmin, isChangeManager, isManager, expandAccordian
+    company, stakeHolders, local, project, match, edit, activity, list, isOpen, currentChangeManager,
+    template, type, stakeHoldersTemplate, isSuperAdmin, isAdmin, isChangeManager, isManager, step, color,
+    expandAccordian
   } = props;
-  const [open, setOpen] = React.useState(edit || false);
-  const [deleteModal, setDeleteModal] = React.useState(false);
+  const [open, setOpen] = useState(edit || isOpen || false);
+  const [deleteModal, setDeleteModal] = useState(false);
   const [time, setTime] = useState('');
-  const [isNew, setIsNew] = React.useState(false);
-  const [users, setUsers] = React.useState([]);
-  const [name, setName] = React.useState('');
-  const [description, setDescription] = React.useState('');
+  const [isNew, setIsNew] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [description, setDescription] = useState('');
   const [person, setPerson] = useState(null);
-  const [peoples, setPeoples] = React.useState(stakeHolders.map(item => item._id));
-  const [activityType, setActivityType] = React.useState({});
-  const [startingDate, setStartingDate] = React.useState(new Date());
-  const [dueDate, setDueDate] = React.useState(new Date());
-  const [dueDateOpen, setDueDateOpen] = useState(false);
+  const [peoples, setPeoples] = useState(stakeHolders.map(item => item._id));
+  const [activityType, setActivityType] = useState({});
+  const [currentProject, setProject] = useState(project);
   const [vision, setVision] = useState([]);
   const [objectives, setObjectives] = useState([]);
-  const [currentProject, setProject] = useState(project);
-  const [changeManager, setChangeManager] = useState(currentChangeManager);
+  const [dueDate, setDueDate] = useState(new Date());
   const [completedDate, setCompletedDate] = useState(null);
-  const [endingDate, setEndingDate] = React.useState(new Date());
-  const [endingDateOpen, setEndingDateOpen] = React.useState(false);
+  const [changeManager, setChangeManager] = useState(currentChangeManager);
   const [expanded1, setExpanded1] = useState(expandAccordian);
   const [expanded2, setExpanded2] = useState(expandAccordian);
   const [expanded3, setExpanded3] = useState(expandAccordian);
@@ -191,8 +216,8 @@ function AddActivity(props) {
   const [isUpdated, setIsUpdated] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
 
-  let {projectId, templateId} = match.params;
 
+  let {projectId, templateId} = match.params;
   const classes = useStyles();
   const classes1 = gridStyles();
 
@@ -253,8 +278,8 @@ function AddActivity(props) {
     }
     let updatedStakeHolders = local.changed ? local.ids : activity.stakeHolders;
     setPeoples(updatedStakeHolders);
-
   };
+
 
   const getProjectManager = () => {
     if (type === 'project') {
@@ -272,10 +297,10 @@ function AddActivity(props) {
         if (curProject.objectives) {
           setObjectives(curProject.objectives)
         }
-      } else {
-        setProject(template);
-        setChangeManager('');
       }
+    } else {
+      setProject(template);
+      setChangeManager('');
     }
   };
 
@@ -285,7 +310,7 @@ function AddActivity(props) {
     setDueDate(new Date());
     setCompletedDate(null);
     setDescription('');
-    setPerson(person);;
+    setPerson(person);
     setTime('');
     setPeoples(stakeHolders.map(item => item._id));
     updateFilter('localStakeHolders', 'ids', stakeHolders.map(item => item._id));
@@ -333,11 +358,21 @@ function AddActivity(props) {
   }, [props.company, stakeHolders, company, props.edit, props.activity, isNew, local]);
 
   const handleChangePanel = panel => (event, isExpanded) => {
-    if(panel==='panel1') { setExpanded1(isExpanded ? panel : false); }
-    if(panel==='panel2') { setExpanded2(isExpanded ? panel : false); }
-    if(panel==='panel3') { setExpanded3(isExpanded ? panel : false); }
-    if(panel==='panel4') { setExpanded4(isExpanded ? panel : false); }
-    if(panel==='panel5') { setExpanded5(isExpanded ? panel : false); }
+    if (panel === 'panel1') {
+      setExpanded1(isExpanded ? panel : false);
+    }
+    if (panel === 'panel2') {
+      setExpanded2(isExpanded ? panel : false);
+    }
+    if (panel === 'panel3') {
+      setExpanded3(isExpanded ? panel : false);
+    }
+    if (panel === 'panel4') {
+      setExpanded4(isExpanded ? panel : false);
+    }
+    if (panel === 'panel5') {
+      setExpanded5(isExpanded ? panel : false);
+    }
   };
 
   const handleClickOpen = () => {
@@ -351,7 +386,6 @@ function AddActivity(props) {
   };
 
   const handleClose = () => {
-    setName('');
     setIsNew(false);
     props.newActivity();
     updateFilter('localStakeHolders', 'changed', false);
@@ -407,7 +441,7 @@ function AddActivity(props) {
             dueDate,
             completedAt: completedDate,
             stakeHolders: peoples,
-            step: 3,
+            step: step,
             time: Number(time)
           }
         }
@@ -422,7 +456,7 @@ function AddActivity(props) {
             dueDate,
             completedAt: completedDate,
             stakeHolders: peoples,
-            step: 3,
+            step: step,
             time: Number(time)
           }
         };
@@ -452,7 +486,7 @@ function AddActivity(props) {
           dueDate,
           completedAt: completedDate,
           stakeHolders: peoples,
-          step: 3,
+          step: step,
           time: Number(time)
         }
       };
@@ -478,16 +512,11 @@ function AddActivity(props) {
   const handleDueDate = date => {
     setDueDate(date);
     setIsUpdated(true);
-    setDueDateOpen(false);
   };
 
   const handleEndingDate = date => {
-    if (!(endingDate < startingDate)) {
-      setEndingDateOpen(false)
-    }
     setCompletedDate(date);
     setIsUpdated(true);
-    setEndingDateOpen(false);
   };
 
   const handleTimeChange = (e) => {
@@ -496,8 +525,10 @@ function AddActivity(props) {
   };
 
   const updateUsers = (value) => {
-    setPerson(value)
+    setPerson(value);
+    setIsUpdated(true);
   };
+
   const handleDescriptionChange = (e) => {
     setDescription(e.target.value);
     setIsUpdated(true);
@@ -526,8 +557,13 @@ function AddActivity(props) {
     <div className={classes.AddNewActivity}>
       {!list && (!((isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
         || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
-        || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)))
-        ? <Button variant="contained" className={classes.button} fullWidth={true} onClick={handleClickOpen}>
+        || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin))) ?
+        <Button variant="contained"
+                className={step === 4 ? classes.buttonInterest : step === 5 ? classes.buttonUnderstanding :
+                  step === 1 ? classes.buttonAwareness :
+                    step === 2 ? classes.buttonPreparedness :
+                      step === 3 ? classes.buttonSupport : null}
+                fullWidth={true} onClick={handleClickOpen}>
           Add Activity
         </Button> : ''
       }
@@ -539,6 +575,10 @@ function AddActivity(props) {
         <form onSubmit={createProject} noValidate>
           <DialogContent dividers>
             <div className={classes.root}>
+
+              {/* expanded={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
+                || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
+                || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin) ? false : expanded} */}
               <ExpansionPanel
                 square expanded={expanded1}
                 onChange={handleChangePanel('panel1')}
@@ -557,7 +597,7 @@ function AddActivity(props) {
                       style={{position: 'absolute', marginTop: -8}}
                       width="35px"
                       height="35px"
-                      fill='#bbabd2'
+                      fill={color}
                       svg={activityType.iconSVG}
                     /> : ''
                     }
@@ -576,7 +616,7 @@ function AddActivity(props) {
                             <SVGInline
                               width="35px"
                               height="35px"
-                              fill='#bbabd2'
+                              fill={color}
                               svg={item.iconSVG}
                             />
                             <Typography className={classes.gridText}>
@@ -590,12 +630,11 @@ function AddActivity(props) {
                 </ExpansionPanelDetails>
               </ExpansionPanel>
 
-              <ExpansionPanel 
-              square expanded={expanded2}
-              onChange={handleChangePanel('panel2')}
-              disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
-              || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
-              || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}>
+              <ExpansionPanel square expanded={expanded2}
+                              onChange={handleChangePanel('panel2')}
+                              disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
+                              || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
+                              || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}>
                 <ExpansionPanelSummary
                   expandIcon={<ExpandMoreIcon/>}
                   aria-controls="panel1bh-content"
@@ -615,10 +654,10 @@ function AddActivity(props) {
                             disableToolbar
                             variant="inline"
                             format="MM/dd/yyyy"
-                            margin="normal"
                             disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
                             || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
                             || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}
+                            margin="normal"
                             id="date-picker-inline"
                             label="Due Date"
                             value={dueDate}
@@ -643,13 +682,14 @@ function AddActivity(props) {
                             fullWidth
                             variant="inline"
                             margin="normal"
+                            id="date-picker-dialog"
                             disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
                             || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
                             || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}
-                            id="date-picker-dialog"
                             label="Date Completed"
                             format="MM/dd/yyyy"
                             value={completedDate}
+                            minDate={dueDate}
                             autoOk={true}
                             onChange={handleEndingDate}
                           />
@@ -683,6 +723,9 @@ function AddActivity(props) {
                 </ExpansionPanelDetails>
               </ExpansionPanel>
 
+              {/* defaultExpanded={!((isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
+                  || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
+                  || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin))} */}
               <ExpansionPanel
                 square expanded={expanded3}
                 onChange={handleChangePanel('panel3')}
@@ -706,6 +749,7 @@ function AddActivity(props) {
                   </Grid>
                 </ExpansionPanelDetails>
               </ExpansionPanel>
+
               <ExpansionPanel
                 square expanded={expanded4}
                 onChange={handleChangePanel('panel4')}
@@ -765,6 +809,7 @@ function AddActivity(props) {
                                              direction="row"
                                              justify="flex-end"
                                              alignItems="baseline">
+
                   <Button color="primary"
                           onClick={() => {
                             sendNotificationEmail(activityType.name, activity.dueDate, time, activity.name, description, stakeHolders.length, currentProject, person, projectId, vision, objectives)
@@ -778,18 +823,19 @@ function AddActivity(props) {
           </DialogContent>
           <DialogActions>
             {isNew ? <Button onClick={handleClose} color="secondary">
-                Cancel
+                cancel
               </Button> :
-              <Button onClick={deleteActivity} color="secondary" disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
-              || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
-              || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}>
+              <Button onClick={deleteActivity} color="secondary"
+                      disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
+                      || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
+                      || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}>
                 Delete
-              </Button>
-            }
+              </Button>}
             {isNew ? <Button color="primary" onClick={() => handleShowNotification()}>Save</Button> :
-              <Button type="submit" color="primary" disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
-              || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
-              || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}>
+              <Button type="submit" color="primary"
+                      disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
+                      || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
+                      || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}>
                 Save
               </Button>}
           </DialogActions>
@@ -843,6 +889,6 @@ const AddActivityPage = withTracker(props => {
     local,
     company,
   };
-})(withRouter(AddActivity));
+})(withRouter(AddActivities));
 
 export default withSnackbar(AddActivityPage)

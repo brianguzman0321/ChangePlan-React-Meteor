@@ -17,6 +17,7 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import Tooltip from '@material-ui/core/Tooltip';
+import AddActivities from "./Modals/AddActivities";
 import AddActivity from '/imports/ui/components/Activities/Modals/AddActivity';
 import AddActivity2 from '/imports/ui/components/Activities/Modals/AddActivity2';
 import AddActivity3 from '/imports/ui/components/Activities/Modals/AddActivity3';
@@ -211,8 +212,11 @@ function StakeHolderList(props) {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [edit, setEdit] = React.useState(addNew || false);
+  const [step, setStep] = React.useState(0);
   const [edit2, setEdit2] = React.useState(false);
   const [edit3, setEdit3] = React.useState(false);
+  const [edit4, setEdit4] = React.useState(false);
+  const [edit5, setEdit5] = React.useState(false);
 
   const handleRequestSort = (event, property) => {
     const isDesc = orderBy === property && order === 'desc';
@@ -247,12 +251,8 @@ function StakeHolderList(props) {
 
   const editActivity = (activity) => {
     sActivity = activity;
-    setEdit(false);
-    setEdit2(false);
-    setEdit3(false);
-    setTimeout(() => {
-      activity.step === 1 ? setEdit(true) : activity.step === 2 ? setEdit2(true) : setEdit3(true)
-    })
+    setEdit(true);
+    setStep(activity.step);
     // setSelectedActivity(selectedActivity);
   };
 
@@ -315,13 +315,14 @@ function StakeHolderList(props) {
                       onClick={event => editActivity(row)}
                     >
                       <TableCell align="center">
-                        <Checkbox disabled={(!(isAdmin && template && (template.companyId === companyId) || isSuperAdmin) && (projectId === undefined))}
-                                  checked={row.completed}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    completeActivity(row)
-                                  }}
-                                  color="default"
+                        <Checkbox
+                          disabled={(!(isAdmin && template && (template.companyId === companyId) || isSuperAdmin) && (projectId === undefined))}
+                          checked={row.completed}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            completeActivity(row)
+                          }}
+                          color="default"
                         />
                       </TableCell>
                       <TableCell align="center" component="th" id={labelId} scope="row">
@@ -363,13 +364,16 @@ function StakeHolderList(props) {
           onChangeRowsPerPage={handleChangeRowsPerPage}
         />
       </Paper>
-        <AddActivity edit={edit} activity={sActivity} newActivity={() => setEdit(false)} list={true} isOpen={addNew}
+      <AddActivities edit={edit} activity={sActivity} newActivity={() => setEdit(false)} list={true} isOpen={addNew}
+                     type={type} template={template} match={match} step={step}
+                     expandAccordian={true}
+                     color={step === 1 ? '#f1753e' : step === 2 ? '#53cbd0' : step === 3 ? '#bbabd2' : step === 4 ? '#8BC34A' : step === 5 ? '#03A9F4' : null}/>
+      {/*<AddActivity edit={edit} activity={sActivity} newActivity={() => setEdit(false)} list={true} isOpen={addNew}
                      type={type} template={template} match={match}/>
         <AddActivity2 edit={edit2} activity={sActivity} newActivity={() => setEdit2(false)} list={true} type={type}
                       template={template} match={match}/>
         <AddActivity3 edit={edit3} activity={sActivity} newActivity={() => setEdit3(false)} list={true}
-                      type={type} template={template} match={match}/>
-
+                      type={type} template={template} match={match}/>*/}
     </div>
   );
 }

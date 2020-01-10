@@ -109,7 +109,7 @@ const Root = withTracker(props => {
 
 Meteor.startup(() => {
   render(
-    <SnackbarProvider maxSnack={3}
+    <SnackbarProvider maxSnack={3} autoHideDuration={2000}
                       anchorOrigin={{vertical: 'top', horizontal: "right"}}>
       <Root/>
     </SnackbarProvider>,

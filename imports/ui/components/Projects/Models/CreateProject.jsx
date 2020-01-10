@@ -272,10 +272,6 @@ function AddActivity(props) {
         resetValues()
     };
 
-    const handleDueDate = date => {
-        setDueDate(date)
-    };
-
     const handleStartingDate = date => {
         setStartingDate(date)
     };
@@ -285,7 +281,6 @@ function AddActivity(props) {
             setEndingDateOpen(false)
         }
         setEndingDate(date);
-
     };
 
     const updateUsers = (value) => {
@@ -377,7 +372,7 @@ function AddActivity(props) {
                                                     value={endingDate}
                                                     minDate={startingDate}
                                                     autoOk={true}
-                                                    onChange={handleDueDate}
+                                                    onChange={handleEndingDate}
                                                     KeyboardButtonProps={{
                                                         'aria-label': 'change date',
                                                     }}

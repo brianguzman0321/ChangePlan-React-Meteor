@@ -73,7 +73,7 @@ Companies.schema = new SimpleSchema({
     activityColumns: {
         type: Array,
         label: 'Activity Columns Name',
-        defaultValue: ['AWARENESS', 'PREPAREDNESS', 'SUPPORT'],
+        defaultValue: ['AWARENESS', 'PREPAREDNESS', 'SUPPORT', 'INTEREST', 'UNDERSTANDING'],
         optional: true,
     },
     'activityColumns.$': {

@@ -30,7 +30,6 @@ const useStyles = makeStyles(theme => ({
   card: {
     background: '#ece7f2',
     margin: 20,
-    // maxWidth: 345,
     borderTop: '2px solid #bbabd2',
     paddingBottom: 0,
     paddingTop: 5,
@@ -42,7 +41,6 @@ const useStyles = makeStyles(theme => ({
     width: 30,
     height: 30
   },
-  infoIcon: {},
   button: {
     background: '#bbabd2',
     color: 'white',
@@ -51,13 +49,14 @@ const useStyles = makeStyles(theme => ({
       color: 'white'
     }
   },
-  checkBoxIcon: {},
   innerCard: {
     borderTop: '2px solid #bbabd2',
     marginBottom: theme.spacing(2),
     cursor: 'pointer',
     boxShadow: 'none',
   },
+  infoIcon: {},
+  checkBoxIcon: {},
   innerCardHeader: {
     padding: 5,
     paddingBottom: 5,
