@@ -11,6 +11,7 @@ import Typography from '@material-ui/core/Typography';
 import AWARENESSCard from './step1'
 import Step2Card from './step2'
 import Step3Card from './step3'
+import ActivitiesColumn from './ActivitiesColumn';
 import config from '/imports/utils/config';
 import {withRouter} from 'react-router';
 import {withTracker} from "meteor/react-meteor-data";
@@ -176,22 +177,66 @@ function ActivitiesCard(props) {
           <Grid
             container
             direction="row"
-            justify="flex-start"
+            justify="space-around"
             alignItems="flex-start"
             spacing={0}
-            style={{paddingRight: 20}}
+            /*style={{paddingRight: 20}}*/
           >
-            <Grid item xs={12} md={4}>
+            {/*<Grid item xs={12} md={2}>
               <AWARENESSCard activities={type === 'project' ?
                 props.activities.filter(activity => activity.step === 1) :
                 props.activitiesTemplate.filter(activity => activity.step === 1)}
                              type={type} match={match}
-                             template={template} i
-                             sSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
+                             template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
                              isChangeManager={isChangeManager} isManager={isManager}
                              project={project}/>
+            </Grid>*/}
+            <Grid item xs={12} md={5} sm={5} lg={2}>
+              <ActivitiesColumn activities={type === 'project' ?
+                props.activities : props.activitiesTemplate}
+                                name='Awareness' step={1} color='#f1753e'
+                                type={type} match={match}
+                                template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
+                                isChangeManager={isChangeManager} isManager={isManager}
+                                project={project}/>
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid item xs={12} md={5} sm={5} lg={2}>
+              <ActivitiesColumn activities={type === 'project' ?
+                props.activities : props.activitiesTemplate}
+                                name='Interest' step={4} color='#8BC34A'
+                                type={type} match={match}
+                                template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
+                                isChangeManager={isChangeManager} isManager={isManager}
+                                project={project}/>
+            </Grid>
+            <Grid item xs={12} md={5} sm={5} lg={2}>
+              <ActivitiesColumn activities={type === 'project' ?
+                props.activities : props.activitiesTemplate}
+                                step={5} name='Understanding' color='#03A9F4'
+                                type={type} match={match}
+                                template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
+                                isChangeManager={isChangeManager} isManager={isManager}
+                                project={project}/>
+            </Grid>
+            <Grid item xs={12} md={5} sm={5} lg={2}>
+              <ActivitiesColumn activities={type === 'project' ?
+                props.activities : props.activitiesTemplate}
+                                name='Preparedness' step={2} color='#53cbd0'
+                                type={type} match={match}
+                                template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
+                                isChangeManager={isChangeManager} isManager={isManager}
+                                project={project}/>
+            </Grid>
+            <Grid item xs={12} md={5} sm={5} lg={2}>
+              <ActivitiesColumn activities={type === 'project' ?
+                props.activities : props.activitiesTemplate}
+                                step={3} name='Support' color='#bbabd2'
+                                type={type} match={match}
+                                template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
+                                isChangeManager={isChangeManager} isManager={isManager}
+                                project={project}/>
+            </Grid>
+            {/*<Grid item xs={12} md={2}>
               <Step2Card activities={type === 'project' ?
                 props.activities.filter(activity => activity.step === 2) :
                 props.activitiesTemplate.filter(activity => activity.step === 2)}
@@ -200,7 +245,7 @@ function ActivitiesCard(props) {
                          isChangeManager={isChangeManager} isManager={isManager}
                          project={project} match={match}/>
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid item xs={12} md={2}>
               <Step3Card activities={type === 'project' ?
                 props.activities.filter(activity => activity.step === 3) :
                 props.activitiesTemplate.filter(activity => activity.step === 3)}
@@ -208,7 +253,7 @@ function ActivitiesCard(props) {
                          isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
                          isChangeManager={isChangeManager} isManager={isManager}
                          project={project} match={match}/>
-            </Grid>
+            </Grid>*/}
           </Grid> :
           <ListView rows={type === 'project' ? props.activities : props.activitiesTemplate} addNew={addNew} type={type}
                     isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}

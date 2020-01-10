@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { withRouter } from 'react-router';
-import { withTracker } from "meteor/react-meteor-data";
+import React, {useState, useEffect} from 'react';
+import {withRouter} from 'react-router';
+import {withTracker} from "meteor/react-meteor-data";
 import moment from "moment";
 
 import Tabs from '@material-ui/core/Tabs';
@@ -14,11 +14,11 @@ import ListIcon from '@material-ui/icons/List';
 
 import config from '/imports/utils/config';
 
-import { Activities } from '/imports/api/activities/activities';
-import { Projects } from '/imports/api/projects/projects';
+import {Activities} from '/imports/api/activities/activities';
+import {Projects} from '/imports/api/projects/projects';
 
 //Importing DHTMLX Modules
-import Gantt, { handleImportData, handleDownload } from './Gantt/index.js';
+import Gantt, {handleImportData, handleDownload} from './Gantt/index.js';
 import ExportDialog from './Dialog/ExportDialog';
 import ImportDialog from './Dialog/ImportDialog';
 import TopNavBar from '/imports/ui/components/App/App';
@@ -26,13 +26,14 @@ import AddActivity from '/imports/ui/components/Activities/Modals/AddActivity';
 import AddActivity2 from '/imports/ui/components/Activities/Modals/AddActivity2';
 import AddActivity3 from '/imports/ui/components/Activities/Modals/AddActivity3';
 
-import { useStyles, changeManagersNames } from './utils';
-import { scaleTypes, colors } from './constants';
+import {useStyles, changeManagersNames} from './utils';
+import {scaleTypes, colors} from './constants';
+import AddActivities from "../Activities/Modals/AddActivities";
 
 
 function Timeline(props) {
-  let { match, projects, activities } = props;
-  let { projectId, templateId } = match.params;
+  let {match, projects, activities} = props;
+  let {projectId, templateId} = match.params;
 
   const classes = useStyles();
   const [viewMode, setViewMode] = useState(0);
@@ -41,14 +42,14 @@ function Timeline(props) {
   const [isImporting, setIsImporting] = useState(false);
   const [exportType, setExportType] = useState(null);
   const [edit, setEdit] = useState(false);
-  const [data, setData] = useState({ data: [] });
+  const [data, setData] = useState({data: []});
   const [activityId, setActivityId] = useState(null);
   const [activity, setActivity] = useState({});
   const [eventType, setEventType] = useState('');
 
   useEffect(() => {
     let tempData = [];
-    let i ;
+    let i;
     const defaultSteps = ["Awareness", "Preparedness", "Support"];
     let startingDate = projects[0] ? projects[0].startingDate : new Date();
     let dueDate = projects[0] ? projects[0].endingDate : new Date();
@@ -130,18 +131,18 @@ function Timeline(props) {
       }
     }
     if (!_.isEqual(data.data, tempData))
-      setData({ data: tempData });
+      setData({data: tempData});
 
   }, [props]);
 
   useEffect(() => {
     const defaultSteps = ["Awareness", "Preparedness", "Support"];
-    const activity = activities.find(({ _id }) => _id === activityId) || {};
+    const activity = activities.find(({_id}) => _id === activityId) || {};
     setActivity(activity);
     setEventType(activity.label || defaultSteps[activity.step - 1]);
   }, [activityId])
 
-  
+
   return (
     <div>
       <TopNavBar menus={config.menus} {...props} />
@@ -169,10 +170,12 @@ function Timeline(props) {
               indicatorColor="primary"
               textColor="primary"
               aria-label="icon tabs example"
-              style={{ background: "white" }}
+              style={{background: "white"}}
             >
-              <Tab className={classes.activityTab} label={<div className={classes.iconTab}><ViewColumnIcon />&nbsp; Gantt</div>} />
-              <Tab className={classes.activityTab} label={<div className={classes.iconTab}><ListIcon />&nbsp; List</div>} />
+              <Tab className={classes.activityTab}
+                   label={<div className={classes.iconTab}><ViewColumnIcon/>&nbsp; Gantt</div>}/>
+              <Tab className={classes.activityTab}
+                   label={<div className={classes.iconTab}><ListIcon/>&nbsp; List</div>}/>
             </Tabs>
           </Grid>
           <Grid className={classes.flexBox}>
@@ -185,7 +188,7 @@ function Timeline(props) {
             <Button
               color="primary"
               onClick={() => setIsExporting(true)}
-              style={{ marginLeft: "20px" }}
+              style={{marginLeft: "20px"}}
             >
               Export
             </Button>
@@ -229,8 +232,9 @@ function Timeline(props) {
           handleImportData={handleImportData}
         />
         {/* {(isAdmin && template && (template.companyId === companyId)) || isSuperAdmin ? */}
-        {(eventType==="Awareness") ? (<AddActivity
+        <AddActivities
           edit={edit}
+          step={(eventType === "Awareness") ? 1 : (eventType === "Preparedness") ? 2 : (eventType === "Support") ? 3 : null}
           activity={activity}
           newActivity={() => setEdit(false)}
           list={true}
@@ -238,35 +242,16 @@ function Timeline(props) {
           type={templateId && 'template' || projectId && 'project'}
           match={match}
           expandAccordian={false}
-        />) : null}
-        {(eventType==="Preparedness") ? (<AddActivity2
-          edit={edit}
-          activity={activity}
-          newActivity={() => setEdit(false)}
-          list={true}
-          isOpen={false}
-          type={templateId && 'template' || projectId && 'project'}
-          match={match}
-          expandAccordian={false}
-        />) : null}
-        {(eventType==="Support") ? (<AddActivity3
-          edit={edit}
-          activity={activity}
-          newActivity={() => setEdit(false)}
-          list={true}
-          isOpen={false}
-          type={templateId && 'template' || projectId && 'project'}
-          match={match}
-          expandAccordian={false}
-        />) : null}
+          color={eventType === "Awareness" ? '#f1753e' : eventType === "Preparedness" ? '#53cbd0' : eventType === "Support" ? '#bbabd2' : null}
+        />
       </Grid>
     </div>
   )
 }
 
 const TimelinePage = withTracker(props => {
-  let { match } = props;
-  let { projectId } = match.params;
+  let {match} = props;
+  let {projectId} = match.params;
   Meteor.subscribe('compoundActivities', projectId);
   // Meteor.subscribe('myProjects', null, {
   //     sort: local.sort || {},

@@ -41,7 +41,6 @@ const useStyles = makeStyles(theme => ({
     width: 30,
     height: 30
   },
-  infoIcon: {},
   button: {
     background: '#53cbd0',
     color: 'white',
@@ -50,13 +49,14 @@ const useStyles = makeStyles(theme => ({
       color: 'white'
     }
   },
-  checkBoxIcon: {},
   innerCard: {
     borderTop: '2px solid #53cbd0',
     marginBottom: theme.spacing(2),
     cursor: 'pointer',
     boxShadow: 'none',
   },
+  infoIcon: {},
+  checkBoxIcon: {},
   innerCardHeader: {
     padding: 5,
     paddingBottom: 5,
@@ -157,7 +157,7 @@ function AWARENESSCard(props) {
   };
 
   const updateColumnsName = () => {
-    let allColumnsName
+    let allColumnsName;
     if (company.activityColumns) {
       allColumnsName = company.activityColumns;
       allColumnsName[1] = columnsName;

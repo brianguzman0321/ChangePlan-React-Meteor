@@ -209,7 +209,7 @@ function TopNavBar(props) {
           props.history.push(`/projects/${projectId}`);
           break;
         case 1:
-          props.history.push(`/projects/${projectId}/timeline`)
+          props.history.push(`/projects/${projectId}/timeline`);
           break;
         case 2:
           props.history.push(`/projects/${projectId}/activities`);

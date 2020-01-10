@@ -68,9 +68,6 @@ function FullWidthTabs(props) {
         setValue(index);
     }
 
-    useEffect(() => {
-    });
-
     return (
         <div className={classes.root}>
             <TopNavBar {...props}/>
