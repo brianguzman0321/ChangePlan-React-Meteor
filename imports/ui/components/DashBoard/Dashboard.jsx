@@ -305,7 +305,7 @@ function Dashboard(props) {
     setIsOpen(false);
   }
 
-
+  console.log('=====================', template);
   return (
     <div>
       <VisionModal open={modals.vision} handleModalClose={handleModalClose} project={project} index={index}
