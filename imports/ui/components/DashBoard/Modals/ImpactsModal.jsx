@@ -159,9 +159,6 @@ function AddImpact(props) {
 
   const updateValues = () => {
     if (indexImpact !== '') {
-      console.error('+++++++++++++++++++++++*********************', impacts);
-      console.error('0000000000000000', handleType);
-      console.error('23432423423423423423', indexImpact);
       const newStakeholders = impacts && impacts[indexImpact].stakeholders;
       localImpacts.changed || updateFilter('localStakeHoldersImpacts', 'ids', newStakeholders);
       if (localImpacts.changed) {

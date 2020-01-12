@@ -26,6 +26,7 @@ import AddActivity from '/imports/ui/components/Activities/Modals/AddActivity';
 import AddActivity2 from '/imports/ui/components/Activities/Modals/AddActivity2';
 import AddActivity3 from '/imports/ui/components/Activities/Modals/AddActivity3';
 import ImpactsModal from '../DashBoard/Modals/ImpactsModal';
+import BenefitsModal from '../DashBoard/Modals/BenefitsModal';
 
 import { useStyles, changeManagersNames } from './utils';
 import { scaleTypes, colors } from './constants';
@@ -50,9 +51,10 @@ function Timeline(props) {
   const [data, setData] = useState({ data: [] });
   const [activityId, setActivityId] = useState(null);
   const [activity, setActivity] = useState({});
-  const [eventType, setEventType] = useState('');
-  const [extraType, setExtraType] = useState(null);
+  const [eventType, setEventType] = useState(null);
   const [impactIndex, setImpactIndex] = useState(null);
+  const [impactLength, setImpactlength] = useState(null);
+  const [benefitsIndex, setBenefitsIndex] = useState(null);
   const [currentCompanyId, setCompanyId] = useState(null);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -99,11 +101,13 @@ function Timeline(props) {
   };
 
   useEffect(() => {
+   
     let tempData = [];
     let i;
     const defaultSteps = ["Awareness", "Preparedness", "Support"];
     let startingDate = projects[0] ? projects[0].startingDate : new Date();
     let dueDate = projects[0] ? projects[0].endingDate : new Date();
+   
     for (i = 0; i < activities.length; i++) {
       let type = activities[i].type;
       tempData.push({
@@ -123,8 +127,8 @@ function Timeline(props) {
     }
     if (activities.length > 0) {
       tempData.unshift({
-        id: 888,
-        eventType: 'Project Start',
+        id: 'Project_Start',
+        eventType: 'Project_Start',
         text: 'Project Start',
         start_date: moment(startingDate).format('DD-MM-YYYY'),
         duration: 1,
@@ -136,8 +140,8 @@ function Timeline(props) {
       });
 
       tempData.push({
-        id: 999,
-        eventType: 'Project End',
+        id: 'Project_End',
+        eventType: 'Project_End',
         text: 'Project End',
         start_date: moment(dueDate).format('DD-MM-YYYY'),
         duration: 1,
@@ -150,6 +154,7 @@ function Timeline(props) {
     }
 
     if (projects[0]) {
+      setImpactlength(projects[0].impacts.length);
       let owner = changeManagersNames(projects[0]);
       let impacts = projects[0] ? projects[0].impacts : [];
       for (i = 0; i < impacts.length; i++) {
@@ -165,14 +170,13 @@ function Timeline(props) {
           description: impacts[i].description,
         })
       }
-
       let benefits = projects[0] ? projects[0].benefits : [];
       for (i = 0; i < benefits.length; i++) {
         tempData.push({
           id: `benefits #${i}`,
           eventType: 'Benefit',
           text: 'Stakeholder benefit',
-          start_date: moment(benefits[i].dueDate).format("DD-MM-YYYY"),
+          start_date: moment(benefits[i].expectedDate).format("DD-MM-YYYY"),
           duration: 1,
           color: colors.benefit,
           stakeholders: benefits[i].stakeholders.length,
@@ -183,27 +187,23 @@ function Timeline(props) {
     }
     if (!_.isEqual(data.data, tempData))
       setData({ data: tempData });
-
   }, [props]);
-
+  
   useEffect(() => {
-    const defaultSteps = ["Awareness", "Preparedness", "Support"];
     const activity = activities.find(({ _id }) => _id === activityId) || {};
     const extraActivity = data.data.find(({ id }) => id === activityId) || {};
     const impactindex = data.data.indexOf(extraActivity) - activities.length - 2;
+    const benefitsindex = data.data.indexOf(extraActivity) - activities.length - impactLength - 2;
     setActivity(activity);
-    setExtraType(extraActivity.eventType);
+    setEventType(extraActivity.eventType);
     setImpactIndex(impactindex);
-    setEventType(activity.label || defaultSteps[activity.step - 1]);
+    setBenefitsIndex(benefitsindex);
   }, [activityId]);
+
 
 
   const handleModalClose = obj => {
     setEdit(obj);
-    // setIndex('');
-    // setImpactIndex('');
-    // setBenefitsIndex('');
-    // setEditValue('');
   };
 
   return (
@@ -299,7 +299,7 @@ function Timeline(props) {
               handleImportData={handleImportData}
             />
             {/* {(isAdmin && template && (template.companyId === companyId)) || isSuperAdmin ? */}
-            {(extraType === "Awareness") ? (<AddActivity
+            {(eventType === "Awareness") ? (<AddActivity
               edit={edit}
               activity={activity}
               newActivity={() => setEdit(false)}
@@ -310,7 +310,7 @@ function Timeline(props) {
               expandAccordian={false}
             />) : null}
             
-            {(extraType === "Preparedness") ? (<AddActivity2
+            {(eventType === "Preparedness") ? (<AddActivity2
               edit={edit}
               activity={activity}
               newActivity={() => setEdit(false)}
@@ -321,7 +321,7 @@ function Timeline(props) {
               expandAccordian={false}
             />) : null}
 
-            {(extraType === "Support") ? (<AddActivity3
+            {(eventType === "Support") ? (<AddActivity3
               edit={edit}
               activity={activity}
               newActivity={() => setEdit(false)}
@@ -332,7 +332,7 @@ function Timeline(props) {
               expandAccordian={false}
             />) : null}
 
-            {(extraType === "Impact") ? (<ImpactsModal
+            {(eventType === "Impact") ? (<ImpactsModal
               open={edit}
               handleModalClose={handleModalClose}
               project={projects[0]}
@@ -343,6 +343,22 @@ function Timeline(props) {
               editValue={projects[0].impacts[impactIndex]}
               currentType={projectId && 'project' || templateId && 'template'}
             />) : null}
+            
+            {(eventType === "Benefit") ? (<BenefitsModal
+              open={edit}
+              handleModalClose={handleModalClose}
+              project={projects[0]}
+              indexBenefits={benefitsIndex}
+              template={template}
+              match={match}
+              handleType={'timeline'}
+              editValue={projects[0].benefits[benefitsIndex]}
+              currentType={projectId && 'project' || templateId && 'template'}
+            />) : null}
+
+            {/* <BenefitsModal open={modals.benefits} handleModalClose={handleModalClose} project={project}
+                     indexBenefits={benefitsIndex} template={template} match={match}
+                     editValue={editValue} currentType={type}/> */}
 
           </Grid> :
           <ListView rows={type === 'project' ? props.activities : props.activitiesTemplate} addNew={false} type={type}

@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {withStyles, makeStyles} from '@material-ui/core/styles';
+import React, { useEffect, useState } from 'react';
+import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
@@ -9,20 +9,20 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
-import {withSnackbar} from 'notistack';
+import { withSnackbar } from 'notistack';
 import 'date-fns';
 import Grid from "@material-ui/core/Grid/Grid";
 import SaveChanges from "../../Modals/SaveChanges";
-import {DatePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
+import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import SelectStakeHolders from "../../Activities/Modals/SelectStakeHolders";
 import DateFnsUtils from "@date-io/date-fns";
-import {withTracker} from "meteor/react-meteor-data";
-import {Companies} from "../../../../api/companies/companies";
-import {Peoples} from "../../../../api/peoples/peoples";
-import {withRouter} from "react-router";
+import { withTracker } from "meteor/react-meteor-data";
+import { Companies } from "../../../../api/companies/companies";
+import { Peoples } from "../../../../api/peoples/peoples";
+import { withRouter } from "react-router";
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
-import {Projects} from "../../../../api/projects/projects";
-import {Templates} from "../../../../api/templates/templates";
+import { Projects } from "../../../../api/projects/projects";
+import { Templates } from "../../../../api/templates/templates";
 
 
 const styles = theme => ({
@@ -59,13 +59,13 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const DialogTitle = withStyles(styles)(props => {
-  const {children, classes, onClose} = props;
+  const { children, classes, onClose } = props;
   return (
     <MuiDialogTitle disableTypography className={classes.root}>
       <Typography variant="h6">{children}</Typography>
       {onClose ? (
         <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
-          <CloseIcon/>
+          <CloseIcon />
         </IconButton>
       ) : null}
     </MuiDialogTitle>
@@ -86,28 +86,33 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function AddValue(props) {
-  let {open, handleModalClose, project, indexBenefits, editValue, stakeHoldersBenefits, localBenefits, currentType, template, stakeHoldersTemplate} = props;
+  let { open, handleModalClose, handleType, project, indexBenefits, editValue, stakeHoldersBenefits, localBenefits, currentType, template, stakeHoldersTemplate } = props;
   const [name, setName] = React.useState('');
   const [expectedDateOpen, setExpectedDateOpen] = useState(false);
   const [peoples, setPeoples] = useState([]);
   const [showModalDialog, setShowModalDialog] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
-  const [benefits, setBenefits] = useState([]);
+  const [benefits, setBenefits] = useState(project.benefits);
   const [expectedDate, setExpectedDate] = useState(null);
 
-  useEffect(() => {
-    if (project && currentType === 'project') {
-      setBenefits(project.benefits)
-    } else if (template && currentType === 'template') {
-      setBenefits(template.benefits)
-    }
-  }, [project.benefits, template.benefits]);
-
+  if (handleType !== 'timeline') {
+    useEffect(() => {
+      if (project && currentType === 'project') {
+        setBenefits(project.benefits)
+      } else if (template && currentType === 'template') {
+        setBenefits(template.benefits)
+      }
+    }, [project.benefits, template.benefits]);
+  }
   const classes = useStyles();
   const modalName = 'benefits';
-
   const handleClose = () => {
-    handleModalClose(modalName);
+    if (handleType !== 'timeline') {
+      handleModalClose(modalName);
+    }
+    else {
+      handleModalClose(false);
+    }
     setName('');
     setExpectedDate(null);
     updateFilter('localStakeHoldersBenefits', 'changed', false);
@@ -136,7 +141,8 @@ function AddValue(props) {
   };
 
   const updateValues = () => {
-    if (indexBenefits!== '') {
+    if (indexBenefits !== '') {
+      console.error('--------------------', handleType);
       const newStakeholders = benefits && benefits[indexBenefits].stakeholders;
       localBenefits.changed || updateFilter('localStakeHoldersBenefits', 'ids', newStakeholders);
       if (localBenefits.changed) {
@@ -159,7 +165,7 @@ function AddValue(props) {
 
   const createBenefits = () => {
     if (!(name)) {
-      props.enqueueSnackbar('Please fill the required Field', {variant: 'error'});
+      props.enqueueSnackbar('Please fill the required Field', { variant: 'error' });
       return false;
     }
     if (currentType === 'project') {
@@ -187,14 +193,14 @@ function AddValue(props) {
         benefits: newBenefits,
       };
 
-      Meteor.call('projects.update', {project: params}, (err, res) => {
+      Meteor.call('projects.update', { project: params }, (err, res) => {
         if (err) {
-          props.enqueueSnackbar(err.reason, {variant: 'error'})
+          props.enqueueSnackbar(err.reason, { variant: 'error' })
         } else {
           handleClose();
           setName('');
           setExpectedDate(null);
-          props.enqueueSnackbar('Project Updated Successfully.', {variant: 'success'})
+          props.enqueueSnackbar('Project Updated Successfully.', { variant: 'success' })
         }
       })
     } else if (currentType === 'template') {
@@ -218,14 +224,14 @@ function AddValue(props) {
         benefits: newBenefits,
       };
 
-      Meteor.call('templates.update', {template: params}, (err, res) => {
+      Meteor.call('templates.update', { template: params }, (err, res) => {
         if (err) {
-          props.enqueueSnackbar(err.reason, {variant: 'error'})
+          props.enqueueSnackbar(err.reason, { variant: 'error' })
         } else {
           handleClose();
           setName('');
           setExpectedDate(null);
-          props.enqueueSnackbar('Template Updated Successfully.', {variant: 'success'})
+          props.enqueueSnackbar('Template Updated Successfully.', { variant: 'success' })
         }
       })
     }
@@ -248,15 +254,15 @@ function AddValue(props) {
   return (
     <div className={classes.createNewProject}>
       <Dialog onClose={isUpdated ? handleOpenModalDialog : handleClose} aria-labelledby="customized-dialog-title"
-              open={open} maxWidth="md" fullWidth={true}>
+        open={open} maxWidth="md" fullWidth={true}>
         <DialogTitle id="customized-dialog-title" onClose={isUpdated ? handleOpenModalDialog : handleClose}>
           Add a Project Benefits
         </DialogTitle>
         <DialogContent dividers>
           <Grid container spacing={2}>
             <Grid item xs={6}>
-              <br/>
-              <br/>
+              <br />
+              <br />
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <Grid item xs={12} className={classes.datePicker}>
                   <Grid item xs={11}>
@@ -275,29 +281,29 @@ function AddValue(props) {
                   </Grid>
                   <Grid item xs={1}>
                     <IconButton aria-label="close" className={classes.closeButton}
-                                onClick={() => onCalendarClick("date-picker-inline")}>
-                      <CalendarTodayIcon/>
+                      onClick={() => onCalendarClick("date-picker-inline")}>
+                      <CalendarTodayIcon />
                     </IconButton>
                   </Grid>
                 </Grid>
               </MuiPickersUtilsProvider>
-              <br/>
-              <br/>
-              <br/>
+              <br />
+              <br />
+              <br />
             </Grid>
             <Grid item xs={6}>
-              <br/>
+              <br />
               <Typography className={classes.heading}>Stakeholders</Typography>
               <Typography className={classes.secondaryHeading}>
                 {peoples && peoples.length || 0} of {currentType === 'project' ? stakeHoldersBenefits.length : stakeHoldersTemplate.length}
               </Typography>
-              <SelectStakeHolders rows={currentType === 'project' ? stakeHoldersBenefits : stakeHoldersTemplate.length} local={localBenefits} isImpacts={false} isBenefits={true}/>
-              <br/>
-              <br/>
-              <br/>
+              <SelectStakeHolders rows={currentType === 'project' ? stakeHoldersBenefits : stakeHoldersTemplate.length} local={localBenefits} isImpacts={false} isBenefits={true} />
+              <br />
+              <br />
+              <br />
             </Grid>
             <Grid item xs={12}>
-              <br/>
+              <br />
               <TextField
                 id="name"
                 label="Description"
@@ -327,8 +333,8 @@ function AddValue(props) {
 }
 
 const AddActivityPage = withTracker(props => {
-  let {match} = props;
-  let {projectId, templateId} = match.params;
+  let { match } = props;
+  let { projectId, templateId } = match.params;
   let localBenefits = LocalCollection.findOne({
     name: 'localStakeHoldersBenefits'
   });
@@ -340,10 +346,10 @@ const AddActivityPage = withTracker(props => {
     _id: projectId
   });
   let company = Companies.findOne() || {};
-  let template = Templates.findOne({_id: templateId});
+  let template = Templates.findOne({ _id: templateId });
   let companyProjectId = project && project.companyId;
   let companyTemplateId = template && template.companyId;
-  Meteor.subscribe('peoples',companyProjectId || companyTemplateId);
+  Meteor.subscribe('peoples', companyProjectId || companyTemplateId);
   return {
     stakeHoldersBenefits: Peoples.find({
       _id: {
