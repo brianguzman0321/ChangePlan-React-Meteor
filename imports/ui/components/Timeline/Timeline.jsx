@@ -25,6 +25,7 @@ import TopNavBar from '/imports/ui/components/App/App';
 import AddActivity from '/imports/ui/components/Activities/Modals/AddActivity';
 import AddActivity2 from '/imports/ui/components/Activities/Modals/AddActivity2';
 import AddActivity3 from '/imports/ui/components/Activities/Modals/AddActivity3';
+import ImpactsModal from '../DashBoard/Modals/ImpactsModal';
 
 import {useStyles, changeManagersNames} from './utils';
 import {scaleTypes, colors} from './constants';
@@ -50,6 +51,8 @@ function Timeline(props) {
   const [activityId, setActivityId] = useState(null);
   const [activity, setActivity] = useState({});
   const [eventType, setEventType] = useState('');
+  const [extraType, setExtraType] = useState(null);
+  const [impactIndex, setImpactIndex] = useState(null);
   const [currentCompanyId, setCompanyId] = useState(null);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -186,10 +189,22 @@ function Timeline(props) {
   useEffect(() => {
     const defaultSteps = ["Awareness", "Preparedness", "Support"];
     const activity = activities.find(({_id}) => _id === activityId) || {};
+    const extraActivity = data.data.find(({ id }) => id === activityId) || {};
+    const impactindex = data.data.indexOf(extraActivity) - activities.length -2 ;
     setActivity(activity);
+    setExtraType(extraActivity.eventType);
+    setImpactIndex(impactindex);
     setEventType(activity.label || defaultSteps[activity.step - 1]);
   }, [activityId]);
+  
 
+  const handleModalClose = obj => {
+    setEdit(obj);
+    // setIndex('');
+    // setImpactIndex('');
+    // setBenefitsIndex('');
+    // setEditValue('');
+  };
 
   return (
     <div>
@@ -284,9 +299,8 @@ function Timeline(props) {
           handleImportData={handleImportData}
           />
         {/* {(isAdmin && template && (template.companyId === companyId)) || isSuperAdmin ? */}
-          <AddActivities
+        {(extraType==="Awareness") ? (<AddActivity
           edit={edit}
-          step={(eventType === "Awareness") ? 1 : (eventType === "Preparedness") ? 2 : (eventType === "Support") ? 3 : null}
           activity={activity}
           newActivity={() => setEdit(false)}
           list={true}
@@ -294,8 +308,39 @@ function Timeline(props) {
           type={templateId && 'template' || projectId && 'project'}
           match={match}
           expandAccordian={false}
-          color={eventType === "Awareness" ? '#f1753e' : eventType === "Preparedness" ? '#53cbd0' : eventType === "Support" ? '#bbabd2' : null}
-          />
+        />) : null}
+        {(extraType==="Preparedness") ? (<AddActivity2
+          edit={edit}
+          activity={activity}
+          newActivity={() => setEdit(false)}
+          list={true}
+          isOpen={false}
+          type={templateId && 'template' || projectId && 'project'}
+          match={match}
+          expandAccordian={false}
+        />) : null}
+        {(extraType==="Support") ? (<AddActivity3
+          edit={edit}
+          activity={activity}
+          newActivity={() => setEdit(false)}
+          list={true}
+          isOpen={false}
+          type={templateId && 'template' || projectId && 'project'}
+          match={match}
+          expandAccordian={false}
+        />) : null}
+        {(extraType==="Impact") ? (<ImpactsModal 
+          open = {edit}
+          handleModalClose={handleModalClose}
+          project = {projects[0]}
+          template = {template}
+          indexImpact = {impactIndex}
+          match = {match}
+          handleType = {'timeline'}
+          editValue = {projects[0].impacts[impactIndex]}
+          currentType = {projectId && 'project' || templateId && 'template'}
+        />) : null}
+
           </Grid> :
           <ListView rows={type === 'project' ? props.activities : props.activitiesTemplate} addNew={false} type={type}
           isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}

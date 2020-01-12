@@ -93,7 +93,7 @@ const DialogActions = withStyles(theme => ({
 
 
 function AddImpact(props) {
-  let {open, handleModalClose, project, indexImpact, editValue, template, currentType, stakeHoldersImpacts, localImpacts, stakeHoldersTemplate} = props;
+  let {open, handleModalClose, handleType, project, indexImpact, editValue, template, currentType, stakeHoldersImpacts, localImpacts, stakeHoldersTemplate} = props;
   const [name, setName] = React.useState('');
   const [expectedDateOpen, setExpectedDateOpen] = useState(false);
   const [peoples, setPeoples] = useState([]);
@@ -103,23 +103,30 @@ function AddImpact(props) {
   const [levelOpen, setLevelOpen] = React.useState(false);
   const [showModalDialog, setShowModalDialog] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
-  const [impacts, setImpacts] = useState([]);
+  const [impacts, setImpacts] = useState(project.impacts);
   const [expectedDate, setExpectedDate] = useState(null);
 
 
-  useEffect(() => {
-    if (project && currentType === 'project') {
-      setImpacts(project.impacts)
-    } else if (template && currentType === 'template') {
-      setImpacts(template.impacts)
-    }
-  }, [project.impacts, template.impacts]);
+  if (handleType !== 'timeline') {
+    useEffect(() => {
+      if (project && currentType === 'project') {
+        setImpacts(project.impacts)
+      } else if (template && currentType === 'template') {
+        setImpacts(template.impacts)
+      }
+    }, [project.impacts, template.impacts]);
+  }
 
   const classes = useStyles();
   const modalName = 'impacts';
 
   const handleClose = () => {
-    handleModalClose(modalName);
+    if( handleType !== 'timeline') {
+      handleModalClose(modalName);
+    }
+    else {
+      handleModalClose(false);
+    }
     setName('');
     setType('');
     setLevel('');
@@ -152,6 +159,9 @@ function AddImpact(props) {
 
   const updateValues = () => {
     if (indexImpact !== '') {
+      console.error('+++++++++++++++++++++++*********************', impacts);
+      console.error('0000000000000000', handleType);
+      console.error('23432423423423423423', indexImpact);
       const newStakeholders = impacts && impacts[indexImpact].stakeholders;
       localImpacts.changed || updateFilter('localStakeHoldersImpacts', 'ids', newStakeholders);
       if (localImpacts.changed) {
@@ -171,6 +181,8 @@ function AddImpact(props) {
   useEffect(() => {
     updateValues();
   }, [indexImpact, stakeHoldersImpacts]);
+
+  
 
   const createProject = () => {
     if (!(name && type && level)) {
