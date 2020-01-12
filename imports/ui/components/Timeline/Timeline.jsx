@@ -1,6 +1,6 @@
-import React, {useState, useEffect} from 'react';
-import {withRouter} from 'react-router';
-import {withTracker} from "meteor/react-meteor-data";
+import React, { useState, useEffect } from 'react';
+import { withRouter } from 'react-router';
+import { withTracker } from "meteor/react-meteor-data";
 import moment from "moment";
 
 import Tabs from '@material-ui/core/Tabs';
@@ -14,11 +14,11 @@ import ListIcon from '@material-ui/icons/List';
 
 import config from '/imports/utils/config';
 
-import {Activities} from '/imports/api/activities/activities';
-import {Projects} from '/imports/api/projects/projects';
+import { Activities } from '/imports/api/activities/activities';
+import { Projects } from '/imports/api/projects/projects';
 
 //Importing DHTMLX Modules
-import Gantt, {handleImportData, handleDownload} from './Gantt/index.js';
+import Gantt, { handleImportData, handleDownload } from './Gantt/index.js';
 import ExportDialog from './Dialog/ExportDialog';
 import ImportDialog from './Dialog/ImportDialog';
 import TopNavBar from '/imports/ui/components/App/App';
@@ -27,17 +27,17 @@ import AddActivity2 from '/imports/ui/components/Activities/Modals/AddActivity2'
 import AddActivity3 from '/imports/ui/components/Activities/Modals/AddActivity3';
 import ImpactsModal from '../DashBoard/Modals/ImpactsModal';
 
-import {useStyles, changeManagersNames} from './utils';
-import {scaleTypes, colors} from './constants';
+import { useStyles, changeManagersNames } from './utils';
+import { scaleTypes, colors } from './constants';
 import AddActivities from "../Activities/Modals/AddActivities";
 import ListView from "../Activities/ListView";
-import {Templates} from "../../../api/templates/templates";
-import {Companies} from "../../../api/companies/companies";
+import { Templates } from "../../../api/templates/templates";
+import { Companies } from "../../../api/companies/companies";
 
 
 function Timeline(props) {
-  let {match, projects, activities, currentCompany, template, project, company} = props;
-  let {projectId, templateId} = match.params;
+  let { match, projects, activities, currentCompany, template, project, company } = props;
+  let { projectId, templateId } = match.params;
 
   const classes = useStyles();
   const [viewMode, setViewMode] = useState(0);
@@ -47,7 +47,7 @@ function Timeline(props) {
   const [isImporting, setIsImporting] = useState(false);
   const [exportType, setExportType] = useState(null);
   const [edit, setEdit] = useState(false);
-  const [data, setData] = useState({data: []});
+  const [data, setData] = useState({ data: [] });
   const [activityId, setActivityId] = useState(null);
   const [activity, setActivity] = useState({});
   const [eventType, setEventType] = useState('');
@@ -79,7 +79,7 @@ function Timeline(props) {
       setIsAdmin(true);
     }
     if (currentCompany) {
-      const projectsCurCompany = Projects.find({companyId: currentCompany._id}).fetch();
+      const projectsCurCompany = Projects.find({ companyId: currentCompany._id }).fetch();
       if (projectsCurCompany) {
         const changeManagers = [...new Set([].concat.apply([], projectsCurCompany.map(project => project.changeManagers)))];
         if (changeManagers.includes(userId)) {
@@ -88,7 +88,7 @@ function Timeline(props) {
       }
     }
     if (currentCompany) {
-      const projectsCurCompany = Projects.find({companyId: currentCompany._id}).fetch();
+      const projectsCurCompany = Projects.find({ companyId: currentCompany._id }).fetch();
       if (projectsCurCompany) {
         const managers = [...new Set([].concat.apply([], projectsCurCompany.map(project => project.managers)))];
         if (managers.includes(userId)) {
@@ -182,21 +182,21 @@ function Timeline(props) {
       }
     }
     if (!_.isEqual(data.data, tempData))
-      setData({data: tempData});
+      setData({ data: tempData });
 
   }, [props]);
 
   useEffect(() => {
     const defaultSteps = ["Awareness", "Preparedness", "Support"];
-    const activity = activities.find(({_id}) => _id === activityId) || {};
+    const activity = activities.find(({ _id }) => _id === activityId) || {};
     const extraActivity = data.data.find(({ id }) => id === activityId) || {};
-    const impactindex = data.data.indexOf(extraActivity) - activities.length -2 ;
+    const impactindex = data.data.indexOf(extraActivity) - activities.length - 2;
     setActivity(activity);
     setExtraType(extraActivity.eventType);
     setImpactIndex(impactindex);
     setEventType(activity.label || defaultSteps[activity.step - 1]);
   }, [activityId]);
-  
+
 
   const handleModalClose = obj => {
     setEdit(obj);
@@ -233,120 +233,123 @@ function Timeline(props) {
               indicatorColor="primary"
               textColor="primary"
               aria-label="icon tabs example"
-              style={{background: "white"}}
+              style={{ background: "white" }}
             >
               <Tab className={classes.activityTab}
-                   label={<div className={classes.iconTab}><ViewColumnIcon/>&nbsp; Gantt</div>}/>
+                label={<div className={classes.iconTab}><ViewColumnIcon />&nbsp; Gantt</div>} />
               <Tab className={classes.activityTab}
-                   label={<div className={classes.iconTab}><ListIcon/>&nbsp; List</div>}/>
+                label={<div className={classes.iconTab}><ListIcon />&nbsp; List</div>} />
             </Tabs>
           </Grid>
           {viewMode === 0 &&
-          <Grid className={classes.flexBox}>
-            <Button
-              color="primary"
-              onClick={() => setIsImporting(true)}
-            >
-              Import
+            <Grid className={classes.flexBox}>
+              <Button
+                color="primary"
+                onClick={() => setIsImporting(true)}
+              >
+                Import
             </Button>
-            <Button
-              color="primary"
-              onClick={() => setIsExporting(true)}
-              style={{marginLeft: "20px"}}
-            >
-              Export
+              <Button
+                color="primary"
+                onClick={() => setIsExporting(true)}
+                style={{ marginLeft: "20px" }}
+              >
+                Export
             </Button>
-            <Tabs
-              value={zoomMode}
-              onChange={(e, newValue) => setZoomMode(newValue)}
-              indicatorColor="primary"
-              textColor="primary"
-              style={{
-                marginLeft: "20px",
-                background: "white",
-              }}
-            >
-              {scaleTypes.map((unit, idx) =>
-                <Tab
-                  key={`date-unit-tab-${idx}`}
-                  className={classes.activityTab}
-                  label={<div className={classes.iconTab}>&nbsp; {unit.toUpperCase()}</div>}
-                />
-              )}
-            </Tabs>
-          </Grid>
+              <Tabs
+                value={zoomMode}
+                onChange={(e, newValue) => setZoomMode(newValue)}
+                indicatorColor="primary"
+                textColor="primary"
+                style={{
+                  marginLeft: "20px",
+                  background: "white",
+                }}
+              >
+                {scaleTypes.map((unit, idx) =>
+                  <Tab
+                    key={`date-unit-tab-${idx}`}
+                    className={classes.activityTab}
+                    label={<div className={classes.iconTab}>&nbsp; {unit.toUpperCase()}</div>}
+                  />
+                )}
+              </Tabs>
+            </Grid>
           }
         </Grid>
         {viewMode === 0 ?
           <Grid container>
-          <Gantt
-            tasks={data}
-            scaleText={scaleTypes[zoomMode]}
-            setActivityId={setActivityId}
-            setEdit={setEdit}
-            activities={activities}
-          />
-          <ExportDialog
-          isExporting={isExporting}
-          setIsExporting={setIsExporting}
-          exportType={exportType}
-          setExportType={setExportType}
-          handleDownload={handleDownload}
-          />
-          <ImportDialog
-          isImporting={isImporting}
-          setIsImporting={setIsImporting}
-          handleImportData={handleImportData}
-          />
-        {/* {(isAdmin && template && (template.companyId === companyId)) || isSuperAdmin ? */}
-        {(extraType==="Awareness") ? (<AddActivity
-          edit={edit}
-          activity={activity}
-          newActivity={() => setEdit(false)}
-          list={true}
-          isOpen={false}
-          type={templateId && 'template' || projectId && 'project'}
-          match={match}
-          expandAccordian={false}
-        />) : null}
-        {(extraType==="Preparedness") ? (<AddActivity2
-          edit={edit}
-          activity={activity}
-          newActivity={() => setEdit(false)}
-          list={true}
-          isOpen={false}
-          type={templateId && 'template' || projectId && 'project'}
-          match={match}
-          expandAccordian={false}
-        />) : null}
-        {(extraType==="Support") ? (<AddActivity3
-          edit={edit}
-          activity={activity}
-          newActivity={() => setEdit(false)}
-          list={true}
-          isOpen={false}
-          type={templateId && 'template' || projectId && 'project'}
-          match={match}
-          expandAccordian={false}
-        />) : null}
-        {(extraType==="Impact") ? (<ImpactsModal 
-          open = {edit}
-          handleModalClose={handleModalClose}
-          project = {projects[0]}
-          template = {template}
-          indexImpact = {impactIndex}
-          match = {match}
-          handleType = {'timeline'}
-          editValue = {projects[0].impacts[impactIndex]}
-          currentType = {projectId && 'project' || templateId && 'template'}
-        />) : null}
+            <Gantt
+              tasks={data}
+              scaleText={scaleTypes[zoomMode]}
+              setActivityId={setActivityId}
+              setEdit={setEdit}
+              activities={activities}
+            />
+            <ExportDialog
+              isExporting={isExporting}
+              setIsExporting={setIsExporting}
+              exportType={exportType}
+              setExportType={setExportType}
+              handleDownload={handleDownload}
+            />
+            <ImportDialog
+              isImporting={isImporting}
+              setIsImporting={setIsImporting}
+              handleImportData={handleImportData}
+            />
+            {/* {(isAdmin && template && (template.companyId === companyId)) || isSuperAdmin ? */}
+            {(extraType === "Awareness") ? (<AddActivity
+              edit={edit}
+              activity={activity}
+              newActivity={() => setEdit(false)}
+              list={true}
+              isOpen={false}
+              type={templateId && 'template' || projectId && 'project'}
+              match={match}
+              expandAccordian={false}
+            />) : null}
+            
+            {(extraType === "Preparedness") ? (<AddActivity2
+              edit={edit}
+              activity={activity}
+              newActivity={() => setEdit(false)}
+              list={true}
+              isOpen={false}
+              type={templateId && 'template' || projectId && 'project'}
+              match={match}
+              expandAccordian={false}
+            />) : null}
+
+            {(extraType === "Support") ? (<AddActivity3
+              edit={edit}
+              activity={activity}
+              newActivity={() => setEdit(false)}
+              list={true}
+              isOpen={false}
+              type={templateId && 'template' || projectId && 'project'}
+              match={match}
+              expandAccordian={false}
+            />) : null}
+
+            {(extraType === "Impact") ? (<ImpactsModal
+              open={edit}
+              handleModalClose={handleModalClose}
+              project={projects[0]}
+              template={template}
+              indexImpact={impactIndex}
+              match={match}
+              handleType={'timeline'}
+              editValue={projects[0].impacts[impactIndex]}
+              currentType={projectId && 'project' || templateId && 'template'}
+            />) : null}
 
           </Grid> :
           <ListView rows={type === 'project' ? props.activities : props.activitiesTemplate} addNew={false} type={type}
-          isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
-          isChangeManager={isChangeManager} isManager={isManager}
-          project={project} projectId={projectId} companyId={currentCompanyId}
-          template={template} match={match}/>
+            isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
+            isChangeManager={isChangeManager} isManager={isManager}
+            project={project} projectId={projectId} companyId={currentCompanyId}
+            template={template} match={match} />
         }
       </Grid>
     </div>
@@ -354,17 +357,17 @@ function Timeline(props) {
 }
 
 const TimelinePage = withTracker(props => {
-  let {match} = props;
-  let {projectId, templateId} = match.params;
+  let { match } = props;
+  let { projectId, templateId } = match.params;
   let userId = Meteor.userId();
   let currentCompany = {};
   Meteor.subscribe('projects');
   Meteor.subscribe('templates');
-  const project = Projects.findOne({_id: projectId});
-  const template = Templates.findOne({_id: templateId});
+  const project = Projects.findOne({ _id: projectId });
+  const template = Templates.findOne({ _id: templateId });
   Meteor.subscribe('companies');
   const companies = Companies.find({}).fetch();
-  const company = Companies.findOne({_id: project && project.companyId || template && template.companyId});
+  const company = Companies.findOne({ _id: project && project.companyId || template && template.companyId });
   if (!company) {
     currentCompany = companies.find(_company => _company.peoples.includes(userId));
   } else {
@@ -377,11 +380,11 @@ const TimelinePage = withTracker(props => {
   //     name: local.search
   // });
   return {
-    activities: Activities.find({projectId: projectId || templateId}).fetch(),
-    template: Templates.findOne({_id: templateId}),
+    activities: Activities.find({ projectId: projectId || templateId }).fetch(),
+    template: Templates.findOne({ _id: templateId }),
     projects: Projects.find(projectId).fetch(),
-    activitiesProject: Activities.find({projectId: projectId}).fetch(),
-    activitiesTemplate: Activities.find({templateId: templateId}).fetch(),
+    activitiesProject: Activities.find({ projectId: projectId }).fetch(),
+    activitiesTemplate: Activities.find({ templateId: templateId }).fetch(),
     templates: Templates.find({}).fetch(),
     companies: Companies.find({}).fetch(),
     company,
