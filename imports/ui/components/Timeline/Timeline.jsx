@@ -27,7 +27,7 @@ import AddActivity2 from '/imports/ui/components/Activities/Modals/AddActivity2'
 import AddActivity3 from '/imports/ui/components/Activities/Modals/AddActivity3';
 import ImpactsModal from '../DashBoard/Modals/ImpactsModal';
 import BenefitsModal from '../DashBoard/Modals/BenefitsModal';
-
+import EditProject from '/imports/ui/components/Projects/Models/EditProject';
 import { useStyles, changeManagersNames } from './utils';
 import { scaleTypes, colors } from './constants';
 import AddActivities from "../Activities/Modals/AddActivities";
@@ -200,8 +200,8 @@ function Timeline(props) {
     setBenefitsIndex(benefitsindex);
   }, [activityId]);
 
-
-
+  console.error('=====================', eventType);
+  
   const handleModalClose = obj => {
     setEdit(obj);
   };
@@ -355,10 +355,16 @@ function Timeline(props) {
               editValue={projects[0].benefits[benefitsIndex]}
               currentType={projectId && 'project' || templateId && 'template'}
             />) : null}
-
-            {/* <BenefitsModal open={modals.benefits} handleModalClose={handleModalClose} project={project}
-                     indexBenefits={benefitsIndex} template={template} match={match}
-                     editValue={editValue} currentType={type}/> */}
+            {(eventType === "Project_Start" || "Project_End") ? (<EditProject
+              open={edit}
+              handleModalClose={handleModalClose}
+              project={projects[0]}
+              template={template}
+              handleType={'timeline'}
+              displayEditButton={false}
+            />) : null}
+              {/* <EditProject open={modals.edit} handleModalClose={handleModalClose} project={project} template={template}
+                displayEditButton={true}/> */}
 
           </Grid> :
           <ListView rows={type === 'project' ? props.activities : props.activitiesTemplate} addNew={false} type={type}

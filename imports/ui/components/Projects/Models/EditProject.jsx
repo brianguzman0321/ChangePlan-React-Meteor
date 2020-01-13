@@ -129,7 +129,7 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function AddActivity(props) {
-    let { company, open, handleModalClose, project, stakeHolders, local, match, edit, activity, isOpen, displayEditButton } = props;
+    let { company, open, handleModalClose, handleType, project, stakeHolders, local, match, edit, activity, isOpen, displayEditButton } = props;
     project = project || {}
     const [deleteModal, setDeleteModal] = React.useState(false);
     const [age, setAge] = React.useState(5);
@@ -271,7 +271,12 @@ function AddActivity(props) {
         // props.newActivity();
         updateFilter('localStakeHolders', 'changed', false);
         resetValues()
-        handleModalClose(modalName);
+        if (handleType !== 'timeline') {
+            handleModalClose(modalName);
+          }
+          else {
+            handleModalClose(false);
+          }
         setIsUpdated(false);
         setShowModalDialog(false);
     };
