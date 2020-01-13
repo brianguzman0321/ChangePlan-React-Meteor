@@ -204,7 +204,7 @@ const Gantt = props => {
   return (
     <div
       ref={(input) => { ganttContainer = input; }}
-      style={{ width: '100%', height: '680px', marginTop: '30px' }}
+      style={{ width: '100%', height: '85vh', marginTop: '30px' }}
     />
   )
 };
