@@ -282,7 +282,6 @@ function ProjectCard(props) {
   };
   const selectProject = (project, e) => {
     props.history.push(`/projects/${project._id}`);
-    window.location.reload(false);
   };
 
   const searchFilter = event => {

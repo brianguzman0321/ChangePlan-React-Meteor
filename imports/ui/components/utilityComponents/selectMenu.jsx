@@ -48,7 +48,6 @@ function ProjectSelectMenu(props) {
         projectId = event.target.value;
         const path = generatePath(props.match.path, { projectId });
         props.history.replace(path);
-        window.location.reload(false);
     }
 
     function handleClose() {

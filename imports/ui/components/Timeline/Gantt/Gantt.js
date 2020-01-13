@@ -131,6 +131,7 @@ const Gantt = props => {
     gantt.attachEvent("onTaskClick", function(id, e) {
       setActivityId(id);
       setEdit(true);
+      console.error('+++++++++++++++tasks', id);
     });
     // FIXME: This is a temporary solution
     gantt.activities = activities;
@@ -143,13 +144,13 @@ const Gantt = props => {
       }
     });
     ////////
-
     gantt.init(ganttContainer);
+    gantt.clearAll();
     gantt.parse(tasks);
   });
-
-  useEffect(() => gantt.parse(tasks), [tasks]);
-
+  
+  useEffect(() => {gantt.parse(tasks)}, [tasks]);
+ 
   useEffect(() => {
     switch(scaleText){
       case "quarter":
