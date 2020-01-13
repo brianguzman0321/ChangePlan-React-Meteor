@@ -91,9 +91,15 @@ const useStyles = makeStyles(theme => ({
     color: 'lightgray',
   },
   sampleCsv: {
+    marginLeft: '50px',
+    marginBottom: 20,
     textDecoration: 'none',
     color: '#303f9f',
-  }
+  },
+  uploadButton: {
+    width: 200,
+    marginBottom: 20,
+  },
 }));
 
 const DialogTitle = withStyles(styles)(props => {
@@ -136,7 +142,7 @@ function AddStakeHolder(props) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState(0);
   const [csvfile, setCsvfile] = React.useState(undefined);
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
   const [notes, setNotes] = React.useState('');
   const [agreedToAddModal, setAgreedToAddModal] = React.useState(false);
   const theme = useTheme();
@@ -207,6 +213,7 @@ function AddStakeHolder(props) {
 
   const handleChangecsv = event => {
     let file = event.target.files[0];
+    setLoading(false);
     let ext;
     try {
       ext = file.name.match(/\.([^\.]+)$/)[1];
@@ -360,7 +367,7 @@ function AddStakeHolder(props) {
       });
     }
     Meteor.call('peoples.insertMany', params, (err, res) => {
-      setLoading(false);
+      setLoading(true);
       if (err) {
         props.enqueueSnackbar(`Upload Aborted! ${err.reason}`, {variant: 'error'})
       } else {
@@ -425,7 +432,7 @@ function AddStakeHolder(props) {
           props.enqueueSnackbar(err.reason, {variant: 'error'})
         } else {
           setOpen(false);
-          props.enqueueSnackbar('StakeHolder Added Successfully.', {variant: 'success'})
+          props.enqueueSnackbar('Stakeholder Added Successfully.', {variant: 'success'})
         }
       })
     }
@@ -451,7 +458,7 @@ function AddStakeHolder(props) {
           props.enqueueSnackbar(err.reason, {variant: 'error'})
         } else {
           insertManyStakeholders({peoples: stakeholdersToBoth});
-          props.enqueueSnackbar('StakeHolder Added Successful.', {variant: 'success'});
+          props.enqueueSnackbar('Stakeholder Added Successful.', {variant: 'success'});
           setAddConfirmation(false);
           setOpen(false);
           setOpenResultTable(true);
@@ -466,7 +473,7 @@ function AddStakeHolder(props) {
         delete currentProject.managerDetails;
 
         if (currentProject.stakeHolders.includes(stakeholder._id)) {
-          props.enqueueSnackbar('This StakeHolder was already added to current project.', {variant: 'warning'})
+          props.enqueueSnackbar('This Stakeholder was already added to current project.', {variant: 'warning'})
           closeAgreedToAddModal();
         } else {
           currentProject.stakeHolders.push(stakeholder._id);
@@ -477,7 +484,7 @@ function AddStakeHolder(props) {
             if (error) {
               props.enqueueSnackbar(err.reason, {variant: 'error'})
             } else {
-              props.enqueueSnackbar('StakeHolder Added Successful.', {variant: 'success'});
+              props.enqueueSnackbar('Stakeholder Added Successful.', {variant: 'success'});
               closeAgreedToAddModal();
               setOpen(false);
             }
@@ -486,7 +493,7 @@ function AddStakeHolder(props) {
       } else if (type === 'template') {
         const currentTemplate = Templates.findOne({_id: templateId});
         if (currentTemplate.stakeHolders.includes(stakeholder._id)) {
-          props.enqueueSnackbar('This StakeHolder was already added to current project.', {variant: 'warning'})
+          props.enqueueSnackbar('This Stakeholder was already added to current project.', {variant: 'warning'})
           closeAgreedToAddModal();
         } else {
           currentTemplate.stakeHolders.push(stakeholder._id);
@@ -497,7 +504,7 @@ function AddStakeHolder(props) {
             if (error) {
               props.enqueueSnackbar(err.reason, {variant: 'error'})
             } else {
-              props.enqueueSnackbar('StakeHolder Added Successful.', {variant: 'success'});
+              props.enqueueSnackbar('Stakeholder Added Successful.', {variant: 'success'});
               closeAgreedToAddModal();
               setOpen(false);
             }
@@ -658,12 +665,12 @@ function AddStakeHolder(props) {
                         }}
                         className={influenceLevel === 0 && classes.menuItem}
                       >
-                        <MenuItem value={0}>no-value</MenuItem>
-                        <MenuItem value={1}>Very low level of support</MenuItem>
-                        <MenuItem value={2}>Low level of support</MenuItem>
-                        <MenuItem value={3}>Moderate level of support</MenuItem>
-                        <MenuItem value={4}>High level of support</MenuItem>
-                        <MenuItem value={5}>Engaged and supportive</MenuItem>
+                        <MenuItem value={0}>Select</MenuItem>
+                        <MenuItem value={1}>1 = Very low level of support</MenuItem>
+                        <MenuItem value={2}>2 = Low level of support</MenuItem>
+                        <MenuItem value={3}>3 = Moderate level of support</MenuItem>
+                        <MenuItem value={4}>4 = High level of support</MenuItem>
+                        <MenuItem value={5}>5 = Engaged and supportive</MenuItem>
                       </Select>
                     </FormControl>
                     <br/>
@@ -690,12 +697,12 @@ function AddStakeHolder(props) {
                         }}
                         className={influenceLevel === 0 && classes.menuItem}
                       >
-                        <MenuItem value={0}>no-value</MenuItem>
-                        <MenuItem value={1}>Little influence over outcomes</MenuItem>
-                        <MenuItem value={2}>Some influence over outcomes</MenuItem>
-                        <MenuItem value={3}>Moderate influence over outcomes</MenuItem>
-                        <MenuItem value={4}>Major influence over outcomes</MenuItem>
-                        <MenuItem value={5}>Project will not succeed without their support</MenuItem>
+                        <MenuItem value={0}>Select</MenuItem>
+                        <MenuItem value={1}>1 = Little influence over outcomes</MenuItem>
+                        <MenuItem value={2}>2 = Some influence over outcomes</MenuItem>
+                        <MenuItem value={3}>3 = Moderate influence over outcomes</MenuItem>
+                        <MenuItem value={4}>4 = Major influence over outcomes</MenuItem>
+                        <MenuItem value={5}>5 = Project will not succeed without their support</MenuItem>
                       </Select>
                     </FormControl>
                     <br/>
@@ -731,7 +738,8 @@ function AddStakeHolder(props) {
                   onChange={handleChangecsv}
                 />
                 <label htmlFor="raised-button-file">
-                  <Button variant="raised" component="span" className={classes.button}>
+                  <Button color="primary"
+                          variant="outlined" component="span" className={classes.uploadButton}>
                     Choose File
                   </Button>
                   <a href="/branding/stakeholder_list.csv" download="stakeholder_list.csv"
@@ -742,7 +750,7 @@ function AddStakeHolder(props) {
 
                 </label>
                 <p/>
-                <Button onClick={importCSV} disabled={loading} color="primary" variant="contained"> Upload </Button>
+                <Button onClick={importCSV} disabled={loading} color="primary" variant="contained" className={classes.uploadButton}> Upload </Button>
               </div>
             </TabPanel>
           </SwipeableViews>

@@ -812,7 +812,7 @@ function AddActivities(props) {
 
                   <Button color="primary"
                           onClick={() => {
-                            sendNotificationEmail(activityType.name, activity.dueDate, time, activity.name, description, stakeHolders.length, currentProject, person, projectId, vision, objectives)
+                            sendNotificationEmail(activityType.name, activity.dueDate, time, activity.name, description, stakeHolders.length, project, person, projectId, project.vision, project.objectives)
                           }}>
                     Notify/Remind by email
                   </Button>
