@@ -204,7 +204,7 @@ function EditStakeHolder(props) {
             }
             else{
                 handleClose();
-                props.enqueueSnackbar('StakeHolder Updated Successfully.', {variant: 'success'})
+                props.enqueueSnackbar('Stakeholder Updated Successfully.', {variant: 'success'})
             }
 
         })
@@ -336,11 +336,11 @@ function EditStakeHolder(props) {
                                         id: 'demo-controlled-open-select',
                                     }}
                                 >
-                                    <MenuItem value={1}>1</MenuItem>
-                                    <MenuItem value={2}>2</MenuItem>
-                                    <MenuItem value={3}>3</MenuItem>
-                                    <MenuItem value={4}>4</MenuItem>
-                                    <MenuItem value={5}>5</MenuItem>
+                                    <MenuItem value={1}>Very low level of support</MenuItem>
+                                    <MenuItem value={2}>Low level of support</MenuItem>
+                                    <MenuItem value={3}>Moderate level of support</MenuItem>
+                                    <MenuItem value={4}>High level of support</MenuItem>
+                                    <MenuItem value={5}>Engaged and supportive</MenuItem>
                                 </Select>
                             </FormControl>
                             <br/>
@@ -365,11 +365,11 @@ function EditStakeHolder(props) {
                                         id: 'demo-controlled-open-select',
                                     }}
                                 >
-                                    <MenuItem value={1}>1</MenuItem>
-                                    <MenuItem value={2}>2</MenuItem>
-                                    <MenuItem value={3}>3</MenuItem>
-                                    <MenuItem value={4}>4</MenuItem>
-                                    <MenuItem value={5}>5</MenuItem>
+                                    <MenuItem value={1}>1 = Little influence over outcomes</MenuItem>
+                                    <MenuItem value={2}>2 = Some influence over outcomes</MenuItem>
+                                    <MenuItem value={3}>3 = Moderate influence over outcomes</MenuItem>
+                                    <MenuItem value={4}>4 = Major influence over outcomes</MenuItem>
+                                    <MenuItem value={5}>5 = Project will not succeed without their support</MenuItem>
                                 </Select>
                             </FormControl>
                             <br/>

@@ -16,7 +16,7 @@ Meteor.methods({
                        currentChangeManagers) {
       Email.send({
         to: email,
-        from: 'Change Plan <no-reply@changeplan.co>',
+        from: 'ChangePlan <no-reply@changeplan.co>',
         subject: `You've been assigned an activity for project ${projectName}.`,
         html: activityNotification( { name,
           projectName,
