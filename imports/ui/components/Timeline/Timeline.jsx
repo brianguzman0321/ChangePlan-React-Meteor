@@ -192,15 +192,13 @@ function Timeline(props) {
   useEffect(() => {
     const activity = activities.find(({ _id }) => _id === activityId) || {};
     const extraActivity = data.data.find(({ id }) => id === activityId) || {};
-    const impactindex = data.data.indexOf(extraActivity) - activities.length - 2;
-    const benefitsindex = data.data.indexOf(extraActivity) - activities.length - impactLength - 2;
+    const impactindex = (activities.length > 0) ? data.data.indexOf(extraActivity) - activities.length - 2 : data.data.indexOf(extraActivity) ;
+    const benefitsindex = (activities.length > 0) ? data.data.indexOf(extraActivity) - activities.length - impactLength - 2 : data.data.indexOf(extraActivity) - impactLength;
     setActivity(activity);
     setEventType(extraActivity.eventType);
     setImpactIndex(impactindex);
     setBenefitsIndex(benefitsindex);
   }, [activityId]);
-
-  console.error('=====================', eventType);
   
   const handleModalClose = obj => {
     setEdit(obj);
@@ -355,7 +353,7 @@ function Timeline(props) {
               editValue={projects[0].benefits[benefitsIndex]}
               currentType={projectId && 'project' || templateId && 'template'}
             />) : null}
-            {(eventType === "Project_Start" || "Project_End") ? (<EditProject
+            {(eventType === "Project_Start") || (eventType === "Project_End") ? (<EditProject
               open={edit}
               handleModalClose={handleModalClose}
               project={projects[0]}

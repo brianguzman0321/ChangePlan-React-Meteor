@@ -281,7 +281,8 @@ function ProjectCard(props) {
     updateFilter('localProjects', 'sort', event.target.value);
   };
   const selectProject = (project, e) => {
-    props.history.push(`/projects/${project._id}`)
+    props.history.push(`/projects/${project._id}`);
+    window.location.reload(false);
   };
 
   const searchFilter = event => {
