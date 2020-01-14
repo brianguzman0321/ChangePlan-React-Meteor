@@ -288,6 +288,7 @@ function Timeline(props) {
               setActivityId={setActivityId}
               setEdit={setEdit}
               activities={activities}
+              project={projects[0]}
             />
             <ExportDialog
               isExporting={isExporting}

@@ -71,8 +71,8 @@ export { handleDownload, handleImportData }
 
 const Gantt = props => {
   savedTask = {};
-  const { tasks, scaleText, setActivityId, setEdit, activities } = props;
-
+  const { tasks, scaleText, setActivityId, setEdit, activities, project } = props;
+  const currentProject = project;
   const updateTaskByDrag = (savedActivities, updatedTask) => {
     const validActivity = savedActivities.find(item => item['_id'] === updatedTask['id']);
     if (!validActivity) return;
@@ -87,6 +87,21 @@ const Gantt = props => {
         props.enqueueSnackbar(err.reason, {variant: 'error'})
       } else {
         props.enqueueSnackbar(`Activity Updated Successfully.`, {variant: 'success'})
+      }
+    });
+  }
+
+  const updateProjectByDrag = ( savedTask ) => {
+    console.error(savedTask.start_date);
+    project.startingDate = savedTask.start_date;
+    let params = {
+      project
+    };
+    Meteor.call('projects.update', params, (err, res) => {
+      if (err) {
+        props.enqueueSnackbar(err.reason, {variant: 'error'})
+      } else {
+        props.enqueueSnackbar(`Project Updated Successfully.`, {variant: 'success'})
       }
     });
   }
@@ -131,24 +146,39 @@ const Gantt = props => {
     gantt.attachEvent("onTaskClick", function(id, e) {
       setActivityId(id);
       setEdit(true);
-      console.error('+++++++++++++++tasks', id);
     });
     // FIXME: This is a temporary solution
     gantt.activities = activities;
     gantt.attachEvent("onAfterTaskDrag", (id, mode, e) => {
       //any custom logic here
       var updatedTask = gantt.getTask(id);
+      console.error('----------------', updatedTask.eventType);
       if (mode === 'move' && updatedTask !== savedTask) {
-        savedTask = updatedTask;
+        savedTask = updatedTask;   
         updateTaskByDrag(gantt.activities, updatedTask);
+        if( savedTask.eventType === 'Project_Start' ) {
+          updateProjectByDrag( savedTask );
+        }
+        if( savedTask.eventType === 'Project_End' ) {
+          console.error(savedTask.start_date);
+          updateProjectByDrag( savedTask );
+        }
+        if( savedTask.eventType === 'Impact' ) {
+          console.error('++++++++++++++++++Impact');
+        }
+        if( savedTask.eventType === 'Benefit' ) {
+          console.error('+++++++++++++++++Benefit');
+        }
       }
     });
     ////////
+   
     gantt.init(ganttContainer);
     gantt.clearAll();
     gantt.parse(tasks);
   });
-  
+  console.error('+++++++++++++++_________________',project);
+
   useEffect(() => {gantt.parse(tasks)}, [tasks]);
  
   useEffect(() => {
