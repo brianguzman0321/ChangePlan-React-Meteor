@@ -127,7 +127,7 @@ function Timeline(props) {
     }
     if (activities.length > 0) {
       tempData.unshift({
-        id: 'Project_Start',
+        id: `Project_Start${projects[0]._id}`,
         eventType: 'Project_Start',
         text: 'Project Start',
         start_date: moment(startingDate).format('DD-MM-YYYY'),
@@ -140,7 +140,7 @@ function Timeline(props) {
       });
 
       tempData.push({
-        id: 'Project_End',
+        id: `Project_End${projects[0]._id}`,
         eventType: 'Project_End',
         text: 'Project End',
         start_date: moment(dueDate).format('DD-MM-YYYY'),

@@ -238,6 +238,7 @@ export const update = new ValidatedMethod({
   }).validator(),
   run({project}) {
     let {_id} = project;
+    console.log(project, _id);
     return Projects.update(_id, {$set: project});
   }
 });
