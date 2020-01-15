@@ -336,11 +336,11 @@ function EditStakeHolder(props) {
                                         id: 'demo-controlled-open-select',
                                     }}
                                 >
-                                    <MenuItem value={1}>Very low level of support</MenuItem>
-                                    <MenuItem value={2}>Low level of support</MenuItem>
-                                    <MenuItem value={3}>Moderate level of support</MenuItem>
-                                    <MenuItem value={4}>High level of support</MenuItem>
-                                    <MenuItem value={5}>Engaged and supportive</MenuItem>
+                                    <MenuItem value={1}>1 = Very low level of support</MenuItem>
+                                    <MenuItem value={2}>2 = Low level of support</MenuItem>
+                                    <MenuItem value={3}>3 = Moderate level of support</MenuItem>
+                                    <MenuItem value={4}>4 = High level of support</MenuItem>
+                                    <MenuItem value={5}>5 = Engaged and supportive</MenuItem>
                                 </Select>
                             </FormControl>
                             <br/>
