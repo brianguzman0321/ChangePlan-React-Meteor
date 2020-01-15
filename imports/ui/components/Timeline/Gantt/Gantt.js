@@ -165,16 +165,20 @@ const Gantt = props => {
       if (mode === 'move' && gantt.getTask(id).start_date !== savedTask.start_date) {
         savedTask = gantt.getTask(id);
         updateTaskByDrag(gantt.activities, savedTask);
+
         if (savedTask.eventType === 'Project_Start' || savedTask.eventType === 'Project_End') {
           updateProjectByDrag(savedTask, gantt.project);
         }
+
         if (savedTask.eventType === 'Impact') {
+
         }
+
         if (savedTask.eventType === 'Benefit') {
+
         }
       }
     });
-
     gantt.init(ganttContainer);
     gantt.clearAll();
     gantt.parse(tasks);
