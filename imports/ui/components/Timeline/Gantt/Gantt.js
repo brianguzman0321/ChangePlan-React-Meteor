@@ -183,7 +183,6 @@ const Gantt = props => {
   });
 
   useEffect(() => { gantt.parse(tasks) }, [tasks]);
-
   useEffect(() => {
     switch (scaleText) {
       case "quarter":
