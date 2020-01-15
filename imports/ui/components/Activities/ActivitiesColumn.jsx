@@ -181,7 +181,7 @@ function ActivitiesColumn(props) {
   const [nameTitle, setNameTitle] = useState(company.activityColumns && company.activityColumns[step] || '');
   const [changeManager, setChangeManager] = useState('');
   const [users, setUsers] = useState([]);
-  let {projectId, templateId} = match.params;
+  let {projectId} = match.params;
   const [currentProject, setProject] = useState({});
 
   function completeActivity(activity) {
