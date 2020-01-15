@@ -171,11 +171,9 @@ const Gantt = props => {
         }
 
         if (savedTask.eventType === 'Impact') {
-
         }
 
         if (savedTask.eventType === 'Benefit') {
-
         }
       }
     });
