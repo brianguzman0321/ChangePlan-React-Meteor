@@ -21,6 +21,7 @@ import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import SaveChanges from "../../Modals/SaveChanges";
+import Link from "@material-ui/core/Link";
 
 const tableHeadStyle = makeStyles(theme => ({
   root: {
@@ -180,6 +181,9 @@ const useStyles1 = makeStyles(theme => ({
     position: 'absolute',
     top: 20,
     width: 1,
+  },
+  selectButton: {
+    color: '#3f51b5',
   },
 }));
 
@@ -383,9 +387,15 @@ export default function SelectStakeHolders(props) {
 
   return (
     <div>
-      <Button variant="outlined" color="primary" onClick={handleClickOpen} fullWidth={true}>
-        Select Stakeholders
-      </Button>
+      {!isImpacts && !isBenefits ?
+        <Link component={"button"} variant={"button"} onClick={handleClickOpen} underline={'none'}>
+          SELECT STAKEHOLDER
+        </Link> :
+        <Button color="primary" variant={"outlined"} onClick={handleClickOpen} fullWidth>
+          Select Stakeholders
+        </Button>
+      }
+
       <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
         <AppBar className={classes.appBar} color="default">
           <Toolbar>

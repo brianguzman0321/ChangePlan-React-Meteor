@@ -21,16 +21,12 @@ import DateFnsUtils from '@date-io/date-fns';
 import {
   MuiPickersUtilsProvider,
   DatePicker,
+  DateTimePicker, TimePicker,
 } from '@material-ui/pickers';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import {data} from "/imports/activitiesContent.json";
 import SelectStakeHolders from './SelectStakeHolders';
 import {Peoples} from '/imports/api/peoples/peoples'
 import {Companies} from '/imports/api/companies/companies'
-import {stringHelpers} from '/imports/helpers/stringHelpers';
 import AutoComplete from '/imports/ui/components/utilityComponents/AutoCompleteInline'
 import AddNewPerson from './AddNewPerson';
 import {withRouter} from 'react-router'
@@ -39,12 +35,20 @@ import SaveChanges from "../../Modals/SaveChanges";
 import {Projects} from "../../../../api/projects/projects";
 import {Templates} from "../../../../api/templates/templates";
 import NotificationModal from "./NotificationModal";
+import Link from "@material-ui/core/Link";
+import {
+  ClickAwayListener,
+  ListSubheader,
+  Select,
+  Switch
+} from "@material-ui/core";
+import MenuItem from "@material-ui/core/MenuItem";
 
 
 const styles = theme => ({
   root: {
     margin: 0,
-    padding: theme.spacing(3, 3),
+    padding: theme.spacing(2, 3, 0, 3),
   },
   closeButton: {
     position: 'absolute',
@@ -58,31 +62,11 @@ const gridStyles = makeStyles(theme => ({
   root: {
     cursor: 'pointer',
     textAlign: 'center',
-    '&:hover': {
-      background: '#dae0e5;'
-    },
     '&:selected': {
       background: '#dae0e5;'
     }
   },
-  item: {
-    // background: '#dae0e5'
-  }
 }));
-
-const styles2 = {
-  root: {
-    cursor: 'pointer',
-    textAlign: 'center',
-    '&:hover': {
-      background: '#dae0e5;'
-    },
-    '&:selected': {}
-  },
-  item: {
-    // background: '#dae0e5'
-  }
-};
 
 const useStyles = makeStyles(theme => ({
   AddNewActivity: {
@@ -125,7 +109,6 @@ const useStyles = makeStyles(theme => ({
     '&:hover': {
       background: '#53cbd0',
       color: 'white'
-
     },
     boxShadow: 'none',
   },
@@ -139,9 +122,10 @@ const useStyles = makeStyles(theme => ({
     boxShadow: 'none',
   },
   heading: {
-    fontSize: theme.typography.pxToRem(15),
+    fontSize: theme.typography.pxToRem(18),
     flexBasis: '33.33%',
     flexShrink: 0,
+    fontWeight: 420,
   },
   secondaryHeading: {
     fontSize: theme.typography.pxToRem(15),
@@ -156,7 +140,22 @@ const useStyles = makeStyles(theme => ({
     root: {
       background: 'red'
     }
-  }
+  },
+  reportContainer: {
+    backgroundColor: '#f5f5f5',
+    height: '50px',
+    borderRadius: '4px',
+    alignContent: 'center',
+  },
+  linkButton: {
+    textAlign: 'right',
+    paddingRight: '18px',
+  },
+  description: {
+    backgroundColor: '#f5f5f5',
+    border: '1px solid #f5f5f5',
+    borderRadius: '4px',
+  },
 }));
 
 const DialogTitle = withStyles(styles)(props => {
@@ -175,7 +174,7 @@ const DialogTitle = withStyles(styles)(props => {
 
 const DialogContent = withStyles(theme => ({
   root: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(0, 3, 2, 3),
   }
 }))(MuiDialogContent);
 
@@ -190,8 +189,8 @@ function AddActivities(props) {
   let {
     company, stakeHolders, local, project, match, edit, activity, list, isOpen, currentChangeManager,
     template, type, stakeHoldersTemplate, isSuperAdmin, isAdmin, isChangeManager, isManager, step, color,
-    expandAccordian
   } = props;
+  const customActivityIcon = data.find(item => item.category === "custom").iconSVG;
   const [open, setOpen] = useState(edit || isOpen || false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [time, setTime] = useState('');
@@ -207,14 +206,18 @@ function AddActivities(props) {
   const [dueDate, setDueDate] = useState(new Date());
   const [completedDate, setCompletedDate] = useState(null);
   const [changeManager, setChangeManager] = useState(currentChangeManager);
-  const [expanded1, setExpanded1] = useState(expandAccordian);
-  const [expanded2, setExpanded2] = useState(expandAccordian);
-  const [expanded3, setExpanded3] = useState(expandAccordian);
-  const [expanded4, setExpanded4] = useState(expandAccordian);
-  const [expanded5, setExpanded5] = useState(expandAccordian);
   const [showModalDialog, setShowModalDialog] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
+  const [checkSchedule, setCheckSchedule] = useState(true);
+  const [timeSendEmail, setTimeSendEmail] = useState(new Date());
+  const activityCategories = ["communication", "engagement", "training/coaching"];
+  const disabled = (isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
+    || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
+    || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin);
+  const [showSelect, setShowSelect] = useState(false);
+  const [selectActivity, setSelectActivity] = useState({});
+  const [showInputEditActivity, setShowInputEditActivity] = useState(isNew || false);
 
 
   let {projectId, templateId} = match.params;
@@ -257,8 +260,13 @@ function AddActivities(props) {
       resetValues();
       return false;
     }
-    let selectedActivity = data.find(item => item.name === activity.type) || {};
+    let selectedActivity = data.find(item => (item.name === activity.type) || item.category === "custom") || {};
+    if (selectedActivity.category === "custom") {
+      selectedActivity.name = activity.type;
+      selectedActivity.buttonText = activity.name;
+    }
     setActivityType(selectedActivity);
+    setSelectActivity(selectedActivity);
     setDueDate(activity.dueDate);
     setCompletedDate(activity.completedAt);
     setDescription(activity.description);
@@ -305,8 +313,8 @@ function AddActivities(props) {
   };
 
   const resetValues = () => {
-    let selectedActivity = data.find(item => item.name === activity.type) || {};
     setActivityType({});
+    setSelectActivity({});
     setDueDate(new Date());
     setCompletedDate(null);
     setDescription('');
@@ -348,41 +356,43 @@ function AddActivities(props) {
       getProjectManager();
     }
     if (edit && activity && activity.name) {
-      setExpanded1(expandAccordian);
-      setExpanded2(expandAccordian);
-      setExpanded3(expandAccordian);
-      setExpanded4(expandAccordian);
-      setExpanded5(expandAccordian);
       updateValues();
     }
   }, [props.company, stakeHolders, company, props.edit, props.activity, isNew, local]);
 
-  const handleChangePanel = panel => (event, isExpanded) => {
-    if (panel === 'panel1') {
-      setExpanded1(isExpanded ? panel : false);
-    }
-    if (panel === 'panel2') {
-      setExpanded2(isExpanded ? panel : false);
-    }
-    if (panel === 'panel3') {
-      setExpanded3(isExpanded ? panel : false);
-    }
-    if (panel === 'panel4') {
-      setExpanded4(isExpanded ? panel : false);
-    }
-    if (panel === 'panel5') {
-      setExpanded5(isExpanded ? panel : false);
-    }
-  };
 
   const handleClickOpen = () => {
     setIsNew(true);
     setOpen(true);
   };
 
-  const changeActivityType = (item) => {
-    setExpanded1(false);
-    setActivityType(item);
+  const changeActivityType = (item, custom = false) => {
+    if (custom) {
+      const activityCustom = {
+        buttonText: item,
+        name: item,
+        iconSVG: customActivityIcon,
+        category: "custom",
+        engageSection: true,
+        equipSection: true,
+        embedSection: true,
+        helpArticleAvailable: false,
+        helpArticleText: "",
+        helpArticleLink: "",
+        resourceAvailable: false,
+        resourceText: "",
+        resourceFileName: "",
+        helpTextTitle: "Other",
+        helpText: "Describe the activity in the 'Description' field.",
+      };
+      setActivityType(activityCustom);
+      setSelectActivity(activityCustom);
+    } else {
+      setActivityType(item);
+      setSelectActivity(item);
+    }
+    setShowSelect(false);
+    setShowInputEditActivity(false);
   };
 
   const handleClose = () => {
@@ -415,6 +425,10 @@ function AddActivities(props) {
     } else {
       setShowNotification(true)
     }
+  };
+
+  const handleShowSelect = () => {
+    setShowSelect(true);
   };
 
   const createProject = (e, isMail = true) => {
@@ -543,6 +557,14 @@ function AddActivities(props) {
     deleted === true && handleClose();
   }
 
+  const handleSchedule = () => event => {
+    setCheckSchedule(event.target.checked)
+  };
+
+  const handleTimeSendEmail = (value) => {
+    setTimeSendEmail(value);
+  };
+
   const onCalendarClick = (id) => {
     document.getElementById(id).click();
   };
@@ -553,11 +575,19 @@ function AddActivities(props) {
     createProject(e, isMail);
   };
 
+  const handleShowEditActivity = () => {
+    setActivityType({});
+    setShowInputEditActivity(true);
+  };
+
+  const resetActivityType = (e) => {
+    e.preventDefault();
+    setActivityType({});
+  };
+
   return (
     <div className={classes.AddNewActivity}>
-      {!list && (!((isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
-        || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
-        || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin))) ?
+      {!list && !disabled ?
         <Button variant="contained"
                 className={step === 4 ? classes.buttonInterest : step === 5 ? classes.buttonUnderstanding :
                   step === 1 ? classes.buttonAwareness :
@@ -570,255 +600,297 @@ function AddActivities(props) {
       <Dialog onClose={handleOpenModalDialog} aria-labelledby="customized-dialog-title" open={open} maxWidth="md"
               fullWidth={true}>
         <DialogTitle id="customized-dialog-title" onClose={handleOpenModalDialog}>
-          {isNew ? 'Add' : 'Edit'} Activity
+          Activity
         </DialogTitle>
         <form onSubmit={createProject} noValidate>
-          <DialogContent dividers>
+          <DialogContent>
             <div className={classes.root}>
-
-              {/* expanded={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
-                || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
-                || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin) ? false : expanded} */}
-              <ExpansionPanel
-                square expanded={expanded1}
-                onChange={handleChangePanel('panel1')}
-                disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
-                || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
-                || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}>
-                <ExpansionPanelSummary
-                  expandIcon={<ExpandMoreIcon/>}
-                  aria-controls="panel2bh-content"
-                  id="panel2bh-header"
-                >
-                  <Typography className={classes.heading}>Activity Type</Typography>
+              <Select fullWidth value={0} open={showSelect} onOpen={handleShowSelect}>
+                <MenuItem value={0} style={{display: 'none'}}>
                   <Typography className={classes.secondaryHeading}>
-                    {activityType.buttonText || ''}
+                    {activityType.buttonText || null}
                     {activityType.iconSVG ? <SVGInline
                       style={{position: 'absolute', marginTop: -8}}
                       width="35px"
                       height="35px"
                       fill={color}
-                      svg={activityType.iconSVG}
-                    /> : ''
-                    }
+                      svg={activityType.iconSVG || customActivityIcon}
+                    /> : ''}
                   </Typography>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails>
-                  <Grid container justify="space-between" spacing={4}>
-                    {
-                      data.map((item, index) => {
-                        return <Tooltip title={item.helpText} key={index} enterDelay={600}>
-                          <Grid item={true} xs={2} classes={classes1}
-                                style={{background: activityType.name === item.name ? '#dae0e5' : ''}} onClick={(e) => {
-                            changeActivityType(item);
-                          }}>
-
-                            <SVGInline
-                              width="35px"
-                              height="35px"
-                              fill={color}
-                              svg={item.iconSVG}
-                            />
-                            <Typography className={classes.gridText}>
-                              {item.buttonText}
-                            </Typography>
-                          </Grid>
-                        </Tooltip>
-                      })
+                </MenuItem>
+                <ClickAwayListener onClickAway={() => {
+                  setActivityType(selectActivity);
+                  setShowInputEditActivity(false);
+                  setShowSelect(false);
+                }}>
+                  <Grid style={{width: '50vw'}}>
+                    {activityCategories.map((activityCategory, index) => {
+                      return (<div><ListSubheader disableSticky>{activityCategory.toUpperCase()}</ListSubheader>
+                        <Grid container key={index} direction="row" style={{width: '48vw'}}>
+                          {data.filter(item => item.category === activityCategory).map((item, index) => {
+                            return <Grid item xs={3} key={index}
+                                         style={{background: activityType.name === item.name ? '#dae0e5' : ''}}>
+                              <MenuItem value={item} onClick={() => {
+                                changeActivityType(item)
+                              }}>
+                                <Tooltip title={item.helpText} key={index} enterDelay={600}>
+                                  <Grid item={true} xs={12} classes={classes1}>
+                                    <SVGInline
+                                      width="35px"
+                                      height="35px"
+                                      fill={color}
+                                      svg={item.iconSVG}
+                                    />
+                                    <Typography className={classes.gridText}>
+                                      {item.buttonText}
+                                    </Typography>
+                                  </Grid>
+                                </Tooltip>
+                              </MenuItem>
+                            </Grid>
+                          })}
+                        </Grid>
+                        <br/>
+                        <hr/>
+                      </div>)
+                    })
                     }
-                  </Grid>
-                </ExpansionPanelDetails>
-              </ExpansionPanel>
 
-              <ExpansionPanel square expanded={expanded2}
-                              onChange={handleChangePanel('panel2')}
-                              disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
-                              || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
-                              || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}>
-                <ExpansionPanelSummary
-                  expandIcon={<ExpandMoreIcon/>}
-                  aria-controls="panel1bh-content"
-                  id="panel1bh-header"
-                >
-                  <Typography className={classes.heading}>Date</Typography>
-                  <Typography className={classes.secondaryHeading}>Due
-                    Date: {moment(dueDate).format('DD-MMM-YY')}</Typography>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails>
-                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                    <Grid container justify="space-between" spacing={4}>
-                      <Grid item xs={6} className={classes.datePicker}>
-                        <Grid item xs={11}>
-                          <DatePicker
-                            fullWidth
-                            disableToolbar
-                            variant="inline"
-                            format="MM/dd/yyyy"
-                            disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
-                            || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
-                            || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}
-                            margin="normal"
-                            id="date-picker-inline"
-                            label="Due Date"
-                            value={dueDate}
-                            autoOk={true}
-                            onChange={handleDueDate}
+                    <ListSubheader disableSticky>CUSTOM</ListSubheader>
+                    {(activityType.category !== "custom") || showInputEditActivity ?
+                      <Grid container direction="row" justify="flex-start" alignItems="flex-start"
+                            style={{width: '48vw'}}>
+                        <Grid item xs={1} style={{maxWidth: '5%'}}>
+                          <SVGInline
+                            width="35px"
+                            height="35px"
+                            fill={color}
+                            svg={customActivityIcon}
                           />
                         </Grid>
-                        <Grid item xs={1}>
-                          <IconButton aria-label="close" className={classes.closeButton}
-                                      disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
-                                      || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
-                                      || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}
-                                      onClick={() => onCalendarClick("date-picker-inline")}>
-                            <CalendarTodayIcon/>
-                          </IconButton>
-                        </Grid>
-                      </Grid>
-                      <Grid item xs={6} className={classes.datePicker}>
                         <Grid item xs={11}>
-                          <DatePicker
-                            disableToolbar
-                            fullWidth
-                            variant="inline"
-                            margin="normal"
-                            id="date-picker-dialog"
-                            disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
-                            || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
-                            || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}
-                            label="Date Completed"
-                            format="MM/dd/yyyy"
-                            value={completedDate}
-                            minDate={dueDate}
-                            autoOk={true}
-                            onChange={handleEndingDate}
-                          />
+                          <TextField
+                            placeholder={"Enter activity type"}
+                            onFocus={resetActivityType}
+                            fullWidth type={"text"}
+                            defaultValue={activityType.category === "custom" ? activityType.buttonText : ''}
+                            onKeyPress={(e) => {
+                              (e.key === 'Enter' ? changeActivityType(e.target.value, true) : null)
+                            }}/>
                         </Grid>
-                        <Grid item xs={1}>
-                          <IconButton aria-label="close" className={classes.closeButton}
-                                      disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
-                                      || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
-                                      || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}
-                                      onClick={() => onCalendarClick("date-picker-dialog")}>
-                            <CalendarTodayIcon/>
-                          </IconButton>
+                      </Grid> :
+                      <Grid style={{width: '48vw'}} onClick={handleShowEditActivity}>
+                        <Grid item xs={3}>
+                          <MenuItem value={activityType}>
+                            <Grid item={true} xs={12} classes={classes1}
+                                  style={{background: activityType.category === "custom" ? '#dae0e5' : ''}}>
+                              <SVGInline
+                                width="35px"
+                                height="35px"
+                                fill={color}
+                                svg={customActivityIcon}
+                              />
+                              <Typography className={classes.gridText}>
+                                {activityType.buttonText}
+                              </Typography>
+                            </Grid>
+                          </MenuItem>
                         </Grid>
                       </Grid>
-                      <Grid item xs={6}>
-                        <TextField
-                          margin="dense"
-                          id="time"
-                          disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
-                          || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
-                          || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}
-                          label="Time Away from BAU (Minutes)"
-                          value={time}
-                          onChange={handleTimeChange}
-                          type="number"
-                          fullWidth
-                        />
-                      </Grid>
-                    </Grid>
-                  </MuiPickersUtilsProvider>
-                </ExpansionPanelDetails>
-              </ExpansionPanel>
-
-              {/* defaultExpanded={!((isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
-                  || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
-                  || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin))} */}
-              <ExpansionPanel
-                square expanded={expanded3}
-                onChange={handleChangePanel('panel3')}
-                disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
-                || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
-                || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}>
-                <ExpansionPanelSummary
-                  expandIcon={<ExpandMoreIcon/>}
-                  aria-controls="panel3bh-content"
-                  id="panel3bh-header"
-                >
-                  <Typography className={classes.heading}>Stakeholders targeted</Typography>
-                  <Typography className={classes.secondaryHeading}>
-                    {peoples.length} of {type === 'project' ? stakeHolders.length : stakeHoldersTemplate.length}
-                  </Typography>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails>
-                  <Grid container justify="center">
-                    <SelectStakeHolders rows={type === 'project' ? stakeHolders : stakeHoldersTemplate} local={local}
-                                        isImpacts={false} isBenefits={false}/>
+                    }
                   </Grid>
-                </ExpansionPanelDetails>
-              </ExpansionPanel>
+                </ClickAwayListener>
+              </Select>
+              <br/>
+              <br/>
 
-              <ExpansionPanel
-                square expanded={expanded4}
-                onChange={handleChangePanel('panel4')}
-                disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
-                || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
-                || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}>
-                <ExpansionPanelSummary
-                  expandIcon={<ExpandMoreIcon/>}
-                  aria-controls="panel4bh-content"
-                  id="panel4bh-header"
-                >
+              <Grid container>
+                <Grid item xs={12}>
                   <Typography className={classes.heading}>Description</Typography>
-                  <Typography className={classes.secondaryHeading}>{
-                    stringHelpers.limitCharacters(description, 36) || 'Add Notes or Instructions for the person responsible'
-                  }</Typography>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails>
                   <TextField
-                    margin="dense"
+                    margin="normal"
                     id="description"
-                    label="Description"
                     value={description}
+                    multiline
+                    rows={3}
+                    placeholder="Add Notes or Instructions for the person responsible"
                     onChange={handleDescriptionChange}
                     type="text"
                     fullWidth
+                    className={classes.description}
                   />
-                </ExpansionPanelDetails>
-              </ExpansionPanel>
+                </Grid>
+              </Grid>
+              <br/>
 
-              <ExpansionPanel
-                square expanded={expanded5}
-                onChange={handleChangePanel('panel5')}
-                disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
-                || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
-                || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}>
-                <ExpansionPanelSummary
-                  expandIcon={<ExpandMoreIcon/>}
-                  aria-controls="panal5bh-content"
-                  id="panal5bh-header"
-                >
-                  <Typography className={classes.heading}>Activity owner</Typography>
-                  <Typography
-                    className={classes.secondaryHeading}>{person ? `${person.label}` : (changeManager || {label: ''}).label}</Typography>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails>
-                  <Grid container justify="space-between" spacing={2}>
-                    <Grid item={true} xs={7}>
-                      <AutoComplete updateUsers={updateUsers} data={users} selectedValue={person}
-                                    currentChangeManager={changeManager}/>
+              <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                <Grid container justify="space-between" spacing={2}>
+                  <Grid item xs={4} className={classes.datePicker}>
+                    <Grid item xs={10}>
+                      <DateTimePicker
+                        fullWidth
+                        variant="inline"
+                        disabled={disabled}
+                        margin="normal"
+                        id="date-time-picker-inline"
+                        label="Due*"
+                        format="yyyy/MM/dd hh:mm a"
+                        value={dueDate}
+                        onChange={handleDueDate}
+                      />
                     </Grid>
-                    <Grid item={true} xs={5}>
-                      <AddNewPerson company={company}/>
+                    <Grid item xs={2}>
+                      <IconButton aria-label="close" className={classes.closeButton}
+                                  disabled={disabled}
+                                  onClick={() => onCalendarClick("date-time-picker-inline")}>
+                        <CalendarTodayIcon/>
+                      </IconButton>
                     </Grid>
                   </Grid>
-                </ExpansionPanelDetails>
-                {type === 'project' && <Grid container
-                                             direction="row"
-                                             justify="flex-end"
-                                             alignItems="baseline">
 
-                  <Button color="primary"
-                          onClick={() => {
-                            sendNotificationEmail(activityType.name, activity.dueDate, time, activity.name, description, stakeHolders.length, currentProject, person, projectId, vision, objectives)
-                          }}>
-                    Notify/Remind by email
-                  </Button>
+                  <Grid item xs={4}>
+                    <TextField
+                      margin="normal"
+                      id="time"
+                      disabled={disabled}
+                      label="Time Away from BAU (Minutes)"
+                      value={time}
+                      onChange={handleTimeChange}
+                      type="number"
+                      fullWidth
+                    />
+                  </Grid>
+
+                  <Grid item xs={4} className={classes.datePicker}>
+                    <Grid item xs={10}>
+                      <DatePicker
+                        disableToolbar
+                        fullWidth
+                        variant="inline"
+                        margin="normal"
+                        id="date-picker-dialog"
+                        disabled={disabled}
+                        label="Completed"
+                        format="MM/dd/yyyy"
+                        value={completedDate}
+                        minDate={dueDate}
+                        autoOk={true}
+                        onChange={handleEndingDate}
+                      />
+                    </Grid>
+                    <Grid item xs={2}>
+                      <IconButton aria-label="close" className={classes.closeButton}
+                                  disabled={disabled}
+                                  onClick={() => onCalendarClick("date-picker-dialog")}>
+                        <CalendarTodayIcon/>
+                      </IconButton>
+                    </Grid>
+                  </Grid>
                 </Grid>
-                }
-              </ExpansionPanel>
+              </MuiPickersUtilsProvider>
+              <br/>
+              <br/>
+
+              <Grid container>
+                <Grid item xs={4}>
+                  <Typography className={classes.heading}>Stakeholders targeted</Typography>
+                </Grid>
+                <Grid item xs={8}>
+                  <Typography className={classes.secondaryHeading}>
+                    {peoples.length} of {type === 'project' ? stakeHolders.length : stakeHoldersTemplate.length}
+                  </Typography>
+                  <SelectStakeHolders rows={type === 'project' ? stakeHolders : stakeHoldersTemplate} local={local}
+                                      isImpacts={false} isBenefits={false}/>
+                </Grid>
+              </Grid>
+              <br/>
+              <br/>
+
+              <Grid container>
+                <Grid item xs={4}>
+                  <Typography className={classes.heading}>Activity owner</Typography>
+                </Grid>
+                <Grid item={true} xs={5}>
+                  <AutoComplete updateUsers={updateUsers} data={users} selectedValue={person}
+                                currentChangeManager={changeManager} isActivity={true}/>
+                  {type === 'project' &&
+                  <Link component={"button"} variant={"button"} underline={"none"}
+                        onClick={() => {
+                          sendNotificationEmail(activityType.name, activity.dueDate, time, activity.name, description, stakeHolders.length, project, person, projectId, project.vision, project.objectives)
+                        }}>
+                    Notify/Remind by email
+                  </Link>
+                  }
+                </Grid>
+                <Grid item={true} xs={3} className={classes.linkButton}>
+                  <AddNewPerson company={company} isActivity={true}/>
+                </Grid>
+              </Grid>
+              <br/>
+              <br/>
+
+              <Grid container justify="space-around" direction="row" alignItems="center">
+                <Grid item xs={4}>
+                  <Typography className={classes.heading}>Stakeholder feedback</Typography>
+                </Grid>
+                <Grid item xs={5}>
+                  <Switch checked={checkSchedule} onChange={handleSchedule()} value="checkSchedule" color="primary"/>
+                </Grid>
+                <Grid item xs={3} className={classes.linkButton}>
+                  <Link underline={"none"} component={"button"} variant={"button"}>
+                    Preview Email
+                  </Link>
+                </Grid>
+              </Grid>
+
+              {checkSchedule &&
+              <Grid container>
+                <Grid item xs={4} className={classes.datePicker}>
+                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                    <Grid item xs={10}>
+                      <TimePicker
+                        variant="inline"
+                        ampm={true}
+                        mask="__:__ _M"
+                        margin="normal"
+                        id="time-picker-inline"
+                        label="Time to send email*"
+                        value={timeSendEmail}
+                        fullWidth
+                        onChange={(e) => handleTimeSendEmail(e.target.value)}
+                      />
+                    </Grid>
+                    <Grid item xs={2}>
+                      <IconButton aria-label="close" className={classes.closeButton}
+                                  disabled={disabled}
+                                  onClick={() => onCalendarClick("time-picker-inline")}>
+                        <CalendarTodayIcon/>
+                      </IconButton>
+                    </Grid>
+                  </MuiPickersUtilsProvider>
+                </Grid>
+              </Grid>
+              }
+              <br/>
+
+              {checkSchedule &&
+              <Grid container className={classes.reportContainer} justify="space-around" direction="row"
+                    alignItems="center">
+                <Grid item xs={4} style={{paddingLeft: '18px'}}>
+                  <Typography variant="body1" display="inline">Responses: <Typography variant="button"
+                                                                                      display="inline">0</Typography></Typography>
+                </Grid>
+                <Grid item xs={5} style={{paddingLeft: '18px'}}>
+                  <Typography variant="body1" display="inline">Average scope: <Typography variant="button"
+                                                                                          display="inline">0</Typography></Typography>
+                </Grid>
+                <Grid item xs={3} className={classes.linkButton}>
+                  <Link component={"button"} variant={"button"} underline={"none"} href="#">
+                    View full report
+                  </Link>
+                </Grid>
+              </Grid>
+              }
             </div>
           </DialogContent>
           <DialogActions>
@@ -826,16 +898,12 @@ function AddActivities(props) {
                 cancel
               </Button> :
               <Button onClick={deleteActivity} color="secondary"
-                      disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
-                      || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
-                      || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}>
+                      disabled={disabled}>
                 Delete
               </Button>}
             {isNew ? <Button color="primary" onClick={() => handleShowNotification()}>Save</Button> :
               <Button type="submit" color="primary"
-                      disabled={(isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
-                      || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
-                      || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin)}>
+                      disabled={disabled}>
                 Save
               </Button>}
           </DialogActions>

@@ -142,7 +142,7 @@ function AddValue(props) {
 
   const updateValues = () => {
     if (indexBenefits !== '') {
-      console.error('--------------------', handleType);
+      // console.error('--------------------', handleType);
       const newStakeholders = benefits && benefits[indexBenefits].stakeholders;
       localBenefits.changed || updateFilter('localStakeHoldersBenefits', 'ids', newStakeholders);
       if (localBenefits.changed) {

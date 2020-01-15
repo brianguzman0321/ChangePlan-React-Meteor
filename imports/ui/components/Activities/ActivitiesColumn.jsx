@@ -31,7 +31,7 @@ const CardHeader = withStyles({
     padding: '5px 10px 10px 10px',
   },
   avatar: {
-      marginRight: '8px'
+    marginRight: '8px'
   }
 })(MuiCardHeader);
 
@@ -181,7 +181,7 @@ function ActivitiesColumn(props) {
   const [nameTitle, setNameTitle] = useState(company.activityColumns && company.activityColumns[step] || '');
   const [changeManager, setChangeManager] = useState('');
   const [users, setUsers] = useState([]);
-  let {projectId, templateId} = match.params;
+  let {projectId} = match.params;
   const [currentProject, setProject] = useState({});
 
   function completeActivity(activity) {
@@ -206,7 +206,7 @@ function ActivitiesColumn(props) {
   }
 
   function iconSVG(activity) {
-    let selectedActivity = data.find(item => item.name === activity.type) || {};
+    let selectedActivity = data.find(item => item.name === activity.type || item.category === "custom") || {};
     return selectedActivity && selectedActivity.iconSVG
   }
 

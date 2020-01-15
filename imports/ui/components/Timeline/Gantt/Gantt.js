@@ -177,6 +177,7 @@ const Gantt = props => {
         }
       }
     });
+    
     gantt.init(ganttContainer);
     gantt.clearAll();
     gantt.parse(tasks);
