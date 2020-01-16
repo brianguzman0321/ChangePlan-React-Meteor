@@ -92,7 +92,6 @@ const Gantt = props => {
   }
 
   const updateProjectByDrag = (savedTask, project) => {
-
     if (savedTask.eventType === 'Project_Start') {
       project.startingDate = savedTask.start_date;
     } else {
@@ -110,8 +109,28 @@ const Gantt = props => {
     });
   }
 
-  Object.assign(gantt, obj);
+  const updateImpactBenefitByDrag = (savedTask, project) => {
+    const index = savedTask.id[savedTask.id.length-1];
+    if( savedTask.eventType === 'Impact') {
+      project.impacts[index].expectedDate = savedTask.start_date;
+    } else {
+      project.benefits[index].expectedDate = savedTask.start_date;
+    }
+    let params = {
+      project
+    };
+    Meteor.call('projects.update', params, (err, res) => {
+      if (err) {
+        props.enqueueSnackbar(err.reason, { variant: 'error' })
+      } else {
+        props.enqueueSnackbar(`Project ${savedTask.eventType} Updated Successfully.`, { variant: 'success' })
+      }
+    });
+  }
 
+
+  Object.assign(gantt, obj);
+  console.error("This is just my gantt", gantt.config.columns);
   useEffect(() => {
     if (
       Roles.userIsInRole(Meteor.userId(), 'manager') ||
@@ -122,9 +141,10 @@ const Gantt = props => {
     }
 
     gantt.config.columns = [
-      { name: "eventType", label: "Event type", align: "left" },
-      { name: "stakeholders", label: "Stakeholders" },
-      { name: "owner", label: "Owner" }
+      { name: "eventType", label: "Event type", align: "left", width: 10},
+      { name: "stakeholders", label: "Stakeholders", width: 100 },
+      { name: "owner", label: "Owner", width: 100 },
+      { name: "date", label: "Date", align: "left", width: 100}
     ];
     gantt.config.tooltip_timeout = 200;
 
@@ -170,11 +190,10 @@ const Gantt = props => {
           updateProjectByDrag(savedTask, gantt.project);
         }
 
-        if (savedTask.eventType === 'Impact') {
+        if (savedTask.eventType === 'Impact' || savedTask.eventType === 'Benefit') {
+          updateImpactBenefitByDrag(savedTask, gantt.project);
         }
 
-        if (savedTask.eventType === 'Benefit') {
-        }
       }
     });
     gantt.init(ganttContainer);
