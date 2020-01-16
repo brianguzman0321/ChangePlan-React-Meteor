@@ -63,8 +63,14 @@ const useStyles = makeStyles(theme => ({
     flex: 1,
   },
   addNewPerson: {
-    marginTop: 17
-  }
+    marginTop: 17,
+    padding: '0px',
+    '&:hover': {
+      backgroundColor: '#ffffff',
+      borderColor: '#ffffff',
+      boxShadow: 'none',
+    },
+  },
 }));
 
 const DialogContent = withStyles(theme => ({
@@ -119,10 +125,9 @@ function AddNewPerson(props) {
   return (
     <div>
       {isActivity ?
-        <Link variant="button" component="button" onClick={handleClickOpen} fullWidth={true} underline={"none"}
-              className={classes.addNewPerson}>
+        <Button color="primary" variant="text" onClick={handleClickOpen} className={classes.addNewPerson}>
           Add New
-        </Link> :
+        </Button> :
         <Button variant="outlined" color="primary" onClick={handleClickOpen} fullWidth={true}
                 className={classes.addNewPerson}>
           Add New Person

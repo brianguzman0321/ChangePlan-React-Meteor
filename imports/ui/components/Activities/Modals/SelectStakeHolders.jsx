@@ -316,6 +316,14 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(2),
     flex: 1,
   },
+  buttonSelect: {
+    padding: '0px',
+    '&:hover': {
+      backgroundColor: '#ffffff',
+      borderColor: '#ffffff',
+      boxShadow: 'none',
+    },
+  },
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -388,9 +396,9 @@ export default function SelectStakeHolders(props) {
   return (
     <div>
       {!isImpacts && !isBenefits ?
-        <Link component={"button"} variant={"button"} onClick={handleClickOpen} underline={'none'}>
-          SELECT STAKEHOLDER
-        </Link> :
+        <Button variant="text" className={classes.buttonSelect} color="primary" onClick={() => {handleClickOpen()}}>
+          SELECT STAKEHOLDERS
+        </Button> :
         <Button color="primary" variant={"outlined"} onClick={handleClickOpen} fullWidth>
           Select Stakeholders
         </Button>
