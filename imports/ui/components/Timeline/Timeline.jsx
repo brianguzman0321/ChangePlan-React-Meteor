@@ -41,8 +41,8 @@ function Timeline(props) {
   let { projectId, templateId } = match.params;
 
   const classes = useStyles();
-  const [viewMode, setViewMode] = useState(0);
-  const [zoomMode, setZoomMode] = useState(1);
+  const [viewMode, setViewMode] = useState(localStorage.getItem(`viewMode_${projectId}_${Meteor.userId()}`) || 0);
+  const [zoomMode, setZoomMode] = useState(localStorage.getItem(`zoomMode_${projectId}_${Meteor.userId()}`) || 1);
   const [type, setType] = useState(templateId && 'template' || projectId && 'project');
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
@@ -98,6 +98,16 @@ function Timeline(props) {
         }
       }
     }
+  };
+
+  const ChangeZoom = (newValue) => {
+    setZoomMode(newValue);
+    localStorage.setItem(`zoomMode_${projectId}_${Meteor.userId()}`, newValue);
+  };
+
+  const ChangeView = (value) => {
+    setViewMode(value);
+    localStorage.setItem(`viewMode_${projectId}_${Meteor.userId()}`, value);
   };
 
   useEffect(() => {
@@ -226,8 +236,8 @@ function Timeline(props) {
               Timeline
             </Typography>
             <Tabs
-              value={viewMode}
-              onChange={(e, newValue) => setViewMode(newValue)}
+              value={JSON.parse(viewMode)}
+              onChange={(e, newValue) => ChangeView(newValue)}
               indicatorColor="primary"
               textColor="primary"
               aria-label="icon tabs example"

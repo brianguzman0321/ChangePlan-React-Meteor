@@ -19,7 +19,7 @@ const activityNotification = ({
     <tbody>
     <tr>
         <td class="email_body tc"
-            style="vertical-align: top; line-height: 100%; text-align: left; padding-left: 16px; padding-right: 16px; font-size: 0pt ! important;">
+            style="vertical-align: top; line-height: 100%; text-align: left; font-size: 0pt ! important;">
             <!-- [if (mso)|(IE)]>
             <table width="632" border="0" cellspacing="0" cellpadding="0" align="center"
                    style="vertical-align:top;width:632px;Margin:0 auto;">
@@ -27,7 +27,7 @@ const activityNotification = ({
                 <tr>
                     <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
             <div class="email_container"
-                 style="margin: 0pt auto; font-size: 0pt; width: 100%; vertical-align: top; max-width: 632px; text-align: left; line-height: inherit; min-width: 0pt ! important;">
+                 style="font-size: 0pt; width: 100%; vertical-align: top; text-align: left; line-height: inherit; min-width: 0pt ! important;">
                 <table class="content_section" style="min-width: 100%; width: 100%;" border="0" cellpadding="0"
                        cellspacing="0">
                     <tbody>
@@ -36,7 +36,7 @@ const activityNotification = ({
                             style="vertical-align: top; width: 100%; font-size: 0pt; text-align: left; padding-left: 16px; padding-right: 16px; line-height: inherit; min-width: 0pt ! important;">
                             <!-- col-6 -->
                             <div class="email_row"
-                                 style="margin: 0pt auto; font-size: 0pt; display: block; width: 100%; vertical-align: top; text-align: left; clear: both; line-height: inherit; min-width: 0pt ! important; max-width: 600px ! important;">
+                                 style="font-size: 0pt; display: block; width: 100%; vertical-align: top; text-align: left; clear: both; line-height: inherit; min-width: 0pt ! important;">
                                 <!-- [if (mso)|(IE)]>
                                 <table width="600" border="0" cellspacing="0" cellpadding="0" align="center"
                                        style="vertical-align:top;width:600px;Margin:0 auto 0 0;">
@@ -46,14 +46,14 @@ const activityNotification = ({
                                             style="width:600px;line-height:0px;font-size:0px;mso-line-height-rule:exactly;">
                                 <![endif]-->
                                 <div class="col_6"
-                                     style="font-size: 0pt; width: 100%; vertical-align: top; max-width: 600px; line-height: inherit; min-width: 0pt ! important;">
+                                     style="font-size: 0pt; width: 100%; vertical-align: top; line-height: inherit; min-width: 0pt ! important;">
                                     <div style="text-align: left;"></div>
                                     <table class="column" style="min-width: 100%; width: 100%;" border="0"
                                            cellpadding="0" cellspacing="0">
                                         <tbody>
                                         <tr>
                                             <td class="column_cell px pte tc"
-                                                style="padding: 32px 16px 16px; vertical-align: top; width: 100%; min-width: 100%; font-family: Helvetica,Arial,sans-serif; font-size: 16px; line-height: 23px; text-align: left;">
+                                                style="padding: 0px 16px 16px; vertical-align: top; width: 100%; min-width: 100%; font-family: Helvetica,Arial,sans-serif; font-size: 14px; line-height: 23px; text-align: left;">
                                                 <div style="text-align: left;"></div>
                                                 <p class="lead"
                                                    style="color: rgb(75, 75, 75); display: block; margin-top: 0px; margin-bottom: 16px; text-align: left;">
@@ -130,9 +130,9 @@ const activityNotification = ({
     <tbody>
     <tr>
         <td class="email_body tc"
-            style="vertical-align: top; line-height: 100%; text-align: left; padding-left: 16px; padding-right: 16px;  font-size: 0pt ! important;">
+            style="vertical-align: top; line-height: 100%; text-align: left; font-size: 0pt ! important;">
             <div class="email_container"
-                 style="margin: 0pt auto; font-size: 0pt; width: 100%; vertical-align: top; max-width: 632px; text-align: left; line-height: inherit; min-width: 0pt ! important;">
+                 style="font-size: 0pt; width: 100%; vertical-align: top; max-width: 632px; text-align: left; line-height: inherit; min-width: 0pt ! important;">
                 <table class="content_section" style="min-width: 100%; width: 100%;" border="0" cellpadding="0"
                        cellspacing="0">
                     <tbody>
@@ -156,7 +156,7 @@ const activityNotification = ({
                                         <tbody>
                                         <tr>
                                             <td class="column_cell px tc"
-                                                style="padding: 16px; vertical-align: top; width: 100%; min-width: 100%; font-family: Helvetica,Arial,sans-serif; font-size: 16px; line-height: 23px; color: rgb(97, 97, 97); text-align: left;">
+                                                style="padding-left: 16px; vertical-align: top; width: 100%; min-width: 100%; font-family: Helvetica,Arial,sans-serif; font-size: 14px; line-height: 23px; color: rgb(97, 97, 97); text-align: left;">
                                                 <p style="color:rgb(75,75,75);display:block;margin-top:10px;margin-bottom:10px;text-align: left;">
                                                     ChangePlan is the single-source-of-truth for enterprise change
                                                     management.
@@ -184,7 +184,7 @@ const activityNotification = ({
     <tbody>
     <tr>
         <td class="email_body tc"
-            style="vertical-align: top; line-height: 100%; text-align: left; padding-left: 16px; padding-right: 16px; font-size: 0pt ! important;">
+            style="vertical-align: top; line-height: 100%; text-align: left; font-size: 0pt ! important;">
             <!-- [if (mso)|(IE)]>
             <table width="632" border="0" cellspacing="0" cellpadding="0" align="left"
                    style="vertical-align:top;width:632px;Margin:0 auto;">
@@ -192,7 +192,7 @@ const activityNotification = ({
                 <tr>
                     <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
             <div class="email_container"
-                 style="margin: 0pt auto; font-size: 0pt; width: 100%; vertical-align: top; max-width: 632px; text-align: left; line-height: inherit; min-width: 0pt ! important;">
+                 style="font-size: 0pt; width: 100%; vertical-align: top; max-width: 632px; text-align: left; line-height: inherit; min-width: 0pt ! important;">
                 <table class="content_section" style="min-width: 100%; width: 100%;" border="0" cellpadding="0"
                        cellspacing="0">
                     <tbody>
@@ -225,7 +225,7 @@ const activityNotification = ({
     <tbody>
     <tr>
         <td class="email_body email_end tc"
-            style="vertical-align: top; line-height: 100%; text-align: center; padding-left: 16px; padding-right: 16px; padding-bottom: 32px; font-size: 0pt ! important;">
+            style="vertical-align: top; line-height: 100%; text-align: center; padding-bottom: 32px; font-size: 0pt ! important;">
             <!-- [if (mso)|(IE)]>
             <table width="632" border="0" cellspacing="0" cellpadding="0" align="left"
                    style="vertical-align:top;width:632px;Margin:0 auto;">
@@ -233,9 +233,9 @@ const activityNotification = ({
                 <tr>
                     <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
             <div class="email_container"
-                 style="margin: 0pt auto; font-size: 0pt; width: 100%; vertical-align: top; max-width: 632px; text-align: left; line-height: inherit; min-width: 0pt ! important;">
+                 style="font-size: 0pt; width: 100%; vertical-align: top; max-width: 632px; text-align: left; line-height: inherit; min-width: 0pt ! important;">
                 <p class="mb_xxs"
-                   style="font-family: Helvetica,Arial,sans-serif; font-size: 16px; line-height: 23px; color: rgb(167, 177, 182); display: block; margin-top: 30px; margin-bottom: 30px; text-align: center;">
+                   style="font-family: Helvetica,Arial,sans-serif; font-size: 14px; line-height: 23px; color: rgb(167, 177, 182); display: block; margin-top: 30px; margin-bottom: 30px; text-align: center;">
                     ©2019
                     Change Plan</p>
                 <table class="content_section" style="min-width: 100%; width: 100%;" border="0" cellpadding="0"
