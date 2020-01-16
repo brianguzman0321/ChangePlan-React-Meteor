@@ -183,7 +183,9 @@ function ActivitiesColumn(props) {
   const [users, setUsers] = useState([]);
   let {projectId} = match.params;
   const [currentProject, setProject] = useState({});
+  
 
+ console.error('+++++++color', color);
   function completeActivity(activity) {
     activity.completed = !activity.completed;
     activity.completed ?
@@ -283,7 +285,7 @@ function ActivitiesColumn(props) {
       setStepActivities(newActivities);
     }
   }, [activities]);
-
+  
   useEffect(() => {
     if (company.activityColumns && company.activityColumns[step - 1]) {
       setNameTitle(company.activityColumns[step - 1])
