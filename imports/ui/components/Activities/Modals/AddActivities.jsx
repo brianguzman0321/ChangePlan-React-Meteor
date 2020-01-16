@@ -156,6 +156,32 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid #f5f5f5',
     borderRadius: '4px',
   },
+  buttonAsLink: {
+    padding: '0px',
+    '&:hover': {
+      backgroundColor: '#ffffff',
+      borderColor: '#ffffff',
+      boxShadow: 'none',
+    },
+    '&:active': {
+      boxShadow: 'none',
+      backgroundColor: '#ffffff',
+      borderColor: '#fffff',
+    },
+  },
+  buttonPreview: {
+    padding: '0px',
+    '&:hover': {
+      backgroundColor: '#f5f5f5',
+      borderColor: '#f5f5f5',
+      boxShadow: 'none',
+    },
+    '&:active': {
+      boxShadow: 'none',
+      backgroundColor: '#f5f5f5',
+      borderColor: '#f5f5f5',
+    },
+  }
 }));
 
 const DialogTitle = withStyles(styles)(props => {
@@ -814,12 +840,12 @@ function AddActivities(props) {
                   <AutoComplete updateUsers={updateUsers} data={users} selectedValue={person}
                                 currentChangeManager={changeManager} isActivity={true}/>
                   {type === 'project' &&
-                  <Link component={"button"} variant={"button"} underline={"none"}
+                  <Button variant="text" color="primary" className={classes.buttonAsLink}
                         onClick={() => {
                           sendNotificationEmail(activityType.name, activity.dueDate, time, activity.name, description, stakeHolders.length, project, person, projectId, project.vision, project.objectives)
                         }}>
                     Notify/Remind by email
-                  </Link>
+                  </Button>
                   }
                 </Grid>
                 <Grid item={true} xs={3} className={classes.linkButton}>
@@ -837,9 +863,9 @@ function AddActivities(props) {
                   <Switch checked={checkSchedule} onChange={handleSchedule()} value="checkSchedule" color="primary"/>
                 </Grid>
                 <Grid item xs={3} className={classes.linkButton}>
-                  <Link underline={"none"} component={"button"} variant={"button"}>
+                  <Button variant="text" color="primary" className={classes.buttonAsLink}>
                     Preview Email
-                  </Link>
+                  </Button>
                 </Grid>
               </Grid>
 
@@ -881,13 +907,13 @@ function AddActivities(props) {
                                                                                       display="inline">0</Typography></Typography>
                 </Grid>
                 <Grid item xs={5} style={{paddingLeft: '18px'}}>
-                  <Typography variant="body1" display="inline">Average scope: <Typography variant="button"
+                  <Typography variant="body1" display="inline">Average score: <Typography variant="button"
                                                                                           display="inline">0</Typography></Typography>
                 </Grid>
                 <Grid item xs={3} className={classes.linkButton}>
-                  <Link component={"button"} variant={"button"} underline={"none"} href="#">
+                  <Button color="primary" variant="text" className={classes.buttonPreview}>
                     View full report
-                  </Link>
+                  </Button>
                 </Grid>
               </Grid>
               }
