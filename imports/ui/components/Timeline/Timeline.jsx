@@ -42,7 +42,7 @@ function Timeline(props) {
 
   const classes = useStyles();
   const [viewMode, setViewMode] = useState(0);
-  const [zoomMode, setZoomMode] = useState(localStorage.getItem(`zoomMode_${projectId}`) || 1);
+  const [zoomMode, setZoomMode] = useState(1);
   const [type, setType] = useState(templateId && 'template' || projectId && 'project');
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
@@ -98,11 +98,6 @@ function Timeline(props) {
         }
       }
     }
-  };
-
-  const ChangeZoom = (newValue) => {
-    setZoomMode(newValue);
-    localStorage.setItem(`zoomMode_${projectId}`, newValue);
   };
 
   useEffect(() => {
@@ -170,7 +165,7 @@ function Timeline(props) {
           start_date: moment(impacts[i].expectedDate).format("DD-MM-YYYY"),
           duration: 1,
           color: colors.impact,
-          stakeholders: impacts[i].stakeholders && impacts[i].stakeholders.length,
+          stakeholders: impacts[i].stakeholders.length,
           owner,
           description: impacts[i].description,
         })
@@ -184,7 +179,7 @@ function Timeline(props) {
           start_date: moment(benefits[i].expectedDate).format("DD-MM-YYYY"),
           duration: 1,
           color: colors.benefit,
-          stakeholders: benefits[i].stakeholders && benefits[i].stakeholders.length,
+          stakeholders: benefits[i].stakeholders.length,
           owner,
           description: benefits[i].description,
         })
@@ -260,8 +255,8 @@ function Timeline(props) {
                 Export
             </Button>
               <Tabs
-                value={JSON.parse(zoomMode)}
-                onChange={(e, newValue) => ChangeZoom(newValue)}
+                value={zoomMode}
+                onChange={(e, newValue) => setZoomMode(newValue)}
                 indicatorColor="primary"
                 textColor="primary"
                 style={{

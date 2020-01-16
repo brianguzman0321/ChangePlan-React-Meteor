@@ -140,10 +140,9 @@ const Gantt = props => {
     }
 
     gantt.config.columns = [
-      { name: "eventType", label: "Event type", align: "left", width: 10},
-      { name: "stakeholders", label: "Stakeholders", width: 100 },
-      { name: "owner", label: "Owner", width: 100 },
-      { name: "date", label: "Date", align: "left", width: 100}
+      { name: "eventType", label: "Event type", align: "left" },
+      { name: "stakeholders", label: "Stakeholders" },
+      { name: "owner", label: "Owner" },
     ];
     gantt.config.tooltip_timeout = 200;
 
