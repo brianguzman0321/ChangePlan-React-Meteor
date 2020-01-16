@@ -104,7 +104,7 @@ function Timeline(props) {
    
     let tempData = [];
     let i;
-    const defaultSteps = ["Awareness", "Preparedness", "Support"];
+    const defaultSteps = ["Awareness", "Preparedness", "Support",  "Interest", "Understanding"];
     let startingDate = projects[0] ? projects[0].startingDate : new Date();
     let dueDate = projects[0] ? projects[0].endingDate : new Date();
    
@@ -185,6 +185,8 @@ function Timeline(props) {
         })
       }
     }
+    console.error('+++++++++++', activities);
+    console.error('------------', tempData);
     if (!_.isEqual(data.data, tempData))
       setData({ data: tempData });
   }, [props]);
