@@ -114,10 +114,10 @@ function Timeline(props) {
    
     let tempData = [];
     let i;
-    const defaultSteps = ["Awareness", "Preparedness", "Support",  "Interest", "Understanding"];
+    const defaultSteps = ["Awareness", "Ability", "Reinforcement",  "Desire", "Knowledge"];
     let startingDate = projects[0] ? projects[0].startingDate : new Date();
     let dueDate = projects[0] ? projects[0].endingDate : new Date();
-   
+    
     for (i = 0; i < activities.length; i++) {
       let type = activities[i].type;
       tempData.push({
