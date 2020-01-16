@@ -619,7 +619,8 @@ function AddActivities(props) {
                   step === 1 ? classes.buttonAwareness :
                     step === 2 ? classes.buttonPreparedness :
                       step === 3 ? classes.buttonSupport : null}
-                fullWidth={true} onClick={handleClickOpen}>
+                fullWidth={true} onClick={handleClickOpen}
+                >
           Add Activity
         </Button> : ''
       }

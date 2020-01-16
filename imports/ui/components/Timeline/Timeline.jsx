@@ -310,39 +310,76 @@ function Timeline(props) {
               handleImportData={handleImportData}
             />
             {/* {(isAdmin && template && (template.companyId === companyId)) || isSuperAdmin ? */}
-            {(eventType === "Awareness") ? (<AddActivity
+            {(eventType === "Awareness") ? (<AddActivities
               edit={edit}
-              activity={activity}
-              newActivity={() => setEdit(false)}
               list={true}
               isOpen={false}
+              step={1}
+              color={'#f1753e'}
+              project={projects[0]}
+              template={template}
+              activity={activity}
+              newActivity={() => setEdit(false)}
               type={templateId && 'template' || projectId && 'project'}
               match={match}
-              expandAccordian={false}
             />) : null}
             
-            {(eventType === "Preparedness") ? (<AddActivity2
+            {(eventType === "Ability") ? (<AddActivities
               edit={edit}
-              activity={activity}
-              newActivity={() => setEdit(false)}
               list={true}
               isOpen={false}
-              type={templateId && 'template' || projectId && 'project'}
-              match={match}
-              expandAccordian={false}
-            />) : null}
-
-            {(eventType === "Support") ? (<AddActivity3
-              edit={edit}
+              step={2}
+              color={'#53cbd0'}
+              project={projects[0]}
+              template={template}
               activity={activity}
               newActivity={() => setEdit(false)}
-              list={true}
-              isOpen={false}
               type={templateId && 'template' || projectId && 'project'}
               match={match}
-              expandAccordian={false}
             />) : null}
 
+            {(eventType === "Reinforcement") ? (<AddActivities
+              edit={edit}
+              list={true}
+              isOpen={false}
+              step={3}
+              color={'#bbabd2'}
+              project={projects[0]}
+              template={template}
+              activity={activity}
+              newActivity={() => setEdit(false)}
+              type={templateId && 'template' || projectId && 'project'}
+              match={match}
+            />) : null}
+
+            {(eventType === "Desire") ? (<AddActivities
+              edit={edit}
+              list={true}
+              isOpen={false}
+              step={4}
+              color={'#8BC34A'}
+              project={projects[0]}
+              template={template}
+              activity={activity}
+              newActivity={() => setEdit(false)}
+              type={templateId && 'template' || projectId && 'project'}
+              match={match}
+            />) : null}
+
+            {(eventType === "Knowledge") ? (<AddActivities
+              edit={edit}
+              list={true}
+              isOpen={false}
+              step={5}
+              color={'#03A9F4'}
+              project={projects[0]}
+              template={template}
+              activity={activity}
+              newActivity={() => setEdit(false)}
+              type={templateId && 'template' || projectId && 'project'}
+              match={match}
+            />) : null}
+            
             {(eventType === "Impact") ? (<ImpactsModal
               open={edit}
               handleModalClose={handleModalClose}
@@ -374,8 +411,6 @@ function Timeline(props) {
               handleType={'timeline'}
               displayEditButton={false}
             />) : null}
-              {/* <EditProject open={modals.edit} handleModalClose={handleModalClose} project={project} template={template}
-                displayEditButton={true}/> */}
 
           </Grid> :
           <ListView rows={type === 'project' ? props.activities : props.activitiesTemplate} addNew={false} type={type}
