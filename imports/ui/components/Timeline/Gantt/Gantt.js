@@ -128,9 +128,8 @@ const Gantt = props => {
     });
   }
 
-
   Object.assign(gantt, obj);
-  console.error("This is just my gantt", gantt.config.columns);
+
   useEffect(() => {
     if (
       Roles.userIsInRole(Meteor.userId(), 'manager') ||
