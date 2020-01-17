@@ -67,6 +67,13 @@ export const insert = new ValidatedMethod({
             type: Boolean,
             optional: true
         },
+        'activity.timeSchedule': {
+            type: Date,
+            optional: true,
+        },
+        'activity.stakeholdersFeedback': {
+            type: Boolean,
+        },
     }).validator(),
     run({ activity }) {
         return Activities.insert(activity);
@@ -144,6 +151,13 @@ export const update = new ValidatedMethod({
         'activity.completed': {
             type: Boolean,
             optional: true
+        },
+        'activity.timeSchedule': {
+            type: Date,
+            optional: true,
+        },
+        'activity.stakeholdersFeedback': {
+            type: Boolean,
         },
     }).validator(),
     run({ activity }) {
