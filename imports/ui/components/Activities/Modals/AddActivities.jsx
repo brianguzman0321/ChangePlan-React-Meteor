@@ -234,7 +234,7 @@ function AddActivities(props) {
   const [showModalDialog, setShowModalDialog] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
-  const [checkSchedule, setCheckSchedule] = useState(true);
+  const [checkSchedule, setCheckSchedule] = useState(false);
   const [timeSendEmail, setTimeSendEmail] = useState(null);
   const activityCategories = ["communication", "engagement", "training/coaching"];
   const disabled = (isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
@@ -293,8 +293,8 @@ function AddActivities(props) {
     setActivityType(selectedActivity);
     setSelectActivity(selectedActivity);
     setDueDate(activity.dueDate);
-    setTimeSendEmail(activity.timeSchedule);
-    setCheckSchedule(activity.stakeholdersFeedback);
+    setTimeSendEmail(activity.timeSchedule || false);
+    setCheckSchedule(activity.stakeholdersFeedback || null);
     setCompletedDate(activity.completedAt);
     setDescription(activity.description);
     if (activity.personResponsible !== undefined) {
@@ -343,13 +343,14 @@ function AddActivities(props) {
     setActivityType({});
     setSelectActivity({});
     setDueDate(new Date());
+    setCheckSchedule(false);
+    setTimeSendEmail(null);
     setCompletedDate(null);
     setDescription('');
     setPerson(person);
     setTime('');
     setPeoples(stakeHolders.map(item => item._id));
     updateFilter('localStakeHolders', 'ids', stakeHolders.map(item => item._id));
-
   };
 
   const updateUsersList = () => {
@@ -595,7 +596,7 @@ function AddActivities(props) {
   }
 
   const handleSchedule = () => event => {
-    setCheckSchedule(event.target.checked)
+    setCheckSchedule(event.target.checked);
     if (!event.target.checked) {
       setTimeSendEmail(null);
     }
