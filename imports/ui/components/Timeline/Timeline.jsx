@@ -61,8 +61,6 @@ function Timeline(props) {
   const [isChangeManager, setIsChangeManager] = useState(false);
   const [isManager, setIsManager] = useState(false);
 
-
-
   useEffect(() => {
     checkRoles();
   }, [currentCompany, company, template, project]);
@@ -101,12 +99,12 @@ function Timeline(props) {
     }
   };
 
-  const ChangeZoom = (newValue) => {
+  const changeZoom = (newValue) => {
     setZoomMode(newValue);
     localStorage.setItem('zoomCondition', newValue);
   };
 
-  const ChangeView = (event, value) => {
+  const changeView = (event, value) => {
     setViewMode(value);
     localStorage.setItem(`viewMode_${projectId}_${Meteor.userId()}`, value);
   };
@@ -242,7 +240,7 @@ function Timeline(props) {
             </Typography>
             <Tabs
               value={viewMode}
-              onChange={ChangeView}
+              onChange={changeView}
               indicatorColor="primary"
               textColor="primary"
               aria-label="icon tabs example"
@@ -271,7 +269,7 @@ function Timeline(props) {
             </Button>
               <Tabs
                 value={zoomMode}
-                onChange={(e, newValue) => ChangeZoom(newValue)}
+                onChange={(e, newValue) => changeZoom(newValue)}
                 indicatorColor="primary"
                 textColor="primary"
                 style={{
