@@ -39,10 +39,10 @@ import { Companies } from "../../../api/companies/companies";
 function Timeline(props) {
   let { match, projects, activities, currentCompany, template, project, company } = props;
   let { projectId, templateId } = match.params;
-
   const classes = useStyles();
   const [viewMode, setViewMode] = useState(localStorage.getItem(`viewMode_${projectId}_${Meteor.userId()}`) || 0);
-  const [zoomMode, setZoomMode] = useState(localStorage.getItem(`zoomMode_${projectId}_${Meteor.userId()}`) || 1);
+  // const [zoomMode, setZoomMode] = useState(localStorage.getItem(`zoomMode_${projectId}_${Meteor.userId()}`) || 1);
+  const [zoomMode, setZoomMode] = useState(localStorage.getItem('zoomCondition') || 1);
   const [type, setType] = useState(templateId && 'template' || projectId && 'project');
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
@@ -62,6 +62,7 @@ function Timeline(props) {
   const [isManager, setIsManager] = useState(false);
 
 
+  
   useEffect(() => {
     checkRoles();
   }, [currentCompany, company, template, project]);
@@ -102,7 +103,7 @@ function Timeline(props) {
 
   const ChangeZoom = (newValue) => {
     setZoomMode(newValue);
-    localStorage.setItem(`zoomMode_${projectId}_${Meteor.userId()}`, newValue);
+    localStorage.setItem('zoomCondition', newValue);
   };
 
   const ChangeView = (value) => {
@@ -195,8 +196,6 @@ function Timeline(props) {
         })
       }
     }
-    console.error('+++++++++++', activities);
-    console.error('------------', tempData);
     if (!_.isEqual(data.data, tempData))
       setData({ data: tempData });
   }, [props]);
@@ -268,7 +267,7 @@ function Timeline(props) {
             </Button>
               <Tabs
                 value={zoomMode}
-                onChange={(e, newValue) => setZoomMode(newValue)}
+                onChange={(e, newValue) => ChangeZoom(newValue)}
                 indicatorColor="primary"
                 textColor="primary"
                 style={{
