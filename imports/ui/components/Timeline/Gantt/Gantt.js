@@ -81,6 +81,12 @@ const Gantt = props => {
     delete params.activity.personResponsible;
     params.activity['dueDate'] = updatedTask.start_date;
     params.activity['updatedAt'] = updatedTask.end_date;
+    if (params.activity['stakeholdersFeedback'] === undefined) {
+      params.activity['stakeholdersFeedback'] = false;
+    }
+    if (params.activity['timeSchedule'] === undefined) {
+      params.activity['timeSchedule'] = null;
+    }
 
     Meteor.call('activities.update', params, (err, res) => {
       if (err) {
@@ -89,7 +95,7 @@ const Gantt = props => {
         props.enqueueSnackbar(`Activity Updated Successfully.`, { variant: 'success' })
       }
     });
-  }
+  };
 
   const updateProjectByDrag = (savedTask, project) => {
     if (savedTask.eventType === 'Project_Start') {
