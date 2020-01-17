@@ -216,7 +216,8 @@ function Timeline(props) {
   const handleModalClose = obj => {
     setEdit(obj);
   };
-
+  console.error('--------------------------', zoomMode);
+  console.error('++++++++++++++++', localStorage.getItem('zoomCondition'));
   return (
     <div>
       <TopNavBar menus={config.menus} {...props} />
@@ -268,7 +269,7 @@ function Timeline(props) {
                 Export
             </Button>
               <Tabs
-                value={zoomMode}
+                value={Number(zoomMode)}
                 onChange={(e, newValue) => changeZoom(newValue)}
                 indicatorColor="primary"
                 textColor="primary"
