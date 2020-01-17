@@ -293,8 +293,8 @@ function AddActivities(props) {
     setActivityType(selectedActivity);
     setSelectActivity(selectedActivity);
     setDueDate(activity.dueDate);
-    setTimeSendEmail(activity.timeSchedule || false);
-    setCheckSchedule(activity.stakeholdersFeedback || null);
+    setTimeSendEmail(activity.timeSchedule || null);
+    setCheckSchedule(activity.stakeholdersFeedback || false);
     setCompletedDate(activity.completedAt);
     setDescription(activity.description);
     if (activity.personResponsible !== undefined) {
