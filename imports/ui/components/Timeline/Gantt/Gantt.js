@@ -73,13 +73,19 @@ const Gantt = props => {
   savedTask = {};
   const { tasks, scaleText, setActivityId, setEdit, activities, project } = props;
   const obj = { project: undefined };
+  const task_scroll = document.querySelector(".gantt_task_cell");
+
   const updateTaskByDrag = (savedActivities, updatedTask) => {
     const validActivity = savedActivities.find(item => item['_id'] === updatedTask['id']);
     if (!validActivity) return;
     let params = {};
     params.activity = validActivity;
     delete params.activity.personResponsible;
-    params.activity['dueDate'] = updatedTask.start_date;
+    if( updatedTask.completed === true ) {
+      params.activity['completedAt'] = updatedTask.start_date;
+    }  else {
+      params.activity['dueDate'] = updatedTask.start_date;
+    }
     params.activity['updatedAt'] = updatedTask.end_date;
     if (params.activity['stakeholdersFeedback'] === undefined) {
       params.activity['stakeholdersFeedback'] = false;
@@ -96,7 +102,7 @@ const Gantt = props => {
       }
     });
   };
-
+ 
   const updateProjectByDrag = (savedTask, project) => {
     if (savedTask.eventType === 'Project_Start') {
       project.startingDate = savedTask.start_date;
@@ -144,7 +150,7 @@ const Gantt = props => {
       gantt.config.drag_resize = false;
       gantt.config.drag_move = false;
     }
-
+    gantt.config.autofit = true;
     gantt.config.columns = [
       { name: "eventType", label: "Event type", align: "left" },
       { name: "stakeholders", label: "Stakeholders" },
@@ -160,10 +166,19 @@ const Gantt = props => {
       return "";
     }
     gantt.templates.scale_cell_class = date => "grey-background";
-    // gantt.templates.rightside_text = (start, end, task) => {
-    //   // return 'aaaaa';
-    // };
-    gantt.templates.rightside_text = (start, end, task) => task.type == gantt.config.types.milestone && task.eventType;
+    gantt.templates.rightside_text = (start, end, task) => {
+      if (gantt.config.min_column_width === 120 || gantt.config.min_column_width === 90 ) {
+        return task.text;
+      }
+    };
+    gantt.templates.task_text = ( start, end, task ) => {
+      if (gantt.config.min_column_width === 120 || gantt.config.min_column_width === 90 ) {
+        return '';
+      } else {
+        return task.text;
+      }
+    }
+    // gantt.templates.rightside_text = (start, end, task) => task.type == gantt.config.types.milestone && task.eventType;
     gantt.templates.tooltip_text = (start, end, task) => {
       const { description } = task;
       if (description && description.length > 20)

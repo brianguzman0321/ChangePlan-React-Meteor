@@ -120,23 +120,39 @@ function Timeline(props) {
     const defaultSteps = ["Awareness", "Ability", "Reinforcement",  "Desire", "Knowledge"];
     let startingDate = projects[0] ? projects[0].startingDate : new Date();
     let dueDate = projects[0] ? projects[0].endingDate : new Date();
-
     for (i = 0; i < activities.length; i++) {
       let type = activities[i].type;
-      tempData.push({
-        id: activities[i]._id,
-        eventType: activities[i].label || defaultSteps[activities[i].step - 1],
-        text: type[0].toUpperCase() + type.slice(1),
-        start_date: moment(activities[i].dueDate).format("DD-MM-YYYY"),
-        duration: 1,
-        color: colors.activity[activities[i].step - 1],
-        stakeholders: activities[i].stakeHolders.length,
-        owner: activities[i].owner && activities[i].personResponsible
-          ? `${activities[i].personResponsible.profile.firstName} ${activities[i].personResponsible.profile.lastName}`
-          : null,
-        completed: activities[i].completed,
-        description: activities[i].description,
-      });
+      if ( activities[i].completed === true ) {
+        tempData.push({
+          id: activities[i]._id,
+          eventType: activities[i].label || defaultSteps[activities[i].step - 1],
+          text: type[0].toUpperCase() + type.slice(1),
+          start_date: moment(activities[i].completedAt).format("DD-MM-YYYY"),
+          duration: 1,
+          color: colors.activity[activities[i].step - 1],
+          stakeholders: activities[i].stakeHolders.length,
+          owner: activities[i].owner && activities[i].personResponsible
+            ? `${activities[i].personResponsible.profile.firstName} ${activities[i].personResponsible.profile.lastName}`
+            : null,
+          completed: activities[i].completed,
+          description: activities[i].description,
+        });
+      } else {
+        tempData.push({
+          id: activities[i]._id,
+          eventType: activities[i].label || defaultSteps[activities[i].step - 1],
+          text: type[0].toUpperCase() + type.slice(1),
+          start_date: moment(activities[i].dueDate).format("DD-MM-YYYY"),
+          duration: 1,
+          color: colors.activity[activities[i].step - 1],
+          stakeholders: activities[i].stakeHolders.length,
+          owner: activities[i].owner && activities[i].personResponsible
+            ? `${activities[i].personResponsible.profile.firstName} ${activities[i].personResponsible.profile.lastName}`
+            : null,
+          completed: activities[i].completed,
+          description: activities[i].description,
+        });
+      }
     }
     if (activities.length > 0) {
       tempData.unshift({
@@ -216,8 +232,7 @@ function Timeline(props) {
   const handleModalClose = obj => {
     setEdit(obj);
   };
-  console.error('--------------------------', zoomMode);
-  console.error('++++++++++++++++', localStorage.getItem('zoomCondition'));
+
   return (
     <div>
       <TopNavBar menus={config.menus} {...props} />
