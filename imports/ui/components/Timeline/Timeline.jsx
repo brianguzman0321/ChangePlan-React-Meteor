@@ -40,7 +40,7 @@ function Timeline(props) {
   let { match, projects, activities, currentCompany, template, project, company } = props;
   let { projectId, templateId } = match.params;
   const classes = useStyles();
-  const [viewMode, setViewMode] = useState(localStorage.getItem(`viewMode_${projectId}_${Meteor.userId()}`) || 0);
+  const [viewMode, setViewMode] = useState(Number(localStorage.getItem(`viewMode_${projectId}_${Meteor.userId()}`)) || 0);
   // const [zoomMode, setZoomMode] = useState(localStorage.getItem(`zoomMode_${projectId}_${Meteor.userId()}`) || 1);
   const [zoomMode, setZoomMode] = useState(localStorage.getItem('zoomCondition') || 1);
   const [type, setType] = useState(templateId && 'template' || projectId && 'project');
@@ -62,7 +62,7 @@ function Timeline(props) {
   const [isManager, setIsManager] = useState(false);
 
 
-  
+
   useEffect(() => {
     checkRoles();
   }, [currentCompany, company, template, project]);
@@ -106,19 +106,23 @@ function Timeline(props) {
     localStorage.setItem('zoomCondition', newValue);
   };
 
-  const ChangeView = (value) => {
+  const ChangeView = (event, value) => {
     setViewMode(value);
     localStorage.setItem(`viewMode_${projectId}_${Meteor.userId()}`, value);
   };
 
   useEffect(() => {
-   
+    setViewMode(Number(localStorage.getItem(`viewMode_${projectId}_${Meteor.userId()}`)));
+  }, [projectId]);
+
+  useEffect(() => {
+
     let tempData = [];
     let i;
     const defaultSteps = ["Awareness", "Ability", "Reinforcement",  "Desire", "Knowledge"];
     let startingDate = projects[0] ? projects[0].startingDate : new Date();
     let dueDate = projects[0] ? projects[0].endingDate : new Date();
-    
+
     for (i = 0; i < activities.length; i++) {
       let type = activities[i].type;
       tempData.push({
@@ -199,7 +203,7 @@ function Timeline(props) {
     if (!_.isEqual(data.data, tempData))
       setData({ data: tempData });
   }, [props]);
-  
+
   useEffect(() => {
     const activity = activities.find(({ _id }) => _id === activityId) || {};
     const extraActivity = data.data.find(({ id }) => id === activityId) || {};
@@ -210,7 +214,7 @@ function Timeline(props) {
     setImpactIndex(impactindex);
     setBenefitsIndex(benefitsindex);
   }, [activityId]);
-  
+
   const handleModalClose = obj => {
     setEdit(obj);
   };
@@ -237,8 +241,8 @@ function Timeline(props) {
               Timeline
             </Typography>
             <Tabs
-              value={JSON.parse(viewMode)}
-              onChange={(e, newValue) => ChangeView(newValue)}
+              value={viewMode}
+              onChange={ChangeView}
               indicatorColor="primary"
               textColor="primary"
               aria-label="icon tabs example"
@@ -286,7 +290,7 @@ function Timeline(props) {
             </Grid>
           }
         </Grid>
-        {viewMode === 0 ?
+        {viewMode === 0 &&
           <Grid container>
             <Gantt
               tasks={data}
@@ -322,7 +326,7 @@ function Timeline(props) {
               type={templateId && 'template' || projectId && 'project'}
               match={match}
             />) : null}
-            
+
             {(eventType === "Ability") ? (<AddActivities
               edit={edit}
               list={true}
@@ -378,7 +382,7 @@ function Timeline(props) {
               type={templateId && 'template' || projectId && 'project'}
               match={match}
             />) : null}
-            
+
             {(eventType === "Impact") ? (<ImpactsModal
               open={edit}
               handleModalClose={handleModalClose}
@@ -390,7 +394,7 @@ function Timeline(props) {
               editValue={projects[0].impacts[impactIndex]}
               currentType={projectId && 'project' || templateId && 'template'}
             />) : null}
-            
+
             {(eventType === "Benefit") ? (<BenefitsModal
               open={edit}
               handleModalClose={handleModalClose}
@@ -411,7 +415,8 @@ function Timeline(props) {
               displayEditButton={false}
             />) : null}
 
-          </Grid> :
+          </Grid> }
+        {viewMode === 1 &&
           <ListView rows={type === 'project' ? props.activities : props.activitiesTemplate} addNew={false} type={type}
             isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
             isChangeManager={isChangeManager} isManager={isManager}
