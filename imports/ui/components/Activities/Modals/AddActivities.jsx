@@ -235,7 +235,7 @@ function AddActivities(props) {
   const [isUpdated, setIsUpdated] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
   const [checkSchedule, setCheckSchedule] = useState(true);
-  const [timeSendEmail, setTimeSendEmail] = useState(new Date());
+  const [timeSendEmail, setTimeSendEmail] = useState(null);
   const activityCategories = ["communication", "engagement", "training/coaching"];
   const disabled = (isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
     || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
@@ -293,6 +293,8 @@ function AddActivities(props) {
     setActivityType(selectedActivity);
     setSelectActivity(selectedActivity);
     setDueDate(activity.dueDate);
+    setTimeSendEmail(activity.timeSchedule);
+    setCheckSchedule(activity.stakeholdersFeedback);
     setCompletedDate(activity.completedAt);
     setDescription(activity.description);
     if (activity.personResponsible !== undefined) {
@@ -467,6 +469,10 @@ function AddActivities(props) {
       setShowNotification(false);
       props.enqueueSnackbar('Please fill all required fields', {variant: 'error'});
       return false;
+    } else if (checkSchedule && !timeSendEmail) {
+      setShowNotification(false);
+      props.enqueueSnackbar('Please fill all required fields', {option: 'error'});
+      return false;
     }
     if (!isMail || !isNew) {
       if (type === 'project') {
@@ -481,6 +487,9 @@ function AddActivities(props) {
             completedAt: completedDate,
             stakeHolders: peoples,
             step: step,
+            time: Number(time),
+            timeSchedule: timeSendEmail,
+            stakeholdersFeedback: checkSchedule,
           }
         }
       } else if (type === 'template') {
@@ -495,6 +504,9 @@ function AddActivities(props) {
             completedAt: completedDate,
             stakeHolders: peoples,
             step: step,
+            time: Number(time),
+            timeSchedule: timeSendEmail,
+            stakeholdersFeedback: checkSchedule,
           }
         };
       }
@@ -524,6 +536,9 @@ function AddActivities(props) {
           completedAt: completedDate,
           stakeHolders: peoples,
           step: step,
+          time: Number(time),
+          timeSchedule: timeSendEmail,
+          stakeholdersFeedback: checkSchedule,
         }
       };
       if (completedDate) {
@@ -581,10 +596,17 @@ function AddActivities(props) {
 
   const handleSchedule = () => event => {
     setCheckSchedule(event.target.checked)
+    if (!event.target.checked) {
+      setTimeSendEmail(null);
+    }
   };
 
   const handleTimeSendEmail = (value) => {
-    setTimeSendEmail(value);
+    const dateTime = new Date(dueDate);
+    dateTime.setHours(moment(value).get('hour'));
+    dateTime.setMinutes(moment(value).get('minute'));
+    dateTime.setSeconds(moment(value).get('second'));
+    setTimeSendEmail(dateTime);
   };
 
   const onCalendarClick = (id) => {
@@ -616,7 +638,7 @@ function AddActivities(props) {
                     step === 2 ? classes.buttonPreparedness :
                       step === 3 ? classes.buttonSupport : null}
                 fullWidth={true} onClick={handleClickOpen}
-                >
+        >
           Add Activity
         </Button> : ''
       }
@@ -631,7 +653,7 @@ function AddActivities(props) {
               <Select fullWidth value={0} open={showSelect} onOpen={handleShowSelect}>
                 <MenuItem value={0} style={{display: 'none'}}>
                   <Typography className={classes.secondaryHeading}>
-                    {activityType.buttonText || "Select channel*"}
+                    {activityType.buttonText || 'Select channel*'}
                     {activityType.iconSVG ? <SVGInline
                       style={{position: 'absolute', marginTop: -8}}
                       width="35px"
@@ -838,9 +860,9 @@ function AddActivities(props) {
                                 currentChangeManager={changeManager} isActivity={true}/>
                   {type === 'project' &&
                   <Button variant="text" color="primary" className={classes.buttonAsLink}
-                        onClick={() => {
-                          sendNotificationEmail(activityType.name, activity.dueDate, time, activity.name, description, stakeHolders.length, project, person, projectId, project.vision, project.objectives)
-                        }}>
+                          onClick={() => {
+                            sendNotificationEmail(activityType.name, activity.dueDate, time, activity.name, description, stakeHolders.length, project, person, projectId, project.vision, project.objectives)
+                          }}>
                     Notify/Remind by email
                   </Button>
                   }
