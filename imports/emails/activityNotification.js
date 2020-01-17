@@ -106,7 +106,7 @@ const activityNotification = ({
                                                 <p class="lead"
                                                    style="color: rgb(75, 75, 75); display: block; margin-top: 40px; margin-bottom: 30px; text-align: left;">
                                                     For more information please contact the project’s change
-                                                    manager/s${currentChangeManagers ? currentChangeManagers.map(item =>
+                                                    manager/s ${currentChangeManagers ? currentChangeManagers.map(item =>
   ` ${item.profile.firstName} ${item.profile.lastName}
                                                     (${item.emails[0].address})`) : '.'}.
                                                 </p>

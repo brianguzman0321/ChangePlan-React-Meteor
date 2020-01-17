@@ -35,7 +35,6 @@ import SaveChanges from "../../Modals/SaveChanges";
 import {Projects} from "../../../../api/projects/projects";
 import {Templates} from "../../../../api/templates/templates";
 import NotificationModal from "./NotificationModal";
-import Link from "@material-ui/core/Link";
 import {
   ClickAwayListener,
   ListSubheader,
@@ -457,7 +456,7 @@ function AddActivities(props) {
     setShowSelect(true);
   };
 
-  const createProject = (e, isMail = true) => {
+  const createActivity = (e, isMail = true) => {
     e.preventDefault();
     let params;
     if (!(dueDate)) {
@@ -482,7 +481,6 @@ function AddActivities(props) {
             completedAt: completedDate,
             stakeHolders: peoples,
             step: step,
-            time: Number(time)
           }
         }
       } else if (type === 'template') {
@@ -497,7 +495,6 @@ function AddActivities(props) {
             completedAt: completedDate,
             stakeHolders: peoples,
             step: step,
-            time: Number(time)
           }
         };
       }
@@ -527,7 +524,6 @@ function AddActivities(props) {
           completedAt: completedDate,
           stakeHolders: peoples,
           step: step,
-          time: Number(time)
         }
       };
       if (completedDate) {
@@ -598,7 +594,7 @@ function AddActivities(props) {
   const handleCloseNotification = (e) => {
     setShowNotification(false);
     const isMail = false;
-    createProject(e, isMail);
+    createActivity(e, isMail);
   };
 
   const handleShowEditActivity = () => {
@@ -629,13 +625,13 @@ function AddActivities(props) {
         <DialogTitle id="customized-dialog-title" onClose={handleOpenModalDialog}>
           Activity
         </DialogTitle>
-        <form onSubmit={createProject} noValidate>
+        <form onSubmit={createActivity} noValidate>
           <DialogContent>
             <div className={classes.root}>
               <Select fullWidth value={0} open={showSelect} onOpen={handleShowSelect}>
                 <MenuItem value={0} style={{display: 'none'}}>
                   <Typography className={classes.secondaryHeading}>
-                    {activityType.buttonText || null}
+                    {activityType.buttonText || "Select channel*"}
                     {activityType.iconSVG ? <SVGInline
                       style={{position: 'absolute', marginTop: -8}}
                       width="35px"
@@ -877,14 +873,13 @@ function AddActivities(props) {
                     <Grid item xs={10}>
                       <TimePicker
                         variant="inline"
-                        ampm={true}
                         mask="__:__ _M"
                         margin="normal"
                         id="time-picker-inline"
                         label="Time to send email*"
                         value={timeSendEmail}
                         fullWidth
-                        onChange={(e) => handleTimeSendEmail(e.target.value)}
+                        onChange={handleTimeSendEmail}
                       />
                     </Grid>
                     <Grid item xs={2}>
@@ -937,11 +932,11 @@ function AddActivities(props) {
           <SaveChanges
             handleClose={handleClose}
             showModalDialog={showModalDialog}
-            handleSave={createProject}
+            handleSave={createActivity}
             closeModalDialog={closeModalDialog}
           />
           <NotificationModal handleClose={handleCloseNotification} showModalDialog={showNotification}
-                             handleSend={createProject}
+                             handleSend={createActivity}
           />
         </form>
       </Dialog>
