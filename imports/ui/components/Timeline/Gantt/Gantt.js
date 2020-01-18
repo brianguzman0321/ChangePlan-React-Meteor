@@ -152,8 +152,9 @@ const Gantt = props => {
     }
     gantt.config.autofit = true;
     gantt.config.columns = [
+      { name: "start_date", label: "Due Date", algin: "left"}, 
       { name: "eventType", label: "Event type", align: "left" },
-      { name: "stakeholders", label: "Stakeholders" },
+      { name: "stakeholders", label: "👨‍⚕️👩‍⚕️", align: "left"},
       { name: "owner", label: "Owner" },
     ];
     gantt.config.tooltip_timeout = 200;
@@ -185,7 +186,8 @@ const Gantt = props => {
         return description.slice(0, 20) + "...";
       return description;
     };
-
+    
+  
     // Events
     gantt.attachEvent("onTaskClick", function (id, e) {
       setActivityId(id);

@@ -11,6 +11,7 @@ import Typography from '@material-ui/core/Typography';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import ViewColumnIcon from '@material-ui/icons/ViewColumn';
 import ListIcon from '@material-ui/icons/List';
+import PeopleOutlineIcon from '@material-ui/icons/PeopleOutline';
 
 import config from '/imports/utils/config';
 
