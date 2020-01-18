@@ -6,7 +6,7 @@
     width: 90px !important;
 }
 .gantt_cell {
-    width: 90px !important;
+    /* width: 90px !important; */
 }
 .completed-task {
     border-width: 2px;
