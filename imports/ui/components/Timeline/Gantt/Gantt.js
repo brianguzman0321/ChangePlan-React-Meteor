@@ -167,12 +167,16 @@ const Gantt = props => {
     }
     gantt.templates.scale_cell_class = date => "grey-background";
     gantt.templates.rightside_text = (start, end, task) => {
-      if (gantt.config.min_column_width === 120 || gantt.config.min_column_width === 90 ) {
+      const sizes = gantt.getTaskPosition(task, start, end);
+      const textLength = 6 * task.text.length;
+      if ( sizes.width < textLength) {
         return task.text;
-      }
+      } 
     };
     gantt.templates.task_text = ( start, end, task ) => {
-      if (gantt.config.min_column_width === 120 || gantt.config.min_column_width === 90 ) {
+      const sizes = gantt.getTaskPosition(task, start, end);
+      const textLength = 6 * task.text.length;
+      if ( sizes.width < textLength) {
         return '';
       } else {
         return task.text;
