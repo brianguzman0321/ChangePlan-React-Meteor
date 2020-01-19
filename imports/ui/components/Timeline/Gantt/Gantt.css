@@ -27,6 +27,11 @@
     color: #fff !important;
     overflow: initial !important;
 }
+.gantt_side_content {
+    font-size: 13px;
+    color: #000000;
+    margin-left: -15px;
+}
 .task_left {
     display: none !important;
 }
