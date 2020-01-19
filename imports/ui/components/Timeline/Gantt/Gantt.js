@@ -168,14 +168,14 @@ const Gantt = props => {
     gantt.templates.scale_cell_class = date => "grey-background";
     gantt.templates.rightside_text = (start, end, task) => {
       const sizes = gantt.getTaskPosition(task, start, end);
-      const textLength = 6 * task.text.length;
+      const textLength = 7 * task.text.length;
       if ( sizes.width < textLength) {
         return task.text;
       } 
     };
     gantt.templates.task_text = ( start, end, task ) => {
       const sizes = gantt.getTaskPosition(task, start, end);
-      const textLength = 6 * task.text.length;
+      const textLength = 7 * task.text.length;
       if ( sizes.width < textLength) {
         return '';
       } else {
