@@ -1,48 +1,72 @@
-.gantt-column-header{
+.gantt-column-header {
     text-align: left;
-    background: rgb(82,82,82);
+    background: rgb(82, 82, 82);
     color: white !important;
     padding-left: 8px !important;
-    width: 100px !important;
 }
+
 .gantt_cell {
     /* width: 90px !important; */
 }
+
 .completed-task {
     border-width: 2px;
-    border-color:blue !important;
+    border-color: blue !important;
 }
+
 .grey-background {
     background: lightgray !important;
     border-style: outset;
     border-width: 1px !important;
     color: #23282C !important;
 }
+
 .project-event {
-    background:white !important;
-    color:rgb(76, 75, 75) !important;
+    background: white !important;
+    color: rgb(76, 75, 75) !important;
     border: none !important;
 }
+
 .gantt_task_content {
     color: #fff !important;
     overflow: initial !important;
 }
+
 .gantt_side_content {
     font-size: 13px;
     color: #000000;
     margin-left: -15px;
 }
+
+.gantt_grid_head_owner {
+    width: 130px !important;
+}
+
+.gantt_grid_head_stakeholders {
+    width: 70px !important;
+}
+
+.gantt_grid_head_eventType {
+    width: 100px !important;
+}
+
+.gantt_grid_start_date {
+    width: 100px !important;
+}
+
 .task_left {
     display: none !important;
 }
+
 .task_right {
     display: none !important;
 }
+
 .gantt_task_progress_wrapper {
     display: none !important;
 }
-.gantt_task_line
-.gantt_task_progress_drag {
+
+.gantt_task_line .gantt_task_progress_drag {
     display: none !important;
 }
 
