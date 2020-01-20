@@ -44,7 +44,7 @@ const handleDownload = (exportType) => {
         cellColors: true,
         columns: [
           { id: "text", header: "text", width: 30 },
-          { id: "start_date", header: "start_date", width: 30, type: 'date' },
+          { id: "start_date", header: "due_date", width: 30, type: 'date' },
           { id: "color", header: "color", width: 30 },
           { id: "description", header: "description", width: 30 },
           { id: "eventType", header: "eventType", width: 30 },
