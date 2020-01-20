@@ -229,7 +229,7 @@ function Timeline(props) {
     setImpactIndex(impactindex);
     setBenefitsIndex(benefitsindex);
   }, [activityId]);
-
+  console.error('+++++++++++++++', activities);
   const handleModalClose = obj => {
     setEdit(obj);
   };
