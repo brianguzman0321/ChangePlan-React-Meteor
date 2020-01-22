@@ -62,16 +62,17 @@ function Timeline(props) {
   const [isChangeManager, setIsChangeManager] = useState(false);
   const [isManager, setIsManager] = useState(false);
   
-  
+  console.error('------------', projectId);
+  console.error('++++++++++++', projects0);
   useEffect(() => {
     checkRoles();
-  }, [currentCompany, company, template, project]);
+  }, [currentCompany, company, template, projects0]);
 
   useEffect(() => {
     if (currentCompany) {
       setCompanyId(currentCompany._id);
     }
-  }, [currentCompany, template, project]);
+  }, [currentCompany, template, projects0]);
 
   const checkRoles = () => {
     const userId = Meteor.userId();
