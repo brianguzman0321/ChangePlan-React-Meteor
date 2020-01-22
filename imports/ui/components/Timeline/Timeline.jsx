@@ -428,7 +428,7 @@ function Timeline(props) {
               editValue={projects0.benefits[benefitsIndex]}
               currentType={projectId && 'project' || templateId && 'template'}
             />) : null}
-            {((eventType === "Project_Start") && ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin || isChangeManager)) || ((eventType === "Project_End") && ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin)) ? (<EditProject
+            {((eventType === "Project_Start") && ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin || isChangeManager)) || ((eventType === "Project_End") && ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin || isChangeManager )) ? (<EditProject
               open={edit}
               handleModalClose={handleModalClose}
               project={projects0}
@@ -469,7 +469,6 @@ const TimelinePage = withTracker(props => {
   }
   Meteor.subscribe('compoundActivities', projectId);
   Meteor.subscribe('compoundActivitiesTemplate', templateId);
-  Meteor.subscribe('peoples', currentCompany && currentCompany._id);
   // Meteor.subscribe('myProjects', null, {
   //     sort: local.sort || {},
   //     name: local.search
