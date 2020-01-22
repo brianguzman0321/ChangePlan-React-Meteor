@@ -61,7 +61,7 @@ function Timeline(props) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isChangeManager, setIsChangeManager] = useState(false);
   const [isManager, setIsManager] = useState(false);
-  
+
   console.error('------------', projectId);
   console.error('++++++++++++', projects0);
   useEffect(() => {
@@ -88,14 +88,12 @@ function Timeline(props) {
         const changeManagers = [...new Set([].concat.apply([], projectsCurCompany.map(projects0 => projects0.changeManagers)))];
         if (changeManagers.includes(userId)) {
           setIsChangeManager(true);
+          if (!Roles.userIsInRole(userId, 'superAdmin') && projectId === undefined) {
+            setIsOpen(true);
+          }
         }
-      }
-    }
-    if (currentCompany) {
-      const projectsCurCompany = Projects.find({ companyId: currentCompany._id }).fetch();
-      if (projectsCurCompany) {
         const managers = [...new Set([].concat.apply([], projectsCurCompany.map(projects0 => projects0.managers)))];
-        if (managers.includes(userId)) {
+        if (!Roles.userIsInRole(userId, 'superAdmin') && managers.includes(userId)) {
           setIsManager(true);
         }
       }
@@ -120,12 +118,12 @@ function Timeline(props) {
 
     let tempData = [];
     let i;
-    const defaultSteps = ["Awareness", "Ability", "Reinforcement",  "Desire", "Knowledge"];
+    const defaultSteps = ["Awareness", "Ability", "Reinforcement", "Desire", "Knowledge"];
     let startingDate = projects0 ? projects0.startingDate : new Date();
     let dueDate = projects0 ? projects0.endingDate : new Date();
     for (i = 0; i < activities.length; i++) {
       let type = activities[i].type;
-      if ( activities[i].completed === true ) {
+      if (activities[i].completed === true) {
         tempData.push({
           id: activities[i]._id,
           eventType: activities[i].label || defaultSteps[activities[i].step - 1],
@@ -224,7 +222,7 @@ function Timeline(props) {
   useEffect(() => {
     const activity = activities.find(({ _id }) => _id === activityId) || {};
     const extraActivity = data.data.find(({ id }) => id === activityId) || {};
-    const impactindex = (activities.length > 0) ? data.data.indexOf(extraActivity) - activities.length - 2 : data.data.indexOf(extraActivity) ;
+    const impactindex = (activities.length > 0) ? data.data.indexOf(extraActivity) - activities.length - 2 : data.data.indexOf(extraActivity);
     const benefitsindex = (activities.length > 0) ? data.data.indexOf(extraActivity) - activities.length - impactLength - 2 : data.data.indexOf(extraActivity) - impactLength;
     setActivity(activity);
     setEventType(extraActivity.eventType);
@@ -334,9 +332,9 @@ function Timeline(props) {
               currentProject={projects0}
               activities={activities}
             />
-            {/* {(isAdmin && template && (template.companyId === companyId)) || isSuperAdmin ? */} 
-            
-            {((eventType === "Awareness") && ((isAdmin && template && ( template.companyId === companyID )) || isSuperAdmin)) ? (<AddActivities
+            {/* {(isAdmin && template && (template.companyId === companyId)) || isSuperAdmin ? */}
+
+            {((eventType === "Awareness") && ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin)) ? (<AddActivities
               edit={edit}
               list={true}
               isOpen={false}
@@ -350,7 +348,7 @@ function Timeline(props) {
               match={match}
             />) : null}
 
-            {((eventType === "Ability") && ((isAdmin && template && ( template.companyId === companyID )) || isSuperAdmin)) ? (<AddActivities
+            {((eventType === "Ability") && ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin)) ? (<AddActivities
               edit={edit}
               list={true}
               isOpen={false}
@@ -364,7 +362,7 @@ function Timeline(props) {
               match={match}
             />) : null}
 
-            {((eventType === "Reinforcement") && ((isAdmin && template && ( template.companyId === companyID )) || isSuperAdmin)) ? (<AddActivities
+            {((eventType === "Reinforcement") && ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin)) ? (<AddActivities
               edit={edit}
               list={true}
               isOpen={false}
@@ -378,7 +376,7 @@ function Timeline(props) {
               match={match}
             />) : null}
 
-            {((eventType === "Desire") && ((isAdmin && template && ( template.companyId === companyID )) || isSuperAdmin)) ? (<AddActivities
+            {((eventType === "Desire") && ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin)) ? (<AddActivities
               edit={edit}
               list={true}
               isOpen={false}
@@ -392,7 +390,7 @@ function Timeline(props) {
               match={match}
             />) : null}
 
-            {((eventType === "Knowledge") && ((isAdmin && template && ( template.companyId === companyID )) || isSuperAdmin)) ? (<AddActivities
+            {((eventType === "Knowledge") && ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin)) ? (<AddActivities
               edit={edit}
               list={true}
               isOpen={false}
@@ -406,7 +404,7 @@ function Timeline(props) {
               match={match}
             />) : null}
 
-            {((eventType === "Impact") && ((isAdmin && template && ( template.companyId === companyID )) || isSuperAdmin)) ? (<ImpactsModal
+            {((eventType === "Impact") && ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin)) ? (<ImpactsModal
               open={edit}
               handleModalClose={handleModalClose}
               project={projects0}
@@ -418,7 +416,7 @@ function Timeline(props) {
               currentType={projectId && 'project' || templateId && 'template'}
             />) : null}
 
-            {((eventType === "Benefit") && ((isAdmin && template && ( template.companyId === companyID )) || isSuperAdmin)) ? (<BenefitsModal
+            {((eventType === "Benefit") && ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin)) ? (<BenefitsModal
               open={edit}
               handleModalClose={handleModalClose}
               project={projects0}
@@ -429,7 +427,7 @@ function Timeline(props) {
               editValue={projects0.benefits[benefitsIndex]}
               currentType={projectId && 'project' || templateId && 'template'}
             />) : null}
-            {((eventType === "Project_Start") && ((isAdmin && template && ( template.companyId === companyID )) || isSuperAdmin)) || ((eventType === "Project_End") && ((isAdmin && template && ( template.companyId === companyID )) || isSuperAdmin)) ? (<EditProject
+            {((eventType === "Project_Start") && ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin)) || ((eventType === "Project_End") && ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin)) ? (<EditProject
               open={edit}
               handleModalClose={handleModalClose}
               project={projects0}
@@ -438,7 +436,7 @@ function Timeline(props) {
               displayEditButton={false}
             />) : null}
 
-          </Grid> }
+          </Grid>}
         {viewMode === 1 &&
           <ListView rows={type === 'project' ? props.activities : props.activitiesTemplate} addNew={false} type={type}
             isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
@@ -477,7 +475,7 @@ const TimelinePage = withTracker(props => {
   return {
     activities: Activities.find({ projectId: projectId || templateId }).fetch(),
     template: Templates.findOne({ _id: templateId }),
-    projects0: Projects.findOne({_id: projectId}),
+    projects0: Projects.findOne({ _id: projectId }),
     activitiesProject: Activities.find({ projectId: projectId }).fetch(),
     activitiesTemplate: Activities.find({ templateId: templateId }).fetch(),
     templates: Templates.find({}).fetch(),
