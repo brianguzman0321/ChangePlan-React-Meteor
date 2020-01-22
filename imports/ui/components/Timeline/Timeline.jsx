@@ -38,7 +38,7 @@ import { Companies } from "../../../api/companies/companies";
 
 
 function Timeline(props) {
-  let { match, projects, activities, currentCompany, template, project, company } = props;
+  let { match, projects0, activities, currentCompany, template, project, company } = props;
   let { projectId, templateId } = match.params;
   const classes = useStyles();
   const [viewMode, setViewMode] = useState(Number(localStorage.getItem(`viewMode_${projectId}_${Meteor.userId()}`)) || 0);
@@ -62,7 +62,6 @@ function Timeline(props) {
   const [isChangeManager, setIsChangeManager] = useState(false);
   const [isManager, setIsManager] = useState(false);
   
-  console.error('++++++++++', projects[0]);
   
   useEffect(() => {
     checkRoles();
@@ -121,8 +120,8 @@ function Timeline(props) {
     let tempData = [];
     let i;
     const defaultSteps = ["Awareness", "Ability", "Reinforcement",  "Desire", "Knowledge"];
-    let startingDate = projects[0] ? projects[0].startingDate : new Date();
-    let dueDate = projects[0] ? projects[0].endingDate : new Date();
+    let startingDate = projects0 ? projects0.startingDate : new Date();
+    let dueDate = projects0 ? projects0.endingDate : new Date();
     for (i = 0; i < activities.length; i++) {
       let type = activities[i].type;
       if ( activities[i].completed === true ) {
@@ -185,10 +184,10 @@ function Timeline(props) {
       });
     }
 
-    if (projects[0]) {
-      setImpactlength(projects[0].impacts.length);
-      let owner = changeManagersNames(projects[0]);
-      let impacts = projects[0] ? projects[0].impacts : [];
+    if (projects0) {
+      setImpactlength(projects0.impacts.length);
+      let owner = changeManagersNames(projects0);
+      let impacts = projects0 ? projects0.impacts : [];
       for (i = 0; i < impacts.length; i++) {
         tempData.push({
           id: `impacts #${i}`,
@@ -202,7 +201,7 @@ function Timeline(props) {
           description: impacts[i].description,
         })
       }
-      let benefits = projects[0] ? projects[0].benefits : [];
+      let benefits = projects0 ? projects0.benefits : [];
       for (i = 0; i < benefits.length; i++) {
         tempData.push({
           id: `benefits #${i}`,
@@ -314,7 +313,7 @@ function Timeline(props) {
               setActivityId={setActivityId}
               setEdit={setEdit}
               activities={activities}
-              project={projects[0]}
+              project={projects0}
               isSuperAdmin={isSuperAdmin}
               isAdmin={isAdmin}
               isManager={isManager}
@@ -331,7 +330,7 @@ function Timeline(props) {
               isImporting={isImporting}
               setIsImporting={setIsImporting}
               handleImportData={handleImportData}
-              currentProject={projects[0]}
+              currentProject={projects0}
               activities={activities}
             />
             {/* {(isAdmin && template && (template.companyId === companyId)) || isSuperAdmin ? */} 
@@ -342,7 +341,7 @@ function Timeline(props) {
               isOpen={false}
               step={1}
               color={'#f1753e'}
-              project={projects[0]}
+              project={projects0}
               template={template}
               activity={activity}
               newActivity={() => setEdit(false)}
@@ -356,7 +355,7 @@ function Timeline(props) {
               isOpen={false}
               step={2}
               color={'#53cbd0'}
-              project={projects[0]}
+              project={projects0}
               template={template}
               activity={activity}
               newActivity={() => setEdit(false)}
@@ -370,7 +369,7 @@ function Timeline(props) {
               isOpen={false}
               step={3}
               color={'#bbabd2'}
-              project={projects[0]}
+              project={projects0}
               template={template}
               activity={activity}
               newActivity={() => setEdit(false)}
@@ -384,7 +383,7 @@ function Timeline(props) {
               isOpen={false}
               step={4}
               color={'#8BC34A'}
-              project={projects[0]}
+              project={projects0}
               template={template}
               activity={activity}
               newActivity={() => setEdit(false)}
@@ -398,7 +397,7 @@ function Timeline(props) {
               isOpen={false}
               step={5}
               color={'#03A9F4'}
-              project={projects[0]}
+              project={projects0}
               template={template}
               activity={activity}
               newActivity={() => setEdit(false)}
@@ -409,30 +408,30 @@ function Timeline(props) {
             {((eventType === "Impact") && ((isAdmin && template && ( template.companyId === companyID )) || isSuperAdmin)) ? (<ImpactsModal
               open={edit}
               handleModalClose={handleModalClose}
-              project={projects[0]}
+              project={projects0}
               template={template}
               indexImpact={impactIndex}
               match={match}
               handleType={'timeline'}
-              editValue={projects[0].impacts[impactIndex]}
+              editValue={projects0.impacts[impactIndex]}
               currentType={projectId && 'project' || templateId && 'template'}
             />) : null}
 
             {((eventType === "Benefit") && ((isAdmin && template && ( template.companyId === companyID )) || isSuperAdmin)) ? (<BenefitsModal
               open={edit}
               handleModalClose={handleModalClose}
-              project={projects[0]}
+              project={projects0}
               indexBenefits={benefitsIndex}
               template={template}
               match={match}
               handleType={'timeline'}
-              editValue={projects[0].benefits[benefitsIndex]}
+              editValue={projects0.benefits[benefitsIndex]}
               currentType={projectId && 'project' || templateId && 'template'}
             />) : null}
             {((eventType === "Project_Start") && ((isAdmin && template && ( template.companyId === companyID )) || isSuperAdmin)) || ((eventType === "Project_End") && ((isAdmin && template && ( template.companyId === companyID )) || isSuperAdmin)) ? (<EditProject
               open={edit}
               handleModalClose={handleModalClose}
-              project={projects[0]}
+              project={projects0}
               template={template}
               handleType={'timeline'}
               displayEditButton={false}
@@ -477,7 +476,7 @@ const TimelinePage = withTracker(props => {
   return {
     activities: Activities.find({ projectId: projectId || templateId }).fetch(),
     template: Templates.findOne({ _id: templateId }),
-    projects: Projects.find(projectId).fetch(),
+    projects0: Projects.findOne({_id: projectId}),
     activitiesProject: Activities.find({ projectId: projectId }).fetch(),
     activitiesTemplate: Activities.find({ templateId: templateId }).fetch(),
     templates: Templates.find({}).fetch(),
