@@ -16,6 +16,7 @@ import Grid from "@material-ui/core/Grid/Grid";
 import CloseIcon from '@material-ui/icons/Close';
 import { styles, useStyles } from '../utils';
 import { importTypes, INSTRUCTION_TEXT } from '../constants';
+import { withSnackbar } from 'notistack';
 
 const DialogTitle = withStyles(styles)(props => {
   const { children, classes, onClose, ...other } = props;
@@ -42,11 +43,8 @@ const DialogActions = withStyles(theme => ({
   },
 }))(MuiDialogActions);
 
-export default function ImportDialog ({
-  isImporting,
-  setIsImporting,
-  handleImportData,
-}) {
+const ImportDialog = props => {
+  const { isImporting, setIsImporting, handleImportData, currentProject, activities } = props;
   const classes = useStyles();
   const [disabled, setDisabled] = useState(true);
   const [file, setFile] = useState(null);
@@ -123,7 +121,7 @@ export default function ImportDialog ({
           disabled={disabled}
           variant="contained"
           className={classes.uploadButton}
-          onClick={() => {if(file) handleImportData(file)}}
+          onClick={() => {if(file) handleImportData(file, currentProject, activities, props)}}
         >
           UPLOAD
         </Button>
@@ -132,3 +130,6 @@ export default function ImportDialog ({
     </Dialog>
   );
 }
+
+
+export default withSnackbar(ImportDialog);
