@@ -469,7 +469,6 @@ const TimelinePage = withTracker(props => {
   }
   Meteor.subscribe('compoundActivities', projectId);
   Meteor.subscribe('compoundActivitiesTemplate', templateId);
-  Meteor.subscribe('peoples', currentCompany && currentCompany._id);
   // Meteor.subscribe('myProjects', null, {
   //     sort: local.sort || {},
   //     name: local.search
