@@ -244,8 +244,9 @@ export { handleDownload, handleImportData }
 
 const Gantt = props => {
   savedTask = {};
-  const { tasks, scaleText, setActivityId, setEdit, activities, project } = props;
+  const { tasks, scaleText, setActivityId, setEdit, activities, isSuperAdmin, isAdmin, isChangeManager, isManager, project } = props;
   const obj = { project: undefined };
+
   const updateTaskByDrag = (savedActivities, updatedTask) => {
     const validActivity = savedActivities.find(item => item['_id'] === updatedTask['id']);
     if (!validActivity) return;
@@ -363,8 +364,10 @@ const Gantt = props => {
 
     // Events
     gantt.attachEvent("onTaskClick", function (id, e) {
-      setActivityId(id);
-      setEdit(true);
+      if ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin) {
+        setActivityId(id);
+        setEdit(true);
+      }
     });
     // FIXME: This is a temporary solution
     gantt.activities = activities;
@@ -374,20 +377,22 @@ const Gantt = props => {
     });
     gantt.attachEvent("onAfterTaskDrag", (id, mode, e) => {
       //any custom logic here
-      if (project === undefined) return;
+      if ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin) {
+        if (project === undefined) return;
 
-      if (mode === 'move' && gantt.getTask(id).start_date !== savedTask.start_date) {
-        savedTask = gantt.getTask(id);
-        updateTaskByDrag(gantt.activities, savedTask);
+        if (mode === 'move' && gantt.getTask(id).start_date !== savedTask.start_date) {
+          savedTask = gantt.getTask(id);
+          updateTaskByDrag(gantt.activities, savedTask);
 
-        if (savedTask.eventType === 'Project_Start' || savedTask.eventType === 'Project_End') {
-          updateProjectByDrag(savedTask, gantt.project);
+          if (savedTask.eventType === 'Project_Start' || savedTask.eventType === 'Project_End') {
+            updateProjectByDrag(savedTask, gantt.project);
+          }
+
+          if (savedTask.eventType === 'Impact' || savedTask.eventType === 'Benefit') {
+            updateImpactBenefitByDrag(savedTask, gantt.project);
+          }
+
         }
-
-        if (savedTask.eventType === 'Impact' || savedTask.eventType === 'Benefit') {
-          updateImpactBenefitByDrag(savedTask, gantt.project);
-        }
-
       }
     });
 
