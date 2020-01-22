@@ -517,7 +517,6 @@ function AddActivities(props) {
       }
       let methodName = isNew ? 'activities.insert' : 'activities.update';
       !isNew && (params.activity._id = activity._id);
-      console.error('================', params);
       Meteor.call(methodName, params, (err, res) => {
         if (err) {
           props.enqueueSnackbar(err.reason, {variant: 'error'})

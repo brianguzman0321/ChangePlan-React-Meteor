@@ -217,7 +217,6 @@ function Timeline(props) {
     }
     if (!_.isEqual(data.data, tempData))
       setData({ data: tempData });
-    console.error('===============', activities);
   }, [props]);
 
   useEffect(() => {

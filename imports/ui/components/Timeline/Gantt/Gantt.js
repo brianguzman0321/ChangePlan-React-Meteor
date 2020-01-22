@@ -264,7 +264,6 @@ const Gantt = props => {
     if (params.activity['timeSchedule'] === undefined) {
       params.activity['timeSchedule'] = null;
     }
-    console.error('++++++++++++++++++dragparams', params);
     Meteor.call('activities.update', params, (err, res) => {
       if (err) {
         props.enqueueSnackbar(err.reason, { variant: 'error' })
