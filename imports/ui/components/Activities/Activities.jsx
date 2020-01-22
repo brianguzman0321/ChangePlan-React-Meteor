@@ -136,7 +136,10 @@ function ActivitiesCard(props) {
       }
     }
   };
-
+  console.error('+++++++++superAmdin', isSuperAdmin);
+  console.error('+++++++++isChangeManger', isChangeManager);
+  console.error('++++++++++++isManager', isManager);
+  console.error('++++++++++++isAdmin', isAdmin);
 
   let menus = config.menus;
   return (

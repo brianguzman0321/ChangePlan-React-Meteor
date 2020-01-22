@@ -291,7 +291,10 @@ const Gantt = props => {
       }
     });
   }
-
+  console.error('+++++++++superAmdin', isSuperAdmin);
+  console.error('+++++++++isChangeManger', isChangeManager);
+  console.error('++++++++++++isManager', isManager);
+  console.error('++++++++++++isAdmin', isAdmin);
   const updateImpactBenefitByDrag = (savedTask, project) => {
     const index = savedTask.id[savedTask.id.length - 1];
     if (savedTask.eventType === 'Impact') {
@@ -376,7 +379,7 @@ const Gantt = props => {
     gantt.attachEvent("onAfterTaskDrag", (id, mode, e) => {
       //any custom logic here
       if (project === undefined) return;
-      if ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin || isChangeManager) {
+      if ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin) {
         if (mode === 'move' && gantt.getTask(id).start_date !== savedTask.start_date) {
           savedTask = gantt.getTask(id);
           updateTaskByDrag(gantt.activities, savedTask);
