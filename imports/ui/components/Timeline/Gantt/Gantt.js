@@ -100,45 +100,45 @@ const updateProjectByImport = (file, project, activities, props) => {
         });
       }
     }
-    if ( file[i].eventType === 'Project_Start' || file[i].eventType === 'Project_End' ) {
-        
-        if (file[i].eventType === 'Project_Start') {
-          project.startingDate = new Date(file[i].start_date);
-        } else {
-          let currentActivity = activities[i-1] ? activities[i-1] : null;
-          if ( currentActivity !== null ) {
-            params1 = {
-              activity: {
-                _id: currentActivity._id,
+    if (file[i].eventType === 'Project_Start' || file[i].eventType === 'Project_End') {
+
+      if (file[i].eventType === 'Project_Start') {
+        project.startingDate = new Date(file[i].start_date);
+      } else {
+        let currentActivity = activities[i - 1] ? activities[i - 1] : null;
+        if (currentActivity !== null) {
+          params1 = {
+            activity: {
+              _id: currentActivity._id,
             }
-            }
-            Meteor.call('activities.remove', params1, (err, res) => {
-              if (err) {
-                props.enqueueSnackbar(err.reason, { variant: 'error' });
-              } else {
-                props.enqueueSnackbar(`Activity Updated Successfully.`, { variant: 'success' });
-              }
-            });
           }
-          project.endingDate = new Date(file[i].start_date);
+          Meteor.call('activities.remove', params1, (err, res) => {
+            if (err) {
+              props.enqueueSnackbar(err.reason, { variant: 'error' });
+            } else {
+              props.enqueueSnackbar(`Activity Updated Successfully.`, { variant: 'success' });
+            }
+          });
         }
-        let params = {
-          project
-        };
-        Meteor.call('projects.update', params, (err, res) => {
-          if (err) {
-            props.enqueueSnackbar(err.reason, { variant: 'error' })
-          } else {
-            props.enqueueSnackbar(`Project Updated Successfully.`, { variant: 'success' })
-          }
-        });
-      
+        project.endingDate = new Date(file[i].start_date);
+      }
+      let params = {
+        project
+      };
+      Meteor.call('projects.update', params, (err, res) => {
+        if (err) {
+          props.enqueueSnackbar(err.reason, { variant: 'error' })
+        } else {
+          props.enqueueSnackbar(`Project Updated Successfully.`, { variant: 'success' })
+        }
+      });
+
     }
-    if ( file[i].eventType === 'Impact' || file[i].eventType === 'Benefit') {
+    if (file[i].eventType === 'Impact' || file[i].eventType === 'Benefit') {
       const len = file[i].id.length;
-      const index = file[i].id[len-1];
-      if ( file[i].eventType === 'Impact') {
-        if ( project.impacts[index] ) {
+      const index = file[i].id[len - 1];
+      if (file[i].eventType === 'Impact') {
+        if (project.impacts[index]) {
           project.impacts[index].expectedDate = new Date(file[i].start_date);
           project.impacts[index].description = file[i].description;
           project.impacts[index].type = file[i].text.split(' ').pop();
@@ -146,14 +146,14 @@ const updateProjectByImport = (file, project, activities, props) => {
           project.impacts.push({
             expectedDate: new Date(file[i].start_date),
             type: '',
-            level:'',
-            type: file[i].text.split(' ').pop(), 
+            level: '',
+            type: file[i].text.split(' ').pop(),
             description: file[i].description,
             stakeholders: file[i].stakeholders,
           });
         }
-      } else if ( file[i].eventType === 'Benefit'){
-        if ( project.benefits[index]) {
+      } else if (file[i].eventType === 'Benefit') {
+        if (project.benefits[index]) {
           project.benefits[index].expectedDate = new Date(file[i].start_date);
           project.benefits[index].description = file[i].description;
         } else {
@@ -174,7 +174,7 @@ const updateProjectByImport = (file, project, activities, props) => {
           props.enqueueSnackbar(`Project Updated Successfully.`, { variant: 'success' })
         }
       });
-    }    
+    }
   }
 }
 
