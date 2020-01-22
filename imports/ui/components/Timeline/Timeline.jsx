@@ -229,7 +229,6 @@ function Timeline(props) {
     setImpactIndex(impactindex);
     setBenefitsIndex(benefitsindex);
   }, [activityId]);
-  console.error('+++++++++++++++', activities);
   const handleModalClose = obj => {
     setEdit(obj);
   };
@@ -326,6 +325,8 @@ function Timeline(props) {
               isImporting={isImporting}
               setIsImporting={setIsImporting}
               handleImportData={handleImportData}
+              currentProject={projects[0]}
+              activities={activities}
             />
             {/* {(isAdmin && template && (template.companyId === companyId)) || isSuperAdmin ? */}
             {(eventType === "Awareness") ? (<AddActivities

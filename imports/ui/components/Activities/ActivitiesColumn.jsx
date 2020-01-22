@@ -184,8 +184,6 @@ function ActivitiesColumn(props) {
   let {projectId} = match.params;
   const [currentProject, setProject] = useState({});
   
-
- console.error('+++++++color', color);
   function completeActivity(activity) {
     activity.completed = !activity.completed;
     activity.completed ?
