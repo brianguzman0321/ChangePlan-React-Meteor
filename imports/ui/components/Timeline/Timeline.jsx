@@ -428,7 +428,7 @@ function Timeline(props) {
               editValue={projects0.benefits[benefitsIndex]}
               currentType={projectId && 'project' || templateId && 'template'}
             />) : null}
-            {((eventType === "Project_Start") && ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin || isChangeManager)) || ((eventType === "Project_End") && ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin)) ? (<EditProject
+            {((eventType === "Project_Start") && ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin || isChangeManager)) || ((eventType === "Project_End") && ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin || isChangeManager )) ? (<EditProject
               open={edit}
               handleModalClose={handleModalClose}
               project={projects0}
