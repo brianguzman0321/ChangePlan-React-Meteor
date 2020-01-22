@@ -62,7 +62,8 @@ function Timeline(props) {
   const [isChangeManager, setIsChangeManager] = useState(false);
   const [isManager, setIsManager] = useState(false);
   
-
+  console.error('++++++++++', projects[0]);
+  
   useEffect(() => {
     checkRoles();
   }, [currentCompany, company, template, project]);
