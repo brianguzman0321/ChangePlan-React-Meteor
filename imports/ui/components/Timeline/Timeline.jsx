@@ -347,7 +347,7 @@ function Timeline(props) {
               match={match}
             />) : null}
 
-            {((eventType === "Ability") && ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin || isChangeManger)) ? (<AddActivities
+            {((eventType === "Ability") && ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin || isChangeManager)) ? (<AddActivities
               edit={edit}
               list={true}
               isOpen={false}
