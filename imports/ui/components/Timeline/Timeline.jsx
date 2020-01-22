@@ -61,6 +61,7 @@ function Timeline(props) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isChangeManager, setIsChangeManager] = useState(false);
   const [isManager, setIsManager] = useState(false);
+  
 
   useEffect(() => {
     checkRoles();
@@ -313,6 +314,10 @@ function Timeline(props) {
               setEdit={setEdit}
               activities={activities}
               project={projects[0]}
+              isSuperAdmin={isSuperAdmin}
+              isAdmin={isAdmin}
+              isManager={isManager}
+              isChangeManager={isChangeManager}
             />
             <ExportDialog
               isExporting={isExporting}
@@ -328,8 +333,9 @@ function Timeline(props) {
               currentProject={projects[0]}
               activities={activities}
             />
-            {/* {(isAdmin && template && (template.companyId === companyId)) || isSuperAdmin ? */}
-            {(eventType === "Awareness") ? (<AddActivities
+            {/* {(isAdmin && template && (template.companyId === companyId)) || isSuperAdmin ? */} 
+            
+            {((eventType === "Awareness") && ((isAdmin && template && ( template.companyId === companyID )) || isSuperAdmin)) ? (<AddActivities
               edit={edit}
               list={true}
               isOpen={false}
@@ -343,7 +349,7 @@ function Timeline(props) {
               match={match}
             />) : null}
 
-            {(eventType === "Ability") ? (<AddActivities
+            {((eventType === "Ability") && ((isAdmin && template && ( template.companyId === companyID )) || isSuperAdmin)) ? (<AddActivities
               edit={edit}
               list={true}
               isOpen={false}
@@ -357,7 +363,7 @@ function Timeline(props) {
               match={match}
             />) : null}
 
-            {(eventType === "Reinforcement") ? (<AddActivities
+            {((eventType === "Reinforcement") && ((isAdmin && template && ( template.companyId === companyID )) || isSuperAdmin)) ? (<AddActivities
               edit={edit}
               list={true}
               isOpen={false}
@@ -371,7 +377,7 @@ function Timeline(props) {
               match={match}
             />) : null}
 
-            {(eventType === "Desire") ? (<AddActivities
+            {((eventType === "Desire") && ((isAdmin && template && ( template.companyId === companyID )) || isSuperAdmin)) ? (<AddActivities
               edit={edit}
               list={true}
               isOpen={false}
@@ -385,7 +391,7 @@ function Timeline(props) {
               match={match}
             />) : null}
 
-            {(eventType === "Knowledge") ? (<AddActivities
+            {((eventType === "Knowledge") && ((isAdmin && template && ( template.companyId === companyID )) || isSuperAdmin)) ? (<AddActivities
               edit={edit}
               list={true}
               isOpen={false}
@@ -399,7 +405,7 @@ function Timeline(props) {
               match={match}
             />) : null}
 
-            {(eventType === "Impact") ? (<ImpactsModal
+            {((eventType === "Impact") && ((isAdmin && template && ( template.companyId === companyID )) || isSuperAdmin)) ? (<ImpactsModal
               open={edit}
               handleModalClose={handleModalClose}
               project={projects[0]}
@@ -411,7 +417,7 @@ function Timeline(props) {
               currentType={projectId && 'project' || templateId && 'template'}
             />) : null}
 
-            {(eventType === "Benefit") ? (<BenefitsModal
+            {((eventType === "Benefit") && ((isAdmin && template && ( template.companyId === companyID )) || isSuperAdmin)) ? (<BenefitsModal
               open={edit}
               handleModalClose={handleModalClose}
               project={projects[0]}
@@ -422,7 +428,7 @@ function Timeline(props) {
               editValue={projects[0].benefits[benefitsIndex]}
               currentType={projectId && 'project' || templateId && 'template'}
             />) : null}
-            {(eventType === "Project_Start") || (eventType === "Project_End") ? (<EditProject
+            {((eventType === "Project_Start") && ((isAdmin && template && ( template.companyId === companyID )) || isSuperAdmin)) || ((eventType === "Project_End") && ((isAdmin && template && ( template.companyId === companyID )) || isSuperAdmin)) ? (<EditProject
               open={edit}
               handleModalClose={handleModalClose}
               project={projects[0]}
