@@ -87,12 +87,14 @@ function Timeline(props) {
         const changeManagers = [...new Set([].concat.apply([], projectsCurCompany.map(projects0 => projects0.changeManagers)))];
         if (changeManagers.includes(userId)) {
           setIsChangeManager(true);
-          if (!Roles.userIsInRole(userId, 'superAdmin') && projectId === undefined) {
-            setIsOpen(true);
-          }
         }
+      }
+    }
+    if (currentCompany) {
+      const projectsCurCompany = Projects.find({ companyId: currentCompany._id }).fetch();
+      if (projectsCurCompany) {
         const managers = [...new Set([].concat.apply([], projectsCurCompany.map(projects0 => projects0.managers)))];
-        if (!Roles.userIsInRole(userId, 'superAdmin') && managers.includes(userId)) {
+        if (managers.includes(userId)) {
           setIsManager(true);
         }
       }
@@ -476,8 +478,8 @@ const TimelinePage = withTracker(props => {
     activities: Activities.find({ projectId: projectId || templateId }).fetch(),
     template: Templates.findOne({ _id: templateId }),
     projects0: Projects.findOne({ _id: projectId }),
-    // activitiesProject: Activities.find({ projectId: projectId }).fetch(),
-    // activitiesTemplate: Activities.find({ templateId: templateId }).fetch(),
+    activitiesProject: Activities.find({ projectId: projectId }).fetch(),
+    activitiesTemplate: Activities.find({ templateId: templateId }).fetch(),
     templates: Templates.find({}).fetch(),
     companies: Companies.find({}).fetch(),
     company,
