@@ -280,7 +280,7 @@ function Dashboard(props) {
       }
     }
   };
-
+  
   useEffect(() => {
     checkRoles();
   }, [currentCompany, company, template, project]);
