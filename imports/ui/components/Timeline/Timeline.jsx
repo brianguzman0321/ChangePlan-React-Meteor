@@ -85,7 +85,7 @@ function Timeline(props) {
     if (currentCompany) {
       const projectsCurCompany = Projects.find({ companyId: currentCompany._id }).fetch();
       if (projectsCurCompany) {
-        const changeManagers = [...new Set([].concat.apply([], projectsCurCompany.map(project => project.changeManagers)))];
+        const changeManagers = [...new Set([].concat.apply([], projectsCurCompany.map(projects0 => projects0.changeManagers)))];
         if (changeManagers.includes(userId)) {
           setIsChangeManager(true);
         }
@@ -94,7 +94,7 @@ function Timeline(props) {
     if (currentCompany) {
       const projectsCurCompany = Projects.find({ companyId: currentCompany._id }).fetch();
       if (projectsCurCompany) {
-        const managers = [...new Set([].concat.apply([], projectsCurCompany.map(project => project.managers)))];
+        const managers = [...new Set([].concat.apply([], projectsCurCompany.map(projects0 => projects0.managers)))];
         if (managers.includes(userId)) {
           setIsManager(true);
         }
@@ -443,7 +443,7 @@ function Timeline(props) {
           <ListView rows={type === 'project' ? props.activities : props.activitiesTemplate} addNew={false} type={type}
             isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
             isChangeManager={isChangeManager} isManager={isManager}
-            project={project} projectId={projectId} companyId={currentCompanyId}
+            project={projects0} projectId={projectId} companyId={currentCompanyId}
             template={template} match={match} />
         }
       </Grid>
