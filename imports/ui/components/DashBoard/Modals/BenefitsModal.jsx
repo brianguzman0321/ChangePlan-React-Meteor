@@ -86,7 +86,7 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function AddValue(props) {
-  let { open, handleModalClose, handleType, project, indexBenefits, editValue, stakeHoldersBenefits, localBenefits, currentType, template, stakeHoldersTemplate } = props;
+  let { open, handleModalClose, handleType, project, indexBenefits, editValue, stakeHoldersBenefits, localBenefits, currentType, template, stakeHoldersTemplate, isSuperAdmin, isAdmin, isManager, isChangeManager,} = props;
   const [name, setName] = React.useState('');
   const [expectedDateOpen, setExpectedDateOpen] = useState(false);
   const [peoples, setPeoples] = useState([]);
@@ -94,6 +94,9 @@ function AddValue(props) {
   const [isUpdated, setIsUpdated] = useState(false);
   const [benefits, setBenefits] = useState(project.benefits);
   const [expectedDate, setExpectedDate] = useState(null);
+  const disabled = (isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
+    || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
+    || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin);
 
   if (handleType !== 'timeline') {
     useEffect(() => {
@@ -276,6 +279,7 @@ function AddValue(props) {
                       value={expectedDate}
                       autoOk={true}
                       onChange={handleExpectedDate}
+                      disabled={disabled}
                     />
                   </Grid>
                   <Grid item xs={1}>
@@ -296,7 +300,7 @@ function AddValue(props) {
               <Typography className={classes.secondaryHeading}>
                 {peoples && peoples.length || 0} of {currentType === 'project' ? stakeHoldersBenefits.length : stakeHoldersTemplate.length}
               </Typography>
-              <SelectStakeHolders rows={currentType === 'project' ? stakeHoldersBenefits : stakeHoldersTemplate.length} local={localBenefits} isImpacts={false} isBenefits={true} />
+              <SelectStakeHolders rows={currentType === 'project' ? stakeHoldersBenefits : stakeHoldersTemplate.length} local={localBenefits} isImpacts={false} disabled={disabled} isBenefits={true} />
               <br />
               <br />
               <br />
@@ -311,12 +315,13 @@ function AddValue(props) {
                 required={true}
                 type="text"
                 fullWidth={true}
+                disabled={disabled}
               />
             </Grid>
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button onClick={createBenefits} color="primary">
+          <Button onClick={createBenefits} disabled={disabled} color="primary">
             Save
           </Button>
         </DialogActions>

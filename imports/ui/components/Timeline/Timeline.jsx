@@ -425,7 +425,7 @@ function Timeline(props) {
               isManager={isManager}
             />) : null}
 
-            {((eventType === "Impact") && ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin )) ? (<ImpactsModal
+            {(eventType === "Impact") ? (<ImpactsModal
               open={edit}
               handleModalClose={handleModalClose}
               project={projects0}
@@ -434,10 +434,14 @@ function Timeline(props) {
               match={match}
               handleType={'timeline'}
               editValue={projects0.impacts[impactIndex]}
+              isSuperAdmin={isSuperAdmin}
+              isAdmin={isAdmin}
+              isManager={isManager}
+              isChangeManager={isChangeManager}
               currentType={projectId && 'project' || templateId && 'template'}
             />) : null}
 
-            {((eventType === "Benefit") && ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin)) ? (<BenefitsModal
+            {(eventType === "Benefit") ? (<BenefitsModal
               open={edit}
               handleModalClose={handleModalClose}
               project={projects0}
@@ -446,15 +450,23 @@ function Timeline(props) {
               match={match}
               handleType={'timeline'}
               editValue={projects0.benefits[benefitsIndex]}
+              isSuperAdmin={isSuperAdmin}
+              isAdmin={isAdmin}
+              isManager={isManager}
+              isChangeManager={isChangeManager}
               currentType={projectId && 'project' || templateId && 'template'}
             />) : null}
-            {((eventType === "Project_Start") && ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin)) || ((eventType === "Project_End") && ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin)) ? (<EditProject
+            {( eventType === "Project_Start" || eventType === "Project_End" ) ? (<EditProject
               open={edit}
               handleModalClose={handleModalClose}
               project={projects0}
               template={template}
               handleType={'timeline'}
               displayEditButton={false}
+              isSuperAdmin={isSuperAdmin}
+              isAdmin={isAdmin}
+              isManager={isManager}
+              isChangeManager={isChangeManager}
             />) : null}
 
           </Grid>}

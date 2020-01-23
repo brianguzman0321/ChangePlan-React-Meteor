@@ -144,7 +144,7 @@ const EnhancedTableToolbar = props => {
         [classes.highlight]: numSelected > 0,
       })}
     >
-      }
+      
     </Toolbar>
   );
 };
@@ -331,7 +331,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function SelectStakeHolders(props) {
-  let {rows, local, isImpacts, isBenefits} = props;
+  let {rows, local, isImpacts, isBenefits, disabled} = props;
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const [stakeHolders, setStakeHolders] = React.useState(local.ids || []);
@@ -396,10 +396,10 @@ export default function SelectStakeHolders(props) {
   return (
     <div>
       {!isImpacts && !isBenefits ?
-        <Button variant="text" className={classes.buttonSelect} color="primary" onClick={() => {handleClickOpen()}}>
+        <Button variant="text" className={classes.buttonSelect} color="primary" onClick={() => {handleClickOpen()}} >
           SELECT STAKEHOLDERS
         </Button> :
-        <Button color="primary" variant={"outlined"} onClick={handleClickOpen} fullWidth>
+        <Button color="primary" variant={"outlined"} onClick={handleClickOpen} disabled={disabled} fullWidth>
           Select Stakeholders
         </Button>
       }
