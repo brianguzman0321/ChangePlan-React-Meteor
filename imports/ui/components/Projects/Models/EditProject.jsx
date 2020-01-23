@@ -410,7 +410,7 @@ function AddActivity(props) {
                                     </MuiPickersUtilsProvider>
                                 </ExpansionPanelDetails>
                             </ExpansionPanel>
-                            <ExpansionPanel expanded={expanded === 'panal3'} onChange={handleChangePanel('panal3')}>
+                            <ExpansionPanel expanded={expanded ===  {disabled} ? 'panel3' : null } onChange={handleChangePanel('panal3')}>
                                 <ExpansionPanelSummary
                                     expandIcon={<ExpandMoreIcon />}
                                     aria-controls="panal5bh-content"
@@ -424,7 +424,7 @@ function AddActivity(props) {
                                 <ExpansionPanelDetails>
                                     <Grid container justify="space-between" spacing={2}>
                                         <Grid item={true} xs={12}>
-                                            <AutoComplete updateUsers={updateUsers} data={users} selectedValue={person} disabled={disabled} multiple={true}/>
+                                            <AutoComplete updateUsers={updateUsers} data={users} selectedValue={person}  multiple={true}/>
                                         </Grid>
                                     </Grid>
                                 </ExpansionPanelDetails>

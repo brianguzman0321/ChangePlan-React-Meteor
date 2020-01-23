@@ -343,7 +343,6 @@ export default function IntegrationReactSelect(props) {
           styles={selectStyles}
           inputId="react-select-multiple"
           TextFieldProps={{
-            disabled: props.disabled,
             label: props.label,
             InputLabelProps: {
               htmlFor: 'react-select-multiple',
@@ -357,6 +356,7 @@ export default function IntegrationReactSelect(props) {
           value={multi}
           onChange={handleChangeMulti.bind(event)}
           isMulti={multiple}
+          disabled={props.disabled}
         />
       </NoSsr>
     </div>
