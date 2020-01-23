@@ -410,7 +410,7 @@ function AddActivity(props) {
                                     </MuiPickersUtilsProvider>
                                 </ExpansionPanelDetails>
                             </ExpansionPanel>
-                            <ExpansionPanel expanded={expanded ===  {disabled} ? 'panel3' : null } onChange={handleChangePanel('panal3')}>
+                            <ExpansionPanel expanded={expanded ===  ( disabled === true ) ? 'panel3' : null } onChange={handleChangePanel('panal3')}>
                                 <ExpansionPanelSummary
                                     expandIcon={<ExpandMoreIcon />}
                                     aria-controls="panal5bh-content"
