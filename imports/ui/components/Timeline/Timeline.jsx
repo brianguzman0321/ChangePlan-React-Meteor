@@ -335,7 +335,7 @@ function Timeline(props) {
             />
             {/* {(isAdmin && template && (template.companyId === companyId)) || isSuperAdmin ? */}
 
-            {((eventType === "Awareness") && ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin)) ? (<AddActivities
+            {(eventType === "Awareness") ? (<AddActivities
               edit={edit}
               list={true}
               isOpen={false}
@@ -347,9 +347,13 @@ function Timeline(props) {
               newActivity={() => setEdit(false)}
               type={templateId && 'template' || projectId && 'project'}
               match={match}
+              isSuperAdmin={isSuperAdmin}
+              isAdmin={isAdmin}
+              isChangeManager={isChangeManager}
+              isManager={isManager}
             />) : null}
 
-            {((eventType === "Ability") && ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin)) ? (<AddActivities
+            {(eventType === "Ability") ? (<AddActivities
               edit={edit}
               list={true}
               isOpen={false}
@@ -361,9 +365,13 @@ function Timeline(props) {
               newActivity={() => setEdit(false)}
               type={templateId && 'template' || projectId && 'project'}
               match={match}
+              isSuperAdmin={isSuperAdmin}
+              isAdmin={isAdmin}
+              isChangeManager={isChangeManager}
+              isManager={isManager}
             />) : null}
 
-            {((eventType === "Reinforcement") && ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin)) ? (<AddActivities
+            {(eventType === "Reinforcement") ? (<AddActivities
               edit={edit}
               list={true}
               isOpen={false}
@@ -375,9 +383,13 @@ function Timeline(props) {
               newActivity={() => setEdit(false)}
               type={templateId && 'template' || projectId && 'project'}
               match={match}
+              isSuperAdmin={isSuperAdmin}
+              isAdmin={isAdmin}
+              isChangeManager={isChangeManager}
+              isManager={isManager}
             />) : null}
 
-            {((eventType === "Desire") && ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin)) ? (<AddActivities
+            {(eventType === "Desire") ? (<AddActivities
               edit={edit}
               list={true}
               isOpen={false}
@@ -389,9 +401,13 @@ function Timeline(props) {
               newActivity={() => setEdit(false)}
               type={templateId && 'template' || projectId && 'project'}
               match={match}
+              isSuperAdmin={isSuperAdmin}
+              isAdmin={isAdmin}
+              isChangeManager={isChangeManager}
+              isManager={isManager}
             />) : null}
 
-            {((eventType === "Knowledge") && ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin )) ? (<AddActivities
+            {(eventType === "Knowledge") ? (<AddActivities
               edit={edit}
               list={true}
               isOpen={false}
@@ -403,6 +419,10 @@ function Timeline(props) {
               newActivity={() => setEdit(false)}
               type={templateId && 'template' || projectId && 'project'}
               match={match}
+              isSuperAdmin={isSuperAdmin}
+              isAdmin={isAdmin}
+              isChangeManager={isChangeManager}
+              isManager={isManager}
             />) : null}
 
             {((eventType === "Impact") && ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin )) ? (<ImpactsModal
