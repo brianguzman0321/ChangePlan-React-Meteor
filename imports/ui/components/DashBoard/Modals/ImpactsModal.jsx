@@ -93,7 +93,7 @@ const DialogActions = withStyles(theme => ({
 
 
 function AddImpact(props) {
-  let { open, handleModalClose, handleType, project, indexImpact, editValue, template, currentType, stakeHoldersImpacts, localImpacts, stakeHoldersTemplate } = props;
+  let { open, handleModalClose, handleType, project, indexImpact, editValue, template, currentType, stakeHoldersImpacts, localImpacts, stakeHoldersTemplate, isSuperAdmin, isAdmin, isChangeManager, isManager } = props;
   const [name, setName] = React.useState('');
   const [expectedDateOpen, setExpectedDateOpen] = useState(false);
   const [peoples, setPeoples] = useState([]);
@@ -105,6 +105,9 @@ function AddImpact(props) {
   const [isUpdated, setIsUpdated] = useState(false);
   const [impacts, setImpacts] = useState(project.impacts);
   const [expectedDate, setExpectedDate] = useState(null);
+  const disabled = (isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
+    || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
+    || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin);
 
 
   if (handleType !== 'timeline') {
@@ -316,6 +319,7 @@ function AddImpact(props) {
                       label="Expected Date"
                       value={expectedDate}
                       autoOk={true}
+                      disabled={disabled}
                       onChange={handleExpectedDate}
                     />
                   </Grid>
@@ -337,7 +341,7 @@ function AddImpact(props) {
               <Typography className={classes.secondaryHeading}>
                 {peoples && peoples.length || 0} of {currentType === 'project' ? stakeHoldersImpacts.length : stakeHoldersTemplate.length}
               </Typography>
-              <SelectStakeHolders rows={currentType === 'project' ? stakeHoldersImpacts : stakeHoldersTemplate} local={localImpacts} isImpacts={true} isBenefits={false} />
+              <SelectStakeHolders rows={currentType === 'project' ? stakeHoldersImpacts : stakeHoldersTemplate} local={localImpacts} disabled={disabled} isImpacts={true} isBenefits={false} />
               <br />
               <br />
               <br />
@@ -355,6 +359,7 @@ function AddImpact(props) {
                   onClose={handleTypeClose}
                   onOpen={handleTypeOpen}
                   value={type}
+                  disabled={disabled}
                   onChange={handleTypeChange}
                   inputProps={{
                     name: 'type',
@@ -380,6 +385,7 @@ function AddImpact(props) {
                   id="level"
                   label="level"
                   fullWidth={true}
+                  disabled={disabled}
                   open={levelOpen}
                   onClose={handleLevelClose}
                   onOpen={handleLevelOpen}
@@ -408,13 +414,14 @@ function AddImpact(props) {
                 onChange={handleChange}
                 required={true}
                 type="text"
+                disabled={disabled}
                 fullWidth={true}
               />
             </Grid>
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button onClick={createProject} color="primary">
+          <Button onClick={createProject} disabled={disabled} color="primary">
             Save
           </Button>
         </DialogActions>

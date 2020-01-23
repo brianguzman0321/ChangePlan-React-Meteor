@@ -129,7 +129,7 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function AddActivity(props) {
-    let { company, open, handleModalClose, handleType, project, stakeHolders, local, match, edit, activity, isOpen, displayEditButton } = props;
+    let { company, open, handleModalClose, handleType, project, template, stakeHolders, local, match, edit, activity, isOpen, displayEditButton, isSuperAdmin, isAdmin, isChangeManager, isManager } = props;
     project = project || {}
     const [deleteModal, setDeleteModal] = React.useState(false);
     const [age, setAge] = React.useState(5);
@@ -139,6 +139,9 @@ function AddActivity(props) {
     const [description, setDescription] = React.useState(project.name || '');
     const [showModalDialog, setShowModalDialog] = useState(false);
     const [isUpdated, setIsUpdated] = useState(false);
+    const disabled = (isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
+    || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
+    || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin);
     let managers;
     if(project && project.managerDetails)
     managers = project.managerDetails.map((manager) => {
@@ -348,6 +351,7 @@ function AddActivity(props) {
                                         value={description}
                                         onChange={handleDescriptionChange}
                                         required={true}
+                                        disabled={disabled}
                                         type="text"
                                         fullWidth
                                     />
@@ -376,6 +380,7 @@ function AddActivity(props) {
                                                     label="Start Date"
                                                     value={startingDate}
                                                     autoOk={true}
+                                                    disabled={disabled}
                                                     onChange={handleStartingDate}
                                                     KeyboardButtonProps={{
                                                         'aria-label': 'change date',
@@ -394,6 +399,7 @@ function AddActivity(props) {
                                                     value={dueDate}
                                                     minDate={startingDate}
                                                     autoOk={true}
+                                                    disabled={disabled}
                                                     onChange={handleDueDate}
                                                     KeyboardButtonProps={{
                                                         'aria-label': 'change date',
@@ -418,7 +424,7 @@ function AddActivity(props) {
                                 <ExpansionPanelDetails>
                                     <Grid container justify="space-between" spacing={2}>
                                         <Grid item={true} xs={12}>
-                                            <AutoComplete updateUsers={updateUsers} data={users} selectedValue={person} multiple={true}/>
+                                            <AutoComplete updateUsers={updateUsers} data={users} selectedValue={person} disabled={disabled} multiple={true}/>
                                         </Grid>
                                     </Grid>
                                 </ExpansionPanelDetails>
@@ -432,10 +438,10 @@ function AddActivity(props) {
                         />
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={isUpdated ? handleOpenModalDialog : () => handleClose()} color="secondary">
+                        <Button onClick={isUpdated ? handleOpenModalDialog : () => handleClose()} disabled={disabled} color="secondary">
                             Cancel
                         </Button>
-                        <Button type="submit" color="primary" onClick={updateProject}>
+                        <Button type="submit" color="primary" disabled={disabled} onClick={updateProject}>
                             Update Project
                         </Button>
                     </DialogActions>
