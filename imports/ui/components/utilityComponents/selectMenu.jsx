@@ -35,7 +35,7 @@ const useStyles = makeStyles(theme => ({
 
 function ProjectSelectMenu(props) {
     const classes = useStyles();
-    let {  match } = props;
+    let {  match, isChangeManager, isManager, isAdmin, isSuperAdmin, currentCompany } = props;
     let { projectId } = match.params;
     const [age, setAge] = React.useState(projectId || '');
     const [itemIndex, setIndex] = React.useState(props.index);
@@ -88,10 +88,17 @@ function ProjectSelectMenu(props) {
                     }}
                 >
 
-                    {props.projects && props.projects.map((entity) => {
+                    {(isManager || isChangeManager) && props.projects && props.projects.filter(project => project.managers.includes(Meteor.userId()) || project.changeManagers.includes(Meteor.userId())).map((entity) => {
                         return <MenuItem key={entity._id} className={classes.topTexts} value={entity._id}>{entity.name.toUpperCase()}</MenuItem>
                     })
                     }
+                    {isAdmin && props.projects && props.projects.filter(project => project.companyId === currentCompany._id).map((entity) => {
+                        return <MenuItem key={entity._id} className={classes.topTexts} value={entity._id}>{entity.name.toUpperCase()}</MenuItem>
+                    })
+                    }
+                    {isSuperAdmin && props.projects && props.projects.map((entity) => {
+                        return <MenuItem key={entity._id} className={classes.topTexts} value={entity._id}>{entity.name.toUpperCase()}</MenuItem>
+                    })}
                 </Select>
             </FormControl>
         </form>
@@ -105,7 +112,7 @@ const ProjectSelectMenuPage = withTracker(props => {
     Meteor.subscribe('projects');
     return {
         projects: Projects.find().fetch(),
-        local
+        local,
     }
 })(withRouter(ProjectSelectMenu));
 
