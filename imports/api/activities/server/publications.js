@@ -7,6 +7,10 @@ Meteor.publish('activities', function () {
     }, {sort: {}});
 });
 
+Meteor.publish('activities.notLoggedIn',function () {
+    return Activities.find({});
+});
+
 Meteor.publishTransformed('compoundActivities', function (projectId) {
 
     return Activities.find({

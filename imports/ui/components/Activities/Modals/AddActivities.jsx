@@ -517,12 +517,15 @@ function AddActivities(props) {
       }
       let methodName = isNew ? 'activities.insert' : 'activities.update';
       !isNew && (params.activity._id = activity._id);
+      if (!isNew && activity.sentEmail) {
+        params.activity.sentEmail = false;
+      }
       Meteor.call(methodName, params, (err, res) => {
         if (err) {
           props.enqueueSnackbar(err.reason, {variant: 'error'})
         } else {
           handleClose();
-          props.enqueueSnackbar(`Activity ${isNew ? 'Added' : 'Updated'} Successfully.`, {variant: 'success'})
+          props.enqueueSnackbar(`Activity ${isNew ? 'Added' : 'Updated'} Successfully.`, {variant: 'success'});
         }
       })
     } else {
@@ -548,6 +551,9 @@ function AddActivities(props) {
       }
       let methodName = isNew ? 'activities.insert' : 'activities.update';
       !isNew && (params.activity._id = activity._id);
+      if (!isNew && params.activity.sentEmail) {
+        params.activity.sentEmail = false;
+      }
       Meteor.call(methodName, params, (err, res) => {
         if (err) {
           props.enqueueSnackbar(err.reason, {variant: 'error'})
@@ -603,11 +609,7 @@ function AddActivities(props) {
   };
 
   const handleTimeSendEmail = (value) => {
-    const dateTime = new Date(dueDate);
-    dateTime.setHours(moment(value).get('hour'));
-    dateTime.setMinutes(moment(value).get('minute'));
-    dateTime.setSeconds(moment(value).get('second'));
-    setTimeSendEmail(dateTime);
+    setTimeSendEmail(value);
   };
 
   const onCalendarClick = (id) => {
@@ -894,11 +896,11 @@ function AddActivities(props) {
                 <Grid item xs={4} className={classes.datePicker}>
                   <MuiPickersUtilsProvider utils={DateFnsUtils}>
                     <Grid item xs={10}>
-                      <TimePicker
+                      <DateTimePicker
                         variant="inline"
-                        mask="__:__ _M"
+                        format="yyyy/MM/dd hh:mm a"
                         margin="normal"
-                        id="time-picker-inline"
+                        id="date-time-schedule-picker-inline"
                         label="Time to send email*"
                         value={timeSendEmail}
                         fullWidth

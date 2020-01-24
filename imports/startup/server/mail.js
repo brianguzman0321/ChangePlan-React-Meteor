@@ -1,6 +1,8 @@
 import {Email} from 'meteor/email'
-import activityNotification from "../../emails/activityNotification";
 import projectNotification from "../../emails/projectNotification";
+import surveyActivityOwner from "../../emails/surveyActivityOwner";
+import surveyStakeholders from "../../emails/surveyStakeholders";
+import remindEmailToChangeManager from "../../emails/remindEmailToChangeManager";
 
 Meteor.methods({
   sendEmail: function (email, name,
@@ -51,12 +53,62 @@ Meteor.methods({
                               projectHelpLink) {
     Email.send({
       to: email,
-      from: 'Change Plan <no-reply@changeplan.co>',
+      from: 'ChangePlan <no-reply@changeplan.co>',
       subject: `You’ve been assigned as a change manager for the project ${projectName}.`,
       html: projectNotification({
         name,
         projectName,
         projectHelpLink
+      })
+    })
+  }
+});
+
+Meteor.methods({
+  sendSurveyActivityOwner: function (email, firstName, activityType, projectName, surveyLink) {
+    Email.send({
+      to: email,
+      from: 'ChangePlan <no-reply@changeplan.co>',
+      subject: "Action required: Mark activity as complete",
+      html: surveyActivityOwner({
+        firstName, activityType, projectName, surveyLink
+      })
+    })
+  }
+});
+
+Meteor.methods({
+  sendSurveyStakeholder: function (email, firstName, activityType, phaseName, projectName, surveyLink) {
+    Email.send({
+      to: email,
+      from: 'ChangePlan <no-reply@changeplan.co>',
+      subject: `Quick feedback about project "${projectName}"`,
+      html: surveyStakeholders({
+        firstName, activityType, phaseName, projectName, surveyLink
+      })
+    })
+  }
+});
+
+Meteor.methods({
+  sendReportToChangeManager: function (email, activityOwner, activityName, projectName) {
+    Email.send({
+      to: email,
+      from: 'ChangePlan <no-reply@changeplan.co>',
+      subject: `Report "${projectName}"`,
+      text: `${activityOwner} has reported the activity ${activityName} wasn't completed`
+    })
+  }
+});
+
+Meteor.methods({
+  sendRemindToChangeManager: function (email, firstName, activityOwner, activityName, projectName, surveyLink) {
+    Email.send({
+      to: email,
+      from: 'ChangePlan <no-reply@changeplan.co>',
+      subject: `Report "${projectName}"`,
+      html: remindEmailToChangeManager({
+        firstName, activityOwner, activityName, projectName, surveyLink
       })
     })
   }

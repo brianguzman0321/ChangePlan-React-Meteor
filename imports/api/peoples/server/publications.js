@@ -31,3 +31,7 @@ Meteor.publish('peoples.single', function (id) {
         _id: id
     });
 });
+
+Meteor.publish('peoples.find', function () {
+    return Peoples.find();
+});

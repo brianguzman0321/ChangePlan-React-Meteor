@@ -96,6 +96,16 @@ Activities.schema = new SimpleSchema({
     type: Boolean,
     label: 'Stakeholder feedback',
   },
+  sentEmail: {
+    type: Boolean,
+    label: 'Sent email for survey Activity Owner',
+    optional: true,
+  },
+  sentEmailDate: {
+    type: Date,
+    label: 'Sent email date',
+    optional: true,
+  },
   createdAt: {
     type: Date,
     label: 'Created At Company',

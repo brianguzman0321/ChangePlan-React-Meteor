@@ -30,6 +30,16 @@ import '/imports/api/projects/projects';
 import '/imports/api/projects/server/publications.js';
 import '/imports/api/projects/methods.js';
 
+//survey activity owner
+import '/imports/api/surveysActivityOwners/surveysActivityOwners';
+import '/imports/api/surveysActivityOwners/server/publications';
+import '/imports/api/surveysActivityOwners/methods';
+
+//survey stakeholder
+import '/imports/api/surveysStakeholders/surveysStakeholders';
+import '/imports/api/surveysStakeholders/server/publications';
+import '/imports/api/surveysStakeholders/methods';
+
 //admin methods
 import '/imports/api/admin/methods'
 import '/imports/api/admin/roles'
