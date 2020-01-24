@@ -487,7 +487,7 @@ const TimelinePage = withTracker(props => {
   let { projectId, templateId } = match.params;
   let userId = Meteor.userId();
   let currentCompany = {};
-  Meteor.subscribe('projects');
+  Meteor.subscribe('projects.notLoggedIn');
   Meteor.subscribe('templates');
   const project = Projects.findOne({ _id: projectId });
   const template = Templates.findOne({ _id: templateId });
