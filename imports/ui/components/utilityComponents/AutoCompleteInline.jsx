@@ -11,6 +11,7 @@ import Chip from '@material-ui/core/Chip';
 import MenuItem from '@material-ui/core/MenuItem';
 import CancelIcon from '@material-ui/icons/Cancel';
 import {withTracker} from "meteor/react-meteor-data";
+import FormControl from "@material-ui/core/FormControl";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -337,28 +338,34 @@ export default function IntegrationReactSelect(props) {
 
   return (
     <div className={props.isActivity ? classes.rootActivity : classes.root}>
+
       <NoSsr>
-        <Select
-          classes={classes}
-          styles={selectStyles}
-          inputId="react-select-multiple"
-          TextFieldProps={{
-            label: props.label,
-            InputLabelProps: {
-              htmlFor: 'react-select-multiple',
-              shrink: true,
-            },
-          }}
-          defaultValue={props.selectedValue || props.currentChangeManager}
-          placeholder="Select Person"
-          options={props.data}
-          components={components}
-          value={multi}
-          onChange={handleChangeMulti.bind(event)}
-          isMulti={multiple}
-          disabled={props.disabled}
-        />
+        <FormControl className={props.isActivity ? classes.rootActivity : classes.root}
+                     disabled={props.isManager && !props.isSuperAdmin && !props.isAdmin && !props.isChangeManager}>
+          <Select
+            classes={classes}
+            styles={selectStyles}
+            inputId="react-select-multiple"
+            TextFieldProps={{
+              label: props.label,
+              InputLabelProps: {
+                htmlFor: 'react-select-multiple',
+                shrink: true,
+              },
+              disabled: props.isManager && !props.isSuperAdmin && !props.isAdmin && !props.isChangeManager,
+            }}
+            defaultValue={props.selectedValue || props.currentChangeManager}
+            placeholder="Select Person"
+            options={props.data}
+            components={components}
+            value={multi}
+            onChange={handleChangeMulti.bind(event)}
+            isMulti={multiple}
+            isDisabled={props.isManager && !props.isSuperAdmin && !props.isAdmin && !props.isChangeManager}
+          />
+        </FormControl>
       </NoSsr>
+
     </div>
   );
 }

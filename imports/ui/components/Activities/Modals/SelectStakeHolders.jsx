@@ -331,7 +331,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function SelectStakeHolders(props) {
-  let {rows, local, isImpacts, isBenefits, disabled} = props;
+  let {rows, local, isImpacts, isBenefits, disabled, isManager,
+    isSuperAdmin, isAdmin, isChangeManager} = props;
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const [stakeHolders, setStakeHolders] = React.useState(local.ids || []);
@@ -396,7 +397,8 @@ export default function SelectStakeHolders(props) {
   return (
     <div>
       {!isImpacts && !isBenefits ?
-        <Button variant="text" className={classes.buttonSelect} color="primary" onClick={() => {handleClickOpen()}} >
+        <Button variant="text" className={classes.buttonSelect} color="primary" onClick={() => {handleClickOpen()}}
+                disabled={isManager && !isSuperAdmin && !isAdmin && !isChangeManager} >
           SELECT STAKEHOLDERS
         </Button> :
         <Button color="primary" variant={"outlined"} onClick={handleClickOpen} disabled={disabled} fullWidth>
