@@ -291,7 +291,7 @@ const Gantt = props => {
       }
     });
   }
-  console.error('+++++++++superAmdin', isSuperAdmin);
+  console.error('+++++++++superAdmin', isSuperAdmin);
   console.error('+++++++++isChangeManger', isChangeManager);
   console.error('++++++++++++isManager', isManager);
   console.error('++++++++++++isAdmin', isAdmin);
@@ -363,7 +363,12 @@ const Gantt = props => {
         return description.slice(0, 20) + "...";
       return description;
     };
-
+    
+    if ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin || isChangeManager) {
+      gantt.config.drag_move = true;
+    } else {
+      gantt.config.drag_move = false;
+    }
 
     // Events
     gantt.attachEvent("onTaskClick", function (id, e) {
@@ -378,10 +383,12 @@ const Gantt = props => {
     });
     gantt.attachEvent("onAfterTaskDrag", (id, mode, e) => {
       //any custom logic here
+
       if (project === undefined) return;
-      if ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin || isChangeManager ) {
-        if (mode === 'move' && gantt.getTask(id).start_date !== savedTask.start_date) {
+      if (mode === 'move' && gantt.getTask(id).start_date !== savedTask.start_date) {
+        if ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin || isChangeManager) {
           savedTask = gantt.getTask(id);
+
           updateTaskByDrag(gantt.activities, savedTask);
 
           if (savedTask.eventType === 'Project_Start' || savedTask.eventType === 'Project_End') {
@@ -391,11 +398,11 @@ const Gantt = props => {
           if (savedTask.eventType === 'Impact' || savedTask.eventType === 'Benefit') {
             updateImpactBenefitByDrag(savedTask, gantt.project);
           }
-
-        }
+        } 
       }
-    });
 
+    });
+    
     gantt.init(ganttContainer);
     gantt.clearAll();
     gantt.parse(tasks);
