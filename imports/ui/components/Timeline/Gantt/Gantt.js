@@ -244,7 +244,7 @@ export { handleDownload, handleImportData }
 
 const Gantt = props => {
   savedTask = {};
-  const { tasks, scaleText, setActivityId, setEdit, activities, isSuperAdmin, isAdmin, isChangeManager, isManager, project } = props;
+  const { tasks, scaleText, setActivityId, setEdit, activities, isSuperAdmin, isAdmin, isChangeManager, isManager, project, template } = props;
   const obj = { project: undefined };
 
   const updateTaskByDrag = (savedActivities, updatedTask) => {
@@ -363,7 +363,7 @@ const Gantt = props => {
         return description.slice(0, 20) + "...";
       return description;
     };
-    
+
     if ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin || isChangeManager) {
       gantt.config.drag_move = true;
     } else {
@@ -398,11 +398,11 @@ const Gantt = props => {
           if (savedTask.eventType === 'Impact' || savedTask.eventType === 'Benefit') {
             updateImpactBenefitByDrag(savedTask, gantt.project);
           }
-        } 
+        }
       }
 
     });
-    
+
     gantt.init(ganttContainer);
     gantt.clearAll();
     gantt.parse(tasks);
