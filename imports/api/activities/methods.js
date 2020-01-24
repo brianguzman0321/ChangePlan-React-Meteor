@@ -74,6 +74,14 @@ export const insert = new ValidatedMethod({
         'activity.stakeholdersFeedback': {
             type: Boolean,
         },
+        'activity.sentEmail': {
+            type: Boolean,
+            optional: true,
+        },
+        'activity.sentEmailDate': {
+            type: Date,
+            optional: true,
+        },
     }).validator(),
     run({ activity }) {
         return Activities.insert(activity);
@@ -158,6 +166,14 @@ export const update = new ValidatedMethod({
         },
         'activity.stakeholdersFeedback': {
             type: Boolean,
+        },
+        'activity.sentEmail': {
+            type: Boolean,
+            optional: true,
+        },
+        'activity.sentEmailDate': {
+            type: Date,
+            optional: true,
         },
     }).validator(),
     run({ activity }) {

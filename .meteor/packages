@@ -33,3 +33,4 @@ force-ssl
 email
 
 sakulstra:aggregate
+percolate:synced-cron

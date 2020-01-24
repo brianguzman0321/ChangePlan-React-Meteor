@@ -27,6 +27,10 @@ Meteor.publish('projects', function (company) {
   });
 });
 
+Meteor.publish('projects.notLoggedIn', function () {
+  return Projects.find({});
+});
+
 Meteor.publish('projectExists', function () {
   //superAdmin
   if (Roles.userIsInRole(this.userId, 'superAdmin')) {
