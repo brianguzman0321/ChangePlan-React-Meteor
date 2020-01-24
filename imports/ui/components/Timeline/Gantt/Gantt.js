@@ -394,7 +394,6 @@ const Gantt = props => {
 
         }
       }
-    gantt.clearAll();
     });
 
     gantt.init(ganttContainer);
