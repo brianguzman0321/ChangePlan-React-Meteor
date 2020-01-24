@@ -125,6 +125,7 @@ function TopNavBar(props) {
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isChangeManager, setIsChangeManager] = useState(false);
+  const [isManager, setIsManager] = useState(false);
   let currentLocation = history.location.pathname.split("/");
   let currentNav = currentLocation[currentLocation.length - 1], selectedTab = 0;
   if(currentNav === '/'){
@@ -163,7 +164,7 @@ function TopNavBar(props) {
     if (Roles.userIsInRole(userId, 'superAdmin')) {
       setIsSuperAdmin(true);
     }
-    if (company && company.admins.includes(userId)) {
+    if (currentCompany && currentCompany.admins.includes(userId)) {
       setIsAdmin(true);
     }
     if (currentCompany) {
@@ -172,6 +173,15 @@ function TopNavBar(props) {
         const changeManagers = [...new Set([].concat.apply([], projectsCurCompany.map(project => project.changeManagers)))];
         if (changeManagers.includes(userId)) {
           setIsChangeManager(true);
+        }
+      }
+    }
+    if (currentCompany) {
+      const projectsCurCompany = Projects.find({companyId: currentCompany._id}).fetch();
+      if (projectsCurCompany) {
+        const managers = [...new Set([].concat.apply([], projectsCurCompany.map(project => project.managers)))];
+        if (managers.includes(userId)) {
+          setIsManager(true);
         }
       }
     }
@@ -288,7 +298,8 @@ function TopNavBar(props) {
           <Brand handleChange1={handleChange1}/>
           <div className={classes.grow}>
             {projectId ?
-              <ProjectSelectMenu title="Projects" entity="Project" entities={[]} localCollection="localProjects"
+              <ProjectSelectMenu title="Projects" entity="Project" entities={[]} localCollection="localProjects" isManager={isManager}
+                                 isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager} currentCompany={currentCompany}
                                  id="projectId"/> : ''}
           </div>
           {displayMenus.length ? <Tabs

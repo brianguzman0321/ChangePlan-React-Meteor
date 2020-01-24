@@ -23,9 +23,6 @@ import Gantt, { handleImportData, handleDownload } from './Gantt/index.js';
 import ExportDialog from './Dialog/ExportDialog';
 import ImportDialog from './Dialog/ImportDialog';
 import TopNavBar from '/imports/ui/components/App/App';
-import AddActivity from '/imports/ui/components/Activities/Modals/AddActivity';
-import AddActivity2 from '/imports/ui/components/Activities/Modals/AddActivity2';
-import AddActivity3 from '/imports/ui/components/Activities/Modals/AddActivity3';
 import ImpactsModal from '../DashBoard/Modals/ImpactsModal';
 import BenefitsModal from '../DashBoard/Modals/BenefitsModal';
 import EditProject from '/imports/ui/components/Projects/Models/EditProject';
@@ -42,7 +39,6 @@ function Timeline(props) {
   let { projectId, templateId } = match.params;
   const classes = useStyles();
   const [viewMode, setViewMode] = useState(Number(localStorage.getItem(`viewMode_${projectId}_${Meteor.userId()}`)) || 0);
-  // const [zoomMode, setZoomMode] = useState(localStorage.getItem(`zoomMode_${projectId}_${Meteor.userId()}`) || 1);
   const [zoomMode, setZoomMode] = useState(localStorage.getItem('zoomCondition') || 1);
   const [type, setType] = useState(templateId && 'template' || projectId && 'project');
   const [isExporting, setIsExporting] = useState(false);
