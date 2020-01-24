@@ -860,7 +860,8 @@ function AddActivities(props) {
                 </Grid>
                 <Grid item={true} xs={5}>
                   <AutoComplete updateUsers={updateUsers} data={users} selectedValue={person}
-                                currentChangeManager={changeManager} isActivity={true}/>
+                                currentChangeManager={changeManager} isActivity={true} isManager={isManager}
+                                isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager}/>
                   {type === 'project' &&
                   <Button variant="text" color="primary" className={classes.buttonAsLink}
                           onClick={() => {
@@ -871,7 +872,8 @@ function AddActivities(props) {
                   }
                 </Grid>
                 <Grid item={true} xs={3} className={classes.linkButton}>
-                  <AddNewPerson company={company} isActivity={true}/>
+                  <AddNewPerson company={company} isActivity={true} isManager={isManager}
+                                isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager}/>
                 </Grid>
               </Grid>
               <br/>
@@ -882,7 +884,8 @@ function AddActivities(props) {
                   <Typography className={classes.heading}>Stakeholder feedback</Typography>
                 </Grid>
                 <Grid item xs={5}>
-                  <Switch checked={checkSchedule} onChange={handleSchedule()} value="checkSchedule" color="primary"/>
+                  <Switch checked={checkSchedule} onChange={handleSchedule()} value="checkSchedule" color="primary"
+                          disabled={isManager && !isSuperAdmin && !isAdmin && !isChangeManager}/>
                 </Grid>
                 <Grid item xs={3} className={classes.linkButton}>
                   <Button variant="text" color="primary" className={classes.buttonAsLink}>
@@ -904,6 +907,7 @@ function AddActivities(props) {
                         label="Time to send email*"
                         value={timeSendEmail}
                         fullWidth
+                        disabled={isManager && !isSuperAdmin && !isAdmin && !isChangeManager}
                         onChange={handleTimeSendEmail}
                       />
                     </Grid>
