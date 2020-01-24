@@ -379,7 +379,7 @@ const Gantt = props => {
     gantt.attachEvent("onAfterTaskDrag", (id, mode, e) => {
       //any custom logic here
       if (project === undefined) return;
-      if ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin) {
+      if ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin || isChangeManager ) {
         if (mode === 'move' && gantt.getTask(id).start_date !== savedTask.start_date) {
           savedTask = gantt.getTask(id);
           updateTaskByDrag(gantt.activities, savedTask);
