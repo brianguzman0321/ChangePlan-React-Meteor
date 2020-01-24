@@ -318,6 +318,7 @@ function Timeline(props) {
               isAdmin={isAdmin}
               isManager={isManager}
               isChangeManager={isChangeManager}
+              template={template}
             />
             <ExportDialog
               isExporting={isExporting}
