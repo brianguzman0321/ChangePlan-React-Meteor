@@ -20,7 +20,6 @@ import {Projects} from "/imports/api/projects/projects";
 import NewProject from './Models/CreateProject';
 import ProjectMenus from './ProjectMenus';
 import {Activities} from "../../../api/activities/activities";
-import {Peoples} from '../../../api/peoples/peoples';
 import ProjectNavBar from "./ProjectsNavBar";
 import {Templates} from "../../../api/templates/templates";
 import {Meteor} from "meteor/meteor";
@@ -234,6 +233,7 @@ function ProjectCard(props) {
       default:
         break;
     }
+    window.scroll(0, 0);
   };
 
 
@@ -282,6 +282,7 @@ function ProjectCard(props) {
   };
   const selectProject = (project, e) => {
     props.history.push(`/projects/${project._id}`);
+    window.scroll(0, 0);
   };
 
   const searchFilter = event => {

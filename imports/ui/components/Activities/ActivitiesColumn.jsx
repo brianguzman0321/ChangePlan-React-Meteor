@@ -172,7 +172,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function ActivitiesColumn(props) {
-  let {activities, company, match, type, template, isSuperAdmin, isAdmin, isChangeManager, project, isManager, name, step, color} = props;
+  let {activities, company, match, type, template, isSuperAdmin, isAdmin, isChangeManager, isActivityOwner, project, isManager, name, step, color} = props;
   const classes = useStyles(color);
   const [edit, setEdit] = useState(false);
   const [stepActivities, setStepActivities] = useState([]);
@@ -182,8 +182,11 @@ function ActivitiesColumn(props) {
   const [changeManager, setChangeManager] = useState('');
   const [users, setUsers] = useState([]);
   let {projectId} = match.params;
+  const disabled = (!(isAdmin && template && (template.companyId === company._id)
+    || isSuperAdmin) && (projectId === undefined)
+    || (isManager && !isActivityOwner && !isChangeManager && !isAdmin && !isSuperAdmin));
   const [currentProject, setProject] = useState({});
-  
+
   function completeActivity(activity) {
     activity.completed = !activity.completed;
     activity.completed ?
@@ -283,7 +286,7 @@ function ActivitiesColumn(props) {
       setStepActivities(newActivities);
     }
   }, [activities]);
-  
+
   useEffect(() => {
     if (company.activityColumns && company.activityColumns[step - 1]) {
       setNameTitle(company.activityColumns[step - 1])
@@ -349,7 +352,7 @@ function ActivitiesColumn(props) {
               }
               action={
                 <IconButton aria-label="settings"
-                            disabled={(!(isAdmin && template && (template.companyId === company._id) || isSuperAdmin) && (projectId === undefined))}
+                            disabled={disabled}
                             className={classes.info} onClick={(e) => {
                   e.stopPropagation();
                   completeActivity(activity)
@@ -388,7 +391,7 @@ function ActivitiesColumn(props) {
         <AddActivities edit={edit} match={match} step={step}
                        currentChangeManager={changeManager} color={color}
                        isChangeManager={isChangeManager} isManager={isManager}
-                       isAdmin={isAdmin} isSuperAdmin={isSuperAdmin}
+                       isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} isActivityOwner={isActivityOwner}
                        project={currentProject} template={template}
                        type={type} activity={sActivity}
                        expandAccordian={true}

@@ -15,6 +15,7 @@ import TopNavBar from '/imports/ui/components/App/App';
 import config from '/imports/utils/config';
 import StakeHolderList from './StakeHoldersList'
 import AddStakeHolder from './Modals/AddStakeHolder';
+import {Activities} from "../../../api/activities/activities";
 
 
 const useStyles = makeStyles(theme => ({
@@ -78,6 +79,7 @@ function StakeHolders(props) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isChangeManager, setIsChangeManager] = useState(false);
   const [isManager, setIsManager] = useState(false);
+  const [isActivityOwner, setIsActivityOwner] = useState(false);
   const [currentCompanyId, setCompanyId] = useState(null);
 
   const searchFilter = event => {
@@ -123,6 +125,14 @@ function StakeHolders(props) {
         }
       }
     }
+    const activities = Activities.find({projectId: projectId}).fetch();
+    if (activities) {
+      activities.forEach(activity => {
+        if (!Roles.userIsInRole(userId, 'superAdmin') && activity.owner.includes(Meteor.userId())) {
+          setIsActivityOwner(true);
+        }
+      })
+    }
   };
 
   return (
@@ -163,7 +173,7 @@ function StakeHolders(props) {
             </Grid>
             : ''}
         </Grid>
-        <StakeHolderList className={classes.stakeHoldersList} template={template} company={currentCompany} isChangeManager={isChangeManager}
+        <StakeHolderList className={classes.stakeHoldersList} template={template} company={currentCompany} isChangeManager={isChangeManager} isActivityOwner={isActivityOwner}
                          isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isManager={isManager} projectId={projectId} project={project}
                          rows={type === 'project' ? stakeHolders : stakeHoldersTemplate} type={type}/>
       </Grid>
@@ -194,6 +204,7 @@ const StakeHoldersPage = withTracker(props => {
   Meteor.subscribe('peoples', currentCompany && currentCompany._id, {
     name: local.search
   });
+  Meteor.subscribe('activities.notLoggedIn');
   Meteor.subscribe('findAllPeoples');
   return {
     stakeHolders: Peoples.find({

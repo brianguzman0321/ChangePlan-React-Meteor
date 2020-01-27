@@ -97,6 +97,7 @@ function ActivitiesCard(props) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isChangeManager, setIsChangeManager] = useState(false);
   const [isManager, setIsManager] = useState(false);
+  const [isActivityOwner, setIsActivityOwner] = useState(false);
   const [currentCompanyId, setCompanyId] = useState(null);
 
   useEffect(() => {
@@ -135,11 +136,15 @@ function ActivitiesCard(props) {
         }
       }
     }
+    const activities = Activities.find({projectId: projectId}).fetch();
+    if (activities) {
+      activities.forEach(activity => {
+        if (!Roles.userIsInRole(userId, 'superAdmin') && activity.owner.includes(Meteor.userId())) {
+          setIsActivityOwner(true);
+        }
+      })
+    }
   };
-  console.error('+++++++++superAmdin', isSuperAdmin);
-  console.error('+++++++++isChangeManger', isChangeManager);
-  console.error('++++++++++++isManager', isManager);
-  console.error('++++++++++++isAdmin', isAdmin);
 
   let menus = config.menus;
   return (
@@ -183,7 +188,7 @@ function ActivitiesCard(props) {
                                 name='Awareness' step={1} color='#f1753e'
                                 type={type} match={match}
                                 template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
-                                isChangeManager={isChangeManager} isManager={isManager}
+                                isChangeManager={isChangeManager} isManager={isManager} isActivityOwner={isActivityOwner}
                                 project={project}/>
             </Grid>
             <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
@@ -192,7 +197,7 @@ function ActivitiesCard(props) {
                                 name='Interest' step={4} color='#8BC34A'
                                 type={type} match={match}
                                 template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
-                                isChangeManager={isChangeManager} isManager={isManager}
+                                isChangeManager={isChangeManager} isManager={isManager} isActivityOwner={isActivityOwner}
                                 project={project}/>
             </Grid>
             <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
@@ -201,7 +206,7 @@ function ActivitiesCard(props) {
                                 step={5} name='Understanding' color='#03A9F4'
                                 type={type} match={match}
                                 template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
-                                isChangeManager={isChangeManager} isManager={isManager}
+                                isChangeManager={isChangeManager} isManager={isManager} isActivityOwner={isActivityOwner}
                                 project={project}/>
             </Grid>
             <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
@@ -210,7 +215,7 @@ function ActivitiesCard(props) {
                                 name='Preparedness' step={2} color='#53cbd0'
                                 type={type} match={match}
                                 template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
-                                isChangeManager={isChangeManager} isManager={isManager}
+                                isChangeManager={isChangeManager} isManager={isManager} isActivityOwner={isActivityOwner}
                                 project={project}/>
             </Grid>
             <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
@@ -219,7 +224,7 @@ function ActivitiesCard(props) {
                                 step={3} name='Support' color='#bbabd2'
                                 type={type} match={match}
                                 template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
-                                isChangeManager={isChangeManager} isManager={isManager}
+                                isChangeManager={isChangeManager} isManager={isManager} isActivityOwner={isActivityOwner}
                                 project={project}/>
             </Grid>
           </Grid>

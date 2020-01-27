@@ -59,7 +59,7 @@ const headCells = [
 
 export function EnhancedTableHead(props) {
   const tableHeadClasses = tableHeadStyle();
-  const {classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort} = props;
+  const {classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort, disabled} = props;
   const createSortHandler = property => event => {
     onRequestSort(event, property);
   };
@@ -70,6 +70,7 @@ export function EnhancedTableHead(props) {
         <TableCell padding="checkbox">
           <Checkbox
             indeterminate={numSelected > 0 && numSelected < rowCount}
+            disabled={disabled}
             checked={numSelected === rowCount}
             onChange={onSelectAllClick}
             inputProps={{'aria-label': 'select all desserts'}}
@@ -206,7 +207,9 @@ export default function StakeHolderList(props) {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [showEditModalDialog, setShowEditModalDialog] = React.useState(false);
-  let {rows, isAdmin, isSuperAdmin, isManager, isChangeManager, template, company, projectId, project, type} = props;
+  let {rows, isAdmin, isSuperAdmin, isManager, isChangeManager, isActivityOwner, template, company, projectId, project, type} = props;
+  const disabled = (!(isAdmin && template && (template.companyId === company._id) || isSuperAdmin) && (projectId === undefined))
+    || ((isManager || isActivityOwner) && !isChangeManager && !isAdmin && !isSuperAdmin);
 
   const handleRequestSort = (event, property) => {
     const isDesc = orderBy === property && order === 'desc';
@@ -268,7 +271,7 @@ export default function StakeHolderList(props) {
             aria-label="enhanced table"
           >
             <EnhancedTableHead
-              disabled={(!(isAdmin && template && (template.companyId === company._id) || isSuperAdmin) && (projectId === undefined)) || isManager}
+              disabled={disabled}
               classes={classes}
               style={{color: 'white'}}
               numSelected={selected.length}
