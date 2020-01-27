@@ -128,7 +128,7 @@ function StakeHolders(props) {
     const activities = Activities.find({projectId: projectId}).fetch();
     if (activities) {
       activities.forEach(activity => {
-        if (!Roles.userIsInRole(userId, 'superAdmin') && activity.owner.includes(Meteor.userId())) {
+        if (!Roles.userIsInRole(userId, 'superAdmin') && activity.owner && activity.owner.includes(Meteor.userId())) {
           setIsActivityOwner(true);
         }
       })
@@ -167,14 +167,17 @@ function StakeHolders(props) {
               <SearchIcon/>
             </IconButton>
           </Grid>
-          {((isAdmin && template && (template.companyId === currentCompanyId)) || isSuperAdmin || (type === 'project' && (project && ( isAdmin || isChangeManager)))) ?
+          {((isAdmin && template && (template.companyId === currentCompanyId)) || isSuperAdmin || (type === 'project' && (project && (isAdmin || isChangeManager)))) ?
             <Grid item xs={4} className={classes.secondTab}>
-              <AddStakeHolder type={type} company={currentCompany} projectId={projectId} templateId={templateId} project={project} template={template}/>
+              <AddStakeHolder type={type} company={currentCompany} projectId={projectId} templateId={templateId}
+                              project={project} template={template}/>
             </Grid>
             : ''}
         </Grid>
-        <StakeHolderList className={classes.stakeHoldersList} template={template} company={currentCompany} isChangeManager={isChangeManager} isActivityOwner={isActivityOwner}
-                         isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isManager={isManager} projectId={projectId} project={project}
+        <StakeHolderList className={classes.stakeHoldersList} template={template} company={currentCompany}
+                         isChangeManager={isChangeManager} isActivityOwner={isActivityOwner}
+                         isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isManager={isManager} projectId={projectId}
+                         project={project}
                          rows={type === 'project' ? stakeHolders : stakeHoldersTemplate} type={type}/>
       </Grid>
 
