@@ -154,13 +154,13 @@ Meteor.publishTransformed('myProjects', function (company, parameters) {
   //     options.sort = {};
   //     options.sort[parameters.sort] = 1
   // }
-  if (!(company && company._id)) {
+ /* if (!(company && company._id)) {
     company = Companies.findOne({
       peoples: {
         $in: [this.userId]
       }
     })
-  }
+  }*/
   let query = {};
   //add Search By Project Name
   if (parameters.name) {
@@ -175,9 +175,21 @@ Meteor.publishTransformed('myProjects', function (company, parameters) {
   } else if (!Roles.userIsInRole(this.userId, 'superAdmin')) {
     // if user Not Super Admin then return only own projects
     query = Object.assign(query, {
-      peoples: {
-        $in: [this.userId]
-      }
+      $or: [{
+        owner: this.userId
+      }, {
+        peoples: {
+          $in: [this.userId]
+        }
+      }, {
+        changeManagers: {
+          $in: [this.userId]
+        }
+      }, {
+        managers: {
+          $in: [this.userId]
+        }
+      }]
     })
   }
 

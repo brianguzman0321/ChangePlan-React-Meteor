@@ -42,6 +42,7 @@ import {
   Switch
 } from "@material-ui/core";
 import MenuItem from "@material-ui/core/MenuItem";
+import FormControl from "@material-ui/core/FormControl";
 
 
 const styles = theme => ({
@@ -213,7 +214,7 @@ const DialogActions = withStyles(theme => ({
 function AddActivities(props) {
   let {
     company, stakeHolders, local, project, match, edit, activity, list, isOpen, currentChangeManager,
-    template, type, stakeHoldersTemplate, isSuperAdmin, isAdmin, isChangeManager, isManager, step, color,
+    template, type, stakeHoldersTemplate, isSuperAdmin, isAdmin, isChangeManager, isManager, isActivityOwner, step, color,
   } = props;
   const customActivityIcon = data.find(item => item.category === "custom").iconSVG;
   const [open, setOpen] = useState(edit || isOpen || false);
@@ -240,6 +241,7 @@ function AddActivities(props) {
   const disabled = (isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
     || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
     || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin);
+  const disabledManager = (isManager || isActivityOwner) && !isChangeManager && !isAdmin && !isSuperAdmin;
   const [showSelect, setShowSelect] = useState(false);
   const [selectActivity, setSelectActivity] = useState({});
   const [showInputEditActivity, setShowInputEditActivity] = useState(isNew || false);
@@ -653,6 +655,7 @@ function AddActivities(props) {
         <form onSubmit={createActivity} noValidate>
           <DialogContent>
             <div className={classes.root}>
+              <FormControl fullWidth disabled={disabledManager}>
               <Select fullWidth value={0} open={showSelect} onOpen={handleShowSelect}>
                 <MenuItem value={0} style={{display: 'none'}}>
                   <Typography className={classes.secondaryHeading}>
@@ -749,6 +752,7 @@ function AddActivities(props) {
                   </Grid>
                 </ClickAwayListener>
               </Select>
+              </FormControl>
               <br/>
               <br/>
 
@@ -759,6 +763,7 @@ function AddActivities(props) {
                     margin="normal"
                     id="description"
                     value={description}
+                    disabled={disabledManager}
                     multiline
                     rows={3}
                     placeholder="Add Notes or Instructions for the person responsible"
@@ -848,7 +853,7 @@ function AddActivities(props) {
                     {peoples.length} of {type === 'project' ? stakeHolders.length : stakeHoldersTemplate.length}
                   </Typography>
                   <SelectStakeHolders rows={type === 'project' ? stakeHolders : stakeHoldersTemplate} local={local}
-                                      isImpacts={false} isBenefits={false}/>
+                                      isImpacts={false} isBenefits={false} disabledManager={disabledManager}/>
                 </Grid>
               </Grid>
               <br/>
@@ -864,6 +869,7 @@ function AddActivities(props) {
                                 isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager}/>
                   {type === 'project' &&
                   <Button variant="text" color="primary" className={classes.buttonAsLink}
+                          disabled={disabledManager}
                           onClick={() => {
                             sendNotificationEmail(activityType.name, activity.dueDate, time, activity.name, description, stakeHolders.length, project, person, projectId, project.vision, project.objectives)
                           }}>

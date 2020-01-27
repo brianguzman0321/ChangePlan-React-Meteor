@@ -61,7 +61,7 @@ const headCells = [
 
 function EnhancedTableHead(props) {
   const tableHeadClasses = tableHeadStyle();
-  const {classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort} = props;
+  const {classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort, disabled} = props;
   const createSortHandler = property => event => {
     onRequestSort(event, property);
   };
@@ -71,6 +71,7 @@ function EnhancedTableHead(props) {
       <TableRow>
         <TableCell padding="checkbox">
           <Checkbox
+            disabled={disabled}
             indeterminate={numSelected > 0 && numSelected < rowCount}
             checked={numSelected === rowCount}
             onChange={onSelectAllClick}
@@ -144,7 +145,7 @@ const EnhancedTableToolbar = props => {
         [classes.highlight]: numSelected > 0,
       })}
     >
-      
+
     </Toolbar>
   );
 };
@@ -188,7 +189,7 @@ const useStyles1 = makeStyles(theme => ({
 }));
 
 function StakeHolderList(props) {
-  let {rows, selectUsers, local, update} = props;
+  let {rows, selectUsers, local, update, disabled} = props;
   const classes = useStyles1();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
@@ -196,7 +197,6 @@ function StakeHolderList(props) {
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-
 
   const handleRequestSort = (event, property) => {
     const isDesc = orderBy === property && order === 'desc';
@@ -217,24 +217,24 @@ function StakeHolderList(props) {
   };
 
   const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
+      const selectedIndex = selected.indexOf(name);
+      let newSelected = [];
 
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
-      );
-    }
-    setSelected(newSelected);
-    selectUsers(newSelected);
-    update();
+      if (selectedIndex === -1) {
+        newSelected = newSelected.concat(selected, name);
+      } else if (selectedIndex === 0) {
+        newSelected = newSelected.concat(selected.slice(1));
+      } else if (selectedIndex === selected.length - 1) {
+        newSelected = newSelected.concat(selected.slice(0, -1));
+      } else if (selectedIndex > 0) {
+        newSelected = newSelected.concat(
+          selected.slice(0, selectedIndex),
+          selected.slice(selectedIndex + 1),
+        );
+      }
+      setSelected(newSelected);
+      selectUsers(newSelected);
+      update();
   };
 
   const isSelected = name => selected.indexOf(name) !== -1;
@@ -256,6 +256,7 @@ function StakeHolderList(props) {
             aria-label="enhanced table"
           >
             <EnhancedTableHead
+              disabled={disabled}
               classes={classes}
               // style={{color: 'white'}}
               numSelected={selected.length}
@@ -275,7 +276,7 @@ function StakeHolderList(props) {
                   return (
                     <TableRow
                       hover
-                      onClick={event => handleClick(event, row._id)}
+                      onClick={event => disabled ? null : handleClick(event, row._id)}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
@@ -284,6 +285,7 @@ function StakeHolderList(props) {
                     >
                       <TableCell padding="checkbox">
                         <Checkbox
+                          disabled={disabled}
                           checked={isItemSelected}
                           inputProps={{'aria-labelledby': labelId}}
                           color="default"
@@ -331,8 +333,9 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function SelectStakeHolders(props) {
-  let {rows, local, isImpacts, isBenefits, disabled, isManager,
-    isSuperAdmin, isAdmin, isChangeManager} = props;
+  let {
+    rows, local, isImpacts, isBenefits, disabled, disabledManager
+  } = props;
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const [stakeHolders, setStakeHolders] = React.useState(local.ids || []);
@@ -397,8 +400,9 @@ export default function SelectStakeHolders(props) {
   return (
     <div>
       {!isImpacts && !isBenefits ?
-        <Button variant="text" className={classes.buttonSelect} color="primary" onClick={() => {handleClickOpen()}}
-                disabled={isManager && !isSuperAdmin && !isAdmin && !isChangeManager} >
+        <Button variant="text" className={classes.buttonSelect} color="primary" onClick={() => {
+          handleClickOpen()
+        }}>
           SELECT STAKEHOLDERS
         </Button> :
         <Button color="primary" variant={"outlined"} onClick={handleClickOpen} disabled={disabled} fullWidth>
@@ -419,14 +423,16 @@ export default function SelectStakeHolders(props) {
             <Typography variant="h6" className={classes.title}>
               Selected {stakeHolders && stakeHolders.length}
             </Typography>
-            <Button autoFocus color="inherit" onClick={updateStakeHolders}>
-              save
-            </Button>
+            {disabledManager ?
+              null :
+              <Button autoFocus color="inherit" onClick={updateStakeHolders}>
+                save
+              </Button>}
           </Toolbar>
         </AppBar>
         <StakeHolderList rows={rows}
                          selectUsers={selectStakeHolders}
-                         local={local} update={updateValue}/>
+                         local={local} update={updateValue} disabled={disabledManager}/>
         <SaveChanges closeModalDialog={closeModalDialog}
                      handleClose={handleClose}
                      showModalDialog={showModalDialog}
