@@ -65,9 +65,9 @@ const useStyles = makeStyles(theme => ({
       maxWidth: '20%',
     },
     [theme.breakpoints.only('lg')]: {
-        flexBasis: '19.5%',
-        maxWidth: '20%',
-      },
+      flexBasis: '19.5%',
+      maxWidth: '20%',
+    },
     [theme.breakpoints.only('md')]: {
       flexBasis: '48.8%',
       maxWidth: '49%',
@@ -139,7 +139,7 @@ function ActivitiesCard(props) {
     const activities = Activities.find({projectId: projectId}).fetch();
     if (activities) {
       activities.forEach(activity => {
-        if (!Roles.userIsInRole(userId, 'superAdmin') && activity.owner.includes(Meteor.userId())) {
+        if (!Roles.userIsInRole(userId, 'superAdmin') && activity.owner && activity.owner.includes(Meteor.userId())) {
           setIsActivityOwner(true);
         }
       })
@@ -175,59 +175,59 @@ function ActivitiesCard(props) {
           </Grid>
         </Grid>
       </Grid>
-          <Grid
-            container
-            direction="row"
-            justify="space-around"
-            alignItems="flex-start"
-            spacing={0}
-          >
-            <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
-              <ActivitiesColumn activities={type === 'project' ?
-                props.activities : props.activitiesTemplate}
-                                name='Awareness' step={1} color='#f1753e'
-                                type={type} match={match}
-                                template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
-                                isChangeManager={isChangeManager} isManager={isManager} isActivityOwner={isActivityOwner}
-                                project={project}/>
-            </Grid>
-            <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
-              <ActivitiesColumn activities={type === 'project' ?
-                props.activities : props.activitiesTemplate}
-                                name='Interest' step={4} color='#8BC34A'
-                                type={type} match={match}
-                                template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
-                                isChangeManager={isChangeManager} isManager={isManager} isActivityOwner={isActivityOwner}
-                                project={project}/>
-            </Grid>
-            <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
-              <ActivitiesColumn activities={type === 'project' ?
-                props.activities : props.activitiesTemplate}
-                                step={5} name='Understanding' color='#03A9F4'
-                                type={type} match={match}
-                                template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
-                                isChangeManager={isChangeManager} isManager={isManager} isActivityOwner={isActivityOwner}
-                                project={project}/>
-            </Grid>
-            <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
-              <ActivitiesColumn activities={type === 'project' ?
-                props.activities : props.activitiesTemplate}
-                                name='Preparedness' step={2} color='#53cbd0'
-                                type={type} match={match}
-                                template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
-                                isChangeManager={isChangeManager} isManager={isManager} isActivityOwner={isActivityOwner}
-                                project={project}/>
-            </Grid>
-            <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
-              <ActivitiesColumn activities={type === 'project' ?
-                props.activities : props.activitiesTemplate}
-                                step={3} name='Support' color='#bbabd2'
-                                type={type} match={match}
-                                template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
-                                isChangeManager={isChangeManager} isManager={isManager} isActivityOwner={isActivityOwner}
-                                project={project}/>
-            </Grid>
-          </Grid>
+      <Grid
+        container
+        direction="row"
+        justify="space-around"
+        alignItems="flex-start"
+        spacing={0}
+      >
+        <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
+          <ActivitiesColumn activities={type === 'project' ?
+            props.activities : props.activitiesTemplate}
+                            name='Awareness' step={1} color='#f1753e'
+                            type={type} match={match}
+                            template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
+                            isChangeManager={isChangeManager} isManager={isManager} isActivityOwner={isActivityOwner}
+                            project={project}/>
+        </Grid>
+        <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
+          <ActivitiesColumn activities={type === 'project' ?
+            props.activities : props.activitiesTemplate}
+                            name='Interest' step={4} color='#8BC34A'
+                            type={type} match={match}
+                            template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
+                            isChangeManager={isChangeManager} isManager={isManager} isActivityOwner={isActivityOwner}
+                            project={project}/>
+        </Grid>
+        <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
+          <ActivitiesColumn activities={type === 'project' ?
+            props.activities : props.activitiesTemplate}
+                            step={5} name='Understanding' color='#03A9F4'
+                            type={type} match={match}
+                            template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
+                            isChangeManager={isChangeManager} isManager={isManager} isActivityOwner={isActivityOwner}
+                            project={project}/>
+        </Grid>
+        <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
+          <ActivitiesColumn activities={type === 'project' ?
+            props.activities : props.activitiesTemplate}
+                            name='Preparedness' step={2} color='#53cbd0'
+                            type={type} match={match}
+                            template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
+                            isChangeManager={isChangeManager} isManager={isManager} isActivityOwner={isActivityOwner}
+                            project={project}/>
+        </Grid>
+        <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
+          <ActivitiesColumn activities={type === 'project' ?
+            props.activities : props.activitiesTemplate}
+                            step={3} name='Support' color='#bbabd2'
+                            type={type} match={match}
+                            template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
+                            isChangeManager={isChangeManager} isManager={isManager} isActivityOwner={isActivityOwner}
+                            project={project}/>
+        </Grid>
+      </Grid>
 
     </div>
   )
