@@ -6,10 +6,15 @@ import EditStakeHolderPage from './Modals/EditStakeHolder';
 import DeleteStakeHolder from './Modals/DeleteStakeHolder';
 
 const StakeHolder = (props) => {
-  const {row, isItemSelected, labelId, setRowSelected, deleteCell, selected,
+  const {
+    row, isItemSelected, labelId, setRowSelected, deleteCell, selected,
     hideSelected = false, smallTable = false, index, isAdmin, isSuperAdmin,
-    isManager, isChangeManager, template, company, projectId, project, type} = props;
+    isManager, isChangeManager, isActivityOwner, template, company, projectId, project, type
+  } = props;
   const [showEditModalDialog, setShowEditModalDialog] = React.useState(false);
+  const disabled = (!(isAdmin && template && (template.companyId === company._id)
+    || isSuperAdmin) && (projectId === undefined))
+    || ((isManager || isActivityOwner) && !isSuperAdmin && !isAdmin && !isChangeManager);
 
   const handleOpenModalDialog = () => {
     setShowEditModalDialog(true)
@@ -48,7 +53,7 @@ const StakeHolder = (props) => {
     >
       {!hideSelected && <TableCell padding="checkbox">
         <Checkbox
-          disabled={(!(isAdmin && template && (template.companyId === company._id) || isSuperAdmin) && (projectId === undefined)) || isManager}
+          disabled={disabled}
           checked={isItemSelected}
           onChange={event => handleClick(event, row._id)}
           inputProps={{'aria-labelledby': labelId}}
@@ -70,10 +75,12 @@ const StakeHolder = (props) => {
         {/*<IconButton aria-label="edit" onClick={handleOpenModalDialog}>*/}
         {/*    <EditIcon />*/}
         {/*</IconButton>*/}
-        <EditStakeHolderPage projectId={projectId} stakeholder={row} open={showEditModalDialog} isChangeManager={isChangeManager}
-                             close={handleCloseModalDialog} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} isManager={isManager}
+        <EditStakeHolderPage projectId={projectId} stakeholder={row} open={showEditModalDialog}
+                             isChangeManager={isChangeManager}
+                             close={handleCloseModalDialog} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin}
+                             isManager={isManager} disabled={disabled}
                              template={template} project={project} company={company} type={type}/>
-          {(isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || (type === 'project' && (project && ( isAdmin || isChangeManager))) ?
+        {(isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || (type === 'project' && (project && (isAdmin || isChangeManager))) ?
           <DeleteStakeHolder stakeholder={row} project={project} type={type} template={template}/> : null}
       </TableCell>}
     </TableRow>

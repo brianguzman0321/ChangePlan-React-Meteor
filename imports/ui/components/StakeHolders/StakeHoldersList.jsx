@@ -300,7 +300,7 @@ export default function StakeHolderList(props) {
                       project={project}
                       type={type}
                       template={template} company={company} isChangeManager={isChangeManager}
-                      isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isManager={isManager}
+                      isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isManager={isManager} isActivityOwner={isActivityOwner}
                     />
                   );
                 })}

@@ -94,7 +94,7 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function EditStakeHolder(props) {
-  let {stakeholder, open, close, isAdmin, isSuperAdmin, isManager, isChangeManager, project, template, type, company, projectId,} = props;
+  let {stakeholder, open, close, isAdmin, isSuperAdmin, isManager, isChangeManager, project, template, type, company, projectId, disabled} = props;
   const [firstName, setFirstName] = React.useState(stakeholder.firstName);
   const [lastName, setLastName] = React.useState(stakeholder.lastName);
   const [role, setRole] = React.useState(stakeholder.role);
@@ -243,7 +243,7 @@ function EditStakeHolder(props) {
             <Grid container spacing={2}>
               <Grid item xs={6}>
                 <TextField
-                  disabled={(!(isAdmin && template && (template.companyId === company._id) || isSuperAdmin) && (projectId === undefined)) || isManager}
+                  disabled={disabled}
                   autoFocus
                   // margin="dense"
                   id="firstName"
@@ -260,7 +260,7 @@ function EditStakeHolder(props) {
               </Grid>
               <Grid item xs={6}>
                 <TextField
-                  disabled={(!(isAdmin && template && (template.companyId === company._id) || isSuperAdmin) && (projectId === undefined)) || isManager}
+                  disabled={disabled}
                   // margin="dense"
                   id="lastName"
                   label="Last Name"
@@ -276,7 +276,7 @@ function EditStakeHolder(props) {
               </Grid>
               <Grid item xs={6}>
                 <TextField
-                  disabled={(!(isAdmin && template && (template.companyId === company._id) || isSuperAdmin) && (projectId === undefined)) || isManager}
+                  disabled={disabled}
                   // margin="dense"
                   id="role"
                   label="Role"
@@ -292,7 +292,7 @@ function EditStakeHolder(props) {
               </Grid>
               <Grid item xs={6}>
                 <TextField
-                  disabled={(!(isAdmin && template && (template.companyId === company._id) || isSuperAdmin) && (projectId === undefined)) || isManager}
+                  disabled={disabled}
                   // margin="dense"
                   id="businessUnit"
                   label="Business Unit"
@@ -308,7 +308,7 @@ function EditStakeHolder(props) {
               </Grid>
               <Grid item xs={6}>
                 <TextField
-                  disabled={(!(isAdmin && template && (template.companyId === company._id) || isSuperAdmin) && (projectId === undefined)) || isManager}
+                  disabled={disabled}
                   // margin="dense"
                   id="email"
                   label="Email"
@@ -322,7 +322,7 @@ function EditStakeHolder(props) {
               <Grid item xs={6}/>
               <Grid item xs={12}>
                 <TextField
-                  disabled={(!(isAdmin && template && (template.companyId === company._id) || isSuperAdmin) && (projectId === undefined)) || isManager}
+                  disabled={disabled}
                   // margin="dense"
                   id="notes"
                   label="Notes"
@@ -339,7 +339,7 @@ function EditStakeHolder(props) {
                 <FormControl className={classes.formControl} fullWidth={true}>
                   <InputLabel htmlFor="demo-controlled-open-select">Level Of Support</InputLabel>
                   <Select
-                    disabled={(!(isAdmin && template && (template.companyId === company._id) || isSuperAdmin) && (projectId === undefined)) || isManager}
+                    disabled={disabled}
                     id="role"
                     label="role"
                     fullWidth={true}
@@ -371,7 +371,7 @@ function EditStakeHolder(props) {
                 <FormControl className={classes.formControl} fullWidth={true}>
                   <InputLabel htmlFor="demo-controlled-open-select">Level Of Influence</InputLabel>
                   <Select
-                    disabled={(!(isAdmin && template && (template.companyId === company._id) || isSuperAdmin) && (projectId === undefined)) || isManager}
+                    disabled={disabled}
                     id="role"
                     label="role"
                     fullWidth={true}
