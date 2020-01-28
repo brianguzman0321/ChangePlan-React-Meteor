@@ -16,6 +16,7 @@ import config from "../../../utils/config";
 import {Projects} from "../../../api/projects/projects";
 import {Companies} from "../../../api/companies/companies";
 import {Meteor} from "meteor/meteor";
+import {Activities} from "../../../api/activities/activities";
 
 const Brand = (handleChange1) => (
   <Link to='/' onClick={handleChange1.handleChange1}>
@@ -126,6 +127,7 @@ function TopNavBar(props) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isChangeManager, setIsChangeManager] = useState(false);
   const [isManager, setIsManager] = useState(false);
+  const [isActivityOwner, setIsActivityOwner] = useState(false);
   let currentLocation = history.location.pathname.split("/");
   let currentNav = currentLocation[currentLocation.length - 1], selectedTab = 0;
   if(currentNav === '/'){
@@ -184,6 +186,18 @@ function TopNavBar(props) {
           setIsManager(true);
         }
       }
+    }
+    if (projects) {
+      projects.forEach(project => {
+        const activities = Activities.find({projectId: project._id}).fetch();
+        if (activities) {
+          activities.forEach(activity => {
+            if (!Roles.userIsInRole(userId, 'superAdmin') && activity.owner && activity.owner.includes(Meteor.userId())) {
+              setIsActivityOwner(true);
+            }
+          })
+        }
+      })
     }
   };
 
@@ -298,9 +312,8 @@ function TopNavBar(props) {
           <Brand handleChange1={handleChange1}/>
           <div className={classes.grow}>
             {projectId ?
-              <ProjectSelectMenu title="Projects" entity="Project" entities={[]} localCollection="localProjects" isManager={isManager}
-                                 isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager} currentCompany={currentCompany}
-                                 id="projectId"/> : ''}
+              <ProjectSelectMenu title="Projects" entity="Project" entities={[]} localCollection="localProjects"
+                                 currentCompany={currentCompany} id="projectId"/> : ''}
           </div>
           {displayMenus.length ? <Tabs
             value={value}

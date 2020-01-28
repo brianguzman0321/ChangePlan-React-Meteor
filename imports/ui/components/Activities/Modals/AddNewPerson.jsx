@@ -84,7 +84,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 function AddNewPerson(props) {
   let {company, isActivity = false, isManager,
-    isSuperAdmin, isAdmin, isChangeManager } = props;
+    isSuperAdmin, isAdmin, isChangeManager, isActivityOwner } = props;
   const [firstName, setFirstName] = React.useState('');
   const [lastName, setLastName] = React.useState('');
   const [email, setEmail] = React.useState('');
@@ -126,7 +126,7 @@ function AddNewPerson(props) {
     <div>
       {isActivity ?
         <Button color="primary" variant="text" onClick={handleClickOpen} className={classes.addNewPerson}
-                disabled={isManager && !isSuperAdmin && !isAdmin && !isChangeManager}>
+                disabled={(isManager || isActivityOwner) && !isSuperAdmin && !isAdmin && !isChangeManager}>
           Add New
         </Button> :
         <Button variant="outlined" color="primary" onClick={handleClickOpen} fullWidth={true}

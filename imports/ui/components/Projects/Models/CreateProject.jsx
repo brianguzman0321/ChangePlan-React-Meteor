@@ -208,10 +208,10 @@ function AddActivity(props) {
       if (err) {
         props.enqueueSnackbar(err.reason, {variant: 'error'})
       } else {
-        setOpen(false);
         setName('');
         resetValues();
         props.enqueueSnackbar('New Project Created Successfully.', {variant: 'success'})
+        setOpen(false);
       }
 
     })

@@ -239,6 +239,7 @@ function AddActivities(props) {
   const [timeSendEmail, setTimeSendEmail] = useState(null);
   const activityCategories = ["communication", "engagement", "training/coaching"];
   const disabled = (isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
+    || (isActivityOwner && !isSuperAdmin && !isChangeManager && !isAdmin)
     || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
     || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin);
   const disabledManager = (isManager || isActivityOwner) && !isChangeManager && !isAdmin && !isSuperAdmin;
@@ -645,7 +646,7 @@ function AddActivities(props) {
                 fullWidth={true} onClick={handleClickOpen}
         >
           Add Activity
-        </Button> : ''
+        </Button> : null
       }
       <Dialog onClose={handleOpenModalDialog} aria-labelledby="customized-dialog-title" open={open} maxWidth="md"
               fullWidth={true}>
@@ -783,7 +784,7 @@ function AddActivities(props) {
                       <DateTimePicker
                         fullWidth
                         variant="inline"
-                        disabled={disabled}
+                        disabled={disabledManager}
                         margin="normal"
                         id="date-time-picker-inline"
                         label="Due*"
@@ -794,7 +795,7 @@ function AddActivities(props) {
                     </Grid>
                     <Grid item xs={2}>
                       <IconButton aria-label="close" className={classes.closeButton}
-                                  disabled={disabled}
+                                  disabled={disabledManager}
                                   onClick={() => onCalendarClick("date-time-picker-inline")}>
                         <CalendarTodayIcon/>
                       </IconButton>
@@ -805,7 +806,7 @@ function AddActivities(props) {
                     <TextField
                       margin="normal"
                       id="time"
-                      disabled={disabled}
+                      disabled={disabledManager}
                       label="Time Away from BAU (Minutes)"
                       value={time}
                       onChange={handleTimeChange}
@@ -866,7 +867,7 @@ function AddActivities(props) {
                 <Grid item={true} xs={5}>
                   <AutoComplete updateUsers={updateUsers} data={users} selectedValue={person}
                                 currentChangeManager={changeManager} isActivity={true} isManager={isManager}
-                                isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager}/>
+                                isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager} isActivityOwner={isActivityOwner}/>
                   {type === 'project' &&
                   <Button variant="text" color="primary" className={classes.buttonAsLink}
                           disabled={disabledManager}
@@ -878,7 +879,7 @@ function AddActivities(props) {
                   }
                 </Grid>
                 <Grid item={true} xs={3} className={classes.linkButton}>
-                  <AddNewPerson company={company} isActivity={true} isManager={isManager}
+                  <AddNewPerson company={company} isActivity={true} isManager={isManager} isActivityOwner={isActivityOwner}
                                 isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager}/>
                 </Grid>
               </Grid>
@@ -891,7 +892,7 @@ function AddActivities(props) {
                 </Grid>
                 <Grid item xs={5}>
                   <Switch checked={checkSchedule} onChange={handleSchedule()} value="checkSchedule" color="primary"
-                          disabled={isManager && !isSuperAdmin && !isAdmin && !isChangeManager}/>
+                          disabled={disabledManager}/>
                 </Grid>
                 <Grid item xs={3} className={classes.linkButton}>
                   <Button variant="text" color="primary" className={classes.buttonAsLink}>
@@ -913,7 +914,7 @@ function AddActivities(props) {
                         label="Time to send email*"
                         value={timeSendEmail}
                         fullWidth
-                        disabled={isManager && !isSuperAdmin && !isAdmin && !isChangeManager}
+                        disabled={disabledManager}
                         onChange={handleTimeSendEmail}
                       />
                     </Grid>

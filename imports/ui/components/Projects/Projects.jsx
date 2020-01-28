@@ -166,6 +166,9 @@ function ProjectCard(props) {
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isChangeManager, setIsChangeManager] = useState(false);
+  const [isManager, setIsManager] = useState(false);
+  const [isActivityOwner, setIsActivityOwner] = useState(false);
+  const [projectCard, setProjectCard] = useState(projects || []);
 
   useEffect(() => {
     if (currentCompany) {
@@ -191,7 +194,59 @@ function ProjectCard(props) {
         }
       }
     }
+    if (currentCompany) {
+      const projectsCurCompany = Projects.find({companyId: currentCompany._id}).fetch();
+      if (projectsCurCompany) {
+        const managers = [...new Set([].concat.apply([], projectsCurCompany.map(project => project.managers)))];
+        if (managers.includes(userId)) {
+          setIsManager(true);
+        }
+      }
+    }
+    if (projects) {
+      projects.forEach(project => {
+        const activities = Activities.find({projectId: project._id}).fetch();
+        if (activities) {
+          activities.forEach(activity => {
+            if (!Roles.userIsInRole(userId, 'superAdmin') && activity.owner && activity.owner.includes(Meteor.userId())) {
+              setIsActivityOwner(true);
+            }
+          })
+        }
+      })
+    }
   };
+
+  useEffect(() => {
+    let projectsFiltering = [];
+    const userId = Meteor.userId();
+    if (projects) {
+      if (isSuperAdmin) {
+        projectsFiltering = projects;
+        setProjectCard(projectsFiltering);
+      }
+      if (isAdmin && !isSuperAdmin) {
+        projectsFiltering = projects.filter(project => project.companyId === currentCompanyId);
+        setProjectCard(projectsFiltering);
+      }
+      if (isChangeManager && !isAdmin && !isSuperAdmin) {
+        projectsFiltering = projects.filter(project => project.changeManagers.includes(userId));
+        setProjectCard(projectsFiltering);
+      }
+      if (isManager && !isSuperAdmin && !isAdmin) {
+        projectsFiltering = projectsFiltering.concat(projects.filter(project => project.managers.includes(userId)));
+        setProjectCard([...new Set(projectsFiltering)]);
+      }
+      if (isActivityOwner && !isSuperAdmin && !isAdmin) {
+          const activities = Activities.find({owner: userId}).fetch();
+          activities.forEach(activity => {
+            const project = projects.find(project => project._id === activity.projectId);
+            projectsFiltering.push(project);
+        });
+        setProjectCard([...new Set(projectsFiltering)]);
+      }
+    }
+  }, [projects, isActivityOwner, isManager, isChangeManager, isAdmin, isSuperAdmin]);
 
   useEffect(() => {
     checkRoles();
@@ -360,7 +415,7 @@ function ProjectCard(props) {
               direction="row"
               justify="flex-start"
               alignItems="flex-start">
-          {projects.map((project, index) => {
+          {projectCard.map((project, index) => {
             return <Grid item xs={12} md={4} sm={6} lg={2} xl={2} key={index} className={classes.grid}>
               <Card className={classes.card} onClick={(e) => selectProject(project)}>
                 <LinearProgress variant="determinate"
@@ -416,7 +471,7 @@ function ProjectCard(props) {
           }
         </Grid>
       </Grid>
-      {!projects.length &&
+      {!projectCard.length &&
       <Grid
         container
         direction="row"
@@ -491,6 +546,7 @@ const ProjectsPage = withTracker(props => {
     name: local.search
   });
   Meteor.subscribe('templates');
+  Meteor.subscribe('activities.notLoggedIn');
   return {
     templates: Templates.find({}).fetch(),
     company: Companies.findOne({_id: currentCompany && currentCompany._id}),
