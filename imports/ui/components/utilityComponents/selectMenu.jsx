@@ -105,7 +105,7 @@ function ProjectSelectMenu(props) {
         setProjectsMenu(menuItem);
       }
       if (isManager && !isSuperAdmin && !isAdmin) {
-        menuItem.concat(projects.filter(project => project.managers.includes(userId)));
+        menuItem = menuItem.concat(projects.filter(project => project.managers.includes(userId)));
         setProjectsMenu([...new Set(menuItem)]);
       }
       if (isActivityOwner && !isSuperAdmin && !isAdmin) {
