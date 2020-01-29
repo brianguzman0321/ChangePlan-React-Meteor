@@ -22,6 +22,7 @@ import {Companies} from "../../../api/companies/companies";
 import {Peoples} from "../../../api/peoples/peoples";
 import Input from "@material-ui/core/Input";
 import {withSnackbar} from "notistack";
+import {Templates} from "../../../api/templates/templates";
 
 
 var sActivity = {};
@@ -402,11 +403,21 @@ function ActivitiesColumn(props) {
 }
 
 export default withTracker(props => {
+  let {match} = props;
+  let {projectId, templateId} = match.params;
   let local = LocalCollection.findOne({
     name: 'localStakeHolders'
   });
+  Meteor.subscribe('compoundProject', projectId);
+  Meteor.subscribe('templates');
   Meteor.subscribe('companies');
-  let company = Companies.findOne() || {};
+  let project = Projects.findOne({
+    _id: projectId
+  });
+  let template = Templates.findOne({_id: templateId});
+  let companyProjectId = project && project.companyId;
+  let companyTemplateId = template && template.companyId;
+  let company = Companies.findOne({_id: companyProjectId || companyTemplateId}) || {};
   let companyId = company._id || {};
   Meteor.subscribe('peoples', companyId);
   return {

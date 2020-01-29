@@ -27,7 +27,7 @@ Meteor.publishTransformed('compoundCompanies', function () {
                 admins:{
                     $in: [this.userId]
                 }
-            }]
+            }, {}]
         }
     }
     return Companies.find(query).serverTransform({

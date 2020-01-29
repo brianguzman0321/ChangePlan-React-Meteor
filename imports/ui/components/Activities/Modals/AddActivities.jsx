@@ -1057,7 +1057,6 @@ const AddActivityPage = withTracker(props => {
   Meteor.subscribe('compoundProject', projectId);
   Meteor.subscribe('templates');
   Meteor.subscribe('companies');
-  Meteor.subscribe('templates');
   let project = Projects.findOne({
     _id: projectId
   });
