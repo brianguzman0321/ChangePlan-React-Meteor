@@ -429,7 +429,7 @@ function ProjectCard(props) {
                     e.stopPropagation();
                     e.preventDefault();
                   }}
-                  action={<ProjectMenus project={project} company={company}/>}
+                  action={<ProjectMenus project={project} company={company} activities={activities}/>}
                   classes={classes1}
                   style={{cursor: "auto"}}
                   title={projectName(project.name)}
