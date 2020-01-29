@@ -209,7 +209,7 @@ function ActivitiesColumn(props) {
   }
 
   function iconSVG(activity) {
-    let selectedActivity = data.find(item => item.name === activity.type || item.category === "custom") || {};
+    let selectedActivity = data.find(item => item.name === activity.type || item.category === "Custom") || {};
     return selectedActivity && selectedActivity.iconSVG
   }
 

@@ -154,7 +154,7 @@ Meteor.publishTransformed('myProjects', function (company, parameters) {
   //     options.sort = {};
   //     options.sort[parameters.sort] = 1
   // }
- /* if (!(company && company._id)) {
+/*  if (!(company && company._id)) {
     company = Companies.findOne({
       peoples: {
         $in: [this.userId]
@@ -189,7 +189,7 @@ Meteor.publishTransformed('myProjects', function (company, parameters) {
         managers: {
           $in: [this.userId]
         }
-      }]
+      }, {}]
     })
   }
 
