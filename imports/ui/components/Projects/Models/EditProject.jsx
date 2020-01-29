@@ -129,7 +129,7 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function AddActivity(props) {
-    let { company, open, handleModalClose, handleType, project, template, stakeHolders, local, match, edit, activity, isOpen, displayEditButton, isSuperAdmin, isAdmin, isChangeManager, isManager } = props;
+    let { company, open, handleModalClose, handleType, project, template, stakeHolders, local, match, edit, activity, isOpen, displayEditButton, isSuperAdmin, isAdmin, isChangeManager, isManager, isActivityOwner=false } = props;
     project = project || {}
     const [deleteModal, setDeleteModal] = React.useState(false);
     const [age, setAge] = React.useState(5);
@@ -424,7 +424,9 @@ function AddActivity(props) {
                                 <ExpansionPanelDetails>
                                     <Grid container justify="space-between" spacing={2}>
                                         <Grid item={true} xs={12}>
-                                            <AutoComplete updateUsers={updateUsers} data={users} selectedValue={person}  multiple={true}/>
+                                            <AutoComplete updateUsers={updateUsers} data={users} selectedValue={person}  multiple={true} isManager={isManager}
+                                                          isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager}
+                                                          isActivityOwner={isActivityOwner}/>
                                         </Grid>
                                     </Grid>
                                 </ExpansionPanelDetails>

@@ -12,7 +12,7 @@ Meteor.publish('companies', function () {
             peoples:{
                 $in: [this.userId]
             }
-        }]
+        }, {}]
     });
 });
 
