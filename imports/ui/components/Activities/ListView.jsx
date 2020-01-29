@@ -214,6 +214,7 @@ function StakeHolderList(props) {
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [edit, setEdit] = React.useState(addNew || false);
   const [step, setStep] = React.useState(0);
+  const disabled = (!(isAdmin && template && (template.companyId === companyId) || isSuperAdmin) && (projectId === undefined) || (isManager || isActivityOwner));
 
   const handleRequestSort = (event, property) => {
     const isDesc = orderBy === property && order === 'desc';
@@ -313,7 +314,7 @@ function StakeHolderList(props) {
                     >
                       <TableCell align="center">
                         <Checkbox
-                          disabled={(!(isAdmin && template && (template.companyId === companyId) || isSuperAdmin) && (projectId === undefined))}
+                          disabled={disabled}
                           checked={row.completed}
                           onClick={(e) => {
                             e.stopPropagation();
