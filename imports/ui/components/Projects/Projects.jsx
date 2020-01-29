@@ -238,12 +238,16 @@ function ProjectCard(props) {
         setProjectCard([...new Set(projectsFiltering)]);
       }
       if (isActivityOwner && !isSuperAdmin && !isAdmin) {
-          const activities = Activities.find({owner: userId}).fetch();
-          activities.forEach(activity => {
+        const _activities = Activities.find({owner: userId}).fetch();
+        if (activities) {
+          _activities.forEach(activity => {
             const project = projects.find(project => project._id === activity.projectId);
-            projectsFiltering.push(project);
-        });
-        setProjectCard([...new Set(projectsFiltering)]);
+            if (project) {
+              projectsFiltering.push(project);
+            }
+          });
+          setProjectCard([...new Set(projectsFiltering)]);
+        }
       }
     }
   }, [projects, isActivityOwner, isManager, isChangeManager, isAdmin, isSuperAdmin]);
@@ -417,14 +421,9 @@ function ProjectCard(props) {
           {projectCard.map((project, index) => {
             return <Grid item xs={12} md={4} sm={6} lg={2} xl={2} key={index} className={classes.grid}>
               <Card className={classes.card} onClick={(e) => selectProject(project)}>
-                {project.totalActivities ? <LinearProgress variant="determinate"
-                                                            value={project.totalActivities && project.totalActivities > 0 ? parseInt((100 * project.completedActivities) / project.totalActivities) : 0}
-                                                            color="primary"/>
-                                                            :
-                  <LinearProgress variant="determinate"
-                                  value={0}
-                                  color="primary"/>}
-
+                <LinearProgress variant="determinate"
+                                value={project.totalActivities && project.totalActivities > 0 ? parseInt((100 * project.completedActivities) / project.totalActivities) : 0}
+                                color="primary"/>
                 <CardHeader
                   onClick={(e) => {
                     e.stopPropagation();
