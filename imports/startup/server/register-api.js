@@ -43,3 +43,8 @@ import '/imports/api/surveysStakeholders/methods';
 //admin methods
 import '/imports/api/admin/methods'
 import '/imports/api/admin/roles'
+
+//project events
+import '/imports/api/projectEvents/projectEvents';
+import '/imports/api/projectEvents/server/publications';
+import '/imports/api/projectEvents/method';

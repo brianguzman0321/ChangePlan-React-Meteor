@@ -46,7 +46,7 @@ SyncedCron.add({
 SyncedCron.add({
   name: 'create job for stakeholders',
   schedule: function (parser) {
-    return parser.text('every 5 minutes')
+    return parser.text('every 56 minutes')
   },
   job: function () {
     const activities = Activities.find({}).fetch().filter(activity => activity.completed && activity.stakeholdersFeedback && activity.timeSchedule);
