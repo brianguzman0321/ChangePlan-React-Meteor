@@ -87,9 +87,19 @@ export const useStyles = makeStyles(theme => ({
     marginBottom: 20,
     marginLeft: 50,
   },
-  addEventButton: {
+  addEventContainer: {
     paddingLeft: '10px',
     paddingTop: '6px',
+  },
+  addEventButton: {
+    background: '#9e9e9e',
+    color: 'white',
+    '&:hover': {
+      background: '#9e9e9e',
+      color: 'white'
+    },
+    boxShadow: 'none',
+    fontWeight: 300,
   },
   formControl: {
     marginTop: '-20px',

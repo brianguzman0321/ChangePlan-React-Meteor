@@ -15,7 +15,7 @@
       "resourceFileName": "email_example.docx",
       "helpTextTitle": "Email",
       "helpText": "Beware not to overuse email as a communication mode.",
-      "category": "communication"
+      "category": "Communication"
     },
     {
       "name": "phoneCall",
@@ -32,7 +32,7 @@
       "resourceFileName": "",
       "helpTextTitle": "Phone Call",
       "helpText": "Give you the opportunity to introduce changes as well as clarify any areas of uncertainty.",
-      "category": "engagement"
+      "category": "Engagement"
     },
     {
       "name": "conversation",
@@ -49,7 +49,7 @@
       "resourceFileName": "",
       "helpTextTitle": "Face-to-face Conversation",
       "helpText": "Allows you to gauge people's emotional responses and get feedback on any points that may not be well understood.",
-      "category": "engagement"
+      "category": "Engagement"
     },
     {
       "name": "executivePresentation",
@@ -66,7 +66,7 @@
       "resourceFileName": "",
       "helpTextTitle": "Executive Presentation",
       "helpText": "Visible involvement of senior leaders is one of the leading contributors to project change success.",
-      "category": "communication"
+      "category": "Communication"
     },
     {
       "name": "newsletter",
@@ -83,7 +83,7 @@
       "resourceFileName": "",
       "helpTextTitle": "Newsletter",
       "helpText": "Reach a wide audience in a manner that gives the message credibility.",
-      "category": "communication"
+      "category": "Communication"
     },
     {
       "name": "socialMedia",
@@ -100,7 +100,7 @@
       "resourceFileName": "",
       "helpTextTitle": "Social Media",
       "helpText": "Provide continuous updates about the change and engages and involves staff in a change.",
-      "category": "communication"
+      "category": "Communication"
     },
     {
       "name": "intranet",
@@ -117,7 +117,7 @@
       "resourceFileName": "",
       "helpTextTitle": "Intranet",
       "helpText": "Can provide detailed and up-to-date information about the project and changes happening.",
-      "category": "communication"
+      "category": "Communication"
     },
     {
       "name": "poster",
@@ -134,7 +134,7 @@
       "resourceFileName": "",
       "helpTextTitle": "Poster",
       "helpText": "Create visibility for upcoming projects and can be used to feed information about changes they will bring.",
-      "category": "communication"
+      "category": "Communication"
     },
     {
       "name": "coaching",
@@ -151,7 +151,7 @@
       "resourceFileName": "",
       "helpTextTitle": "Coaching",
       "helpText": "Help people develop skills, attitudes and goals to assist them to adapt to changes.",
-      "category": "engagement"
+      "category": "Engagement"
     },
     {
       "name": "presentation",
@@ -168,7 +168,7 @@
       "resourceFileName": "presentation_template.pptx",
       "helpTextTitle": "Presentations",
       "helpText": "Offer detailed information, use visual aids and respond to questions in real-time.",
-      "category": "communication"
+      "category": "Communication"
     },
     {
       "name": "videoConference",
@@ -185,7 +185,7 @@
       "resourceFileName": "",
       "helpTextTitle": "Video Conference",
       "helpText": "Allows you to share information in an interactive manner to geographically dispersed audiences.",
-      "category": "communication"
+      "category": "Communication"
     },
     {
       "name": "meeting",
@@ -202,7 +202,7 @@
       "resourceFileName": "meeting_agenda_template.docx",
       "helpTextTitle": "Meeting",
       "helpText": "Share information about project changes, answer questions and gain feedback in an informal manner.",
-      "category": "engagement"
+      "category": "Engagement"
     },
     {
       "name": "demonstration",
@@ -219,7 +219,7 @@
       "resourceFileName": "",
       "helpTextTitle": "Demonstration",
       "helpText": "Showing people how to do something can be much more memorable and effective than merely them how to do something.",
-      "category": "training/coaching"
+      "category": "Learning/coaching"
     },
     {
       "name": "explainerVideo",
@@ -236,7 +236,7 @@
       "resourceFileName": "",
       "helpTextTitle": "Explainer Video",
       "helpText": "Communicate changes and instructions quickly in an easy to understand, repeatable and easily shared manner.",
-      "category": "training/coaching"
+      "category": "Learning/coaching"
     },
     {
       "name": "roadshow",
@@ -253,7 +253,7 @@
       "resourceFileName": "roadshow_presentation_template.pptx",
       "helpTextTitle": "Roadshow",
       "helpText": "A planned series of presentations to audiences around the organization to introduce the project and changes. Ideally involve senior leaders.",
-      "category": "communication"
+      "category": "Communication"
     },
     {
       "name": "jobAid",
@@ -270,7 +270,7 @@
       "resourceFileName": "",
       "helpTextTitle": "Job-aid",
       "helpText": "Simple, easy to read guides reduce axiety about what to do and help those people affected by changes to feel supported.",
-      "category": "training/coaching"
+      "category": "Learning/coaching"
     },
     {
       "name": "celebration",
@@ -287,7 +287,7 @@
       "resourceFileName": "",
       "helpTextTitle": "Celebration",
       "helpText": "Celebrating successful adoption of changes reinforces those changes and helps build long-term commitment to the new way of doing things.",
-      "category": "training/coaching"
+      "category": "Engagement"
     },
     {
       "name": "publicRecognition",
@@ -304,7 +304,7 @@
       "resourceFileName": "",
       "helpTextTitle": "Public recognition",
       "helpText": "Communicates that adapting positive change behaviors is valued. Improves people's willingness to adapt to changes in the future.",
-      "category": "training/coaching"
+      "category": "Learning/coaching"
     },
     {
       "name": "reward",
@@ -321,7 +321,7 @@
       "resourceFileName": "",
       "helpTextTitle": "Reward",
       "helpText": "Incentives for adapting to changes are a powerful motivator, and must be planned carefully.",
-      "category": "training/coaching"
+      "category": "Learning/coaching"
     },
     {
       "name": "oneOnOneTraining",
@@ -338,7 +338,7 @@
       "resourceFileName": "training_needs_analysis.xlsx",
       "helpTextTitle": "One-on-one training",
       "helpText": "Allows for rich sharing of experiences, instructions, information and ideas. Any concerns or questions can be clarified immediately.",
-      "category": "training/coaching"
+      "category": "Learning/coaching"
     },
     {
       "name": "workshop",
@@ -355,7 +355,7 @@
       "resourceFileName": "",
       "helpTextTitle": "Training workshop",
       "helpText": "Provides people with an opportunity to learn concepts and skills and ask questions.",
-      "category": "training/coaching"
+      "category": "Learning/coaching"
     },
     {
       "name": "elearning",
@@ -372,7 +372,7 @@
       "resourceFileName": "",
       "helpTextTitle": "E-learning",
       "helpText": "Useful for building skills in geographically dispersed groups in an on-demand manner.",
-      "category": "training/coaching"
+      "category": "Learning/coaching"
     },
     {
       "name": "writtenMaterials",
@@ -389,7 +389,7 @@
       "resourceFileName": "",
       "helpTextTitle": "Written materials",
       "helpText": "Can be provided as references online or as printed guides to help ensure people understand what they need to do.",
-      "category": "training/coaching"
+      "category": "Learning/coaching"
     },
     {
       "name": "other",
@@ -406,7 +406,7 @@
       "resourceFileName": "",
       "helpTextTitle": "Other",
       "helpText": "Describe the activity in the 'Description' field.",
-      "category": "custom"
+      "category": "Custom"
     }
   ]
 }

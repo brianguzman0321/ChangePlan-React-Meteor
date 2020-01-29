@@ -58,6 +58,7 @@ function Timeline(props) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isChangeManager, setIsChangeManager] = useState(false);
   const [isManager, setIsManager] = useState(false);
+  const [isActivityOwner, setIsActivityOwner] = useState(false);
   const [showAddEventModal, setShowAddEventModal] = useState(false);
 
 
@@ -86,16 +87,19 @@ function Timeline(props) {
         if (changeManagers.includes(userId)) {
           setIsChangeManager(true);
         }
-      }
-    }
-    if (currentCompany) {
-      const projectsCurCompany = Projects.find({ companyId: currentCompany._id }).fetch();
-      if (projectsCurCompany) {
         const managers = [...new Set([].concat.apply([], projectsCurCompany.map(projects0 => projects0.managers)))];
         if (managers.includes(userId)) {
           setIsManager(true);
         }
       }
+    }
+    const activities = Activities.find({projectId: projectId}).fetch();
+    if (activities) {
+      activities.forEach(activity => {
+        if (!Roles.userIsInRole(userId, 'superAdmin') && activity.owner && activity.owner.includes(Meteor.userId())) {
+          setIsActivityOwner(true);
+        }
+      })
     }
   };
 
@@ -270,8 +274,26 @@ function Timeline(props) {
               <Tab className={classes.activityTab}
                 label={<div className={classes.iconTab}><ListIcon />&nbsp; List</div>} />
             </Tabs>
-            <Grid item className={classes.addEventButton}>
-              <Button color="primary" variant={"outlined"} onClick={() => setShowAddEventModal(true)}>
+            <Grid item className={classes.addEventContainer}>
+              <AddActivities
+                edit={false}
+                list={false}
+                isOpen={false}
+                project={projects0}
+                template={template}
+                activity={{}}
+                newActivity={() => setEdit(false)}
+                type={templateId && 'template' || projectId && 'project'}
+                match={match}
+                isSuperAdmin={isSuperAdmin}
+                isAdmin={isAdmin}
+                isChangeManager={isChangeManager}
+                isManager={isManager}
+                isActivityOwner={isActivityOwner}
+              />
+            </Grid>
+            <Grid item className={classes.addEventContainer}>
+              <Button variant="contained" onClick={() => setShowAddEventModal(true)} className={classes.addEventButton}>
                 Add Project Event
               </Button>
             </Grid>
@@ -359,6 +381,7 @@ function Timeline(props) {
               isAdmin={isAdmin}
               isChangeManager={isChangeManager}
               isManager={isManager}
+              isActivityOwner={isActivityOwner}
             />) : null}
 
             {(eventType === "Ability") ? (<AddActivities
@@ -377,6 +400,7 @@ function Timeline(props) {
               isAdmin={isAdmin}
               isChangeManager={isChangeManager}
               isManager={isManager}
+              isActivityOwner={isActivityOwner}
             />) : null}
 
             {(eventType === "Reinforcement") ? (<AddActivities
@@ -395,6 +419,7 @@ function Timeline(props) {
               isAdmin={isAdmin}
               isChangeManager={isChangeManager}
               isManager={isManager}
+              isActivityOwner={isActivityOwner}
             />) : null}
 
             {(eventType === "Desire") ? (<AddActivities
@@ -413,6 +438,7 @@ function Timeline(props) {
               isAdmin={isAdmin}
               isChangeManager={isChangeManager}
               isManager={isManager}
+              isActivityOwner={isActivityOwner}
             />) : null}
 
             {(eventType === "Knowledge") ? (<AddActivities
@@ -431,6 +457,7 @@ function Timeline(props) {
               isAdmin={isAdmin}
               isChangeManager={isChangeManager}
               isManager={isManager}
+              isActivityOwner={isActivityOwner}
             />) : null}
 
             {(eventType === "Impact") ? (<ImpactsModal
@@ -446,6 +473,7 @@ function Timeline(props) {
               isAdmin={isAdmin}
               isManager={isManager}
               isChangeManager={isChangeManager}
+              isActivityOwner={isActivityOwner}
               currentType={projectId && 'project' || templateId && 'template'}
             />) : null}
 
@@ -462,6 +490,7 @@ function Timeline(props) {
               isAdmin={isAdmin}
               isManager={isManager}
               isChangeManager={isChangeManager}
+              isActivityOwner={isActivityOwner}
               currentType={projectId && 'project' || templateId && 'template'}
             />) : null}
             {( eventType === "Project_Start" || eventType === "Project_End" ) ? (<EditProject
@@ -474,6 +503,7 @@ function Timeline(props) {
               isSuperAdmin={isSuperAdmin}
               isAdmin={isAdmin}
               isManager={isManager}
+              isActivityOwner={isActivityOwner}
               isChangeManager={isChangeManager}
             />) : null}
 
@@ -481,7 +511,7 @@ function Timeline(props) {
         {viewMode === 1 &&
           <ListView rows={type === 'project' ? props.activities : props.activitiesTemplate} addNew={false} type={type}
             isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
-            isChangeManager={isChangeManager} isManager={isManager}
+            isChangeManager={isChangeManager} isManager={isManager} isActivityOwner={isActivityOwner}
             project={projects0} projectId={projectId} companyId={currentCompanyId}
             template={template} match={match} />
         }

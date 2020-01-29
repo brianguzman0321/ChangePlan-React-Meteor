@@ -22,6 +22,7 @@ import AddActivity from '/imports/ui/components/Activities/Modals/AddActivity';
 import AddActivity2 from '/imports/ui/components/Activities/Modals/AddActivity2';
 import AddActivity3 from '/imports/ui/components/Activities/Modals/AddActivity3';
 import AWARENESSCard from "./step1";
+import EditProject from "../Projects/Models/EditProject";
 
 var sActivity = {};
 
@@ -203,7 +204,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function StakeHolderList(props) {
-  let {rows, addNew, type, isSuperAdmin, template, companyId, isAdmin, projectId, match } = props;
+  let {rows, addNew, type, isSuperAdmin, template, companyId, isAdmin, isChangeManager, isManager, isActivityOwner, projectId, match} = props;
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
@@ -362,7 +363,8 @@ function StakeHolderList(props) {
       </Paper>
       <AddActivities edit={edit} activity={sActivity} newActivity={() => setEdit(false)} list={true} isOpen={addNew}
                      type={type} template={template} match={match} step={step}
-                     expandAccordian={true}
+                     expandAccordian={true} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isManager={isManager}
+                     isActivityOwner={isActivityOwner} isChangeManager={isChangeManager}
                      color={step === 1 ? '#f1753e' : step === 2 ? '#53cbd0' : step === 3 ? '#bbabd2' : step === 4 ? '#8BC34A' : step === 5 ? '#03A9F4' : null}/>
       {/*<AddActivity edit={edit} activity={sActivity} newActivity={() => setEdit(false)} list={true} isOpen={addNew}
                      type={type} template={template} match={match}/>

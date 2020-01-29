@@ -43,6 +43,7 @@ import {
 } from "@material-ui/core";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
+import InputLabel from "@material-ui/core/InputLabel";
 
 
 const styles = theme => ({
@@ -120,6 +121,16 @@ const useStyles = makeStyles(theme => ({
       color: 'white'
     },
     boxShadow: 'none',
+  },
+  button: {
+    background: '#1976d2',
+    color: 'white',
+    '&:hover': {
+      background: '#1976d2',
+      color: 'white'
+    },
+    boxShadow: 'none',
+    fontWeight: 300,
   },
   heading: {
     fontSize: theme.typography.pxToRem(18),
@@ -214,10 +225,12 @@ const DialogActions = withStyles(theme => ({
 function AddActivities(props) {
   let {
     company, stakeHolders, local, project, match, edit, activity, list, isOpen, currentChangeManager,
-    template, type, stakeHoldersTemplate, isSuperAdmin, isAdmin, isChangeManager, isManager, isActivityOwner, step, color,
+    template, type, stakeHoldersTemplate, isSuperAdmin, isAdmin, isChangeManager, isManager, isActivityOwner, step,
   } = props;
-  const customActivityIcon = data.find(item => item.category === "custom").iconSVG;
+  const customActivityIcon = data.find(item => item.category === "Custom").iconSVG;
   const [open, setOpen] = useState(edit || isOpen || false);
+  const [phase, setPhase] = useState((step) || 1);
+  const [color, setColor] = useState('#f1753e');
   const [deleteModal, setDeleteModal] = useState(false);
   const [time, setTime] = useState('');
   const [isNew, setIsNew] = useState(false);
@@ -237,7 +250,7 @@ function AddActivities(props) {
   const [showNotification, setShowNotification] = useState(false);
   const [checkSchedule, setCheckSchedule] = useState(false);
   const [timeSendEmail, setTimeSendEmail] = useState(null);
-  const activityCategories = ["communication", "engagement", "training/coaching"];
+  const activityCategories = ["Engagement", "Communication", "Learning/coaching"];
   const disabled = (isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
     || (isActivityOwner && !isSuperAdmin && !isChangeManager && !isAdmin)
     || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
@@ -283,19 +296,47 @@ function AddActivities(props) {
       });
   };
 
+  useEffect(() => {
+    let phaseColor = '';
+    switch (phase) {
+      case 1: {
+        phaseColor = '#f1753e';
+        break;
+      }
+      case 2: {
+        phaseColor = '#53cbd0';
+        break;
+      }
+      case 3: {
+        phaseColor = '#bbabd2';
+        break;
+      }
+      case 4: {
+        phaseColor = '#8BC34A';
+        break;
+      }
+      case 5: {
+        phaseColor = '#03A9F4';
+        break;
+      }
+    }
+    setColor(phaseColor);
+  }, [phase]);
+
   const updateValues = () => {
     if (isNew) {
       resetValues();
       return false;
     }
-    let selectedActivity = data.find(item => (item.name === activity.type) || item.category === "custom") || {};
-    if (selectedActivity.category === "custom") {
+    let selectedActivity = data.find(item => (item.name === activity.type) || item.category === "Custom") || {};
+    if (selectedActivity.category === "Custom") {
       selectedActivity.name = activity.type;
       selectedActivity.buttonText = activity.name;
     }
     setActivityType(selectedActivity);
     setSelectActivity(selectedActivity);
     setDueDate(activity.dueDate);
+    setPhase(activity.step);
     setTimeSendEmail(activity.timeSchedule || null);
     setCheckSchedule(activity.stakeholdersFeedback || false);
     setCompletedDate(activity.completedAt);
@@ -346,6 +387,8 @@ function AddActivities(props) {
     setActivityType({});
     setSelectActivity({});
     setDueDate(new Date());
+    setPhase(1);
+    setColor('');
     setCheckSchedule(false);
     setTimeSendEmail(null);
     setCompletedDate(null);
@@ -403,7 +446,7 @@ function AddActivities(props) {
         buttonText: item,
         name: item,
         iconSVG: customActivityIcon,
-        category: "custom",
+        category: "Custom",
         engageSection: true,
         equipSection: true,
         embedSection: true,
@@ -490,7 +533,7 @@ function AddActivities(props) {
             dueDate,
             completedAt: completedDate,
             stakeHolders: peoples,
-            step: step,
+            step: phase,
             time: Number(time),
             timeSchedule: timeSendEmail,
             stakeholdersFeedback: checkSchedule,
@@ -507,7 +550,7 @@ function AddActivities(props) {
             dueDate,
             completedAt: completedDate,
             stakeHolders: peoples,
-            step: step,
+            step: phase,
             time: Number(time),
             timeSchedule: timeSendEmail,
             stakeholdersFeedback: checkSchedule,
@@ -542,7 +585,7 @@ function AddActivities(props) {
           dueDate,
           completedAt: completedDate,
           stakeHolders: peoples,
-          step: step,
+          step: phase,
           time: Number(time),
           timeSchedule: timeSendEmail,
           stakeholdersFeedback: checkSchedule,
@@ -635,6 +678,10 @@ function AddActivities(props) {
     setActivityType({});
   };
 
+  const handlePhaseChange = (e) => {
+    setPhase(e.target.value)
+  };
+
   return (
     <div className={classes.AddNewActivity}>
       {!list && !disabled ?
@@ -642,7 +689,7 @@ function AddActivities(props) {
                 className={step === 4 ? classes.buttonInterest : step === 5 ? classes.buttonUnderstanding :
                   step === 1 ? classes.buttonAwareness :
                     step === 2 ? classes.buttonPreparedness :
-                      step === 3 ? classes.buttonSupport : null}
+                      step === 3 ? classes.buttonSupport : classes.button}
                 fullWidth={true} onClick={handleClickOpen}
         >
           Add Activity
@@ -656,104 +703,122 @@ function AddActivities(props) {
         <form onSubmit={createActivity} noValidate>
           <DialogContent>
             <div className={classes.root}>
-              <FormControl fullWidth disabled={disabledManager}>
-              <Select fullWidth value={0} open={showSelect} onOpen={handleShowSelect}>
-                <MenuItem value={0} style={{display: 'none'}}>
-                  <Typography className={classes.secondaryHeading}>
-                    {activityType.buttonText || 'Select channel*'}
-                    {activityType.iconSVG ? <SVGInline
-                      style={{position: 'absolute', marginTop: -8}}
-                      width="35px"
-                      height="35px"
-                      fill={color}
-                      svg={activityType.iconSVG || customActivityIcon}
-                    /> : ''}
-                  </Typography>
-                </MenuItem>
-                <ClickAwayListener onClickAway={() => {
-                  setActivityType(selectActivity);
-                  setShowInputEditActivity(false);
-                  setShowSelect(false);
-                }}>
-                  <Grid style={{width: '50vw'}}>
-                    {activityCategories.map((activityCategory, index) => {
-                      return (<div><ListSubheader disableSticky>{activityCategory.toUpperCase()}</ListSubheader>
-                        <Grid container key={index} direction="row" style={{width: '48vw'}}>
-                          {data.filter(item => item.category === activityCategory).map((item, index) => {
-                            return <Grid item xs={3} key={index}
-                                         style={{background: activityType.name === item.name ? '#dae0e5' : ''}}>
-                              <MenuItem value={item} onClick={() => {
-                                changeActivityType(item)
-                              }}>
-                                <Tooltip title={item.helpText} key={index} enterDelay={600}>
-                                  <Grid item={true} xs={12} classes={classes1}>
+              <Grid container justify="space-between">
+                <Grid item xs={5}>
+                  <FormControl fullWidth disabled={disabledManager}>
+                    <InputLabel id="select-activity-type">Type*</InputLabel>
+                    <Select fullWidth value={0} id="select-activity-type" open={showSelect} onOpen={handleShowSelect}>
+                      <MenuItem value={0} style={{display: 'none'}}>
+                        <Typography className={classes.secondaryHeading}>
+                          {activityType.category && `${activityType.category}: ${activityType.buttonText}` || 'Choose Activity*'}
+                          {activityType.iconSVG ? <SVGInline
+                            style={{position: 'absolute', marginTop: -8}}
+                            width="35px"
+                            height="35px"
+                            fill={color}
+                            svg={activityType.iconSVG || customActivityIcon}
+                          /> : ''}
+                        </Typography>
+                      </MenuItem>
+                      <ClickAwayListener onClickAway={() => {
+                        setActivityType(selectActivity);
+                        setShowInputEditActivity(false);
+                        setShowSelect(false);
+                      }}>
+                        <Grid style={{width: '50vw'}}>
+                          {activityCategories.map((activityCategory, index) => {
+                            return (<div><ListSubheader disableSticky>{activityCategory.toUpperCase()}</ListSubheader>
+                              <Grid container key={index} direction="row" style={{width: '48vw'}}>
+                                {data.filter(item => item.category === activityCategory).map((item, index) => {
+                                  return <Grid item xs={3} key={index}
+                                               style={{background: activityType.name === item.name ? '#dae0e5' : ''}}>
+                                    <MenuItem value={item} onClick={() => {
+                                      changeActivityType(item)
+                                    }}>
+                                      <Tooltip title={item.helpText} key={index} enterDelay={600}>
+                                        <Grid item={true} xs={12} classes={classes1}>
+                                          <SVGInline
+                                            width="35px"
+                                            height="35px"
+                                            fill={color}
+                                            svg={item.iconSVG}
+                                          />
+                                          <Typography className={classes.gridText}>
+                                            {item.buttonText}
+                                          </Typography>
+                                        </Grid>
+                                      </Tooltip>
+                                    </MenuItem>
+                                  </Grid>
+                                })}
+                              </Grid>
+                              <br/>
+                              <hr/>
+                            </div>)
+                          })
+                          }
+
+                          <ListSubheader disableSticky>CUSTOM</ListSubheader>
+                          {(activityType.category !== "Custom") || showInputEditActivity ?
+                            <Grid container direction="row" justify="flex-start" alignItems="flex-start"
+                                  style={{width: '48vw'}}>
+                              <Grid item xs={1} style={{maxWidth: '5%'}}>
+                                <SVGInline
+                                  width="35px"
+                                  height="35px"
+                                  fill={color}
+                                  svg={customActivityIcon}
+                                />
+                              </Grid>
+                              <Grid item xs={11}>
+                                <TextField
+                                  placeholder={"Enter activity type"}
+                                  onFocus={resetActivityType}
+                                  fullWidth type={"text"}
+                                  defaultValue={activityType.category === "Custom" ? activityType.buttonText : ''}
+                                  onKeyPress={(e) => {
+                                    (e.key === 'Enter' ? changeActivityType(e.target.value, true) : null)
+                                  }}/>
+                              </Grid>
+                            </Grid> :
+                            <Grid style={{width: '48vw'}} onClick={handleShowEditActivity}>
+                              <Grid item xs={3}>
+                                <MenuItem value={activityType}>
+                                  <Grid item={true} xs={12} classes={classes1}
+                                        style={{background: activityType.category === "Custom" ? '#dae0e5' : ''}}>
                                     <SVGInline
                                       width="35px"
                                       height="35px"
                                       fill={color}
-                                      svg={item.iconSVG}
+                                      svg={customActivityIcon}
                                     />
                                     <Typography className={classes.gridText}>
-                                      {item.buttonText}
+                                      {activityType.buttonText}
                                     </Typography>
                                   </Grid>
-                                </Tooltip>
-                              </MenuItem>
+                                </MenuItem>
+                              </Grid>
                             </Grid>
-                          })}
+                          }
                         </Grid>
-                        <br/>
-                        <hr/>
-                      </div>)
-                    })
-                    }
+                      </ClickAwayListener>
+                    </Select>
+                  </FormControl>
+                </Grid>
 
-                    <ListSubheader disableSticky>CUSTOM</ListSubheader>
-                    {(activityType.category !== "custom") || showInputEditActivity ?
-                      <Grid container direction="row" justify="flex-start" alignItems="flex-start"
-                            style={{width: '48vw'}}>
-                        <Grid item xs={1} style={{maxWidth: '5%'}}>
-                          <SVGInline
-                            width="35px"
-                            height="35px"
-                            fill={color}
-                            svg={customActivityIcon}
-                          />
-                        </Grid>
-                        <Grid item xs={11}>
-                          <TextField
-                            placeholder={"Enter activity type"}
-                            onFocus={resetActivityType}
-                            fullWidth type={"text"}
-                            defaultValue={activityType.category === "custom" ? activityType.buttonText : ''}
-                            onKeyPress={(e) => {
-                              (e.key === 'Enter' ? changeActivityType(e.target.value, true) : null)
-                            }}/>
-                        </Grid>
-                      </Grid> :
-                      <Grid style={{width: '48vw'}} onClick={handleShowEditActivity}>
-                        <Grid item xs={3}>
-                          <MenuItem value={activityType}>
-                            <Grid item={true} xs={12} classes={classes1}
-                                  style={{background: activityType.category === "custom" ? '#dae0e5' : ''}}>
-                              <SVGInline
-                                width="35px"
-                                height="35px"
-                                fill={color}
-                                svg={customActivityIcon}
-                              />
-                              <Typography className={classes.gridText}>
-                                {activityType.buttonText}
-                              </Typography>
-                            </Grid>
-                          </MenuItem>
-                        </Grid>
-                      </Grid>
-                    }
-                  </Grid>
-                </ClickAwayListener>
-              </Select>
-              </FormControl>
+                <Grid item xs={5}>
+                  <FormControl fullWidth disabled={disabledManager}>
+                    <InputLabel id="select-phase">Change phase*</InputLabel>
+                    <Select fullWidth value={phase || 1} id="select-phase" onChange={handlePhaseChange}>
+                      <MenuItem value={1}>{company.activityColumns && company.activityColumns[0].toUpperCase()}</MenuItem>
+                      <MenuItem value={4}>{company.activityColumns && company.activityColumns[3].toUpperCase()}</MenuItem>
+                      <MenuItem value={5}>{company.activityColumns && company.activityColumns[4].toUpperCase()}</MenuItem>
+                      <MenuItem value={2}>{company.activityColumns && company.activityColumns[1].toUpperCase()}</MenuItem>
+                      <MenuItem value={3}>{company.activityColumns && company.activityColumns[2].toUpperCase()}</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+              </Grid>
               <br/>
               <br/>
 
@@ -867,7 +932,8 @@ function AddActivities(props) {
                 <Grid item={true} xs={5}>
                   <AutoComplete updateUsers={updateUsers} data={users} selectedValue={person}
                                 currentChangeManager={changeManager} isActivity={true} isManager={isManager}
-                                isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager} isActivityOwner={isActivityOwner}/>
+                                isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager}
+                                isActivityOwner={isActivityOwner}/>
                   {type === 'project' &&
                   <Button variant="text" color="primary" className={classes.buttonAsLink}
                           disabled={disabledManager}
@@ -879,7 +945,8 @@ function AddActivities(props) {
                   }
                 </Grid>
                 <Grid item={true} xs={3} className={classes.linkButton}>
-                  <AddNewPerson company={company} isActivity={true} isManager={isManager} isActivityOwner={isActivityOwner}
+                  <AddNewPerson company={company} isActivity={true} isManager={isManager}
+                                isActivityOwner={isActivityOwner}
                                 isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager}/>
                 </Grid>
               </Grid>
