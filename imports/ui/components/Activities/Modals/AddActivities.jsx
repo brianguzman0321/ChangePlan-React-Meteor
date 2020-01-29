@@ -810,11 +810,11 @@ function AddActivities(props) {
                   <FormControl fullWidth disabled={disabledManager}>
                     <InputLabel id="select-phase">Change phase*</InputLabel>
                     <Select fullWidth value={phase || 1} id="select-phase" onChange={handlePhaseChange}>
-                      <MenuItem value={1}>{company.activityColumns && company.activityColumns[0].toUpperCase()}</MenuItem>
-                      <MenuItem value={4}>{company.activityColumns && company.activityColumns[3].toUpperCase()}</MenuItem>
-                      <MenuItem value={5}>{company.activityColumns && company.activityColumns[4].toUpperCase()}</MenuItem>
-                      <MenuItem value={2}>{company.activityColumns && company.activityColumns[1].toUpperCase()}</MenuItem>
-                      <MenuItem value={3}>{company.activityColumns && company.activityColumns[2].toUpperCase()}</MenuItem>
+                      <MenuItem value={1}>{(company.activityColumns && company.activityColumns[0].toUpperCase()) || "AWARENESS"}</MenuItem>
+                      <MenuItem value={4}>{(company.activityColumns && company.activityColumns[3].toUpperCase()) || "INTEREST"}</MenuItem>
+                      <MenuItem value={5}>{(company.activityColumns && company.activityColumns[4].toUpperCase()) || "UNDERSTANDING"}</MenuItem>
+                      <MenuItem value={2}>{(company.activityColumns && company.activityColumns[1].toUpperCase()) || "PREPAREDNESS"}</MenuItem>
+                      <MenuItem value={3}>{(company.activityColumns && company.activityColumns[2].toUpperCase()) || "SUPPORT"}</MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>
