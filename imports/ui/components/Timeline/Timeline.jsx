@@ -32,6 +32,7 @@ import AddActivities from "../Activities/Modals/AddActivities";
 import ListView from "../Activities/ListView";
 import { Templates } from "../../../api/templates/templates";
 import { Companies } from "../../../api/companies/companies";
+import AddEventModal from "../Events/AddEventModal";
 
 
 function Timeline(props) {
@@ -57,6 +58,7 @@ function Timeline(props) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isChangeManager, setIsChangeManager] = useState(false);
   const [isManager, setIsManager] = useState(false);
+  const [showAddEventModal, setShowAddEventModal] = useState(false);
 
 
   useEffect(() => {
@@ -230,6 +232,10 @@ function Timeline(props) {
     setEdit(obj);
   };
 
+  const handleCloseAddEventModal = () => {
+    setShowAddEventModal(false);
+  };
+
   return (
     <div>
       <TopNavBar menus={config.menus} {...props} />
@@ -264,6 +270,11 @@ function Timeline(props) {
               <Tab className={classes.activityTab}
                 label={<div className={classes.iconTab}><ListIcon />&nbsp; List</div>} />
             </Tabs>
+            <Grid item className={classes.addEventButton}>
+              <Button color="primary" variant={"outlined"} onClick={() => setShowAddEventModal(true)}>
+                Add Project Event
+              </Button>
+            </Grid>
           </Grid>
           {viewMode === 0 &&
             <Grid className={classes.flexBox}>
@@ -475,6 +486,7 @@ function Timeline(props) {
             template={template} match={match} />
         }
       </Grid>
+      <AddEventModal open={showAddEventModal} handleClose={handleCloseAddEventModal}/>
     </div>
   )
 }

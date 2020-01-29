@@ -86,8 +86,6 @@ function DeleteProject(props) {
         Meteor.call('activities.remove', paramsActivity, (err, res) => {
           if (err) {
             props.enqueueSnackbar(err.reason, {variant: 'error'})
-          } else {
-            props.enqueueSnackbar('Activities Removed Successfully.', {variant: 'success'})
           }
         });
       })

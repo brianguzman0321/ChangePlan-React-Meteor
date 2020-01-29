@@ -1,5 +1,4 @@
-
-import { makeStyles } from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 
 export const styles = theme => ({
   root: {
@@ -21,11 +20,11 @@ export const styles = theme => ({
 
 export const useStyles = makeStyles(theme => ({
   inline: {
-    display:"inline",
+    display: "inline",
   },
   activityTabs: {
     wrapper: {
-      flexDirection:'row',
+      flexDirection: 'row',
     },
     color: "black",
   },
@@ -88,6 +87,10 @@ export const useStyles = makeStyles(theme => ({
     marginBottom: 20,
     marginLeft: 50,
   },
+  addEventButton: {
+    paddingLeft: '10px',
+    paddingTop: '6px',
+  },
   formControl: {
     marginTop: '-20px',
     margin: theme.spacing(1),
@@ -101,9 +104,9 @@ export const useStyles = makeStyles(theme => ({
   },
 }));
 
-export function changeManagersNames({ changeManagerDetails }) {
+export function changeManagersNames({changeManagerDetails}) {
   if (changeManagerDetails) {
-    let changeManagers = changeManagerDetails.map(({ profile: { firstName, lastName } }) => `${firstName} ${lastName}`);
+    let changeManagers = changeManagerDetails.map(({profile: {firstName, lastName}}) => `${firstName} ${lastName}`);
     if (changeManagers.length) {
       return changeManagers.join(", ")
     }
