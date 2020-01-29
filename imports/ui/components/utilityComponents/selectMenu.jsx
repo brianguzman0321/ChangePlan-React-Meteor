@@ -109,14 +109,16 @@ function ProjectSelectMenu(props) {
         setProjectsMenu([...new Set(menuItem)]);
       }
       if (isActivityOwner && !isSuperAdmin && !isAdmin) {
-        projects.forEach(_project => {
           const activities = Activities.find({owner: userId}).fetch();
-          activities.forEach(activity => {
-            const project = projects.find(project => project._id === activity.projectId);
-            menuItem.push(project);
-          })
-        });
-        setProjectsMenu([...new Set(menuItem)]);
+          if (activities) {
+            activities.forEach(activity => {
+              const project = projects.find(project => project._id === activity.projectId);
+              if (project) {
+                menuItem.push(project);
+              }
+            });
+            setProjectsMenu([...new Set(menuItem)]);
+          }
       }
     }
   }, [projects, isActivityOwner, isManager, isChangeManager, isAdmin, isSuperAdmin]);

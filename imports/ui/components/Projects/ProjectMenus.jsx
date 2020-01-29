@@ -18,7 +18,7 @@ export default function SimpleMenu(props) {
         delete: false
     });
     const [openDuplicateModal, setOpenDuplicateModal] = useState(false)
-    let { project, company } = props;
+    let { project, company, activities } = props;
     const allowedValues = ['share', 'delete', 'edit', 'duplicate'];
 
     const handleClick = event => {
@@ -68,7 +68,7 @@ export default function SimpleMenu(props) {
                 <MenuItem onClick={handleClose.bind(null, 'delete')} disabled={isAdminOrChangeManager(company, project)}>Delete</MenuItem>
             </Menu>
             <ShareProject open={modals.share} handleModalClose={handleModalClose} project={project}/>
-            <DeleteProject open={modals.delete} handleModalClose={handleModalClose} project={project}/>
+            <DeleteProject open={modals.delete} handleModalClose={handleModalClose} project={project} activities={activities}/>
             <DuplicateProject open={openDuplicateModal}
                               handleClose={handleCloseDuplicateModal}
                               project={project}
