@@ -43,6 +43,7 @@ function ProjectSelectMenu(props) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isChangeManager, setIsChangeManager] = useState(false);
   const [isManager, setIsManager] = useState(false);
+  const [isActivityOwner, setIsActivityOwner] = useState(false);
   const [isActivityDeliverer, setIsActivityDeliverer] = useState(false);
   const [projectsMenu, setProjectsMenu] = useState(projects || []);
   const [age, setAge] = React.useState(projectId || '');
@@ -78,6 +79,9 @@ function ProjectSelectMenu(props) {
             if (!Roles.userIsInRole(userId, 'superAdmin') && activity.deliverer && activity.deliverer.includes(Meteor.userId())) {
               setIsActivityDeliverer(true);
             }
+            if (!Roles.userIsInRole(userId, 'superAdmin') && activity.owner && activity.owner.includes(Meteor.userId())) {
+              setIsActivityOwner(true);
+            }
           })
         }
       })
@@ -109,16 +113,28 @@ function ProjectSelectMenu(props) {
         setProjectsMenu([...new Set(menuItem)]);
       }
       if (isActivityDeliverer && !isSuperAdmin && !isAdmin) {
-          const activities = Activities.find({deliverer: userId}).fetch();
-          if (activities) {
-            activities.forEach(activity => {
-              const project = projects.find(project => project._id === activity.projectId);
-              if (project) {
-                menuItem.push(project);
-              }
-            });
-            setProjectsMenu([...new Set(menuItem)]);
-          }
+        const activities = Activities.find({deliverer: userId}).fetch();
+        if (activities) {
+          activities.forEach(activity => {
+            const project = projects.find(project => project._id === activity.projectId);
+            if (project) {
+              menuItem.push(project);
+            }
+          });
+          setProjectsMenu([...new Set(menuItem)]);
+        }
+      }
+      if (isActivityOwner && !isSuperAdmin && !isAdmin) {
+        const activities = Activities.find({owner: userId}).fetch();
+        if (activities) {
+          activities.forEach(activity => {
+            const project = projects.find(project => project._id === activity.projectId);
+            if (project) {
+              menuItem.push(project);
+            }
+          });
+          setProjectsMenu([...new Set(menuItem)]);
+        }
       }
     }
   }, [projects, isActivityDeliverer, isManager, isChangeManager, isAdmin, isSuperAdmin]);
