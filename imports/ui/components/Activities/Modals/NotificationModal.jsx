@@ -26,7 +26,7 @@ const SendNotification = ({ showModalDialog, handleClose, handleSend, isProject 
           { "Send Email" }
         </DialogTitle>
         <DialogContentText id="customized-dialog-description" className={styles.dialogContent}>
-          {isProject ? 'Notify the Change Manager via email?' : 'Notify the Activity owner via email?'}
+          {isProject ? 'Notify the Change Manager via email?' : 'Notify the Activity deliverer via email?'}
         </DialogContentText>
         <DialogActions>
           <Button type="submit" color="primary" onClick={ (e) => handleSend (e)}>Yes</Button>

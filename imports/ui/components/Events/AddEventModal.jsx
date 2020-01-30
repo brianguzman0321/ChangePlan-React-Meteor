@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {withStyles, makeStyles} from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -74,7 +74,7 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function AddEvent(props) {
-  let {match, open, handleClose, isNew = true} = props;
+  let {match, open, handleClose, isNew = true, event} = props;
   let {projectId} = match.params;
   const [name, setName] = useState('');
   const [startDate, setStartDate] = useState(new Date());
@@ -98,7 +98,12 @@ function AddEvent(props) {
         endDate,
       }
     };
-    Meteor.call('projectEvents.insert', params, (err, res) => {
+    let methodName = 'projectEvents.insert';
+    if (!isNew) {
+      methodName = 'projectEvents.update';
+      params.projectEvent._id = event._id;
+    }
+    Meteor.call(methodName, params, (err, res) => {
       if (err) {
         props.enqueueSnackbar(err.reason, {variant: 'error'})
       } else {
@@ -108,6 +113,14 @@ function AddEvent(props) {
       }
     })
   };
+
+  useEffect(() => {
+    if (event) {
+      setName(event.name);
+      setStartDate(event.startDate);
+      setEndDate(event.endDate);
+    }
+  }, [props.event]);
 
   const resetValues = () => {
     setName('');
@@ -132,12 +145,25 @@ function AddEvent(props) {
   };
 
   const deleteEvent = () => {
-
+    const params = {
+      projectEvent: {
+        _id: event._id
+      },
+    };
+    Meteor.call('projectEvents.remove', params, (err, res) => {
+      if (err) {
+        props.enqueueSnackbar(err.reason, {variant: 'error'})
+      } else {
+        props.enqueueSnackbar('New Project Event Deleted Successfully.', {variant: 'success'});
+        resetValues();
+        handleClose();
+      }
+    })
   };
 
   return (
     <div className={classes.AddNewEvent}>
-      <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md"
+      <Dialog onClose={() => handleClose()} aria-labelledby="customized-dialog-title" open={open} maxWidth="md"
               fullWidth={true}>
         <DialogTitle id="customized-dialog-title" onClose={() => handleClose()}>
           Add project event

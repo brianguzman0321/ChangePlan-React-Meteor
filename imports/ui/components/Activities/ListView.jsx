@@ -62,7 +62,7 @@ const headCells = [
   {id: 'completedAt', numeric: false, disablePadding: true, label: 'DATE COMPLETED'},
   {id: 'name', numeric: true, disablePadding: false, label: 'ACTIVITY'},
   {id: 'description', numeric: true, disablePadding: false, label: 'DESCRIPTION'},
-  {id: 'activityOwner', numeric: false, disablePadding: false, label: 'ACTIVITY OWNER'},
+  {id: 'activityDeliverer', numeric: false, disablePadding: false, label: 'ACTIVITY DELIVERER'},
 ];
 
 function EnhancedTableHead(props) {
@@ -78,7 +78,7 @@ function EnhancedTableHead(props) {
         {headCells.map(headCell => (
           <TableCell style={{color: 'white'}}
                      key={headCell.id}
-                     align={headCell.id === 'name' || headCell.id === 'description' || headCell.id === 'activityOwner' ? 'left' : 'center'}
+                     align={headCell.id === 'name' || headCell.id === 'description' || headCell.id === 'activityDeliverer' ? 'left' : 'center'}
                      sortDirection={orderBy === headCell.id ? order : false}
           >
             <TableSortLabel
@@ -204,7 +204,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function StakeHolderList(props) {
-  let {rows, addNew, type, isSuperAdmin, template, companyId, isAdmin, isChangeManager, isManager, isActivityOwner, projectId, match} = props;
+  let {rows, addNew, type, isSuperAdmin, template, companyId, isAdmin, isChangeManager, isManager, isActivityDeliverer, projectId, match} = props;
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
@@ -214,7 +214,7 @@ function StakeHolderList(props) {
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [edit, setEdit] = React.useState(addNew || false);
   const [step, setStep] = React.useState(0);
-  const disabled = (!(isAdmin && template && (template.companyId === companyId) || isSuperAdmin) && (projectId === undefined) || (isManager || isActivityOwner));
+  const disabled = (!(isAdmin && template && (template.companyId === companyId) || isSuperAdmin) && (projectId === undefined) || (isManager || isActivityDeliverer));
 
   const handleRequestSort = (event, property) => {
     const isDesc = orderBy === property && order === 'desc';
@@ -239,7 +239,7 @@ function StakeHolderList(props) {
     } else {
       activity.completedAt = null;
     }
-    delete activity.activityOwner;
+    delete activity.activityDeliverer;
     let params = {
       activity
     };
@@ -271,10 +271,10 @@ function StakeHolderList(props) {
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
   rows.forEach(row => {
-    if (row.activityOwner) {
-      row.activityOwner = `${row.personResponsible.profile.firstName} ${row.personResponsible.profile.lastName}`;
+    if (row.activityDeliverer) {
+      row.activityDeliverer = `${row.personResponsible.profile.firstName} ${row.personResponsible.profile.lastName}`;
     } else {
-      row.activityOwner = '';
+      row.activityDeliverer = '';
     }
   });
   return (
@@ -365,7 +365,7 @@ function StakeHolderList(props) {
       <AddActivities edit={edit} activity={sActivity} newActivity={() => setEdit(false)} list={true} isOpen={addNew}
                      type={type} template={template} match={match} step={step}
                      expandAccordian={true} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isManager={isManager}
-                     isActivityOwner={isActivityOwner} isChangeManager={isChangeManager}
+                     isActivityDeliverer={isActivityDeliverer} isChangeManager={isChangeManager}
                      color={step === 1 ? '#f1753e' : step === 2 ? '#53cbd0' : step === 3 ? '#bbabd2' : step === 4 ? '#8BC34A' : step === 5 ? '#03A9F4' : null}/>
       {/*<AddActivity edit={edit} activity={sActivity} newActivity={() => setEdit(false)} list={true} isOpen={addNew}
                      type={type} template={template} match={match}/>

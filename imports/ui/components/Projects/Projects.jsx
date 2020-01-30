@@ -167,7 +167,7 @@ function ProjectCard(props) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isChangeManager, setIsChangeManager] = useState(false);
   const [isManager, setIsManager] = useState(false);
-  const [isActivityOwner, setIsActivityOwner] = useState(false);
+  const [isActivityDeliverer, setIsActivityDeliverer] = useState(false);
   const [projectCard, setProjectCard] = useState(projects || []);
 
   useEffect(() => {
@@ -208,8 +208,8 @@ function ProjectCard(props) {
         const activities = Activities.find({projectId: project._id}).fetch();
         if (activities) {
           activities.forEach(activity => {
-            if (!Roles.userIsInRole(userId, 'superAdmin') && activity.owner && activity.owner.includes(Meteor.userId())) {
-              setIsActivityOwner(true);
+            if (!Roles.userIsInRole(userId, 'superAdmin') && activity.deliverer && activity.deliverer.includes(Meteor.userId())) {
+              setIsActivityDeliverer(true);
             }
           })
         }
@@ -237,8 +237,8 @@ function ProjectCard(props) {
         projectsFiltering = projectsFiltering.concat(projects.filter(project => project.managers.includes(userId)));
         setProjectCard([...new Set(projectsFiltering)]);
       }
-      if (isActivityOwner && !isSuperAdmin && !isAdmin) {
-        const _activities = Activities.find({owner: userId}).fetch();
+      if (isActivityDeliverer && !isSuperAdmin && !isAdmin) {
+        const _activities = Activities.find({deliverer: userId}).fetch();
         if (activities) {
           _activities.forEach(activity => {
             const project = projects.find(project => project._id === activity.projectId);
@@ -250,7 +250,7 @@ function ProjectCard(props) {
         }
       }
     }
-  }, [projects, isActivityOwner, isManager, isChangeManager, isAdmin, isSuperAdmin]);
+  }, [projects, isActivityDeliverer, isManager, isChangeManager, isAdmin, isSuperAdmin]);
 
   useEffect(() => {
     checkRoles();

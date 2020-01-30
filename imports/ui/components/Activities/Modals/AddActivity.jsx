@@ -402,7 +402,7 @@ function AddActivity(props) {
             type: activityType.name,
             description,
             projectId: projectId,
-            owner: person && person.value,
+            deliverer: person && person.value,
             dueDate,
             completedAt: completedDate,
             stakeHolders: peoples,
@@ -417,7 +417,7 @@ function AddActivity(props) {
             type: activityType.name,
             description,
             templateId: templateId,
-            owner: person && person.value,
+            deliverer: person && person.value,
             dueDate,
             completedAt: completedDate,
             stakeHolders: peoples,
@@ -447,7 +447,7 @@ function AddActivity(props) {
           type: activityType.name,
           description,
           projectId: projectId,
-          owner: person && person.value,
+          deliverer: person && person.value,
           dueDate,
           completedAt: completedDate,
           stakeHolders: peoples,
@@ -755,7 +755,7 @@ function AddActivity(props) {
                   aria-controls="panal5bh-content"
                   id="panal5bh-header"
                 >
-                  <Typography className={classes.heading}>Activity owner</Typography>
+                  <Typography className={classes.heading}>Activity deliverer</Typography>
                   <Typography
                     className={classes.secondaryHeading}>{person ? `${person.label}` : (changeManager || {label: ''}).label}</Typography>
                 </ExpansionPanelSummary>

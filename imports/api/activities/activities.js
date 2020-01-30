@@ -27,6 +27,11 @@ Activities.schema = new SimpleSchema({
     label: 'Owner',
     optional: true,
   },
+  deliverer: {
+    type: String,
+    label: 'Activity Deliverer',
+    optional: true,
+  },
   type: {
     type: String,
     label: 'activity Type'
@@ -87,6 +92,26 @@ Activities.schema = new SimpleSchema({
     label: 'completed or not',
     defaultValue: false
   },
+  buildStartDate: {
+    type: Date,
+    label: 'Activity build start date',
+    optional: true,
+  },
+  buildEndDate: {
+    type: Date,
+    label: 'Activity build end date',
+    optional: true,
+  },
+  signOffDate: {
+    type: Date,
+    label: 'Activity sign off date',
+    optional: true,
+  },
+  cost: {
+    type: Number,
+    label: 'Activity cost',
+    optional: true,
+  },
   timeSchedule: {
     type: Date,
     label: 'Time for send ',
@@ -98,7 +123,7 @@ Activities.schema = new SimpleSchema({
   },
   sentEmail: {
     type: Boolean,
-    label: 'Sent email for survey Activity Owner',
+    label: 'Sent email for survey Activity Deliverer',
     optional: true,
   },
   sentEmailDate: {

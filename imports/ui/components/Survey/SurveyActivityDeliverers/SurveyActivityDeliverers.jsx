@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function SurveyActivityOwner(props) {
+function SurveyActivityDeliverer(props) {
   let {match, history: {push}, activity} = props;
   const [value, setValue] = useState(1);
   const [issue, setIssue] = useState('');
@@ -86,13 +86,13 @@ function SurveyActivityOwner(props) {
         }
       });
       const paramsSurvey = {
-        surveyActivityOwners: {
+        surveyActivityDeliverer: {
           activityId: match.params.activityId,
-          activityOwnerId: match.params.activityOwnerId,
+          activityDelivererId: match.params.activityDelivererId,
           question1: Number(match.params.response),
         }
       };
-      Meteor.call('surveysActivityOwners.insert', paramsSurvey, (err, res) => {
+      Meteor.call('surveysActivityDeliverers.insert', paramsSurvey, (err, res) => {
         if (err) {
           props.enqueueSnackbar(err.reason, {variant: 'error'});
         } else if (res) {
@@ -106,11 +106,11 @@ function SurveyActivityOwner(props) {
       changeManagers.forEach(_changeManager => {
         const changeManager = Meteor.users.findOne({_id: _changeManager});
         const email = changeManager.emails[0];
-        const activityOwnerInformation = Meteor.users.find({_id: match.params.activityOwnerId}).fetch()[0];
-        const activityOwner = `${activityOwnerInformation.profile.firstName} ${activityOwnerInformation.profile.lastName}`;
+        const activityDelivererInformation = Meteor.users.find({_id: match.params.activityDelivererId}).fetch()[0];
+        const activityDeliverer = `${activityDelivererInformation.profile.firstName} ${activityDelivererInformation.profile.lastName}`;
         const activityName = activity.name;
         const projectName = project.name;
-        Meteor.call('sendReportToChangeManager', email, activityOwner, activityName, projectName, (err, res) => {
+        Meteor.call('sendReportToChangeManager', email, activityDeliverer, activityName, projectName, (err, res) => {
           if (err) {
             props.enqueueSnackbar(err.reason, {variant: 'error'});
           }
@@ -121,10 +121,10 @@ function SurveyActivityOwner(props) {
 
   const saveSurvey = () => {
     const params = {
-      surveyActivityOwners: {
+      surveyActivityDeliverers: {
         _id: survey,
         activityId: match.params.activityId,
-        activityOwnerId: match.params.activityOwnerId,
+        activityDelivererId: match.params.activityDelivererId,
         question1: Number(match.params.response),
         question2: value,
         question3: issue,
@@ -132,7 +132,7 @@ function SurveyActivityOwner(props) {
         question5: comments,
       }
     };
-    Meteor.call('surveysActivityOwners.update', params, (err, res) => {
+    Meteor.call('surveysActivityDeliverers.update', params, (err, res) => {
       if (err) {
         props.enqueueSnackbar(err.reason, {variant: 'error'})
       } else if (res) {
@@ -216,14 +216,14 @@ function SurveyActivityOwner(props) {
 }
 
 
-const SurveyActivityOwners = withTracker(props => {
-  Meteor.subscribe('surveysActivityOwners');
+const SurveyActivityDeliverers = withTracker(props => {
+  Meteor.subscribe('surveysActivityDeliverers');
   Meteor.subscribe('activities.notLogin');
   Meteor.subscribe('projects.notLogin');
   Meteor.subscribe('users.notLogin');
   return {
     activity: Activities.findOne({_id: props.match.params.activityId})
   };
-})(withRouter(withSnackbar(SurveyActivityOwner)));
+})(withRouter(withSnackbar(SurveyActivityDeliverer)));
 
-export default SurveyActivityOwners;
+export default SurveyActivityDeliverers;

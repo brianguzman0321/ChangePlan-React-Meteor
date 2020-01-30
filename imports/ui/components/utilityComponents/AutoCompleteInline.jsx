@@ -352,7 +352,7 @@ export default function IntegrationReactSelect(props) {
                 htmlFor: 'react-select-multiple',
                 shrink: true,
               },
-              disabled: (props.isManager || props.isActivityOwner) && !props.isSuperAdmin && !props.isAdmin && !props.isChangeManager,
+              disabled: (props.isManager || props.isActivityDeliverer) && !props.isSuperAdmin && !props.isAdmin && !props.isChangeManager,
             }}
             defaultValue={props.selectedValue || props.currentChangeManager}
             placeholder="Select Person"
@@ -361,7 +361,7 @@ export default function IntegrationReactSelect(props) {
             value={multi}
             onChange={handleChangeMulti.bind(event)}
             isMulti={multiple}
-            isDisabled={(props.isManager || props.isActivityOwner) && !props.isSuperAdmin && !props.isAdmin && !props.isChangeManager}
+            isDisabled={(props.isManager || props.isActivityDeliverer) && !props.isSuperAdmin && !props.isAdmin && !props.isChangeManager}
           />
         </FormControl>
       </NoSsr>

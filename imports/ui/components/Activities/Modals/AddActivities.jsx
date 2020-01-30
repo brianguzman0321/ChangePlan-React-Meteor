@@ -36,7 +36,7 @@ import {Projects} from "../../../../api/projects/projects";
 import {Templates} from "../../../../api/templates/templates";
 import NotificationModal from "./NotificationModal";
 import {
-  ClickAwayListener,
+  ClickAwayListener, InputAdornment,
   ListSubheader,
   Select,
   Switch
@@ -44,6 +44,7 @@ import {
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
+import Input from "@material-ui/core/Input";
 
 
 const styles = theme => ({
@@ -133,7 +134,7 @@ const useStyles = makeStyles(theme => ({
     fontWeight: 300,
   },
   heading: {
-    fontSize: theme.typography.pxToRem(18),
+    fontSize: theme.typography.pxToRem(14),
     flexBasis: '33.33%',
     flexShrink: 0,
     fontWeight: 420,
@@ -192,7 +193,10 @@ const useStyles = makeStyles(theme => ({
       backgroundColor: '#f5f5f5',
       borderColor: '#f5f5f5',
     },
-  }
+  },
+  selectPhase: {
+    height: '35px',
+  },
 }));
 
 const DialogTitle = withStyles(styles)(props => {
@@ -225,7 +229,7 @@ const DialogActions = withStyles(theme => ({
 function AddActivities(props) {
   let {
     company, stakeHolders, local, project, match, edit, activity, list, isOpen, currentChangeManager,
-    template, type, stakeHoldersTemplate, isSuperAdmin, isAdmin, isChangeManager, isManager, isActivityOwner, step,
+    template, type, stakeHoldersTemplate, isSuperAdmin, isAdmin, isChangeManager, isManager, isActivityDeliverer, step,
   } = props;
   const customActivityIcon = data.find(item => item.category === "Custom").iconSVG;
   const [open, setOpen] = useState(edit || isOpen || false);
@@ -237,13 +241,18 @@ function AddActivities(props) {
   const [users, setUsers] = useState([]);
   const [description, setDescription] = useState('');
   const [person, setPerson] = useState(null);
+  const [owner, setOwner] = useState(null);
   const [peoples, setPeoples] = useState(stakeHolders.map(item => item._id));
   const [activityType, setActivityType] = useState({});
   const [currentProject, setProject] = useState(project);
   const [vision, setVision] = useState([]);
+  const [cost, setCost] = useState('');
   const [objectives, setObjectives] = useState([]);
   const [dueDate, setDueDate] = useState(new Date());
   const [completedDate, setCompletedDate] = useState(null);
+  const [buildStartDate, setBuildStartDate] = useState(null);
+  const [buildEndDate, setBuildEndDate] = useState(null);
+  const [signOffDate, setSignOffDate] = useState(null);
   const [changeManager, setChangeManager] = useState(currentChangeManager);
   const [showModalDialog, setShowModalDialog] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
@@ -252,10 +261,10 @@ function AddActivities(props) {
   const [timeSendEmail, setTimeSendEmail] = useState(null);
   const activityCategories = ["Engagement", "Communication", "Learning/coaching"];
   const disabled = (isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
-    || (isActivityOwner && !isSuperAdmin && !isChangeManager && !isAdmin)
+    || (isActivityDeliverer && !isSuperAdmin && !isChangeManager && !isAdmin)
     || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
     || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin);
-  const disabledManager = (isManager || isActivityOwner) && !isChangeManager && !isAdmin && !isSuperAdmin;
+  const disabledManager = (isManager || isActivityDeliverer) && !isChangeManager && !isAdmin && !isSuperAdmin;
   const [showSelect, setShowSelect] = useState(false);
   const [selectActivity, setSelectActivity] = useState({});
   const [showInputEditActivity, setShowInputEditActivity] = useState(isNew || false);
@@ -339,8 +348,21 @@ function AddActivities(props) {
     setPhase(activity.step);
     setTimeSendEmail(activity.timeSchedule || null);
     setCheckSchedule(activity.stakeholdersFeedback || false);
+    setBuildStartDate(activity.buildStartDate || null);
+    setBuildEndDate(activity.buildEndDate || null);
+    setSignOffDate(activity.signOffDate || null);
+    setCost(activity.cost);
     setCompletedDate(activity.completedAt);
     setDescription(activity.description);
+    if (activity.ownerInfo !== undefined) {
+      const _owner = {
+        label: `${activity.ownerInfo.profile.firstName} ${activity.ownerInfo.profile.lastName}`,
+        firstName: activity.ownerInfo.profile.firstName,
+        value: activity.ownerInfo._id,
+        email: activity.ownerInfo.emails,
+      };
+      setOwner(_owner);
+    }
     if (activity.personResponsible !== undefined) {
       let obj = {
         label: `${activity.personResponsible.profile.firstName} ${activity.personResponsible.profile.lastName}`,
@@ -392,7 +414,12 @@ function AddActivities(props) {
     setCheckSchedule(false);
     setTimeSendEmail(null);
     setCompletedDate(null);
+    setBuildStartDate(null);
+    setBuildEndDate(null);
+    setSignOffDate(null);
+    setCost('');
     setDescription('');
+    setOwner(owner);
     setPerson(person);
     setTime('');
     setPeoples(stakeHolders.map(item => item._id));
@@ -465,6 +492,7 @@ function AddActivities(props) {
       setActivityType(item);
       setSelectActivity(item);
     }
+    setIsUpdated(true);
     setShowSelect(false);
     setShowInputEditActivity(false);
   };
@@ -529,9 +557,14 @@ function AddActivities(props) {
             type: activityType.name,
             description,
             projectId: projectId,
-            owner: person && person.value,
+            deliverer: person && person.value,
+            owner: owner && owner.value,
             dueDate,
             completedAt: completedDate,
+            buildStartDate: buildStartDate,
+            buildEndDate: buildEndDate,
+            signOffDate: signOffDate,
+            cost: Number(cost),
             stakeHolders: peoples,
             step: phase,
             time: Number(time),
@@ -546,9 +579,14 @@ function AddActivities(props) {
             type: activityType.name,
             description,
             templateId: templateId,
-            owner: person && person.value,
+            deliverer: person && person.value,
+            owner: owner && owner.value,
             dueDate,
             completedAt: completedDate,
+            buildStartDate: buildStartDate,
+            buildEndDate: buildEndDate,
+            signOffDate: signOffDate,
+            cost: Number(cost),
             stakeHolders: peoples,
             step: phase,
             time: Number(time),
@@ -558,8 +596,7 @@ function AddActivities(props) {
         };
       }
       if (completedDate) {
-        activity.completed = true;
-        params.activity.completed = activity.completed;
+        params.activity.completed = true;
       }
       let methodName = isNew ? 'activities.insert' : 'activities.update';
       !isNew && (params.activity._id = activity._id);
@@ -581,9 +618,14 @@ function AddActivities(props) {
           type: activityType.name,
           description,
           projectId: projectId,
-          owner: person && person.value,
+          deliverer: person && person.value,
+          owner: owner && owner.value,
           dueDate,
           completedAt: completedDate,
+          buildStartDate: buildStartDate,
+          buildEndDate: buildEndDate,
+          signOffDate: signOffDate,
+          cost: Number(cost),
           stakeHolders: peoples,
           step: phase,
           time: Number(time),
@@ -592,8 +634,7 @@ function AddActivities(props) {
         }
       };
       if (completedDate) {
-        activity.completed = true;
-        params.activity.completed = activity.completed;
+        params.activity.completed = true;
       }
       let methodName = isNew ? 'activities.insert' : 'activities.update';
       !isNew && (params.activity._id = activity._id);
@@ -623,6 +664,22 @@ function AddActivities(props) {
     setIsUpdated(true);
   };
 
+  const handleBuildStartDate = date => {
+    setBuildStartDate(date);
+    setIsUpdated(true);
+  };
+
+  const handleBuildEndDate = date => {
+    setBuildEndDate(date);
+    setIsUpdated(true);
+  };
+
+  const handleSignOffDate = date => {
+    setSignOffDate(date);
+    setIsUpdated(true);
+  };
+
+
   const handleTimeChange = (e) => {
     setTime(Number(e.target.value));
     setIsUpdated(true);
@@ -630,6 +687,11 @@ function AddActivities(props) {
 
   const updateUsers = (value) => {
     setPerson(value);
+    setIsUpdated(true);
+  };
+
+  const updateOwner = (value) => {
+    setOwner(value);
     setIsUpdated(true);
   };
 
@@ -679,7 +741,13 @@ function AddActivities(props) {
   };
 
   const handlePhaseChange = (e) => {
-    setPhase(e.target.value)
+    setPhase(e.target.value);
+    setIsUpdated(true);
+  };
+
+  const handleCostChange = (e) => {
+    setCost(e.target.value);
+    setIsUpdated(true);
   };
 
   return (
@@ -717,7 +785,7 @@ function AddActivities(props) {
                             height="35px"
                             fill={color}
                             svg={activityType.iconSVG || customActivityIcon}
-                          /> : ''}
+                          /> : null}
                         </Typography>
                       </MenuItem>
                       <ClickAwayListener onClickAway={() => {
@@ -809,7 +877,7 @@ function AddActivities(props) {
                 <Grid item xs={5}>
                   <FormControl fullWidth disabled={disabledManager}>
                     <InputLabel id="select-phase">Change phase*</InputLabel>
-                    <Select fullWidth value={phase || 1} id="select-phase" onChange={handlePhaseChange}>
+                    <Select fullWidth value={phase || 1} id="select-phase" onChange={handlePhaseChange} className={classes.selectPhase}>
                       <MenuItem value={1}>{(company.activityColumns && company.activityColumns[0].toUpperCase()) || "AWARENESS"}</MenuItem>
                       <MenuItem value={4}>{(company.activityColumns && company.activityColumns[3].toUpperCase()) || "INTEREST"}</MenuItem>
                       <MenuItem value={5}>{(company.activityColumns && company.activityColumns[4].toUpperCase()) || "UNDERSTANDING"}</MenuItem>
@@ -852,9 +920,10 @@ function AddActivities(props) {
                         disabled={disabledManager}
                         margin="normal"
                         id="date-time-picker-inline"
-                        label="Due*"
-                        format="yyyy/MM/dd hh:mm a"
+                        label="Due date & time*"
+                        format="MM/dd/yyyy hh:mm a"
                         value={dueDate}
+                        autoOk={true}
                         onChange={handleDueDate}
                       />
                     </Grid>
@@ -872,7 +941,7 @@ function AddActivities(props) {
                       margin="normal"
                       id="time"
                       disabled={disabledManager}
-                      label="Time Away from BAU (Minutes)"
+                      label="Time Away from BAU (mins)"
                       value={time}
                       onChange={handleTimeChange}
                       type="number"
@@ -906,6 +975,84 @@ function AddActivities(props) {
                     </Grid>
                   </Grid>
                 </Grid>
+
+                <Grid container justify="space-between" spacing={2}>
+                  <Grid item xs={4} className={classes.datePicker}>
+                    <Grid item xs={10}>
+                      <DatePicker
+                        disableToolbar
+                        fullWidth
+                        variant="inline"
+                        disabled={disabledManager}
+                        margin="normal"
+                        id="build-start-date-picker-inline"
+                        label="Activity build start date"
+                        format="MM/dd/yyyy"
+                        autoOk={true}
+                        value={buildStartDate}
+                        onChange={handleBuildStartDate}
+                      />
+                    </Grid>
+                    <Grid item xs={2}>
+                      <IconButton aria-label="close" className={classes.closeButton}
+                                  disabled={disabledManager}
+                                  onClick={() => onCalendarClick("build-start-date-picker-inline")}>
+                        <CalendarTodayIcon/>
+                      </IconButton>
+                    </Grid>
+                  </Grid>
+
+                  <Grid item xs={4} className={classes.datePicker}>
+                    <Grid item xs={10}>
+                      <DatePicker
+                        disableToolbar
+                        fullWidth
+                        variant="inline"
+                        disabled={disabledManager}
+                        margin="normal"
+                        id="build-end-date-picker-inline"
+                        label="Activity build end date"
+                        format="MM/dd/yyyy"
+                        autoOk={true}
+                        minDate={buildStartDate}
+                        value={buildEndDate}
+                        onChange={handleBuildEndDate}
+                      />
+                    </Grid>
+                    <Grid item xs={2}>
+                      <IconButton aria-label="close" className={classes.closeButton}
+                                  disabled={disabledManager}
+                                  onClick={() => onCalendarClick("build-end-date-picker-inline")}>
+                        <CalendarTodayIcon/>
+                      </IconButton>
+                    </Grid>
+                  </Grid>
+
+                  <Grid item xs={4} className={classes.datePicker}>
+                    <Grid item xs={10}>
+                      <DatePicker
+                        disableToolbar
+                        fullWidth
+                        variant="inline"
+                        margin="normal"
+                        id="sign-off-date-picker-dialog"
+                        disabled={disabledManager}
+                        label="Sign off date"
+                        format="MM/dd/yyyy"
+                        value={signOffDate}
+                        autoOk={true}
+                        onChange={handleSignOffDate}
+                      />
+                    </Grid>
+                    <Grid item xs={2}>
+                      <IconButton aria-label="close" className={classes.closeButton}
+                                  disabled={disabledManager}
+                                  onClick={() => onCalendarClick("sign-off-date-picker-dialog")}>
+                        <CalendarTodayIcon/>
+                      </IconButton>
+                    </Grid>
+                  </Grid>
+                </Grid>
               </MuiPickersUtilsProvider>
               <br/>
               <br/>
@@ -920,34 +1067,6 @@ function AddActivities(props) {
                   </Typography>
                   <SelectStakeHolders rows={type === 'project' ? stakeHolders : stakeHoldersTemplate} local={local}
                                       isImpacts={false} isBenefits={false} disabledManager={disabledManager}/>
-                </Grid>
-              </Grid>
-              <br/>
-              <br/>
-
-              <Grid container>
-                <Grid item xs={4}>
-                  <Typography className={classes.heading}>Activity owner</Typography>
-                </Grid>
-                <Grid item={true} xs={5}>
-                  <AutoComplete updateUsers={updateUsers} data={users} selectedValue={person}
-                                currentChangeManager={changeManager} isActivity={true} isManager={isManager}
-                                isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager}
-                                isActivityOwner={isActivityOwner}/>
-                  {type === 'project' &&
-                  <Button variant="text" color="primary" className={classes.buttonAsLink}
-                          disabled={disabledManager}
-                          onClick={() => {
-                            sendNotificationEmail(activityType.name, activity.dueDate, time, activity.name, description, stakeHolders.length, project, person, projectId, project.vision, project.objectives)
-                          }}>
-                    Notify/Remind by email
-                  </Button>
-                  }
-                </Grid>
-                <Grid item={true} xs={3} className={classes.linkButton}>
-                  <AddNewPerson company={company} isActivity={true} isManager={isManager}
-                                isActivityOwner={isActivityOwner}
-                                isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager}/>
                 </Grid>
               </Grid>
               <br/>
@@ -1016,6 +1135,65 @@ function AddActivities(props) {
                 </Grid>
               </Grid>
               }
+
+              <br/>
+              <br/>
+              <Grid container>
+                <Grid item xs={5}>
+                  <Typography className={classes.heading}>Activity deliverer</Typography>
+                </Grid>
+                <Grid item xs={7}>
+                  <Typography className={classes.heading}>Activity owner</Typography>
+                </Grid>
+                <Grid item={true} xs={5}>
+                  <AutoComplete updateUsers={updateUsers} data={users} selectedValue={person}
+                                currentChangeManager={changeManager} isActivity={true} isManager={isManager}
+                                isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager}
+                                isActivityDeliverer={isActivityDeliverer}/>
+                  {type === 'project' &&
+                  <Button variant="text" color="primary" className={classes.buttonAsLink}
+                          disabled={disabledManager}
+                          onClick={() => {
+                            sendNotificationEmail(activityType.name, activity.dueDate, time, activity.name, description, stakeHolders.length, project, person, projectId, project.vision, project.objectives)
+                          }}>
+                    Notify/Remind by email
+                  </Button>
+                  }
+                </Grid>
+                <Grid item={true} xs={5}>
+                  <AutoComplete updateUsers={updateOwner} data={users} selectedValue={owner}
+                                currentChangeManager={changeManager} isActivity={true} isManager={isManager}
+                                isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager}
+                                isActivityDeliverer={isActivityDeliverer}/>
+                  {type === 'project' &&
+                  <Button variant="text" color="primary" className={classes.buttonAsLink}
+                          disabled={disabledManager}
+                          onClick={() => {
+                            sendNotificationEmail(activityType.name, activity.dueDate, time, activity.name, description, stakeHolders.length, project, owner, projectId, project.vision, project.objectives)
+                          }}>
+                    Notify/Remind by email
+                  </Button>
+                  }
+                </Grid>
+                <Grid item={true} xs={2} className={classes.linkButton}>
+                  <AddNewPerson company={company} isActivity={true} isManager={isManager}
+                                isActivityDeliverer={isActivityDeliverer}
+                                isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager}/>
+                </Grid>
+              </Grid>
+
+              <br/>
+              <br/>
+              <Grid container>
+                <Grid item xs={4}>
+                  <Typography className={classes.heading}>Cost</Typography>
+                  <FormControl>
+                    <Input value={cost} type="number" onChange={handleCostChange}
+                           startAdornment={<InputAdornment position="start">$</InputAdornment>} />
+                  </FormControl>
+                </Grid>
+              </Grid>
+
             </div>
           </DialogContent>
           <DialogActions>

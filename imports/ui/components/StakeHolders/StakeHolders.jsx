@@ -79,7 +79,7 @@ function StakeHolders(props) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isChangeManager, setIsChangeManager] = useState(false);
   const [isManager, setIsManager] = useState(false);
-  const [isActivityOwner, setIsActivityOwner] = useState(false);
+  const [isActivityDeliverer, setIsActivityDeliverer] = useState(false);
   const [currentCompanyId, setCompanyId] = useState(null);
 
   const searchFilter = event => {
@@ -128,8 +128,8 @@ function StakeHolders(props) {
     const activities = Activities.find({projectId: projectId}).fetch();
     if (activities) {
       activities.forEach(activity => {
-        if (!Roles.userIsInRole(userId, 'superAdmin') && activity.owner && activity.owner.includes(Meteor.userId())) {
-          setIsActivityOwner(true);
+        if (!Roles.userIsInRole(userId, 'superAdmin') && activity.deliverer && activity.deliverer.includes(Meteor.userId())) {
+          setIsActivityDeliverer(true);
         }
       })
     }
@@ -175,7 +175,7 @@ function StakeHolders(props) {
             : ''}
         </Grid>
         <StakeHolderList className={classes.stakeHoldersList} template={template} company={currentCompany}
-                         isChangeManager={isChangeManager} isActivityOwner={isActivityOwner}
+                         isChangeManager={isChangeManager} isActivityDeliverer={isActivityDeliverer}
                          isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isManager={isManager} projectId={projectId}
                          project={project}
                          rows={type === 'project' ? stakeHolders : stakeHoldersTemplate} type={type}/>

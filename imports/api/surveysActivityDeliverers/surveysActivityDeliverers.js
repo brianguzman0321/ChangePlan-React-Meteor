@@ -1,13 +1,13 @@
 import {Mongo} from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
 
-class SurveysActivityOwnersCollection extends Mongo.Collection{
+class SurveysActivityDeliverersCollection extends Mongo.Collection{
 
 }
 
-export const SurveysActivityOwners = new SurveysActivityOwnersCollection('surveysActivityOwners');
+export const SurveysActivityDeliverers = new SurveysActivityDeliverersCollection('surveysActivityDeliverers');
 
-SurveysActivityOwners.deny({
+SurveysActivityDeliverers.deny({
   insert() {
     return true;
   },
@@ -19,14 +19,14 @@ SurveysActivityOwners.deny({
   },
 });
 
-SurveysActivityOwners.schema = new SimpleSchema({
+SurveysActivityDeliverers.schema = new SimpleSchema({
   activityId: {
     type: String,
     label: 'Activity Id',
   },
-  activityOwnerId: {
+  activityDelivererId: {
     type: String,
-    label: 'Activity Owner Id',
+    label: 'Activity Deliverer Id',
   },
   question1: {
     type: Number,
@@ -67,5 +67,5 @@ SurveysActivityOwners.schema = new SimpleSchema({
   },
 });
 
-SurveysActivityOwners.attachSchema(SurveysActivityOwners.schema);
+SurveysActivityDeliverers.attachSchema(SurveysActivityDeliverers.schema);
 

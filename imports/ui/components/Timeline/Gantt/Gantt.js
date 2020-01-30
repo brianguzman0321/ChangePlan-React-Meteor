@@ -73,7 +73,7 @@ const updateProjectByImport = (file, project, activities, props) => {
         } else if (file[i].eventType === 'Knowledge') {
           step = 5;
         }
-        params1 = {
+        const params1 = {
           activity: {
             name: file[i].text,
             type: file[i].text[0].toLowerCase() + file[i].text.slice(1),
@@ -107,7 +107,7 @@ const updateProjectByImport = (file, project, activities, props) => {
       } else {
         let currentActivity = activities[i - 1] ? activities[i - 1] : null;
         if (currentActivity !== null) {
-          params1 = {
+          const params1 = {
             activity: {
               _id: currentActivity._id,
             }
@@ -176,7 +176,7 @@ const updateProjectByImport = (file, project, activities, props) => {
       });
     }
   }
-}
+};
 
 const handleImportData = (file, currentProject, activities, props) => {
   const type = file.name.split('.').pop();
@@ -244,7 +244,7 @@ export { handleDownload, handleImportData }
 
 const Gantt = props => {
   savedTask = {};
-  const { tasks, scaleText, setActivityId, setEdit, activities, isSuperAdmin, isAdmin, isChangeManager, isManager, project, template } = props;
+  const { tasks, scaleText, setActivityId, setEdit, activities, isSuperAdmin, isAdmin, isChangeManager, isManager, project, template, event } = props;
   const obj = { project: undefined };
 
   const updateTaskByDrag = (savedActivities, updatedTask) => {
@@ -290,11 +290,7 @@ const Gantt = props => {
         props.enqueueSnackbar(`Project Updated Successfully.`, { variant: 'success' })
       }
     });
-  }
-  console.error('+++++++++superAdmin', isSuperAdmin);
-  console.error('+++++++++isChangeManger', isChangeManager);
-  console.error('++++++++++++isManager', isManager);
-  console.error('++++++++++++isAdmin', isAdmin);
+  };
   const updateImpactBenefitByDrag = (savedTask, project) => {
     const index = savedTask.id[savedTask.id.length - 1];
     if (savedTask.eventType === 'Impact') {
@@ -312,14 +308,28 @@ const Gantt = props => {
         props.enqueueSnackbar(`Project ${savedTask.eventType} Updated Successfully.`, { variant: 'success' })
       }
     });
-  }
+  };
+  const updateProjectEventByDrag = (savedTask, events) => {
+    const projectEvent = events.find(_event => _event._id === savedTask.id);
+    projectEvent.startDate = savedTask.start_date;
+    const params = {
+      projectEvent
+    };
+    Meteor.call('projectEvents.update', params, (err, res) => {
+      if (err) {
+        props.enqueueSnackbar(err.reason, { variant: 'error' })
+      } else if (res) {
+        props.enqueueSnackbar(`Project ${savedTask.eventType} Updated Successfully.`, { variant: 'success' })
+      }
+    })
+  };
 
   Object.assign(gantt, obj);
 
   useEffect(() => {
     if (
       Roles.userIsInRole(Meteor.userId(), 'manager') ||
-      Roles.userIsInRole(Meteor.userId(), 'activityOwner')
+      Roles.userIsInRole(Meteor.userId(), 'activityDeliverer')
     ) {
       gantt.config.drag_resize = false;
       gantt.config.drag_move = false;
@@ -378,6 +388,7 @@ const Gantt = props => {
     // FIXME: This is a temporary solution
     gantt.activities = activities;
     gantt.project = project;
+    gantt.projectEvents = event;
     gantt.attachEvent("onTaskDrag", (id, e) => {
       setActivityId(null);
     });
@@ -397,6 +408,10 @@ const Gantt = props => {
 
           if (savedTask.eventType === 'Impact' || savedTask.eventType === 'Benefit') {
             updateImpactBenefitByDrag(savedTask, gantt.project);
+          }
+
+          if (savedTask.eventType === 'Project Event') {
+            updateProjectEventByDrag(savedTask, gantt.projectEvents);
           }
         }
       }

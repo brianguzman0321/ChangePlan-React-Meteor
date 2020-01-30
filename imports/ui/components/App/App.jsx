@@ -127,7 +127,7 @@ function TopNavBar(props) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isChangeManager, setIsChangeManager] = useState(false);
   const [isManager, setIsManager] = useState(false);
-  const [isActivityOwner, setIsActivityOwner] = useState(false);
+  const [isActivityDeliverer, setIsActivityDeliverer] = useState(false);
   let currentLocation = history.location.pathname.split("/");
   let currentNav = currentLocation[currentLocation.length - 1], selectedTab = 0;
   if(currentNav === '/'){
@@ -192,8 +192,8 @@ function TopNavBar(props) {
         const activities = Activities.find({projectId: project._id}).fetch();
         if (activities) {
           activities.forEach(activity => {
-            if (!Roles.userIsInRole(userId, 'superAdmin') && activity.owner && activity.owner.includes(Meteor.userId())) {
-              setIsActivityOwner(true);
+            if (!Roles.userIsInRole(userId, 'superAdmin') && activity.deliverer && activity.deliverer.includes(Meteor.userId())) {
+              setIsActivityDeliverer(true);
             }
           })
         }
