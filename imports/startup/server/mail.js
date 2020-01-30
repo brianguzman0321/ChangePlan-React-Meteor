@@ -1,6 +1,6 @@
 import {Email} from 'meteor/email'
 import projectNotification from "../../emails/projectNotification";
-import surveyActivityOwner from "../../emails/surveyActivityOwner";
+import surveyActivityDeliverer from "../../emails/surveyActivityDeliverer";
 import surveyStakeholders from "../../emails/surveyStakeholders";
 import remindEmailToChangeManager from "../../emails/remindEmailToChangeManager";
 
@@ -65,12 +65,12 @@ Meteor.methods({
 });
 
 Meteor.methods({
-  sendSurveyActivityOwner: function (email, firstName, activityType, projectName, surveyLink) {
+  sendSurveyActivityDeliverer: function (email, firstName, activityType, projectName, surveyLink) {
     Email.send({
       to: email,
       from: 'ChangePlan <no-reply@changeplan.co>',
       subject: "Action required: Mark activity as complete",
-      html: surveyActivityOwner({
+      html: surveyActivityDeliverer({
         firstName, activityType, projectName, surveyLink
       })
     })
@@ -91,24 +91,24 @@ Meteor.methods({
 });
 
 Meteor.methods({
-  sendReportToChangeManager: function (email, activityOwner, activityName, projectName) {
+  sendReportToChangeManager: function (email, activityDeliverer, activityName, projectName) {
     Email.send({
       to: email,
       from: 'ChangePlan <no-reply@changeplan.co>',
       subject: `Report "${projectName}"`,
-      text: `${activityOwner} has reported the activity ${activityName} wasn't completed`
+      text: `${activityDeliverer} has reported the activity ${activityName} wasn't completed`
     })
   }
 });
 
 Meteor.methods({
-  sendRemindToChangeManager: function (email, firstName, activityOwner, activityName, projectName, surveyLink) {
+  sendRemindToChangeManager: function (email, firstName, activityDeliverer, activityName, projectName, surveyLink) {
     Email.send({
       to: email,
       from: 'ChangePlan <no-reply@changeplan.co>',
       subject: `Report "${projectName}"`,
       html: remindEmailToChangeManager({
-        firstName, activityOwner, activityName, projectName, surveyLink
+        firstName, activityDeliverer, activityName, projectName, surveyLink
       })
     })
   }

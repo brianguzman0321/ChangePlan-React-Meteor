@@ -121,7 +121,7 @@ function CreateProjectModal(props) {
           name: newActivity.name,
           type: newActivity.type,
           description: newActivity.description,
-          owner: newActivity.owner,
+          deliverer: newActivity.deliverer,
           dueDate: newActivity.dueDate,
           stakeHolders: [],
           projectId: newProjectId,

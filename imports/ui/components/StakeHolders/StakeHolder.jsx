@@ -9,12 +9,12 @@ const StakeHolder = (props) => {
   const {
     row, isItemSelected, labelId, setRowSelected, deleteCell, selected,
     hideSelected = false, smallTable = false, index, isAdmin, isSuperAdmin,
-    isManager, isChangeManager, isActivityOwner, template, company, projectId, project, type
+    isManager, isChangeManager, isActivityDeliverer, template, company, projectId, project, type
   } = props;
   const [showEditModalDialog, setShowEditModalDialog] = React.useState(false);
   const disabled = (!(isAdmin && template && (template.companyId === company._id)
     || isSuperAdmin) && (projectId === undefined))
-    || ((isManager || isActivityOwner) && !isSuperAdmin && !isAdmin && !isChangeManager);
+    || ((isManager || isActivityDeliverer) && !isSuperAdmin && !isAdmin && !isChangeManager);
 
   const handleOpenModalDialog = () => {
     setShowEditModalDialog(true)

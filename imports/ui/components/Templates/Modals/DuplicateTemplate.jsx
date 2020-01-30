@@ -100,7 +100,7 @@ function DuplicateTemplate(props) {
           name: newActivity.name,
           type: newActivity.type,
           description: newActivity.description,
-          owner: newActivity.owner,
+          deliverer: newActivity.deliverer,
           dueDate: new Date(),
           stakeHolders: [],
           templateId: newTemplateId,

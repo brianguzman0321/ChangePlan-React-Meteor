@@ -41,6 +41,7 @@ ProjectEvents.schema = new SimpleSchema({
   createdAt: {
     type: Date,
     label: 'Created At Event',
+    optional: true,
     autoValue: function () {
       if (this.isInsert) {
         return new Date();

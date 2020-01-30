@@ -7,7 +7,7 @@ import {Meteor} from "meteor/meteor";
 
 
 SyncedCron.add({
-  name: 'create job for activity owners',
+  name: 'create job for activity deliverers',
   schedule: function (parser) {
     return parser.text('every 55 minutes')
   },
@@ -15,23 +15,23 @@ SyncedCron.add({
     const activities = Activities.find({}).fetch().filter(activity => activity.completed === false && (activity.sentEmail === undefined || activity.sentEmail === false));
     activities.forEach(activity => {
       if (activity.updatedAt !== undefined) {
-        SyncedCron.remove(`Sending email to activity owner with id ${activity.owner} ${activity._id}`)
+        SyncedCron.remove(`Sending email to activity deliverer with id ${activity.deliverer} ${activity._id}`)
       }
       SyncedCron.add({
-        name: `Sending email to activity owner with id ${activity.owner} ${activity._id}`,
+        name: `Sending email to activity deliverer with id ${activity.deliverer} ${activity._id}`,
         schedule: function (parser) {
           const date = new Date(moment(activity.dueDate, 'YYYY-MM-DD HH-mm-ss Z'));
           date.setHours(date.getHours() + 1);
           return parser.recur().on(date).fullDate();
         },
         job: function () {
-          const activityOwner = Meteor.users.findOne({'_id': activity.owner});
-          const email = activityOwner.emails[0];
-          const firstName = activityOwner.profile.firstName;
+          const activityDeliverer = Meteor.users.findOne({'_id': activity.deliverer});
+          const email = activityDeliverer.emails[0];
+          const firstName = activityDeliverer.profile.firstName;
           const activityType = activity.type;
           const projectName = Projects.findOne({_id: activity.projectId}).name;
-          const surveyLink = `https://changeplan.herokuapp.com/survey-activity-owner/${activity._id}/${activityOwner._id}`;
-          Meteor.call('sendSurveyActivityOwner', email, firstName, activityType, projectName, surveyLink, (err, res) => {
+          const surveyLink = `https://changeplan.herokuapp.com/survey-activity-deliverer/${activity._id}/${activityDeliverer._id}`;
+          Meteor.call('sendSurveyActivityDeliverer', email, firstName, activityType, projectName, surveyLink, (err, res) => {
           });
           activity.sentEmail = true;
           activity.sentEmailDate = new Date();
@@ -83,7 +83,7 @@ SyncedCron.add({
 });
 
 SyncedCron.add({
-  name: 'check sending email activity owner',
+  name: 'check sending email activity deliverer',
   schedule: function (parser) {
     return parser.text('every 57 minutes');
   },
@@ -93,14 +93,14 @@ SyncedCron.add({
     activities.forEach(activity => {
       const dateSending = new Date(moment(activity.sentEmailDate, 'YYYY-MM-DD HH-mm-ss'));
       if (activity.updatedAt !== undefined) {
-        SyncedCron.remove(`Sending remind email ${activity._id} ${activity.owner}`)
+        SyncedCron.remove(`Sending remind email ${activity._id} ${activity.deliverer}`)
       }
       if (dateNow.getFullYear() === dateSending.getFullYear()
         && dateNow.getMonth() === dateSending.getMonth()
         && dateNow.getDate() === dateSending.getDate()
         && (dateNow.getHours() - dateSending.getHours() === 1 || 2)) {
         SyncedCron.add({
-          name: `Sending remind email ${activity._id} ${activity.owner}`,
+          name: `Sending remind email ${activity._id} ${activity.deliverer}`,
           schedule: function (parser) {
             const date = new Date(moment(activity.sentEmailDate, 'YYYY-MM-DD HH-mm-ss Z'));
             date.setHours(date.getHours() + 2);
@@ -108,23 +108,23 @@ SyncedCron.add({
           },
           job: function () {
             if (activity.completed === false) {
-              const activityOwnerInfo = Meteor.users.findOne({'_id': activity.owner});
-              const email = activityOwnerInfo.emails[0];
-              const firstName = activityOwnerInfo.profile.firstName;
+              const activityDelivererInfo = Meteor.users.findOne({'_id': activity.deliverer});
+              const email = activityDelivererInfo.emails[0];
+              const firstName = activityDelivererInfo.profile.firstName;
               const activityType = activity.type;
               const projectName = Projects.findOne({_id: activity.projectId}).name;
-              const surveyLink = `https://changeplan.herokuapp.com/survey-activity-owner/${activity._id}/${activityOwnerInfo._id}`;
-              Meteor.call('sendSurveyActivityOwner', email, firstName, activityType, projectName, surveyLink, (err, res) => {
+              const surveyLink = `https://changeplan.herokuapp.com/survey-activity-deliverer/${activity._id}/${activityDelivererInfo._id}`;
+              Meteor.call('sendSurveyActivityDeliverer', email, firstName, activityType, projectName, surveyLink, (err, res) => {
               });
               const project = Projects.findOne({_id: activity.projectId});
               const changeManagers = project.changeManagers;
               changeManagers.forEach(_changeManager => {
-                const activityOwner = `${activityOwnerInfo.profile.firstName} ${activityOwnerInfo.profile.lastName}`;
+                const activityDeliverer = `${activityDelivererInfo.profile.firstName} ${activityDelivererInfo.profile.lastName}`;
                 const activityName = activity.name;
                 const changeManager = Meteor.users.findOne({_id: _changeManager});
                 const emailChangeManager = changeManager.emails[0];
                 const firstNameChangeManager = changeManager.profile.firstName;
-                Meteor.call('sendRemindToChangeManager', emailChangeManager, firstNameChangeManager, activityOwner, activityName, projectName, surveyLink, (err, res) => {
+                Meteor.call('sendRemindToChangeManager', emailChangeManager, firstNameChangeManager, activityDeliverer, activityName, projectName, surveyLink, (err, res) => {
                 });
               })
             }
@@ -136,7 +136,7 @@ SyncedCron.add({
 });
 
 SyncedCron.add({
-  name: 'check sending email activity owner 18',
+  name: 'check sending email activity deliverer 18',
   schedule: function (parser) {
     return parser.text('every 58 minutes');
   },
@@ -146,14 +146,14 @@ SyncedCron.add({
     activities.forEach(activity => {
       const dateSending = new Date(moment(activity.sentEmailDate, 'YYYY-MM-DD HH-mm-ss'));
       if (activity.updatedAt !== undefined) {
-        SyncedCron.remove(`Sending remind email 18 ${activity._id} ${activity.owner}`)
+        SyncedCron.remove(`Sending remind email 18 ${activity._id} ${activity.deliverer}`)
       }
       if (dateNow.getFullYear() === dateSending.getFullYear()
         && dateNow.getMonth() === dateSending.getMonth()
         && dateNow.getDate() === dateSending.getDate()
         && (dateNow.getHours() - dateSending.getHours() === 17 || 18)) {
         SyncedCron.add({
-          name: `Sending remind email 18 ${activity._id} ${activity.owner}`,
+          name: `Sending remind email 18 ${activity._id} ${activity.deliverer}`,
           schedule: function (parser) {
             const date = new Date(moment(activity.sentEmailDate, 'YYYY-MM-DD HH-mm-ss Z'));
             date.setHours(date.getHours() + 18);
@@ -161,23 +161,23 @@ SyncedCron.add({
           },
           job: function () {
             if (activity.completed === false) {
-              const activityOwnerInfo = Meteor.users.findOne({'_id': activity.owner});
-              const email = activityOwnerInfo.emails[0];
-              const firstName = activityOwnerInfo.profile.firstName;
+              const activityDelivererInfo = Meteor.users.findOne({'_id': activity.deliverer});
+              const email = activityDelivererInfo.emails[0];
+              const firstName = activityDelivererInfo.profile.firstName;
               const activityType = activity.type;
               const projectName = Projects.findOne({_id: activity.projectId}).name;
-              const surveyLink = `https://changeplan.herokuapp.com/survey-activity-owner/${activity._id}/${activityOwnerInfo._id}`;
-              Meteor.call('sendSurveyActivityOwner', email, firstName, activityType, projectName, surveyLink, (err, res) => {
+              const surveyLink = `https://changeplan.herokuapp.com/survey-activity-deliverer/${activity._id}/${activityDelivererInfo._id}`;
+              Meteor.call('sendSurveyActivityDeliverer', email, firstName, activityType, projectName, surveyLink, (err, res) => {
               });
               const project = Projects.findOne({_id: activity.projectId});
               const changeManagers = project.changeManagers;
               changeManagers.forEach(_changeManager => {
-                const activityOwner = `${activityOwnerInfo.profile.firstName} ${activityOwnerInfo.profile.lastName}`;
+                const activityDeliverer = `${activityDelivererInfo.profile.firstName} ${activityDelivererInfo.profile.lastName}`;
                 const activityName = activity.name;
                 const changeManager = Meteor.users.findOne({_id: _changeManager});
                 const emailChangeManager = changeManager.emails[0];
                 const firstNameChangeManager = changeManager.profile.firstName;
-                Meteor.call('sendRemindToChangeManager', emailChangeManager, firstNameChangeManager, activityOwner, activityName, projectName, surveyLink, (err, res) => {
+                Meteor.call('sendRemindToChangeManager', emailChangeManager, firstNameChangeManager, activityDeliverer, activityName, projectName, surveyLink, (err, res) => {
                 });
               })
             }
@@ -189,7 +189,7 @@ SyncedCron.add({
 });
 
 SyncedCron.add({
-  name: 'check sending email activity owner 48',
+  name: 'check sending email activity deliverer 48',
   schedule: function (parser) {
     return parser.text('every 59 minutes');
   },
@@ -199,13 +199,13 @@ SyncedCron.add({
     activities.forEach(activity => {
       const dateSending = new Date(moment(activity.sentEmailDate, 'YYYY-MM-DD HH-mm-ss'));
       if (activity.updatedAt !== undefined) {
-        SyncedCron.remove(`Sending remind email 48 ${activity._id} ${activity.owner}`)
+        SyncedCron.remove(`Sending remind email 48 ${activity._id} ${activity.deliverer}`)
       }
       if (dateNow.getFullYear() === dateSending.getFullYear()
         && dateNow.getMonth() === dateSending.getMonth()
         && (1 < dateNow.getDate() - dateSending.getDate() < 2)) {
         SyncedCron.add({
-          name: `Sending remind email 48 ${activity._id} ${activity.owner}`,
+          name: `Sending remind email 48 ${activity._id} ${activity.deliverer}`,
           schedule: function (parser) {
             const date = new Date(moment(activity.sentEmailDate, 'YYYY-MM-DD HH-mm-ss Z'));
             date.setDate(date.getDate() + 2);
@@ -213,23 +213,23 @@ SyncedCron.add({
           },
           job: function () {
             if (activity.completed === false) {
-              const activityOwnerInfo = Meteor.users.findOne({'_id': activity.owner});
-              const email = activityOwnerInfo.emails[0];
-              const firstName = activityOwnerInfo.profile.firstName;
+              const activityDelivererInfo = Meteor.users.findOne({'_id': activity.deliverer});
+              const email = activityDelivererInfo.emails[0];
+              const firstName = activityDelivererInfo.profile.firstName;
               const activityType = activity.type;
               const projectName = Projects.findOne({_id: activity.projectId}).name;
-              const surveyLink = `https://changeplan.herokuapp.com/survey-activity-owner/${activity._id}/${activityOwnerInfo._id}`;
-              Meteor.call('sendSurveyActivityOwner', email, firstName, activityType, projectName, surveyLink, (err, res) => {
+              const surveyLink = `https://changeplan.herokuapp.com/survey-activity-deliverer/${activity._id}/${activityDelivererInfo._id}`;
+              Meteor.call('sendSurveyActivityDeliverer', email, firstName, activityType, projectName, surveyLink, (err, res) => {
               });
               const project = Projects.findOne({_id: activity.projectId});
               const changeManagers = project.changeManagers;
               changeManagers.forEach(_changeManager => {
-                const activityOwner = `${activityOwnerInfo.profile.firstName} ${activityOwnerInfo.profile.lastName}`;
+                const activityDeliverer = `${activityDelivererInfo.profile.firstName} ${activityDelivererInfo.profile.lastName}`;
                 const activityName = activity.name;
                 const changeManager = Meteor.users.findOne({_id: _changeManager});
                 const emailChangeManager = changeManager.emails[0];
                 const firstNameChangeManager = changeManager.profile.firstName;
-                Meteor.call('sendRemindToChangeManager', emailChangeManager, firstNameChangeManager, activityOwner, activityName, projectName, surveyLink, (err, res) => {
+                Meteor.call('sendRemindToChangeManager', emailChangeManager, firstNameChangeManager, activityDeliverer, activityName, projectName, surveyLink, (err, res) => {
                 });
               });
             }

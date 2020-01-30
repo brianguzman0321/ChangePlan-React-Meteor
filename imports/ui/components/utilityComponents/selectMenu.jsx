@@ -43,7 +43,7 @@ function ProjectSelectMenu(props) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isChangeManager, setIsChangeManager] = useState(false);
   const [isManager, setIsManager] = useState(false);
-  const [isActivityOwner, setIsActivityOwner] = useState(false);
+  const [isActivityDeliverer, setIsActivityDeliverer] = useState(false);
   const [projectsMenu, setProjectsMenu] = useState(projects || []);
   const [age, setAge] = React.useState(projectId || '');
   const [itemIndex, setIndex] = React.useState(props.index);
@@ -75,8 +75,8 @@ function ProjectSelectMenu(props) {
         const activities = Activities.find({projectId: project._id}).fetch();
         if (activities) {
           activities.forEach(activity => {
-            if (!Roles.userIsInRole(userId, 'superAdmin') && activity.owner && activity.owner.includes(Meteor.userId())) {
-              setIsActivityOwner(true);
+            if (!Roles.userIsInRole(userId, 'superAdmin') && activity.deliverer && activity.deliverer.includes(Meteor.userId())) {
+              setIsActivityDeliverer(true);
             }
           })
         }
@@ -108,8 +108,8 @@ function ProjectSelectMenu(props) {
         menuItem = menuItem.concat(projects.filter(project => project.managers.includes(userId)));
         setProjectsMenu([...new Set(menuItem)]);
       }
-      if (isActivityOwner && !isSuperAdmin && !isAdmin) {
-          const activities = Activities.find({owner: userId}).fetch();
+      if (isActivityDeliverer && !isSuperAdmin && !isAdmin) {
+          const activities = Activities.find({deliverer: userId}).fetch();
           if (activities) {
             activities.forEach(activity => {
               const project = projects.find(project => project._id === activity.projectId);
@@ -121,7 +121,7 @@ function ProjectSelectMenu(props) {
           }
       }
     }
-  }, [projects, isActivityOwner, isManager, isChangeManager, isAdmin, isSuperAdmin]);
+  }, [projects, isActivityDeliverer, isManager, isChangeManager, isAdmin, isSuperAdmin]);
 
   function handleChange(event) {
     setAge(event.target.value);

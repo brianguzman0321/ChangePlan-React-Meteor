@@ -22,7 +22,7 @@ import Dashboard from '/imports/ui/components/DashBoard/Dashboard'
 import {SnackbarProvider} from 'notistack';
 import Timeline from "../../ui/components/Timeline/Timeline";
 import Templates from "../../ui/components/Templates/Templates";
-import SurveyActivityOwner from "../../ui/components/Survey/SurveyActivityOwners/SurveyActivityOwners";
+import SurveyActivityDeliverer from "../../ui/components/Survey/SurveyActivityDeliverers/SurveyActivityDeliverers";
 import SurveyStakeholder from "../../ui/components/Survey/SurveyStakeholders/SurveyStakeholders";
 
 //list of Public Routes
@@ -50,7 +50,7 @@ const AdminRoute = ({loggingIn, authenticated, user, component, ...rest}) => (
 const Public = ({loggingIn, authenticated, component, ...rest}) => (
   <Route {...rest} render={(props) => {
     // if (loggingIn) return <div></div>;
-    if (!authenticated || (component === SurveyActivityOwner || component === SurveyStakeholder)) {
+    if (!authenticated || (component === SurveyActivityDeliverer || component === SurveyStakeholder)) {
       return React.createElement(component, {...props, loggingIn, authenticated})
     } else {
       return <Redirect to="/"/>;
@@ -92,8 +92,8 @@ const Routes = appProps => (
         <Public path="/forgot-password" component={ForgotPassword} {...appProps}/>
         <Public path="/reset-password/:id" component={ResetPassword} {...appProps}/>
         <Public path="/enroll-account/:id" component={EnrollAccountPage} {...appProps}/>
-        <Public path="/survey-activity-owner/:activityId/:activityOwnerId/:response"
-                component={SurveyActivityOwner} {...appProps}/>
+        <Public path="/survey-activity-deliverer/:activityId/:activityDelivererId/:response"
+                component={SurveyActivityDeliverer} {...appProps}/>
         <Public path="/survey-stakeholder/:activityId/:stakeholderId/:response"
                 component={SurveyStakeholder} {...appProps}/>
       </Switch>

@@ -162,12 +162,12 @@ function AddImpact(props) {
 
   const updateValues = () => {
     if (indexImpact !== '') {
-      const newStakeholders = impacts && impacts[indexImpact].stakeholders;
+      const newStakeholders = impacts && impacts[indexImpact] && impacts[indexImpact].stakeholders;
       localImpacts.changed || updateFilter('localStakeHoldersImpacts', 'ids', newStakeholders);
       if (localImpacts.changed) {
         setIsUpdated(true)
       }
-      const newExpectedDate = impacts && impacts[indexImpact].expectedDate;
+      const newExpectedDate = impacts && impacts[indexImpact] && impacts[indexImpact].expectedDate;
       setExpectedDate(newExpectedDate);
       let updatedStakeHolders = localImpacts.changed ? localImpacts.ids : newStakeholders;
       setPeoples(updatedStakeHolders);
@@ -289,9 +289,11 @@ function AddImpact(props) {
   };
 
   useEffect(() => {
-    setType(editValue.type);
-    setLevel(editValue.level);
-    setName(editValue.description);
+    if (editValue) {
+      setType(editValue.type);
+      setLevel(editValue.level);
+      setName(editValue.description);
+    }
   }, [editValue]);
 
   return (
