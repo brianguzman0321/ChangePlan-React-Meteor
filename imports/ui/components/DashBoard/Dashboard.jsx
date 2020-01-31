@@ -28,6 +28,8 @@ import BenefitsModal from "./Modals/BenefitsModal";
 import {Templates} from "../../../api/templates/templates";
 import {withSnackbar} from "notistack";
 import ChangeTemplate from "./Modals/ChangeTemplate";
+import {Activities} from "../../../api/activities/activities";
+import {Meteor} from "meteor/meteor";
 
 
 const useStyles = makeStyles({
@@ -145,6 +147,8 @@ function Dashboard(props) {
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isChangeManager, setIsChangeManager] = useState(false);
+  const [isActivityOwner, setIsActivityOwner] = useState(false);
+  const [isActivityDeliverer, setIsActivityDeliverer] = useState(false);
   const [currentCompanyId, setCompanyId] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isManager, setIsManager] = useState(false);
@@ -279,8 +283,21 @@ function Dashboard(props) {
         }
       }
     }
+    if (project) {
+      const activities = Activities.find({projectId: projectId}).fetch();
+      if (activities) {
+        activities.forEach(activity => {
+          if (!Roles.userIsInRole(userId, 'superAdmin') && activity.deliverer && activity.deliverer.includes(Meteor.userId())) {
+            setIsActivityDeliverer(true);
+          }
+          if (!Roles.userIsInRole(userId, 'superAdmin') && activity.owner && activity.owner.includes(Meteor.userId())) {
+            setIsActivityOwner(true);
+          }
+        })
+      }
+    }
   };
-  
+
   useEffect(() => {
     checkRoles();
   }, [currentCompany, company, template, project]);

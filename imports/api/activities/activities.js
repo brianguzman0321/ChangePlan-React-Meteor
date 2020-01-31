@@ -107,6 +107,11 @@ Activities.schema = new SimpleSchema({
     label: 'Activity sign off date',
     optional: true,
   },
+  dueDateToInviteSent: {
+    type: Date,
+    label: 'Due date for invite to be sent',
+    optional: true,
+  },
   cost: {
     type: Number,
     label: 'Activity cost',

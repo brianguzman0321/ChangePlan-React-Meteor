@@ -62,8 +62,6 @@ const useStyles = makeStyles(theme => ({
     flex: 1,
   },
   addNewPerson: {
-    marginTop: 17,
-    padding: '0px',
     '&:hover': {
       backgroundColor: '#ffffff',
       borderColor: '#ffffff',
@@ -84,7 +82,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 function AddNewPerson(props) {
   let {company, isActivity = false, isManager,
-    isSuperAdmin, isAdmin, isChangeManager, isActivityDeliverer } = props;
+    isSuperAdmin, isAdmin, isChangeManager, isActivityDeliverer, isActivityOwner } = props;
   const [firstName, setFirstName] = React.useState('');
   const [lastName, setLastName] = React.useState('');
   const [email, setEmail] = React.useState('');
@@ -126,7 +124,7 @@ function AddNewPerson(props) {
     <div>
       {isActivity ?
         <Button color="primary" variant="text" onClick={handleClickOpen} className={classes.addNewPerson}
-                disabled={(isManager || isActivityDeliverer) && !isSuperAdmin && !isAdmin && !isChangeManager}>
+                disabled={(isManager || isActivityDeliverer || isActivityOwner) && !isSuperAdmin && !isAdmin && !isChangeManager}>
           Add New
         </Button> :
         <Button variant="outlined" color="primary" onClick={handleClickOpen} fullWidth={true}

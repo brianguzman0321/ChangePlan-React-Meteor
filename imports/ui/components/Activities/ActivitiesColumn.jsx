@@ -173,7 +173,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function ActivitiesColumn(props) {
-  let {activities, company, match, type, template, isSuperAdmin, isAdmin, isChangeManager, isActivityDeliverer, project, isManager, name, step, color} = props;
+  let {activities, company, match, type, template, isSuperAdmin, isAdmin, isChangeManager, isActivityOwner, isActivityDeliverer, project, isManager, name, step, color} = props;
   const classes = useStyles(color);
   const [edit, setEdit] = useState(false);
   const [stepActivities, setStepActivities] = useState([]);
@@ -185,7 +185,7 @@ function ActivitiesColumn(props) {
   let {projectId} = match.params;
   const disabled = (!(isAdmin && template && (template.companyId === company._id)
     || isSuperAdmin) && (projectId === undefined)
-    || (isManager && !isActivityDeliverer && !isChangeManager && !isAdmin && !isSuperAdmin));
+    || (isManager && !isActivityDeliverer && !isActivityOwner && !isChangeManager && !isAdmin && !isSuperAdmin));
   const [currentProject, setProject] = useState({});
 
   function completeActivity(activity) {
@@ -393,6 +393,7 @@ function ActivitiesColumn(props) {
                        currentChangeManager={changeManager} color={color}
                        isChangeManager={isChangeManager} isManager={isManager}
                        isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} isActivityDeliverer={isActivityDeliverer}
+                       isActivityOwner={isActivityOwner}
                        project={currentProject} template={template}
                        type={type} activity={sActivity}
                        expandAccordian={true}
