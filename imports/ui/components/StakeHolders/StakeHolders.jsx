@@ -16,6 +16,7 @@ import config from '/imports/utils/config';
 import StakeHolderList from './StakeHoldersList'
 import AddStakeHolder from './Modals/AddStakeHolder';
 import {Activities} from "../../../api/activities/activities";
+import {Meteor} from "meteor/meteor";
 
 
 const useStyles = makeStyles(theme => ({
@@ -80,6 +81,7 @@ function StakeHolders(props) {
   const [isChangeManager, setIsChangeManager] = useState(false);
   const [isManager, setIsManager] = useState(false);
   const [isActivityDeliverer, setIsActivityDeliverer] = useState(false);
+  const [isActivityOwner, setIsActivityOwner] = useState(false);
   const [currentCompanyId, setCompanyId] = useState(null);
 
   const searchFilter = event => {
@@ -131,6 +133,9 @@ function StakeHolders(props) {
         if (!Roles.userIsInRole(userId, 'superAdmin') && activity.deliverer && activity.deliverer.includes(Meteor.userId())) {
           setIsActivityDeliverer(true);
         }
+        if (!Roles.userIsInRole(userId, 'superAdmin') && activity.owner && activity.owner.includes(Meteor.userId())) {
+          setIsActivityOwner(true);
+        }
       })
     }
   };
@@ -175,7 +180,7 @@ function StakeHolders(props) {
             : ''}
         </Grid>
         <StakeHolderList className={classes.stakeHoldersList} template={template} company={currentCompany}
-                         isChangeManager={isChangeManager} isActivityDeliverer={isActivityDeliverer}
+                         isChangeManager={isChangeManager} isActivityDeliverer={isActivityDeliverer} isActivityOwner={isActivityOwner}
                          isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isManager={isManager} projectId={projectId}
                          project={project}
                          rows={type === 'project' ? stakeHolders : stakeHoldersTemplate} type={type}/>

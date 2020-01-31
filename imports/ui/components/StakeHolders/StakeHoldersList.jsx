@@ -207,9 +207,9 @@ export default function StakeHolderList(props) {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [showEditModalDialog, setShowEditModalDialog] = React.useState(false);
-  let {rows, isAdmin, isSuperAdmin, isManager, isChangeManager, isActivityDeliverer, template, company, projectId, project, type} = props;
+  let {rows, isAdmin, isSuperAdmin, isManager, isChangeManager, isActivityDeliverer, isActivityOwner, template, company, projectId, project, type} = props;
   const disabled = (!(isAdmin && template && (template.companyId === company._id) || isSuperAdmin) && (projectId === undefined))
-    || ((isManager || isActivityDeliverer) && !isChangeManager && !isAdmin && !isSuperAdmin);
+    || ((isManager || isActivityDeliverer || isActivityOwner) && !isChangeManager && !isAdmin && !isSuperAdmin);
 
   const handleRequestSort = (event, property) => {
     const isDesc = orderBy === property && order === 'desc';
@@ -299,7 +299,7 @@ export default function StakeHolderList(props) {
                       projectId={projectId}
                       project={project}
                       type={type}
-                      template={template} company={company} isChangeManager={isChangeManager}
+                      template={template} company={company} isChangeManager={isChangeManager} isActivityOwner={isActivityOwner}
                       isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isManager={isManager} isActivityDeliverer={isActivityDeliverer}
                     />
                   );

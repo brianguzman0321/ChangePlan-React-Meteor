@@ -78,6 +78,13 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
   },
+  headingCost: {
+    fontSize: theme.typography.pxToRem(14),
+    flexBasis: '33.33%',
+    flexShrink: 0,
+    fontWeight: 420,
+    marginBottom: '11px',
+  },
   buttonAwareness: {
     background: '#f1753e',
     color: 'white',
@@ -86,6 +93,9 @@ const useStyles = makeStyles(theme => ({
       color: 'white'
     },
     boxShadow: 'none',
+  },
+  timeField: {
+    width: '90%'
   },
   buttonInterest: {
     background: '#8BC34A',
@@ -163,6 +173,24 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'right',
     paddingRight: '18px',
   },
+  removeButton: {
+    marginTop: '-8px',
+    textAlign: 'left',
+  },
+  removeBuildButton: {
+    textAlign: 'right',
+    paddingRight: '174px',
+    marginTop: '40px',
+  },
+  removeDateInviteButton: {
+    marginTop: '-8px',
+    textAlign: 'right',
+  },
+  addButton: {
+    marginTop: '-8px',
+    textAlign: 'right',
+    paddingRight: '37px',
+  },
   description: {
     backgroundColor: '#f5f5f5',
     border: '1px solid #f5f5f5',
@@ -180,6 +208,10 @@ const useStyles = makeStyles(theme => ({
       backgroundColor: '#ffffff',
       borderColor: '#fffff',
     },
+  },
+  addSignDateButton: {
+    textAlign: 'left',
+    marginTop: '35px',
   },
   buttonPreview: {
     padding: '0px',
@@ -228,7 +260,7 @@ const DialogActions = withStyles(theme => ({
 
 function AddActivities(props) {
   let {
-    company, stakeHolders, local, project, match, edit, activity, list, isOpen, currentChangeManager,
+    company, stakeHolders, local, project, match, edit, activity, list, isOpen, currentChangeManager, isActivityOwner,
     template, type, stakeHoldersTemplate, isSuperAdmin, isAdmin, isChangeManager, isManager, isActivityDeliverer, step,
   } = props;
   const customActivityIcon = data.find(item => item.category === "Custom").iconSVG;
@@ -253,8 +285,13 @@ function AddActivities(props) {
   const [buildStartDate, setBuildStartDate] = useState(null);
   const [buildEndDate, setBuildEndDate] = useState(null);
   const [signOffDate, setSignOffDate] = useState(null);
+  const [dateToInviteSent, setDateToInviteSent] = useState(null);
   const [changeManager, setChangeManager] = useState(currentChangeManager);
   const [showModalDialog, setShowModalDialog] = useState(false);
+  const [showBuildDate, setShowBuildDate] = useState(false);
+  const [showSignOffDate, setShowSignOffDate] = useState(false);
+  const [showActivityOwner, setShowActivityOwner] = useState(false);
+  const [showDateToInviteSent, setShowDateToInviteSent] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
   const [checkSchedule, setCheckSchedule] = useState(false);
@@ -262,9 +299,10 @@ function AddActivities(props) {
   const activityCategories = ["Engagement", "Communication", "Learning/coaching"];
   const disabled = (isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
     || (isActivityDeliverer && !isSuperAdmin && !isChangeManager && !isAdmin)
+    || (isActivityOwner && !isSuperAdmin && !isChangeManager && !isAdmin)
     || (isChangeManager && template && !project && !isSuperAdmin && !isAdmin)
     || (isAdmin && !project && template && (template.companyId === '') && !isSuperAdmin);
-  const disabledManager = (isManager || isActivityDeliverer) && !isChangeManager && !isAdmin && !isSuperAdmin;
+  const disabledManager = (isManager || isActivityDeliverer || isActivityOwner) && !isChangeManager && !isAdmin && !isSuperAdmin;
   const [showSelect, setShowSelect] = useState(false);
   const [selectActivity, setSelectActivity] = useState({});
   const [showInputEditActivity, setShowInputEditActivity] = useState(isNew || false);
@@ -328,6 +366,8 @@ function AddActivities(props) {
         phaseColor = '#03A9F4';
         break;
       }
+      default:
+        break;
     }
     setColor(phaseColor);
   }, [phase]);
@@ -351,6 +391,19 @@ function AddActivities(props) {
     setBuildStartDate(activity.buildStartDate || null);
     setBuildEndDate(activity.buildEndDate || null);
     setSignOffDate(activity.signOffDate || null);
+    setDateToInviteSent(activity.dueDateToInviteSent || null);
+    if (buildStartDate || buildEndDate) {
+      setShowBuildDate(true);
+    }
+    if (signOffDate) {
+      setShowSignOffDate(true);
+    }
+    if (owner) {
+      setShowActivityOwner(true);
+    }
+    if (dateToInviteSent) {
+      setShowDateToInviteSent(true);
+    }
     setCost(activity.cost);
     setCompletedDate(activity.completedAt);
     setDescription(activity.description);
@@ -417,6 +470,11 @@ function AddActivities(props) {
     setBuildStartDate(null);
     setBuildEndDate(null);
     setSignOffDate(null);
+    setDateToInviteSent(null);
+    setShowDateToInviteSent(false);
+    setShowActivityOwner(false);
+    setShowSignOffDate(false);
+    setShowBuildDate(false);
     setCost('');
     setDescription('');
     setOwner(owner);
@@ -564,6 +622,7 @@ function AddActivities(props) {
             buildStartDate: buildStartDate,
             buildEndDate: buildEndDate,
             signOffDate: signOffDate,
+            dueDateToInviteSent: dateToInviteSent,
             cost: Number(cost),
             stakeHolders: peoples,
             step: phase,
@@ -586,6 +645,7 @@ function AddActivities(props) {
             buildStartDate: buildStartDate,
             buildEndDate: buildEndDate,
             signOffDate: signOffDate,
+            dueDateToInviteSent: dateToInviteSent,
             cost: Number(cost),
             stakeHolders: peoples,
             step: phase,
@@ -625,6 +685,7 @@ function AddActivities(props) {
           buildStartDate: buildStartDate,
           buildEndDate: buildEndDate,
           signOffDate: signOffDate,
+          dueDateToInviteSent: dateToInviteSent,
           cost: Number(cost),
           stakeHolders: peoples,
           step: phase,
@@ -704,6 +765,50 @@ function AddActivities(props) {
     setDeleteModal(true);
   }
 
+  const handleShowChange = (type) => {
+    switch (type) {
+      case 'buildDate':
+        setShowBuildDate(true);
+        setShowSignOffDate(true);
+        break;
+      case 'signOffDate':
+        setShowSignOffDate(true);
+        break;
+      case 'dateToInviteSent':
+        setShowDateToInviteSent(true);
+        break;
+      case 'activityOwner':
+        setShowActivityOwner(true);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleCloseChange = (type) => {
+    switch (type) {
+      case 'buildDate':
+        setShowBuildDate(false);
+        setBuildStartDate(null);
+        setBuildEndDate(null);
+        break;
+      case 'signOffDate':
+        setShowSignOffDate(false);
+        setSignOffDate(null);
+        break;
+      case 'dateToInviteSent':
+        setShowDateToInviteSent(false);
+        setDateToInviteSent(null);
+        break;
+      case 'activityOwner':
+        setShowActivityOwner(false);
+        setOwner(null);
+        break;
+      default:
+        break;
+    }
+  };
+
   function deleteActivityClose(deleted) {
     setDeleteModal(false);
     deleted === true && handleClose();
@@ -747,6 +852,11 @@ function AddActivities(props) {
 
   const handleCostChange = (e) => {
     setCost(e.target.value);
+    setIsUpdated(true);
+  };
+
+  const handleDateToInviteSent = date => {
+    setDateToInviteSent(date);
     setIsUpdated(true);
   };
 
@@ -826,7 +936,7 @@ function AddActivities(props) {
                           })
                           }
 
-                          <ListSubheader disableSticky>CUSTOM</ListSubheader>
+                          <ListSubheader disableSticky>Other</ListSubheader>
                           {(activityType.category !== "Custom") || showInputEditActivity ?
                             <Grid container direction="row" justify="flex-start" alignItems="flex-start"
                                   style={{width: '48vw'}}>
@@ -877,12 +987,18 @@ function AddActivities(props) {
                 <Grid item xs={5}>
                   <FormControl fullWidth disabled={disabledManager}>
                     <InputLabel id="select-phase">Change phase*</InputLabel>
-                    <Select fullWidth value={phase || 1} id="select-phase" onChange={handlePhaseChange} className={classes.selectPhase}>
-                      <MenuItem value={1}>{(company.activityColumns && company.activityColumns[0].toUpperCase()) || "AWARENESS"}</MenuItem>
-                      <MenuItem value={4}>{(company.activityColumns && company.activityColumns[3].toUpperCase()) || "INTEREST"}</MenuItem>
-                      <MenuItem value={5}>{(company.activityColumns && company.activityColumns[4].toUpperCase()) || "UNDERSTANDING"}</MenuItem>
-                      <MenuItem value={2}>{(company.activityColumns && company.activityColumns[1].toUpperCase()) || "PREPAREDNESS"}</MenuItem>
-                      <MenuItem value={3}>{(company.activityColumns && company.activityColumns[2].toUpperCase()) || "SUPPORT"}</MenuItem>
+                    <Select fullWidth value={phase || 1} id="select-phase" onChange={handlePhaseChange}
+                            className={classes.selectPhase}>
+                      <MenuItem
+                        value={1}>{(company.activityColumns && company.activityColumns[0].toUpperCase()) || "AWARENESS"}</MenuItem>
+                      <MenuItem
+                        value={4}>{(company.activityColumns && company.activityColumns[3].toUpperCase()) || "INTEREST"}</MenuItem>
+                      <MenuItem
+                        value={5}>{(company.activityColumns && company.activityColumns[4].toUpperCase()) || "UNDERSTANDING"}</MenuItem>
+                      <MenuItem
+                        value={2}>{(company.activityColumns && company.activityColumns[1].toUpperCase()) || "PREPAREDNESS"}</MenuItem>
+                      <MenuItem
+                        value={3}>{(company.activityColumns && company.activityColumns[2].toUpperCase()) || "SUPPORT"}</MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>
@@ -911,7 +1027,7 @@ function AddActivities(props) {
               <br/>
 
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <Grid container justify="space-between" spacing={2}>
+                <Grid container>
                   <Grid item xs={4} className={classes.datePicker}>
                     <Grid item xs={10}>
                       <DateTimePicker
@@ -945,7 +1061,7 @@ function AddActivities(props) {
                       value={time}
                       onChange={handleTimeChange}
                       type="number"
-                      fullWidth
+                      className={classes.timeField}
                     />
                   </Grid>
 
@@ -974,9 +1090,22 @@ function AddActivities(props) {
                       </IconButton>
                     </Grid>
                   </Grid>
+                  {!showBuildDate && !showSignOffDate &&
+                  <Grid container justify="flex-end" style={{paddingRight: '18px'}}>
+                    <Grid item xs={12} className={classes.addButton}>
+                      <Button variant="text" color="primary" disabled={disabled} className={classes.buttonAsLink}
+                              onClick={() => handleShowChange('buildDate')}>
+                        Add build & sign-off dates
+                      </Button>
+                    </Grid>
+                  </Grid>
+                  }
                 </Grid>
+              </MuiPickersUtilsProvider>
 
-                <Grid container justify="space-between" spacing={2}>
+              <Grid container>
+                <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                  {showBuildDate &&
                   <Grid item xs={4} className={classes.datePicker}>
                     <Grid item xs={10}>
                       <DatePicker
@@ -1001,8 +1130,8 @@ function AddActivities(props) {
                       </IconButton>
                     </Grid>
                   </Grid>
-
-                  <Grid item xs={4} className={classes.datePicker}>
+                  }
+                  {showBuildDate && <Grid item xs={4} className={classes.datePicker}>
                     <Grid item xs={10}>
                       <DatePicker
                         disableToolbar
@@ -1027,8 +1156,18 @@ function AddActivities(props) {
                       </IconButton>
                     </Grid>
                   </Grid>
+                  }
 
-                  <Grid item xs={4} className={classes.datePicker}>
+                  {showSignOffDate && !showBuildDate &&
+                  <Grid item xs={8} className={classes.removeBuildButton}>
+                    <Button variant="text" color="primary" disabled={disabled} className={classes.buttonAsLink}
+                            onClick={() => handleShowChange('buildDate')}>
+                      Add build dates
+                    </Button>
+                  </Grid>
+                  }
+
+                  {showSignOffDate && <Grid item xs={4} className={classes.datePicker}>
                     <Grid item xs={10}>
                       <DatePicker
                         disableToolbar
@@ -1052,11 +1191,38 @@ function AddActivities(props) {
                       </IconButton>
                     </Grid>
                   </Grid>
-                </Grid>
-              </MuiPickersUtilsProvider>
-              <br/>
-              <br/>
+                  }
 
+                  {!showSignOffDate && showBuildDate &&
+                  <Grid item xs={4} className={classes.addSignDateButton}>
+                    <Button variant="text" color="primary" disabled={disabled} className={classes.buttonAsLink}
+                            onClick={() => handleShowChange('signOffDate')}>
+                      Add sign-off date
+                    </Button>
+                  </Grid>
+                  }
+
+                  <Grid container justify="flex-end">
+                    {showBuildDate && <Grid item xs={!showSignOffDate ? 8 : 4} className={classes.removeButton}>
+                      <Button variant="text" color="primary" disabled={disabled}  className={classes.buttonAsLink}
+                              onClick={() => handleCloseChange('buildDate')}>
+                        Remove build Dates
+                      </Button>
+                    </Grid>}
+                    {showSignOffDate && <Grid item xs={4} className={classes.removeButton}>
+                      <Button variant="text" color="primary" disabled={disabled}  className={classes.buttonAsLink}
+                              onClick={() => handleCloseChange('signOffDate')}>
+                        Remove sign-off date
+                      </Button>
+                    </Grid>}
+
+                  </Grid>
+                </MuiPickersUtilsProvider>
+              </Grid>
+
+
+              <br/>
+              <br/>
               <Grid container>
                 <Grid item xs={4}>
                   <Typography className={classes.heading}>Stakeholders targeted</Typography>
@@ -1074,7 +1240,7 @@ function AddActivities(props) {
 
               <Grid container justify="space-around" direction="row" alignItems="center">
                 <Grid item xs={4}>
-                  <Typography className={classes.heading}>Stakeholder feedback</Typography>
+                  <Typography className={classes.heading}>Collect stakeholder feedback</Typography>
                 </Grid>
                 <Grid item xs={5}>
                   <Switch checked={checkSchedule} onChange={handleSchedule()} value="checkSchedule" color="primary"
@@ -1138,19 +1304,18 @@ function AddActivities(props) {
 
               <br/>
               <br/>
-              <Grid container>
-                <Grid item xs={5}>
+              <Grid container justify="flex-start" direction="row" alignItems="baseline">
+                <Grid item xs={12}>
                   <Typography className={classes.heading}>Activity deliverer</Typography>
                 </Grid>
-                <Grid item xs={7}>
-                  <Typography className={classes.heading}>Activity owner</Typography>
-                </Grid>
-                <Grid item={true} xs={5}>
+                <Grid item={true} xs={4}>
                   <AutoComplete updateUsers={updateUsers} data={users} selectedValue={person}
                                 currentChangeManager={changeManager} isActivity={true} isManager={isManager}
                                 isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager}
-                                isActivityDeliverer={isActivityDeliverer}/>
-                  {type === 'project' &&
+                                isActivityDeliverer={isActivityDeliverer} isActivityOwner={isActivityOwner}/>
+                </Grid>
+                {type === 'project' &&
+                <Grid item xs={3}>
                   <Button variant="text" color="primary" className={classes.buttonAsLink}
                           disabled={disabledManager}
                           onClick={() => {
@@ -1158,14 +1323,38 @@ function AddActivities(props) {
                           }}>
                     Notify/Remind by email
                   </Button>
-                  }
                 </Grid>
-                <Grid item={true} xs={5}>
+                }
+                {!showActivityOwner &&
+                <Grid item xs={3}>
+                  <Button variant="text" color="primary" disabled={disabled}  className={classes.buttonAsLink}
+                          onClick={() => handleShowChange('activityOwner')}>
+                    Add Activity owner
+                  </Button>
+                </Grid>
+                }
+                <Grid item xs={2}>
+                  <AddNewPerson company={company} isActivity={true} isManager={isManager}
+                                isActivityDeliverer={isActivityDeliverer} isActivityOwner={isActivityOwner}
+                                isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager}/>
+                </Grid>
+              </Grid>
+
+              {showActivityOwner &&
+              <Grid container justify="flex-end" direction="row" alignItems="baseline">
+                <Grid item xs={12}>
+                  <br/>
+                  <br/>
+                  <Typography className={classes.heading}>Activity owner</Typography>
+                </Grid>
+                <Grid item={true} xs={4}>
                   <AutoComplete updateUsers={updateOwner} data={users} selectedValue={owner}
                                 currentChangeManager={changeManager} isActivity={true} isManager={isManager}
                                 isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager}
-                                isActivityDeliverer={isActivityDeliverer}/>
-                  {type === 'project' &&
+                                isActivityDeliverer={isActivityDeliverer} isActivityOwner={isActivityOwner}/>
+                </Grid>
+                {type === 'project' &&
+                <Grid item xs={3}>
                   <Button variant="text" color="primary" className={classes.buttonAsLink}
                           disabled={disabledManager}
                           onClick={() => {
@@ -1173,25 +1362,68 @@ function AddActivities(props) {
                           }}>
                     Notify/Remind by email
                   </Button>
-                  }
                 </Grid>
-                <Grid item={true} xs={2} className={classes.linkButton}>
-                  <AddNewPerson company={company} isActivity={true} isManager={isManager}
-                                isActivityDeliverer={isActivityDeliverer}
-                                isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager}/>
+                }
+                <Grid item xs={5}>
+                  <Button variant="text" color="primary" disabled={disabled} className={classes.buttonAsLink}
+                          onClick={() => handleCloseChange('activityOwner')}>
+                    Remove Activity owner
+                  </Button>
                 </Grid>
               </Grid>
+              }
 
               <br/>
               <br/>
               <Grid container>
                 <Grid item xs={4}>
-                  <Typography className={classes.heading}>Cost</Typography>
+                  <Typography className={classes.headingCost}>Cost</Typography>
                   <FormControl>
-                    <Input value={cost} type="number" onChange={handleCostChange}
-                           startAdornment={<InputAdornment position="start">$</InputAdornment>} />
+                    <Input value={cost} type="number" disabled={disabled} onChange={handleCostChange}
+                           startAdornment={<InputAdornment position="start">$</InputAdornment>}/>
                   </FormControl>
                 </Grid>
+                {showDateToInviteSent ?
+                <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                  <Grid item xs={4} className={classes.datePicker}>
+                    <Grid item xs={10}>
+                      <DatePicker
+                        disableToolbar
+                        fullWidth
+                        variant="inline"
+                        disabled={disabledManager}
+                        margin="normal"
+                        id="date-to-invite-sent-picker"
+                        label="Due date for invite to be sent"
+                        format="MM/dd/yyyy"
+                        value={dateToInviteSent}
+                        autoOk={true}
+                        onChange={handleDateToInviteSent}
+                      />
+                    </Grid>
+                    <Grid item xs={2}>
+                      <IconButton aria-label="close" className={classes.closeButton}
+                                  disabled={disabledManager}
+                                  onClick={() => onCalendarClick("date-to-invite-sent-picker")}>
+                        <CalendarTodayIcon/>
+                      </IconButton>
+                    </Grid>
+                  </Grid>
+                  <Grid item xs={8} className={classes.removeDateInviteButton}>
+                    <Button variant="text" color="primary" disabled={disabled}  className={classes.buttonAsLink}
+                            onClick={() => handleCloseChange('dateToInviteSent')}>
+                      Remove due date for invite to be sent
+                    </Button>
+                  </Grid>
+                </MuiPickersUtilsProvider> :
+                  <Grid item xs={5}>
+                    <Button variant="text" color="primary" disabled={disabled} className={classes.addSignDateButton}
+                            onClick={() => handleShowChange('dateToInviteSent')}>
+                      Add due date for invite to be sent
+                    </Button>
+                  </Grid>
+                }
+
               </Grid>
 
             </div>

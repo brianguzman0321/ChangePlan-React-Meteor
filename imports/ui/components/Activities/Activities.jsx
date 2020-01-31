@@ -11,6 +11,7 @@ import {Activities} from '/imports/api/activities/activities'
 import {Templates} from "../../../api/templates/templates";
 import {Projects} from "../../../api/projects/projects";
 import {Companies} from "../../../api/companies/companies";
+import {Meteor} from "meteor/meteor";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -89,6 +90,7 @@ function ActivitiesCard(props) {
   const [isChangeManager, setIsChangeManager] = useState(false);
   const [isManager, setIsManager] = useState(false);
   const [isActivityDeliverer, setIsActivityDeliverer] = useState(false);
+  const [isActivityOwner, setIsActivityOwner] = useState(false);
   const [currentCompanyId, setCompanyId] = useState(null);
 
   useEffect(() => {
@@ -132,6 +134,9 @@ function ActivitiesCard(props) {
       activities.forEach(activity => {
         if (!Roles.userIsInRole(userId, 'superAdmin') && activity.deliverer && activity.deliverer.includes(Meteor.userId())) {
           setIsActivityDeliverer(true);
+        }
+        if (!Roles.userIsInRole(userId, 'superAdmin') && activity.owner && activity.owner.includes(Meteor.userId())) {
+          setIsActivityOwner(true);
         }
       })
     }
@@ -180,6 +185,7 @@ function ActivitiesCard(props) {
                             type={type} match={match}
                             template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
                             isChangeManager={isChangeManager} isManager={isManager} isActivityDeliverer={isActivityDeliverer}
+                            isActivityOwner={isActivityOwner}
                             project={project}/>
         </Grid>
         <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
@@ -189,6 +195,7 @@ function ActivitiesCard(props) {
                             type={type} match={match}
                             template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
                             isChangeManager={isChangeManager} isManager={isManager} isActivityDeliverer={isActivityDeliverer}
+                            isActivityOwner={isActivityOwner}
                             project={project}/>
         </Grid>
         <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
@@ -198,6 +205,7 @@ function ActivitiesCard(props) {
                             type={type} match={match}
                             template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
                             isChangeManager={isChangeManager} isManager={isManager} isActivityDeliverer={isActivityDeliverer}
+                            isActivityOwner={isActivityOwner}
                             project={project}/>
         </Grid>
         <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
@@ -207,6 +215,7 @@ function ActivitiesCard(props) {
                             type={type} match={match}
                             template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
                             isChangeManager={isChangeManager} isManager={isManager} isActivityDeliverer={isActivityDeliverer}
+                            isActivityOwner={isActivityOwner}
                             project={project}/>
         </Grid>
         <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
@@ -216,6 +225,7 @@ function ActivitiesCard(props) {
                             type={type} match={match}
                             template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
                             isChangeManager={isChangeManager} isManager={isManager} isActivityDeliverer={isActivityDeliverer}
+                            isActivityOwner={isActivityOwner}
                             project={project}/>
         </Grid>
       </Grid>

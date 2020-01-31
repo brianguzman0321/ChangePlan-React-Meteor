@@ -83,6 +83,10 @@ export const insert = new ValidatedMethod({
       type: Date,
       optional: true,
     },
+    'activity.dueDateToInviteSent': {
+      type: Date,
+      optional: true,
+    },
     'activity.cost': {
       type: Number,
       optional: true,
@@ -190,6 +194,10 @@ export const update = new ValidatedMethod({
       optional: true,
     },
     'activity.signOffDate': {
+      type: Date,
+      optional: true,
+    },
+    'activity.dueDateToInviteSent': {
       type: Date,
       optional: true,
     },
