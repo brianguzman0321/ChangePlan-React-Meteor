@@ -173,6 +173,10 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'right',
     paddingRight: '18px',
   },
+  containerStakeholderFeedback: {
+    paddingLeft: '18px',
+    paddingTop: '40px',
+  },
   removeButton: {
     marginTop: '-8px',
     textAlign: 'left',
@@ -296,7 +300,7 @@ function AddActivities(props) {
   const [showNotification, setShowNotification] = useState(false);
   const [checkSchedule, setCheckSchedule] = useState(false);
   const [timeSendEmail, setTimeSendEmail] = useState(null);
-  const activityCategories = ["Engagement", "Communication", "Learning/coaching"];
+  const activityCategories = ["Engagement", "Communication", "Learning/coaching", "Other"];
   const disabled = (isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
     || (isActivityDeliverer && !isSuperAdmin && !isChangeManager && !isAdmin)
     || (isActivityOwner && !isSuperAdmin && !isChangeManager && !isAdmin)
@@ -377,7 +381,10 @@ function AddActivities(props) {
       resetValues();
       return false;
     }
-    let selectedActivity = data.find(item => (item.name === activity.type) || item.category === "Custom") || {};
+    let selectedActivity = data.find(item => (item.name === activity.type));
+    if (!selectedActivity) {
+      selectedActivity = data.find(item => (item.category === "Custom"));
+    }
     if (selectedActivity.category === "Custom") {
       selectedActivity.name = activity.type;
       selectedActivity.buttonText = activity.name;
@@ -905,7 +912,7 @@ function AddActivities(props) {
                       }}>
                         <Grid style={{width: '50vw'}}>
                           {activityCategories.map((activityCategory, index) => {
-                            return (<div><ListSubheader disableSticky>{activityCategory.toUpperCase()}</ListSubheader>
+                            return (<div><hr/><ListSubheader disableSticky>{activityCategory.toUpperCase()}</ListSubheader>
                               <Grid container key={index} direction="row" style={{width: '48vw'}}>
                                 {data.filter(item => item.category === activityCategory).map((item, index) => {
                                   return <Grid item xs={3} key={index}
@@ -931,12 +938,10 @@ function AddActivities(props) {
                                 })}
                               </Grid>
                               <br/>
-                              <hr/>
                             </div>)
                           })
                           }
 
-                          <ListSubheader disableSticky>Other</ListSubheader>
                           {(activityType.category !== "Custom") || showInputEditActivity ?
                             <Grid container direction="row" justify="flex-start" alignItems="flex-start"
                                   style={{width: '48vw'}}>
@@ -1238,18 +1243,13 @@ function AddActivities(props) {
               <br/>
               <br/>
 
-              <Grid container justify="space-around" direction="row" alignItems="center">
+              <Grid container direction="row" alignItems="center">
                 <Grid item xs={4}>
                   <Typography className={classes.heading}>Collect stakeholder feedback</Typography>
                 </Grid>
                 <Grid item xs={5}>
                   <Switch checked={checkSchedule} onChange={handleSchedule()} value="checkSchedule" color="primary"
                           disabled={disabledManager}/>
-                </Grid>
-                <Grid item xs={3} className={classes.linkButton}>
-                  <Button variant="text" color="primary" className={classes.buttonAsLink}>
-                    Preview Email
-                  </Button>
                 </Grid>
               </Grid>
 
@@ -1279,26 +1279,19 @@ function AddActivities(props) {
                     </Grid>
                   </MuiPickersUtilsProvider>
                 </Grid>
-              </Grid>
-              }
-              <br/>
-
-              {checkSchedule &&
-              <Grid container className={classes.reportContainer} justify="space-around" direction="row"
-                    alignItems="center">
-                <Grid item xs={4} style={{paddingLeft: '18px'}}>
-                  <Typography variant="body1" display="inline">Responses: <Typography variant="button"
-                                                                                      display="inline">0</Typography></Typography>
-                </Grid>
-                <Grid item xs={5} style={{paddingLeft: '18px'}}>
-                  <Typography variant="body1" display="inline">Average score: <Typography variant="button"
-                                                                                          display="inline">0</Typography></Typography>
-                </Grid>
-                <Grid item xs={3} className={classes.linkButton}>
-                  <Button color="primary" variant="text" className={classes.buttonPreview}>
-                    View full report
-                  </Button>
-                </Grid>
+                  <Grid item xs={3} className={classes.containerStakeholderFeedback}>
+                    <Typography variant="body1" display="inline">Responses: <Typography variant="button"
+                                                                                        display="inline">0</Typography></Typography>
+                  </Grid>
+                  <Grid item xs={3} className={classes.containerStakeholderFeedback}>
+                    <Typography variant="body1" display="inline">Average score: <Typography variant="button"
+                                                                                            display="inline">0</Typography></Typography>
+                  </Grid>
+                  <Grid item xs={2} className={classes.containerStakeholderFeedback}>
+                    <Button color="primary" variant="text" className={classes.buttonPreview}>
+                      View report
+                    </Button>
+                  </Grid>
               </Grid>
               }
 
