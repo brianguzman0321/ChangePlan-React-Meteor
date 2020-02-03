@@ -210,7 +210,10 @@ function ActivitiesColumn(props) {
   }
 
   function iconSVG(activity) {
-    let selectedActivity = data.find(item => item.name === activity.type || item.category === "Custom") || {};
+    let selectedActivity = data.find(item => (item.name === activity.type));
+    if (!selectedActivity) {
+      selectedActivity = data.find(item => (item.category === "Custom"));
+    }
     return selectedActivity && selectedActivity.iconSVG
   }
 
@@ -344,12 +347,12 @@ function ActivitiesColumn(props) {
           }}>
             <CardHeader
               className={classes.innerCardHeader}
-              avatar={<SVGInline
+              avatar={activity ? <SVGInline
                 width="35px"
                 height="35px"
                 fill={color}
                 svg={iconSVG(activity)}
-              />
+              /> : null
               }
               action={
                 <IconButton aria-label="settings"
