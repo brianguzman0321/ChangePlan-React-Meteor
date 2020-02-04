@@ -48,3 +48,8 @@ import '/imports/api/admin/roles'
 import '/imports/api/projectEvents/projectEvents';
 import '/imports/api/projectEvents/server/publications';
 import '/imports/api/projectEvents/method';
+
+//impacts
+import '/imports/api/impacts/impacts';
+import '/imports/api/impacts/server/publications';
+import '/imports/api/impacts/methods';

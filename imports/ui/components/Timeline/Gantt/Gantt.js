@@ -132,38 +132,7 @@ const updateProjectByImport = (file, project, activities, props) => {
           props.enqueueSnackbar(`Project Updated Successfully.`, { variant: 'success' })
         }
       });
-
     }
-    if (file[i].eventType === 'Impact' || file[i].eventType === 'Benefit') {
-      const len = file[i].id.length;
-      const index = file[i].id[len - 1];
-      if (file[i].eventType === 'Impact') {
-        if (project.impacts[index]) {
-          project.impacts[index].expectedDate = new Date(file[i].start_date);
-          project.impacts[index].description = file[i].description;
-          project.impacts[index].type = file[i].text.split(' ').pop();
-        } else {
-          project.impacts.push({
-            expectedDate: new Date(file[i].start_date),
-            type: '',
-            level: '',
-            type: file[i].text.split(' ').pop(),
-            description: file[i].description,
-            stakeholders: file[i].stakeholders,
-          });
-        }
-      } else if (file[i].eventType === 'Benefit') {
-        if (project.benefits[index]) {
-          project.benefits[index].expectedDate = new Date(file[i].start_date);
-          project.benefits[index].description = file[i].description;
-        } else {
-          project.benefits.push({
-            expectedDate: new Date(file[i].start_date),
-            description: file[i].description,
-            stakeholders: file[i].stakeholders,
-          });
-        }
-      }
       let params = {
         project
       };
@@ -175,7 +144,6 @@ const updateProjectByImport = (file, project, activities, props) => {
         }
       });
     }
-  }
 };
 
 const handleImportData = (file, currentProject, activities, props) => {
@@ -291,24 +259,6 @@ const Gantt = props => {
       }
     });
   };
-  const updateImpactBenefitByDrag = (savedTask, project) => {
-    const index = savedTask.id[savedTask.id.length - 1];
-    if (savedTask.eventType === 'Impact') {
-      project.impacts[index].expectedDate = savedTask.start_date;
-    } else {
-      project.benefits[index].expectedDate = savedTask.start_date;
-    }
-    let params = {
-      project
-    };
-    Meteor.call('projects.update', params, (err, res) => {
-      if (err) {
-        props.enqueueSnackbar(err.reason, { variant: 'error' })
-      } else {
-        props.enqueueSnackbar(`Project ${savedTask.eventType} Updated Successfully.`, { variant: 'success' })
-      }
-    });
-  };
   const updateProjectEventByDrag = (savedTask, events) => {
     const projectEvent = events.find(_event => _event._id === savedTask.id);
     projectEvent.startDate = savedTask.start_date;
@@ -404,10 +354,6 @@ const Gantt = props => {
 
           if (savedTask.eventType === 'Project_Start' || savedTask.eventType === 'Project_End') {
             updateProjectByDrag(savedTask, gantt.project);
-          }
-
-          if (savedTask.eventType === 'Impact' || savedTask.eventType === 'Benefit') {
-            updateImpactBenefitByDrag(savedTask, gantt.project);
           }
 
           if (savedTask.eventType === 'Project Event') {

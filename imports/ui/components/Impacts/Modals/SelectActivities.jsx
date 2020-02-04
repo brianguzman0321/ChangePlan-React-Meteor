@@ -1,4 +1,12 @@
-import React, {useEffect, useState} from "react";
+import Table from "@material-ui/core/Table";
+import Paper from "@material-ui/core/Paper";
+import {makeStyles, TableCell, TableHead, TableRow, TableBody} from "@material-ui/core";
+import clsx from "clsx";
+import PropTypes from "prop-types";
+import Checkbox from "@material-ui/core/Checkbox";
+import TableSortLabel from "@material-ui/core/TableSortLabel";
+import moment from "moment";
+import React, {useState} from "react";
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import AppBar from '@material-ui/core/AppBar';
@@ -7,21 +15,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
-
-
-import PropTypes from 'prop-types';
-import clsx from 'clsx';
-import {makeStyles} from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import TableSortLabel from '@material-ui/core/TableSortLabel';
-import Paper from '@material-ui/core/Paper';
-import Checkbox from '@material-ui/core/Checkbox';
 import SaveChanges from "../../Modals/SaveChanges";
-import Link from "@material-ui/core/Link";
 
 const tableHeadStyle = makeStyles(theme => ({
   root: {
@@ -54,14 +48,17 @@ function getSorting(order, orderBy) {
 }
 
 const headCells = [
-  {id: 'firstName', numeric: true, disablePadding: true, label: 'First name'},
-  {id: 'lastName', numeric: false, disablePadding: true, label: 'Last Name'},
-  {id: 'role', numeric: true, disablePadding: false, label: 'ROLE'}
+  {id: 'dueDate', numeric: true, disablePadding: true, label: 'Due date'},
+  {id: 'phase', numeric: false, disablePadding: true, label: 'Phase'},
+  {id: 'type', numeric: true, disablePadding: false, label: 'Type'},
+  {id: 'time', numeric: true, disablePadding: false, label: 'Time away from BAU'},
+  {id: 'deliverer', numeric: true, disablePadding: false, label: 'Deliverer'},
+  {id: 'description', numeric: true, disablePadding: false, label: 'Description'},
 ];
 
 function EnhancedTableHead(props) {
   const tableHeadClasses = tableHeadStyle();
-  const {classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort, disabled} = props;
+  const {classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort} = props;
   const createSortHandler = property => event => {
     onRequestSort(event, property);
   };
@@ -71,7 +68,6 @@ function EnhancedTableHead(props) {
       <TableRow>
         <TableCell padding="checkbox">
           <Checkbox
-            disabled={disabled}
             indeterminate={numSelected > 0 && numSelected < rowCount}
             checked={numSelected === rowCount}
             onChange={onSelectAllClick}
@@ -82,9 +78,7 @@ function EnhancedTableHead(props) {
         {headCells.map(headCell => (
           <TableCell
             key={headCell.id}
-            // align={headCell.numeric ? 'right' : 'left'}
             align={'left'}
-            // padding={headCell.disablePadding ? 'none' : 'default'}
             sortDirection={orderBy === headCell.id ? order : false}
           >
             <TableSortLabel
@@ -121,15 +115,6 @@ const useToolbarStyles = makeStyles(theme => ({
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(1),
   },
-  highlight:
-    theme.palette.type === 'light'
-      ? {
-        // color: 'white',
-        // backgroundColor: '#f5f5f5',
-      }
-      : {
-        // backgroundColor: '#f5f5f5',
-      },
   title: {
     flex: '1 1 100%',
   },
@@ -137,16 +122,9 @@ const useToolbarStyles = makeStyles(theme => ({
 
 const EnhancedTableToolbar = props => {
   const classes = useToolbarStyles();
-  const {numSelected} = props;
 
   return (
-    <Toolbar
-      className={clsx(classes.root, {
-        [classes.highlight]: numSelected > 0,
-      })}
-    >
-
-    </Toolbar>
+    <Toolbar className={clsx(classes.root)}></Toolbar>
   );
 };
 
@@ -154,7 +132,7 @@ EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
 
-const useStyles1 = makeStyles(theme => ({
+const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
     margin: theme.spacing(3),
@@ -186,131 +164,6 @@ const useStyles1 = makeStyles(theme => ({
   selectButton: {
     color: '#3f51b5',
   },
-}));
-
-function StakeHolderList(props) {
-  let {rows, selectUsers, local, update, disabled} = props;
-  const classes = useStyles1();
-  const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('calories');
-  const [selected, setSelected] = React.useState(local && local.ids || local || []);
-  const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-
-  const handleRequestSort = (event, property) => {
-    const isDesc = orderBy === property && order === 'desc';
-    setOrder(isDesc ? 'asc' : 'desc');
-    setOrderBy(property);
-  };
-
-  const handleSelectAllClick = event => {
-    update();
-    if (event.target.checked) {
-      const newSelecteds = rows.map(n => n._id);
-      setSelected(newSelecteds);
-      selectUsers(newSelecteds);
-      return;
-    }
-    setSelected([]);
-    selectUsers([]);
-  };
-
-  const handleClick = (event, name) => {
-      const selectedIndex = selected.indexOf(name);
-      let newSelected = [];
-
-      if (selectedIndex === -1) {
-        newSelected = newSelected.concat(selected, name);
-      } else if (selectedIndex === 0) {
-        newSelected = newSelected.concat(selected.slice(1));
-      } else if (selectedIndex === selected.length - 1) {
-        newSelected = newSelected.concat(selected.slice(0, -1));
-      } else if (selectedIndex > 0) {
-        newSelected = newSelected.concat(
-          selected.slice(0, selectedIndex),
-          selected.slice(selectedIndex + 1),
-        );
-      }
-      setSelected(newSelected);
-      selectUsers(newSelected);
-      update();
-  };
-
-  const isSelected = name => selected.indexOf(name) !== -1;
-
-  useEffect(() => {
-    selectUsers(local && local.ids)
-  }, [local]);
-
-  const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
-
-  return (
-    <div className={classes.root}>
-      <Paper className={classes.paper}>
-        <div className={classes.tableWrapper}>
-          <Table
-            className={classes.table}
-            aria-labelledby="tableTitle"
-            size={dense ? 'small' : 'medium'}
-            aria-label="enhanced table"
-          >
-            <EnhancedTableHead
-              disabled={disabled}
-              classes={classes}
-              // style={{color: 'white'}}
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={rows.length}
-              stakeHolders={props.stakeHolders}
-            />
-            <TableBody>
-              {stableSort(rows, getSorting(order, orderBy))
-                .map((row, index) => {
-                  const isItemSelected = isSelected(row._id);
-                  const labelId = `enhanced-table-checkbox-${index}`;
-
-                  return (
-                    <TableRow
-                      hover
-                      onClick={event => disabled ? null : handleClick(event, row._id)}
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row._id}
-                      selected={isItemSelected}
-                    >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          disabled={disabled}
-                          checked={isItemSelected}
-                          inputProps={{'aria-labelledby': labelId}}
-                          color="default"
-                        />
-                      </TableCell>
-                      <TableCell align="left">{row.firstName}</TableCell>
-                      <TableCell align="left">{row.lastName}</TableCell>
-                      <TableCell align="left">{row.role}</TableCell>
-                    </TableRow>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow style={{height: (dense ? 33 : 53) * emptyRows}}>
-                  <TableCell colSpan={6}/>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      </Paper>
-    </div>
-  );
-}
-
-const useStyles = makeStyles(theme => ({
   appBar: {
     position: 'relative',
   },
@@ -328,31 +181,134 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const ListActivities = (props) => {
+  let {activities, selectActivities, update, selectedActivities} = props;
+  const classes = useStyles();
+  const [order, setOrder] = React.useState('asc');
+  const [orderBy, setOrderBy] = React.useState('calories');
+  const [selected, setSelected] = React.useState(selectedActivities || []);
+  const page = 0;
+  const dense = false;
+  const rowsPerPage = 10;
+
+  const handleRequestSort = (event, property) => {
+    const isDesc = orderBy === property && order === 'desc';
+    setOrder(isDesc ? 'asc' : 'desc');
+    setOrderBy(property);
+  };
+
+  const handleSelectAllClick = event => {
+    update();
+    if (event.target.checked) {
+      const newSelecteds = activities.map(n => n._id);
+      setSelected(newSelecteds);
+      selectActivities(newSelecteds);
+      return;
+    }
+    setSelected([]);
+    selectActivities([]);
+  };
+
+  const handleClick = (event, name) => {
+    const selectedIndex = selected.indexOf(name);
+    let newSelected = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, name);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1),
+      );
+    }
+    setSelected(newSelected);
+    selectActivities(newSelected);
+    update();
+  };
+
+  const isSelected = name => selected.indexOf(name) !== -1;
+  const emptyRows = rowsPerPage - Math.min(rowsPerPage, activities.length - page * rowsPerPage);
+
+  return (
+    <div className={classes.root}>
+      <Paper className={classes.paper}>
+        <div className={classes.tableWrapper}>
+          <Table
+            className={classes.table}
+            aria-labelledby="tableTitle"
+            aria-label="enhanced table"
+          >
+            <EnhancedTableHead
+              classes={classes}
+              numSelected={selected.length}
+              order={order}
+              orderBy={orderBy}
+              onSelectAllClick={handleSelectAllClick}
+              onRequestSort={handleRequestSort}
+              rowCount={activities.length}
+              stakeHolders={props.stakeHolders}
+            />
+            <TableBody>
+              {stableSort(activities, getSorting(order, orderBy))
+                .map((row, index) => {
+                  const isItemSelected = isSelected(row._id);
+                  const labelId = `enhanced-table-checkbox-${index}`;
+
+                  return (
+                    <TableRow
+                      hover
+                      onClick={event => handleClick(event, row._id)}
+                      role="checkbox"
+                      aria-checked={isItemSelected}
+                      tabIndex={-1}
+                      key={row._id}
+                      selected={isItemSelected}
+                    >
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          checked={isItemSelected}
+                          inputProps={{'aria-labelledby': labelId}}
+                          color="default"
+                        />
+                      </TableCell>
+                      <TableCell align="left">{moment(row.dueDate).format('MM-DD-YYYY')}</TableCell>
+                      <TableCell align="left">{row.step}</TableCell>
+                      <TableCell align="left">{row.name}</TableCell>
+                      <TableCell align="left">{row.time}</TableCell>
+                      <TableCell align="left">{`${row.personResponsible.profile.firstName} ${row.personResponsible.profile.lastName}`}</TableCell>
+                      <TableCell align="left">{row.description}</TableCell>
+                    </TableRow>
+                  );
+                })}
+              {emptyRows > 0 && (
+                <TableRow style={{height: (dense ? 33 : 53) * emptyRows}}>
+                  <TableCell colSpan={6}/>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </Paper>
+    </div>
+  )
+};
+
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function SelectStakeHolders(props) {
+export default function SelectActivities(props) {
   let {
-    rows, local, isImpacts, isBenefits, disabled, disabledManager, handleChange
+    activities, selectedActivities, handleClose, open, handleChange,
   } = props;
   const classes = useStyles();
-  const [open, setOpen] = React.useState(false);
-  const [stakeHolders, setStakeHolders] = React.useState(local && local.ids || local || []);
-  const [flag, setFlag] = React.useState(true);
+  const [selActivities, setSelActivities] = React.useState([]);
   const [showModalDialog, setShowModalDialog] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
-
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-    setShowModalDialog(false);
-    setIsUpdated(false);
-  };
 
   const handleOpenModalDialog = () => {
     if (isUpdated) {
@@ -371,47 +327,18 @@ export default function SelectStakeHolders(props) {
     setIsUpdated(true);
   };
 
-  const updateStakeHolders = () => {
-    if (isImpacts) {
-      if (stakeHolders !== undefined) {
-        updateFilter('localStakeHoldersImpacts', 'ids', stakeHolders);
-        updateFilter('localStakeHoldersImpacts', 'changed', true);
-        handleChange(stakeHolders);
-      }
-    } else if (isBenefits) {
-      updateFilter('localStakeHoldersBenefits', 'ids', stakeHolders);
-      updateFilter('localStakeHoldersBenefits', 'changed', true);
-    } else {
-      updateFilter('localStakeHolders', 'ids', stakeHolders);
-      updateFilter('localStakeHolders', 'changed', true);
-    }
-    setOpen(false);
+  const updateActivities = () => {
+    handleChange(selActivities);
     closeModalDialog(isUpdated);
+    handleClose();
   };
 
-  const selectStakeHolders = (ids) => {
-    setStakeHolders(ids);
+  const selectActivities = (ids) => {
+    setSelActivities(ids);
   };
-
-  useEffect(() => {
-    if (flag && local && local.ids) {
-      setStakeHolders(local.ids);
-      setFlag(false)
-    }
-  });
 
   return (
     <div>
-      {!isBenefits ?
-        <Button variant="text" className={classes.buttonSelect} color="primary" onClick={() => {
-          handleClickOpen()
-        }}>
-          SELECT STAKEHOLDERS
-        </Button> :
-        <Button color="primary" variant={"outlined"} onClick={handleClickOpen} disabled={disabled} fullWidth>
-          Select Stakeholders
-        </Button>
-      }
 
       <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
         <AppBar className={classes.appBar} color="default">
@@ -421,25 +348,23 @@ export default function SelectStakeHolders(props) {
               <CloseIcon/>
             </IconButton>
             <Typography variant="h6" className={classes.title}>
-              Select Stakeholders
+              Select Activities
             </Typography>
             <Typography variant="h6" className={classes.title}>
-              Selected {stakeHolders && stakeHolders.length}
+              Selected {selectedActivities && selectedActivities.length}
             </Typography>
-            {disabledManager ?
-              null :
-              <Button autoFocus color="inherit" onClick={updateStakeHolders}>
+              <Button autoFocus color="inherit" onClick={updateActivities}>
                 save
-              </Button>}
+              </Button>
           </Toolbar>
         </AppBar>
-        <StakeHolderList rows={rows}
-                         selectUsers={selectStakeHolders}
-                         local={local} update={updateValue} disabled={disabledManager}/>
+        <ListActivities activities={activities}
+                         selectActivities={selectActivities}
+                        selectedActivities={selectedActivities} update={updateValue}/>
         <SaveChanges closeModalDialog={closeModalDialog}
                      handleClose={handleClose}
                      showModalDialog={showModalDialog}
-                     handleSave={updateStakeHolders}
+                     handleSave={updateActivities}
         />
       </Dialog>
     </div>
