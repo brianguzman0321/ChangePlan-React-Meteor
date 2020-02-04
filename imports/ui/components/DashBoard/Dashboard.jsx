@@ -16,7 +16,6 @@ import Divider from '@material-ui/core/Divider';
 import Icon from '@material-ui/core/Icon';
 import VisionModal from './Modals/VisionModal';
 import ObjectiveModal from './Modals/ObjectiveModal';
-import ImpactsModal from './Modals/ImpactsModal';
 import RisksModal from './Modals/RisksModal';
 import DeleteValue from './Modals/deleteModal';
 import config from '/imports/utils/config';
@@ -196,14 +195,6 @@ function Dashboard(props) {
     }
   };
 
-  const editImpacts = (index, value) => {
-    if ((isAdmin && template.companyId !== '' || isSuperAdmin) || (type === 'project' && (project && (isAdmin || isChangeManager)))) {
-      setImpactIndex(index);
-      setEditValue(value);
-      handleClose('impacts');
-    }
-  };
-
   const editBenefits = (index, value) => {
     if ((isAdmin && template.companyId !== '' || isSuperAdmin) || (type === 'project' && (project && (isAdmin || isChangeManager)))) {
       setBenefitsIndex(index);
@@ -231,7 +222,6 @@ function Dashboard(props) {
   const handleModalClose = obj => {
     setModals({modals, ...obj});
     setIndex('');
-    setImpactIndex('');
     setBenefitsIndex('');
     setEditValue('');
   };
@@ -243,14 +233,9 @@ function Dashboard(props) {
     if (project && project.objectives) {
       setObjective(project.objectives)
     }
-
-    if (project && project.impacts) {
-      setImpacts(project.impacts)
-    }
     if (project && project.benefits) {
       setBenefits(project.benefits)
     }
-
     if (project && project.risks) {
       setRisks(project.risks)
     }
@@ -330,9 +315,6 @@ function Dashboard(props) {
       <ObjectiveModal open={modals.objectives} handleModalClose={handleModalClose} project={project} index={index}
                       template={template}
                       editValue={editValue} currentType={type}/>
-      <ImpactsModal open={modals.impacts} handleModalClose={handleModalClose} project={project} template={template}
-                    indexImpact={impactIndex} match={match}
-                    editValue={editValue} currentType={type}/>
       <RisksModal open={modals.risks} handleModalClose={handleModalClose} project={project} index={index}
                   template={template}
                   editValue={editValue} currentType={type}/>
@@ -527,116 +509,6 @@ function Dashboard(props) {
                         Add
                       </Button> : ''}
 
-                  </CardContent>
-                </Card>
-                <br/>
-                <Card>
-                  <CardContent>
-                    <Typography className={classes.displayHeading} gutterBottom>
-                      Impacts &nbsp;&nbsp;
-                      <Icon color="disabled" fontSize="small" style={{verticalAlign: 'middle', marginBottom: 4}}>
-                        help
-                      </Icon>
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      <span className={classes.helpTipText}>List the project's impact on processes, technology, people & organization?</span>
-                    </Typography>
-                    <Divider/>
-                    <Grid
-                      container
-                      direction="row"
-                      justify="flex-end"
-                      alignItems="center"
-                    >
-                      <Grid item xs={2}>
-                        <Typography className={classes.columnsHeadings} gutterBottom style={{fontWeight: 'bold'}}>
-                          EXPECTED DATE
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={2}>
-                        <Typography className={classes.columnsHeadings} gutterBottom style={{fontWeight: 'bold'}}>
-                          TYPE
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={5}>
-                        <Typography className={classes.columnsHeadings} gutterBottom style={{fontWeight: 'bold'}}>
-                          DESCRIPTION
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={1}>
-                        <Typography className={classes.columnsHeadings} gutterBottom style={{fontWeight: 'bold'}}>
-                          STAKEHOLDERS
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={1}>
-                        <Typography className={classes.columnsHeadings} gutterBottom style={{fontWeight: 'bold'}}>
-                          LEVEL
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={1} justify="flex-end" style={{display: 'flex'}}>
-
-                      </Grid>
-                    </Grid>
-                    <Divider/>
-                    {impacts.map((v, i) => {
-                      return <><Grid key={i}
-                                     container
-                                     direction="row"
-                                     justify="flex-end"
-                                     alignItems="center"
-                                     style={{cursor: 'pointer'}}
-                      >
-                        <Grid item xs={2} onClick={(e) => {
-                          editImpacts(i, v)
-                        }}>
-                          <Typography className={classes.detailValues} gutterBottom>
-                            {v.expectedDate !== null ? moment(v.expectedDate).format('DD-MMM-YY') : '--'}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={2} onClick={(e) => {
-                          editImpacts(i, v)
-                        }}>
-                          <Typography className={classes.detailValues} gutterBottom>
-                            {stringHelpers.capitalize(v.type)}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={5} onClick={(e) => {
-                          editImpacts(i, v)
-                        }}>
-                          {stringHelpers.limitCharacters(v.description, 92)}
-                        </Grid>
-                        <Grid item xs={1} onClick={(e) => {
-                          editImpacts(i, v)
-                        }}>
-                          {v.stakeholders && v.stakeholders.length}
-                        </Grid>
-                        <Grid item xs={1} onClick={(e) => {
-                          editImpacts(i, v)
-                        }}>
-                          {v.level.toUpperCase()}
-                        </Grid>
-                        {((isAdmin && template && (template.companyId === currentCompany._id)) || isSuperAdmin || type === 'project' && (project && (isAdmin || isChangeManager))) ?
-                          <Grid item xs={1} justify="flex-end" style={{display: 'flex'}}>
-                            <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {
-                              editImpacts(i, v)
-                            }}>
-                              edit
-                            </Icon>
-                            <Icon fontSize="small" style={{marginRight: 6, cursor: 'pointer'}} onClick={(e) => {
-                              deleteEntity(i, 'impacts')
-                            }}>
-                              delete
-                            </Icon>
-                          </Grid> : <Grid item xs={1} justify="flex-end" style={{display: 'flex'}}></Grid>}
-                      </Grid>
-                        <Divider/>
-                      </>
-                    })}
-                    <Divider/>
-                    {((isAdmin && template && (template.companyId === currentCompany._id)) || isSuperAdmin || type === 'project' && (project && (isAdmin || isChangeManager))) ?
-                      <Button align="right" color="primary" variant="contained" fullWidth={true} style={{marginTop: 7}}
-                              onClick={handleClose.bind(null, 'impacts')}>
-                        Add
-                      </Button> : ''}
                   </CardContent>
                 </Card>
                 <br/>

@@ -40,11 +40,11 @@ const useStyles = makeStyles(theme => ({
   },
   topTexts: {
     [theme.breakpoints.only('md')]: {
-      paddingRight: theme.spacing(2),
-      paddingLeft: theme.spacing(2),
+      paddingRight: theme.spacing(1),
+      paddingLeft: theme.spacing(1),
     },
-    paddingRight: theme.spacing(4),
-    paddingLeft: theme.spacing(4),
+    paddingRight: theme.spacing(3),
+    paddingLeft: theme.spacing(3),
     color: '#465563',
     fontWeight: 700,
     borderRight: '0.1em solid #eaecef',
@@ -140,11 +140,14 @@ function TopNavBar(props) {
     case 'activities':
       selectedTab = 2;
       break;
-    case 'stake-holders':
+    case 'impacts':
       selectedTab = 3;
       break;
-    case 'reports':
+    case 'stake-holders':
       selectedTab = 4;
+      break;
+    case 'reports':
+      selectedTab = 5;
       break;
     default:
       break;
@@ -242,9 +245,12 @@ function TopNavBar(props) {
           props.history.push(`/projects/${projectId}/activities`);
           break;
         case 3:
-          props.history.push(`/projects/${projectId}/stake-holders`);
+          props.history.push(`/projects/${projectId}/impacts`);
           break;
         case 4:
+          props.history.push(`/projects/${projectId}/stake-holders`);
+          break;
+        case 5:
           props.history.push(`/projects/${projectId}/reports`);
           break;
         default:
@@ -263,9 +269,12 @@ function TopNavBar(props) {
         props.history.push(`/templates/${templateId}/activities`);
         break;
       case 3:
-        props.history.push(`/templates/${templateId}/stake-holders`);
+        props.history.push(`/templates/${templateId}/impacts`);
         break;
       case 4:
+        props.history.push(`/templates/${templateId}/stake-holders`);
+        break;
+      case 5:
         props.history.push(`/templates/${templateId}/reports`);
         break;
       default:

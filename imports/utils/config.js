@@ -17,13 +17,18 @@ export default config = {
     },
     {
       show: true,
-      name: 'stakeHolders',
+      name: 'impacts',
       value: 3,
+    },
+    {
+      show: true,
+      name: 'stakeHolders',
+      value: 4,
     },
     {
       name: 'reports',
       show: true,
-      value: 4,
+      value: 5,
     }
   ],
   projectsMenus: [

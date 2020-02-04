@@ -24,6 +24,7 @@ import Timeline from "../../ui/components/Timeline/Timeline";
 import Templates from "../../ui/components/Templates/Templates";
 import SurveyActivityDeliverer from "../../ui/components/Survey/SurveyActivityDeliverers/SurveyActivityDeliverers";
 import SurveyStakeholder from "../../ui/components/Survey/SurveyStakeholders/SurveyStakeholders";
+import ImpactsPage from "../../ui/components/Impacts/Impacts";
 
 //list of Public Routes
 
@@ -77,12 +78,14 @@ const Routes = appProps => (
                        component={Timeline} {...appProps}/>
         <Authenticated exact path="/templates/:templateId/" component={Dashboard} {...appProps}/>
         <Authenticated exact path="/templates/:templateId/activities" component={ActivitiesCard} {...appProps}/>
+        <Authenticated exact path="/templates/:templateId/impacts" component={ImpactsPage} {...appProps}/>
         <Authenticated exact path="/templates/:templateId/timeline" component={Timeline} {...appProps}/>
         <Authenticated exact path="/templates/:templateId/stake-holders" component={StakeHoldersCard} {...appProps}/>
         <Authenticated exact path="/templates/:templateId/reports" component={ReportsCard} {...appProps}/>
         <Authenticated exact path="/control-panel" component={ControlPanel} {...appProps}/>
         <Authenticated exact path="/projects/:projectId/activities" component={ActivitiesCard} {...appProps}/>
         <Authenticated exact path="/projects/:projectId/stake-holders" component={StakeHoldersCard} {...appProps}/>
+        <Authenticated exact path="/projects/:projectId/impacts" component={ImpactsPage} {...appProps}/>
         <Authenticated exact path="/projects/:projectId/reports" component={ReportsCard} {...appProps}/>
         <Authenticated exact path="/projects/:projectId/timeline" component={Timeline} {...appProps}/>
         <AdminRoute exact path="/admin/control-panel" component={MaterialTableDemo} {...appProps}/>

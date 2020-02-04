@@ -23,8 +23,6 @@ import Gantt, {handleImportData, handleDownload} from './Gantt/index.js';
 import ExportDialog from './Dialog/ExportDialog';
 import ImportDialog from './Dialog/ImportDialog';
 import TopNavBar from '/imports/ui/components/App/App';
-import ImpactsModal from '../DashBoard/Modals/ImpactsModal';
-import BenefitsModal from '../DashBoard/Modals/BenefitsModal';
 import EditProject from '/imports/ui/components/Projects/Models/EditProject';
 import {useStyles, changeManagersNames} from './utils';
 import {scaleTypes, colors} from './constants';
@@ -51,9 +49,6 @@ function Timeline(props) {
   const [activityId, setActivityId] = useState(null);
   const [activity, setActivity] = useState({});
   const [eventType, setEventType] = useState(null);
-  const [impactIndex, setImpactIndex] = useState(null);
-  const [impactLength, setImpactlength] = useState(null);
-  const [benefitsIndex, setBenefitsIndex] = useState(null);
   const [event, setEvent] = useState(null);
   const [currentCompanyId, setCompanyId] = useState(null);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
@@ -146,6 +141,7 @@ function Timeline(props) {
             eventType: 'Project Event',
             text: event.name,
             start_date: moment(event.startDate).format('DD-MM-YYYY'),
+            end_date: moment(event.endDate).format('DD-MM-YYYY'),
             duration: 1,
             color: 'grey',
             stakeholders: '',
@@ -203,38 +199,6 @@ function Timeline(props) {
       }
     }
 
-    if (projects0) {
-      setImpactlength(projects0.impacts.length);
-      let owner = changeManagersNames(projects0);
-      let impacts = projects0 ? projects0.impacts : [];
-      for (i = 0; i < impacts.length; i++) {
-        tempData.push({
-          id: `impacts #${i}`,
-          eventType: 'Impact',
-          text: `Impact: ${impacts[i].type}`,
-          start_date: moment(impacts[i].expectedDate).format("DD-MM-YYYY"),
-          duration: 1,
-          color: colors.impact,
-          stakeholders: impacts[i].stakeholders.length,
-          owner,
-          description: impacts[i].description,
-        })
-      }
-      let benefits = projects0 ? projects0.benefits : [];
-      for (i = 0; i < benefits.length; i++) {
-        tempData.push({
-          id: `benefits #${i}`,
-          eventType: 'Benefit',
-          text: 'Stakeholder benefit',
-          start_date: moment(benefits[i].expectedDate).format("DD-MM-YYYY"),
-          duration: 1,
-          color: colors.benefit,
-          stakeholders: benefits[i].stakeholders.length,
-          owner,
-          description: benefits[i].description,
-        })
-      }
-    }
     if (!_.isEqual(data.data, tempData))
       setData({data: tempData});
   }, [props]);
@@ -243,13 +207,9 @@ function Timeline(props) {
     const activity = activities.find(({_id}) => _id === activityId) || {};
     const extraActivity = data.data.find(({id}) => id === activityId) || {};
     const projectEvents = events.filter(_event => _event.projectId === projectId);
-    const impactindex = (activities.length > 0 && projectEvents.length > 0) ? data.data.indexOf(extraActivity) - activities.length - projectEvents.length - 2 : data.data.indexOf(extraActivity);
-    const benefitsindex = (activities.length > 0 && projectEvents.length > 0) ? data.data.indexOf(extraActivity) - activities.length - projectEvents.length - impactLength - 2 : data.data.indexOf(extraActivity) - impactLength;
     const projectEvent = projectEvents.find(_event => _event._id === activityId);
     setActivity(activity);
     setEventType(extraActivity.eventType);
-    setImpactIndex(impactindex);
-    setBenefitsIndex(benefitsindex);
     setEvent(projectEvent);
   }, [activityId, events, activities, projects0]);
 
@@ -485,40 +445,6 @@ function Timeline(props) {
             isChangeManager={isChangeManager}
             isManager={isManager}
             isActivityDeliverer={isActivityDeliverer}
-          />) : null}
-
-          {(eventType === "Impact") ? (<ImpactsModal
-            open={edit}
-            handleModalClose={handleModalClose}
-            project={projects0}
-            template={template}
-            indexImpact={impactIndex}
-            match={match}
-            handleType={'timeline'}
-            editValue={projects0.impacts[impactIndex]}
-            isSuperAdmin={isSuperAdmin}
-            isAdmin={isAdmin}
-            isManager={isManager}
-            isChangeManager={isChangeManager}
-            isActivityDeliverer={isActivityDeliverer}
-            currentType={projectId && 'project' || templateId && 'template'}
-          />) : null}
-
-          {(eventType === "Benefit") ? (<BenefitsModal
-            open={edit}
-            handleModalClose={handleModalClose}
-            project={projects0}
-            indexBenefits={benefitsIndex}
-            template={template}
-            match={match}
-            handleType={'timeline'}
-            editValue={projects0.benefits[benefitsIndex]}
-            isSuperAdmin={isSuperAdmin}
-            isAdmin={isAdmin}
-            isManager={isManager}
-            isChangeManager={isChangeManager}
-            isActivityDeliverer={isActivityDeliverer}
-            currentType={projectId && 'project' || templateId && 'template'}
           />) : null}
 
           {eventType === "Project Event" &&
