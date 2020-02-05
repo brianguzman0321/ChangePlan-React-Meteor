@@ -145,16 +145,19 @@ function AddImpact(props) {
       setSelectedActivities(impact.activities);
       updateActivities(impact.activities);
     } else if (isNew) {
-      setType('');
-      setLevel('');
-      setChange('');
-      setDescribeImpact('');
-      setActivitiesImpact([]);
-      setSelectedActivities([]);
-      setPeoples([]);
+      resetValues();
     }
-  }, [impact, ]);
+  }, [impact]);
 
+  const resetValues = () => {
+    setType('');
+    setLevel('');
+    setChange('');
+    setDescribeImpact('');
+    setActivitiesImpact([]);
+    setSelectedActivities([]);
+    setPeoples([]);
+  };
 
   const classes = useStyles();
 
@@ -222,11 +225,11 @@ function AddImpact(props) {
       methodName = 'impacts.update';
       params.impact._id = impact._id;
     }
-
     Meteor.call(methodName, params, (err, res) => {
       if (err) {
         props.enqueueSnackbar(err.reason, {variant: 'error'})
       } else {
+        resetValues();
         handleClose();
         props.enqueueSnackbar(isNew ? 'Impact Saving Successfully' : 'Impact Updating Successfully', {variant: 'success'})
       }

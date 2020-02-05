@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import moment from 'moment';
 import {withStyles, makeStyles} from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -39,12 +38,16 @@ import {
   ClickAwayListener, InputAdornment,
   ListSubheader,
   Select,
-  Switch
+  Switch, TableCell, TableHead, TableRow
 } from "@material-ui/core";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import Input from "@material-ui/core/Input";
+import Table from "@material-ui/core/Table";
+import {stringHelpers} from "../../../../helpers/stringHelpers";
+import {Impacts} from "../../../../api/impacts/impacts";
+import SelectImpacts from "./SelectImpacts";
 
 
 const styles = theme => ({
@@ -266,6 +269,7 @@ function AddActivities(props) {
   let {
     company, stakeHolders, local, project, match, edit, activity, list, isOpen, currentChangeManager, isActivityOwner,
     template, type, stakeHoldersTemplate, isSuperAdmin, isAdmin, isChangeManager, isManager, isActivityDeliverer, step,
+    impacts,
   } = props;
   const customActivityIcon = data.find(item => item.category === "Custom").iconSVG;
   const [open, setOpen] = useState(edit || isOpen || false);
@@ -291,8 +295,11 @@ function AddActivities(props) {
   const [signOffDate, setSignOffDate] = useState(null);
   const [dateToInviteSent, setDateToInviteSent] = useState(null);
   const [changeManager, setChangeManager] = useState(currentChangeManager);
+  const [impactsActivities, setImpactsActivities] = useState([]);
   const [showModalDialog, setShowModalDialog] = useState(false);
   const [showBuildDate, setShowBuildDate] = useState(false);
+  const [showImpacts, setShowImpacts] = useState(false);
+  const [selectedImpacts, setSelectedImpacts] = useState([]);
   const [showSignOffDate, setShowSignOffDate] = useState(false);
   const [showActivityOwner, setShowActivityOwner] = useState(false);
   const [showDateToInviteSent, setShowDateToInviteSent] = useState(false);
@@ -414,6 +421,12 @@ function AddActivities(props) {
     setCost(activity.cost);
     setCompletedDate(activity.completedAt);
     setDescription(activity.description);
+    const idsSelectedImpacts = [];
+    impacts.filter(impact => impact.activities.includes(activity._id)).forEach(_impact => {
+      idsSelectedImpacts.push(_impact._id);
+    });
+    setSelectedImpacts(idsSelectedImpacts);
+    updateImpacts(idsSelectedImpacts);
     if (activity.ownerInfo !== undefined) {
       const _owner = {
         label: `${activity.ownerInfo.profile.firstName} ${activity.ownerInfo.profile.lastName}`,
@@ -439,6 +452,15 @@ function AddActivities(props) {
     }
     let updatedStakeHolders = local.changed ? local.ids : activity.stakeHolders;
     setPeoples(updatedStakeHolders);
+  };
+
+  const updateImpacts = (newSelectedImpacts) => {
+    const newImpacts = [];
+    newSelectedImpacts.forEach(_impact => {
+      const newImpact = impacts.find(impact => impact._id === _impact);
+      newImpacts.push(newImpact);
+    });
+    setImpactsActivities(newImpacts);
   };
 
 
@@ -488,6 +510,8 @@ function AddActivities(props) {
     setPerson(person);
     setTime('');
     setPeoples(stakeHolders.map(item => item._id));
+    setImpactsActivities([]);
+    setSelectedImpacts([]);
     updateFilter('localStakeHolders', 'ids', stakeHolders.map(item => item._id));
   };
 
@@ -580,6 +604,19 @@ function AddActivities(props) {
     }
   };
 
+  const handleShowImpacts = () => {
+    setShowImpacts(true);
+  };
+
+  const handleCloseImpacts = () => {
+    setShowImpacts(false);
+  };
+
+  const handleSelectImpacts = (newSelectedImpacts) => {
+    setSelectedImpacts(newSelectedImpacts);
+    updateImpacts(newSelectedImpacts);
+  };
+
   const closeModalDialog = () => {
     setShowModalDialog(false);
   };
@@ -600,7 +637,6 @@ function AddActivities(props) {
 
   const createActivity = (e, isMail = true) => {
     e.preventDefault();
-    let params;
     if (!(dueDate)) {
       setShowNotification(false);
       props.enqueueSnackbar('Please fill all required fields', {variant: 'error'});
@@ -614,53 +650,71 @@ function AddActivities(props) {
       props.enqueueSnackbar('Please fill all required fields', {option: 'error'});
       return false;
     }
-    if (!isMail || !isNew) {
-      if (type === 'project') {
-        params = {
-          activity: {
-            name: activityType.buttonText,
-            type: activityType.name,
-            description,
-            projectId: projectId,
-            deliverer: person && person.value,
-            owner: owner && owner.value,
-            dueDate,
-            completedAt: completedDate,
-            buildStartDate: buildStartDate,
-            buildEndDate: buildEndDate,
-            signOffDate: signOffDate,
-            dueDateToInviteSent: dateToInviteSent,
-            cost: Number(cost),
-            stakeHolders: peoples,
-            step: phase,
-            time: Number(time),
-            timeSchedule: timeSendEmail,
-            stakeholdersFeedback: checkSchedule,
-          }
-        }
-      } else if (type === 'template') {
-        params = {
-          activity: {
-            name: activityType.buttonText,
-            type: activityType.name,
-            description,
-            templateId: templateId,
-            deliverer: person && person.value,
-            owner: owner && owner.value,
-            dueDate,
-            completedAt: completedDate,
-            buildStartDate: buildStartDate,
-            buildEndDate: buildEndDate,
-            signOffDate: signOffDate,
-            dueDateToInviteSent: dateToInviteSent,
-            cost: Number(cost),
-            stakeHolders: peoples,
-            step: phase,
-            time: Number(time),
-            timeSchedule: timeSendEmail,
-            stakeholdersFeedback: checkSchedule,
-          }
+    const oldImpacts = impacts.filter(impact => impact.activities.includes(activity._id));
+    let sImpacts = [];
+    selectedImpacts.forEach(_impact => {
+      const newImpacts = impacts.find(impact => impact._id === _impact);
+      sImpacts.push(newImpacts);
+    });
+    const deletedImpacts = oldImpacts.filter(oldImpact =>
+      !sImpacts.some(_impact => oldImpact._id === _impact._id)
+    );
+
+    deletedImpacts.forEach(deletedImpact => {
+      deletedImpact.activities = deletedImpact.activities.filter(_activity => _activity !== activity._id);
+    });
+
+    const newImpacts = sImpacts.filter(_impact =>
+      !oldImpacts.some(oldImpact => _impact._id === oldImpact._id)
+    );
+
+    newImpacts.forEach(newImpact => {
+      newImpact.activities.push(activity._id)
+    });
+
+    const allImpacts = deletedImpacts.concat(newImpacts);
+    if (allImpacts.length > 0) {
+      allImpacts.forEach(impact => {
+        delete impact.createdAt;
+        delete impact.updatedAt;
+        const paramsImpact = {
+          impact
         };
+        Meteor.call('impacts.update', paramsImpact, (err, res) => {
+          if (err) {
+            props.enqueueSnackbar(err.reason, {variant: 'error'})
+          }
+        });
+      });
+    }
+
+    let params;
+    if (!isMail || !isNew) {
+      params = {
+        activity: {
+          name: activityType.buttonText,
+          type: activityType.name,
+          description,
+          deliverer: person && person.value,
+          owner: owner && owner.value,
+          dueDate,
+          completedAt: completedDate,
+          buildStartDate: buildStartDate,
+          buildEndDate: buildEndDate,
+          signOffDate: signOffDate,
+          dueDateToInviteSent: dateToInviteSent,
+          cost: Number(cost),
+          stakeHolders: peoples,
+          step: phase,
+          time: Number(time),
+          timeSchedule: timeSendEmail,
+          stakeholdersFeedback: checkSchedule,
+        }
+      };
+      if (type === 'project') {
+        params.activity.projectId = projectId;
+      } else if (type === 'template') {
+        params.activity.templateId = templateId;
       }
       if (completedDate) {
         params.activity.completed = true;
@@ -721,6 +775,7 @@ function AddActivities(props) {
       })
     }
   };
+
 
   const handleDueDate = date => {
     setDueDate(date);
@@ -912,7 +967,9 @@ function AddActivities(props) {
                       }}>
                         <Grid style={{width: '50vw'}}>
                           {activityCategories.map((activityCategory, index) => {
-                            return (<div><hr/><ListSubheader disableSticky>{activityCategory.toUpperCase()}</ListSubheader>
+                            return (<div>
+                              <hr/>
+                              <ListSubheader disableSticky>{activityCategory.toUpperCase()}</ListSubheader>
                               <Grid container key={index} direction="row" style={{width: '48vw'}}>
                                 {data.filter(item => item.category === activityCategory).map((item, index) => {
                                   return <Grid item xs={3} key={index}
@@ -1209,13 +1266,13 @@ function AddActivities(props) {
 
                   <Grid container justify="flex-end">
                     {showBuildDate && <Grid item xs={!showSignOffDate ? 8 : 4} className={classes.removeButton}>
-                      <Button variant="text" color="primary" disabled={disabled}  className={classes.buttonAsLink}
+                      <Button variant="text" color="primary" disabled={disabled} className={classes.buttonAsLink}
                               onClick={() => handleCloseChange('buildDate')}>
                         Remove build Dates
                       </Button>
                     </Grid>}
                     {showSignOffDate && <Grid item xs={4} className={classes.removeButton}>
-                      <Button variant="text" color="primary" disabled={disabled}  className={classes.buttonAsLink}
+                      <Button variant="text" color="primary" disabled={disabled} className={classes.buttonAsLink}
                               onClick={() => handleCloseChange('signOffDate')}>
                         Remove sign-off date
                       </Button>
@@ -1279,19 +1336,19 @@ function AddActivities(props) {
                     </Grid>
                   </MuiPickersUtilsProvider>
                 </Grid>
-                  <Grid item xs={3} className={classes.containerStakeholderFeedback}>
-                    <Typography variant="body1" display="inline">Responses: <Typography variant="button"
-                                                                                        display="inline">0</Typography></Typography>
-                  </Grid>
-                  <Grid item xs={3} className={classes.containerStakeholderFeedback}>
-                    <Typography variant="body1" display="inline">Average score: <Typography variant="button"
-                                                                                            display="inline">0</Typography></Typography>
-                  </Grid>
-                  <Grid item xs={2} className={classes.containerStakeholderFeedback}>
-                    <Button color="primary" variant="text" className={classes.buttonPreview}>
-                      View report
-                    </Button>
-                  </Grid>
+                <Grid item xs={3} className={classes.containerStakeholderFeedback}>
+                  <Typography variant="body1" display="inline">Responses: <Typography variant="button"
+                                                                                      display="inline">0</Typography></Typography>
+                </Grid>
+                <Grid item xs={3} className={classes.containerStakeholderFeedback}>
+                  <Typography variant="body1" display="inline">Average score: <Typography variant="button"
+                                                                                          display="inline">0</Typography></Typography>
+                </Grid>
+                <Grid item xs={2} className={classes.containerStakeholderFeedback}>
+                  <Button color="primary" variant="text" className={classes.buttonPreview}>
+                    View report
+                  </Button>
+                </Grid>
               </Grid>
               }
 
@@ -1320,7 +1377,7 @@ function AddActivities(props) {
                 }
                 {!showActivityOwner &&
                 <Grid item xs={3}>
-                  <Button variant="text" color="primary" disabled={disabled}  className={classes.buttonAsLink}
+                  <Button variant="text" color="primary" disabled={disabled} className={classes.buttonAsLink}
                           onClick={() => handleShowChange('activityOwner')}>
                     Add Activity owner
                   </Button>
@@ -1377,38 +1434,38 @@ function AddActivities(props) {
                   </FormControl>
                 </Grid>
                 {showDateToInviteSent ?
-                <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                  <Grid item xs={4} className={classes.datePicker}>
-                    <Grid item xs={10}>
-                      <DatePicker
-                        disableToolbar
-                        fullWidth
-                        variant="inline"
-                        disabled={disabledManager}
-                        margin="normal"
-                        id="date-to-invite-sent-picker"
-                        label="Due date for invite to be sent"
-                        format="MM/dd/yyyy"
-                        value={dateToInviteSent}
-                        autoOk={true}
-                        onChange={handleDateToInviteSent}
-                      />
+                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                    <Grid item xs={4} className={classes.datePicker}>
+                      <Grid item xs={10}>
+                        <DatePicker
+                          disableToolbar
+                          fullWidth
+                          variant="inline"
+                          disabled={disabledManager}
+                          margin="normal"
+                          id="date-to-invite-sent-picker"
+                          label="Due date for invite to be sent"
+                          format="MM/dd/yyyy"
+                          value={dateToInviteSent}
+                          autoOk={true}
+                          onChange={handleDateToInviteSent}
+                        />
+                      </Grid>
+                      <Grid item xs={2}>
+                        <IconButton aria-label="close" className={classes.closeButton}
+                                    disabled={disabledManager}
+                                    onClick={() => onCalendarClick("date-to-invite-sent-picker")}>
+                          <CalendarTodayIcon/>
+                        </IconButton>
+                      </Grid>
                     </Grid>
-                    <Grid item xs={2}>
-                      <IconButton aria-label="close" className={classes.closeButton}
-                                  disabled={disabledManager}
-                                  onClick={() => onCalendarClick("date-to-invite-sent-picker")}>
-                        <CalendarTodayIcon/>
-                      </IconButton>
+                    <Grid item xs={8} className={classes.removeDateInviteButton}>
+                      <Button variant="text" color="primary" disabled={disabled} className={classes.buttonAsLink}
+                              onClick={() => handleCloseChange('dateToInviteSent')}>
+                        Remove due date for invite to be sent
+                      </Button>
                     </Grid>
-                  </Grid>
-                  <Grid item xs={8} className={classes.removeDateInviteButton}>
-                    <Button variant="text" color="primary" disabled={disabled}  className={classes.buttonAsLink}
-                            onClick={() => handleCloseChange('dateToInviteSent')}>
-                      Remove due date for invite to be sent
-                    </Button>
-                  </Grid>
-                </MuiPickersUtilsProvider> :
+                  </MuiPickersUtilsProvider> :
                   <Grid item xs={5}>
                     <Button variant="text" color="primary" disabled={disabled} className={classes.addSignDateButton}
                             onClick={() => handleShowChange('dateToInviteSent')}>
@@ -1416,9 +1473,44 @@ function AddActivities(props) {
                     </Button>
                   </Grid>
                 }
-
               </Grid>
 
+              <br/>
+              <br/>
+              <Grid container justify={"space-between"} direction={"row"} className={classes.containerImpacts}>
+                <Grid item xs={10}>
+                  <Typography className={classes.heading}>Change impacts this activity addresses</Typography>
+                </Grid>
+                <Grid item xs={2} className={classes.buttonContainer}>
+                  <Button color="primary" className={classes.buttonActivities} onClick={handleShowImpacts}>
+                    ADD/EDIT
+                  </Button>
+                  <SelectImpacts handleClose={handleCloseImpacts} handleChange={handleSelectImpacts}
+                                 open={showImpacts} impacts={impacts} selectedImpacts={selectedImpacts}/>
+                </Grid>
+                <br/>
+                <br/>
+                <Grid item xs={12}>
+                  <Table size={"small"}>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell align={"left"}>TYPE</TableCell>
+                        <TableCell align={"left"}>CHANGE</TableCell>
+                        <TableCell align={"left"}>IMPACT</TableCell>
+                        <TableCell align={"left"}>LEVEL</TableCell>
+                      </TableRow>
+                      {impactsActivities.map((impact, index) => {
+                        return <TableRow key={index}>
+                          <TableCell>{impact && impact.type[0].toUpperCase() + impact.type.slice(1)}</TableCell>
+                          <TableCell>{impact && stringHelpers.limitCharacters(impact.change, 112)}</TableCell>
+                          <TableCell>{impact && stringHelpers.limitCharacters(impact.impact, 112)}</TableCell>
+                          <TableCell>{impact && impact.level[0].toUpperCase() + impact.level.slice(1)}</TableCell>
+                        </TableRow>
+                      })}
+                    </TableHead>
+                  </Table>
+                </Grid>
+              </Grid>
             </div>
           </DialogContent>
           <DialogActions>
@@ -1460,6 +1552,7 @@ const AddActivityPage = withTracker(props => {
   Meteor.subscribe('compoundProject', projectId);
   Meteor.subscribe('templates');
   Meteor.subscribe('companies');
+  Meteor.subscribe('impacts.findAll');
   let project = Projects.findOne({
     _id: projectId
   });
@@ -1467,6 +1560,7 @@ const AddActivityPage = withTracker(props => {
   let companyProjectId = project && project.companyId;
   let companyTemplateId = template && template.companyId;
   let company = Companies.findOne({_id: companyProjectId || companyTemplateId}) || {};
+  let impacts = Impacts.find({projectId: projectId}).fetch();
   Meteor.subscribe('peoples', companyProjectId || companyTemplateId);
   return {
     project: Projects.findOne({_id: projectId}),
@@ -1481,6 +1575,7 @@ const AddActivityPage = withTracker(props => {
       }
     }).fetch(),
     template: Templates.findOne({_id: templateId}),
+    impacts,
     local,
     company,
   };
