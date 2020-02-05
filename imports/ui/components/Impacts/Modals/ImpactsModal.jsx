@@ -281,10 +281,10 @@ function AddImpact(props) {
                     id: 'demo-controlled-open-select',
                   }}
                 >
-                  <MenuItem value='process'>Process</MenuItem>
-                  <MenuItem value='technology'>Technology</MenuItem>
-                  <MenuItem value='people'>People</MenuItem>
-                  <MenuItem value='organization'>Organization</MenuItem>
+                  <MenuItem value={'Process'}>Process</MenuItem>
+                  <MenuItem value={'Technology'}>Technology</MenuItem>
+                  <MenuItem value={'People'}>People</MenuItem>
+                  <MenuItem value={'Organization'}>Organization</MenuItem>
                 </Select>
               </FormControl>
               <br/>
@@ -308,9 +308,9 @@ function AddImpact(props) {
                     id: 'demo-controlled-open-select',
                   }}
                 >
-                  <MenuItem value='high'>High</MenuItem>
-                  <MenuItem value='medium'>Medium</MenuItem>
-                  <MenuItem value='low'>Low</MenuItem>
+                  <MenuItem value={'High'}>High</MenuItem>
+                  <MenuItem value={'Medium'}>Medium</MenuItem>
+                  <MenuItem value={'Low'}>Low</MenuItem>
                 </Select>
               </FormControl>
               <br/>

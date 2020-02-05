@@ -35,16 +35,16 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center'
   },
   menuButton: {
-    marginRight: theme.spacing(2),
-    marginLeft: theme.spacing(2),
+    marginRight: '16px',
+    marginLeft: '16px',
   },
   topTexts: {
     [theme.breakpoints.only('md')]: {
-      paddingRight: theme.spacing(1),
-      paddingLeft: theme.spacing(1),
+      paddingRight: '8px',
+      paddingLeft: '8px',
     },
-    paddingRight: theme.spacing(3),
-    paddingLeft: theme.spacing(3),
+    paddingRight: '14px',
+    paddingLeft: '14px',
     color: '#465563',
     fontWeight: 700,
     borderRight: '0.1em solid #eaecef',
