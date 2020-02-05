@@ -69,13 +69,13 @@ const Impact = (props) => {
         />
       </TableCell>
       <TableCell className={classes.cellInfo} align="left" component="th" id={labelId} scope="row" onClick={handleOpenModalDialog}>
-        {row.type}
+        {row.type[0].toUpperCase() + row.type.slice(1)}
       </TableCell>
       <TableCell align="left" component="th" id={labelId} scope="row" onClick={handleOpenModalDialog}>
         {stringHelpers.limitCharacters(row.change, 112)}
       </TableCell>
       <TableCell align="left" className={classes.cellInfo} onClick={handleOpenModalDialog}>{stringHelpers.limitCharacters(row.impact, 112)}</TableCell>
-      <TableCell align="left" className={classes.cellInfo} onClick={handleOpenModalDialog}>{row.level}</TableCell>
+      <TableCell align="left" className={classes.cellInfo} onClick={handleOpenModalDialog}>{row.level[0].toUpperCase() + row.level.slice(1)}</TableCell>
       <TableCell align="left" className={classes.cellInfo} onClick={handleOpenModalDialog}>{row.activities.length || '-'}</TableCell>
       <TableCell align="left" className={classes.cellInfo} onClick={handleOpenModalDialog}>{row.stakeholders.length || '-'}</TableCell>
       <TableCell align="left" className={classes.cellInfo} onClick={event => deleteCell(event, row)}>
