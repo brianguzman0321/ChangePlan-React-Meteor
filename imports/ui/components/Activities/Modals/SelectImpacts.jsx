@@ -5,7 +5,6 @@ import clsx from "clsx";
 import PropTypes from "prop-types";
 import Checkbox from "@material-ui/core/Checkbox";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
-import moment from "moment";
 import React, {useState} from "react";
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -48,12 +47,10 @@ function getSorting(order, orderBy) {
 }
 
 const headCells = [
-  {id: 'dueDate', numeric: true, disablePadding: true, label: 'Due date'},
-  {id: 'phase', numeric: false, disablePadding: true, label: 'Phase'},
-  {id: 'type', numeric: true, disablePadding: false, label: 'Type'},
-  {id: 'time', numeric: true, disablePadding: false, label: 'Time away from BAU'},
-  {id: 'deliverer', numeric: true, disablePadding: false, label: 'Deliverer'},
-  {id: 'description', numeric: true, disablePadding: false, label: 'Description'},
+  {id: 'type', numeric: false, disablePadding: true, label: 'Type'},
+  {id: 'change', numeric: false, disablePadding: true, label: 'Change'},
+  {id: 'impact', numeric: false, disablePadding: false, label: 'Impact'},
+  {id: 'level', numeric: false, disablePadding: false, label: 'Level'},
 ];
 
 function EnhancedTableHead(props) {
@@ -181,12 +178,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const ListActivities = (props) => {
-  let {activities, selectActivities, update, selectedActivities} = props;
+const ListImpacts = (props) => {
+  let {impacts, selectImpacts, update, selectedImpacts} = props;
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
-  const [selected, setSelected] = React.useState(selectedActivities || []);
+  const [selected, setSelected] = React.useState(selectedImpacts || []);
   const page = 0;
   const dense = false;
   const rowsPerPage = 10;
@@ -200,13 +197,13 @@ const ListActivities = (props) => {
   const handleSelectAllClick = event => {
     update();
     if (event.target.checked) {
-      const newSelecteds = activities.map(n => n._id);
+      const newSelecteds = impacts.map(n => n._id);
       setSelected(newSelecteds);
-      selectActivities(newSelecteds);
+      selectImpacts(newSelecteds);
       return;
     }
     setSelected([]);
-    selectActivities([]);
+    selectImpacts([]);
   };
 
   const handleClick = (event, name) => {
@@ -226,12 +223,12 @@ const ListActivities = (props) => {
       );
     }
     setSelected(newSelected);
-    selectActivities(newSelected);
+    selectImpacts(newSelected);
     update();
   };
 
   const isSelected = name => selected.indexOf(name) !== -1;
-  const emptyRows = rowsPerPage - Math.min(rowsPerPage, activities.length - page * rowsPerPage);
+  const emptyRows = rowsPerPage - Math.min(rowsPerPage, impacts.length - page * rowsPerPage);
 
   return (
     <div className={classes.root}>
@@ -249,11 +246,11 @@ const ListActivities = (props) => {
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={activities.length}
+              rowCount={impacts.length}
               stakeHolders={props.stakeHolders}
             />
             <TableBody>
-              {stableSort(activities, getSorting(order, orderBy))
+              {stableSort(impacts, getSorting(order, orderBy))
                 .map((row, index) => {
                   const isItemSelected = isSelected(row._id);
                   const labelId = `enhanced-table-checkbox-${index}`;
@@ -275,12 +272,10 @@ const ListActivities = (props) => {
                           color="default"
                         />
                       </TableCell>
-                      <TableCell align="left">{moment(row.dueDate).format('MM-DD-YYYY')}</TableCell>
-                      <TableCell align="left">{row.step}</TableCell>
-                      <TableCell align="left">{row.name}</TableCell>
-                      <TableCell align="left">{row.time}</TableCell>
-                      <TableCell align="left">{`${row.personResponsible.profile.firstName} ${row.personResponsible.profile.lastName}`}</TableCell>
-                      <TableCell align="left">{row.description}</TableCell>
+                      <TableCell align="left">{row.type}</TableCell>
+                      <TableCell align="left">{row.change}</TableCell>
+                      <TableCell align="left">{row.impact}</TableCell>
+                      <TableCell align="left">{row.level}</TableCell>
                     </TableRow>
                   );
                 })}
@@ -301,12 +296,12 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function SelectActivities(props) {
+export default function SelectImpacts(props) {
   let {
-    activities, selectedActivities, handleClose, open, handleChange,
+    impacts, selectedImpacts, handleClose, open, handleChange,
   } = props;
   const classes = useStyles();
-  const [selActivities, setSelActivities] = React.useState(selectedActivities || []);
+  const [selImpacts, setSelImpacts] = React.useState(selectedImpacts || []);
   const [showModalDialog, setShowModalDialog] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
 
@@ -327,14 +322,14 @@ export default function SelectActivities(props) {
     setIsUpdated(true);
   };
 
-  const updateActivities = () => {
-    handleChange(selActivities);
+  const updateImpacts = () => {
+    handleChange(selImpacts);
     closeModalDialog(isUpdated);
     handleClose();
   };
 
-  const selectActivities = (ids) => {
-    setSelActivities(ids);
+  const selectImpacts = (ids) => {
+    setSelImpacts(ids);
   };
 
   return (
@@ -348,23 +343,23 @@ export default function SelectActivities(props) {
               <CloseIcon/>
             </IconButton>
             <Typography variant="h6" className={classes.title}>
-              Select Activities
+              Select Impacts
             </Typography>
             <Typography variant="h6" className={classes.title}>
-              Selected {selActivities && selActivities.length}
+              Selected {selImpacts && selImpacts.length}
             </Typography>
-              <Button autoFocus color="inherit" onClick={updateActivities}>
-                save
-              </Button>
+            <Button autoFocus color="inherit" onClick={updateImpacts}>
+              save
+            </Button>
           </Toolbar>
         </AppBar>
-        <ListActivities activities={activities}
-                         selectActivities={selectActivities}
-                        selectedActivities={selectedActivities} update={updateValue}/>
+        <ListImpacts impacts={impacts}
+                        selectImpacts={selectImpacts}
+                     selectedImpacts={selectedImpacts} update={updateValue}/>
         <SaveChanges closeModalDialog={closeModalDialog}
                      handleClose={handleClose}
                      showModalDialog={showModalDialog}
-                     handleSave={updateActivities}
+                     handleSave={updateImpacts}
         />
       </Dialog>
     </div>
