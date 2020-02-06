@@ -215,16 +215,31 @@ const Gantt = props => {
   const { tasks, scaleText, setActivityId, setEdit, activities, isSuperAdmin, isAdmin, isChangeManager, isManager, project, template, event } = props;
   const obj = { project: undefined };
 
-  const updateTaskByDrag = (savedActivities, updatedTask) => {
+  const updateTaskByDrag = (savedActivities, updatedTask, type) => {
     const validActivity = savedActivities.find(item => item['_id'] === updatedTask['id']);
     if (!validActivity) return;
     let params = {};
     params.activity = validActivity;
     delete params.activity.personResponsible;
-    if (updatedTask.completed === true) {
-      params.activity['completedAt'] = updatedTask.start_date;
-    } else {
-      params.activity['dueDate'] = updatedTask.start_date;
+    switch (type) {
+      case 'activity':
+        if (updatedTask.completed) {
+          params.activity['completedAt'] = updatedTask.start_date;
+        } else {
+          params.activity['dueDate'] = updatedTask.start_date;
+        }
+        break;
+      case 'build':
+        params.activity['buildStartDate'] = updatedTask.start_date;
+        break;
+      case 'signOff':
+        params.activity['signOffDate'] = updatedTask.start_date;
+        break;
+      case 'invitation':
+        params.activity['dueDateToInviteSent'] = updatedTask.start_date;
+        break;
+      default:
+        break;
     }
     params.activity['updatedAt'] = updatedTask.end_date;
     if (params.activity['stakeholdersFeedback'] === undefined) {
@@ -259,6 +274,7 @@ const Gantt = props => {
       }
     });
   };
+
   const updateProjectEventByDrag = (savedTask, events) => {
     const projectEvent = events.find(_event => _event._id === savedTask.id);
     projectEvent.startDate = savedTask.start_date;
@@ -349,8 +365,29 @@ const Gantt = props => {
       if (mode === 'move' && gantt.getTask(id).start_date !== savedTask.start_date) {
         if ((isAdmin && template && (template.companyId === companyID)) || isSuperAdmin || isChangeManager) {
           savedTask = gantt.getTask(id);
+          let type = '';
+          if (["Awareness", "Ability", "Reinforcement", "Desire", "Knowledge"].includes(savedTask.eventType)) {
+            type = 'activity';
+            updateTaskByDrag(gantt.activities, savedTask, type);
+          }
 
-          updateTaskByDrag(gantt.activities, savedTask);
+          if (savedTask.eventType === 'Activity Event') {
+            savedTask.id = savedTask.id.slice(0, -1);
+            switch (savedTask.text) {
+              case 'Activity Design & Build':
+                type = 'build';
+                break;
+              case 'Activity sign off':
+                type = 'signOff';
+                break;
+              case 'Activity invitation to be sent date due':
+                type = 'invitation';
+                break;
+              default:
+                break;
+            }
+            updateTaskByDrag(gantt.activities, savedTask, type);
+          }
 
           if (savedTask.eventType === 'Project_Start' || savedTask.eventType === 'Project_End') {
             updateProjectByDrag(savedTask, gantt.project);
@@ -359,6 +396,7 @@ const Gantt = props => {
           if (savedTask.eventType === 'Project Event') {
             updateProjectEventByDrag(savedTask, gantt.projectEvents);
           }
+
         }
       }
 
@@ -369,7 +407,8 @@ const Gantt = props => {
     gantt.parse(tasks);
   });
 
-  useEffect(() => { gantt.parse(tasks) }, [tasks]);
+
+  useEffect(() => { gantt.parse(tasks)}, [tasks]);
   useEffect(() => {
     switch (scaleText) {
       case "quarter":

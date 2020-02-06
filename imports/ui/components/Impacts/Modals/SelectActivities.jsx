@@ -233,6 +233,23 @@ const ListActivities = (props) => {
   const isSelected = name => selected.indexOf(name) !== -1;
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, activities.length - page * rowsPerPage);
 
+  const selectRow = (step) => {
+    switch (step) {
+      case 1:
+        return '1';
+      case 2:
+        return '4';
+      case 3:
+        return '5';
+      case 4:
+        return '2';
+      case 5:
+        return '3';
+      default:
+        break;
+    }
+  };
+
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
@@ -276,7 +293,7 @@ const ListActivities = (props) => {
                         />
                       </TableCell>
                       <TableCell align="left">{moment(row.dueDate).format('MM-DD-YYYY')}</TableCell>
-                      <TableCell align="left">{row.step}</TableCell>
+                      <TableCell align="left">{selectRow(row.step)}</TableCell>
                       <TableCell align="left">{row.name}</TableCell>
                       <TableCell align="left">{row.time}</TableCell>
                       <TableCell align="left">{`${row.personResponsible.profile.firstName} ${row.personResponsible.profile.lastName}`}</TableCell>

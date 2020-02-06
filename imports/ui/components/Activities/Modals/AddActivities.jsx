@@ -157,8 +157,10 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.text.secondary,
   },
   gridText: {
-    fontSize: theme.typography.pxToRem(12),
-    color: '#465563'
+    fontSize: '1em',
+    color: '#465563',
+    fontWeight: '500',
+    whiteSpace: 'pre-wrap',
   },
   panelSummary: {
     background: 'red',
@@ -236,6 +238,26 @@ const useStyles = makeStyles(theme => ({
   selectPhase: {
     height: '35px',
   },
+  selectTypes: {
+    [theme.breakpoints.only('md')]: {
+      width: '85vw'
+    },
+    [theme.breakpoints.only('lg')]: {
+      width: '48vw'
+    },
+    [theme.breakpoints.only('xl')]: {
+      width: '40vw'
+    },
+    [theme.breakpoints.only('sm')]: {
+      width: '90vw'
+    },
+    [theme.breakpoints.only('xs')]: {
+      width: '90vw'
+    }
+  },
+  addImpacts: {
+    textAlign: 'right',
+  },
 }));
 
 const DialogTitle = withStyles(styles)(props => {
@@ -286,7 +308,7 @@ function AddActivities(props) {
   const [activityType, setActivityType] = useState({});
   const [currentProject, setProject] = useState(project);
   const [vision, setVision] = useState([]);
-  const [cost, setCost] = useState('');
+  const [cost, setCost] = useState(null);
   const [objectives, setObjectives] = useState([]);
   const [dueDate, setDueDate] = useState(new Date());
   const [completedDate, setCompletedDate] = useState(null);
@@ -418,7 +440,7 @@ function AddActivities(props) {
     if (dateToInviteSent) {
       setShowDateToInviteSent(true);
     }
-    setCost(activity.cost);
+    setCost(activity.cost || null);
     setCompletedDate(activity.completedAt);
     setDescription(activity.description);
     const idsSelectedImpacts = [];
@@ -504,7 +526,7 @@ function AddActivities(props) {
     setShowActivityOwner(false);
     setShowSignOffDate(false);
     setShowBuildDate(false);
-    setCost('');
+    setCost(null);
     setDescription('');
     setOwner(owner);
     setPerson(person);
@@ -965,15 +987,15 @@ function AddActivities(props) {
                         setShowInputEditActivity(false);
                         setShowSelect(false);
                       }}>
-                        <Grid style={{width: '50vw'}}>
+                        <Grid className={classes.selectTypes}>
                           {activityCategories.map((activityCategory, index) => {
                             return (<div>
-                              <hr/>
+                              {activityCategory !== 'Engagement' &&  <hr/>}
                               <ListSubheader disableSticky>{activityCategory.toUpperCase()}</ListSubheader>
-                              <Grid container key={index} direction="row" style={{width: '48vw'}}>
+                              <Grid container key={index} direction="row" className={classes.selectTypes}>
                                 {data.filter(item => item.category === activityCategory).map((item, index) => {
-                                  return <Grid item xs={3} key={index}
-                                               style={{background: activityType.name === item.name ? '#dae0e5' : ''}}>
+                                  return <Grid item key={index}
+                                               style={{background: activityType.name === item.name ? '#dae0e5' : '', width: '20%'}}>
                                     <MenuItem value={item} onClick={() => {
                                       changeActivityType(item)
                                     }}>
@@ -993,15 +1015,32 @@ function AddActivities(props) {
                                     </MenuItem>
                                   </Grid>
                                 })}
+                                {!showInputEditActivity && activityCategory === 'Other' &&
+                                  <Grid item onClick={handleShowEditActivity} style={{width: '20%'}}>
+                                    <MenuItem value={activityType}>
+                                      <Grid item={true} xs={12} classes={classes1}
+                                            style={{background: activityType.category === "Custom" ? '#dae0e5' : ''}}>
+                                        <SVGInline
+                                          width="35px"
+                                          height="35px"
+                                          fill={color}
+                                          svg={customActivityIcon}
+                                        />
+                                        <Typography className={classes.gridText}>
+                                          {(activityType.category !== "Custom") ? 'Custom' : activityType.buttonText}
+                                        </Typography>
+                                      </Grid>
+                                    </MenuItem>
+                                </Grid> }
                               </Grid>
                               <br/>
                             </div>)
                           })
                           }
 
-                          {(activityType.category !== "Custom") || showInputEditActivity ?
+                          {showInputEditActivity ?
                             <Grid container direction="row" justify="flex-start" alignItems="flex-start"
-                                  style={{width: '48vw'}}>
+                                  className={classes.selectTypes}>
                               <Grid item xs={1} style={{maxWidth: '5%'}}>
                                 <SVGInline
                                   width="35px"
@@ -1020,26 +1059,7 @@ function AddActivities(props) {
                                     (e.key === 'Enter' ? changeActivityType(e.target.value, true) : null)
                                   }}/>
                               </Grid>
-                            </Grid> :
-                            <Grid style={{width: '48vw'}} onClick={handleShowEditActivity}>
-                              <Grid item xs={3}>
-                                <MenuItem value={activityType}>
-                                  <Grid item={true} xs={12} classes={classes1}
-                                        style={{background: activityType.category === "Custom" ? '#dae0e5' : ''}}>
-                                    <SVGInline
-                                      width="35px"
-                                      height="35px"
-                                      fill={color}
-                                      svg={customActivityIcon}
-                                    />
-                                    <Typography className={classes.gridText}>
-                                      {activityType.buttonText}
-                                    </Typography>
-                                  </Grid>
-                                </MenuItem>
-                              </Grid>
-                            </Grid>
-                          }
+                            </Grid> : null}
                         </Grid>
                       </ClickAwayListener>
                     </Select>
@@ -1481,8 +1501,8 @@ function AddActivities(props) {
                 <Grid item xs={10}>
                   <Typography className={classes.heading}>Change impacts this activity addresses</Typography>
                 </Grid>
-                <Grid item xs={2} className={classes.buttonContainer}>
-                  <Button color="primary" className={classes.buttonActivities} onClick={handleShowImpacts}>
+                <Grid item xs={2} className={classes.addImpacts}>
+                  <Button color="primary" className={classes.buttonAsLink} onClick={handleShowImpacts}>
                     ADD/EDIT
                   </Button>
                   <SelectImpacts handleClose={handleCloseImpacts} handleChange={handleSelectImpacts}

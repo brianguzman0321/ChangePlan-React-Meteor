@@ -465,7 +465,7 @@ function Dashboard(props) {
                         help
                       </Icon>
                       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      <span className={classes.helpTipText}>List the ways in which the project/change will support the organisation. What problems is the project/change solving?</span>
+                      <span className={classes.helpTipText}>What are we trying to achieve?</span>
                     </Typography>
                     <Divider/>
 
@@ -515,102 +515,11 @@ function Dashboard(props) {
                 <Card>
                   <CardContent>
                     <Typography className={classes.displayHeading} gutterBottom>
-                      Benefits &nbsp;&nbsp;
+                      Change management risks &nbsp;&nbsp;
                       <Icon color="disabled" fontSize="small" style={{verticalAlign: 'middle', marginBottom: 4}}>
                         help
                       </Icon>
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      <span className={classes.helpTipText}>List the project's benefit?</span>
-                    </Typography>
-                    <Divider/>
-                    <Grid
-                      container
-                      direction="row"
-                      justify="flex-end"
-                      alignItems="center"
-                    >
-                      <Grid item xs={3}>
-                        <Typography className={classes.columnsHeadings} gutterBottom style={{fontWeight: 'bold'}}>
-                          EXPECTED DATE
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Typography className={classes.columnsHeadings} gutterBottom style={{fontWeight: 'bold'}}>
-                          DESCRIPTION
-                        </Typography>
-
-                      </Grid>
-                      <Grid item xs={1}>
-                        <Typography className={classes.columnsHeadings} gutterBottom style={{fontWeight: 'bold'}}>
-                          STAKEHOLDERS
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
-
-                      </Grid>
-                    </Grid>
-                    <Divider/>
-                    {benefits.map((v, i) => {
-                      return <><Grid key={i}
-                                     container
-                                     direction="row"
-                                     justify="flex-end"
-                                     alignItems="center"
-                      >
-                        <Grid item xs={3} onClick={(e) => {
-                          editBenefits(i, v)
-                        }}>
-                          <Typography className={classes.detailValues} gutterBottom>
-                            {v.expectedDate !== null ? moment(v.expectedDate).format('DD-MMM-YY') : '--'}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={6} onClick={(e) => {
-                          editBenefits(i, v)
-                        }}>
-                          {stringHelpers.limitCharacters(v.description, 92)}
-                        </Grid>
-                        <Grid item xs={1} onClick={(e) => {
-                          editBenefits(i, v)
-                        }}>
-                          {v.stakeholders && v.stakeholders.length}
-                        </Grid>
-                        {((isAdmin && template && (template.companyId === currentCompany._id)) || isSuperAdmin || type === 'project' && (project && (isAdmin || isChangeManager))) ?
-                          <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
-                            <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {
-                              editBenefits(i, v)
-                            }}>
-                              edit
-                            </Icon>
-                            <Icon fontSize="small" style={{marginRight: 6, cursor: 'pointer'}} onClick={(e) => {
-                              deleteEntity(i, 'benefits')
-                            }}>
-                              delete
-                            </Icon>
-                          </Grid> : <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}></Grid>}
-                      </Grid>
-                        <Divider/>
-                      </>
-
-                    })}
-
-                    <Divider/>
-                    {((isAdmin && template && (template.companyId === currentCompany._id)) || isSuperAdmin || type === 'project' && (project && (isAdmin || isChangeManager))) ?
-                      <Button align="right" color="primary" variant="contained" fullWidth={true} style={{marginTop: 7}}
-                              onClick={handleClose.bind(null, 'benefits')}>
-                        Add
-                      </Button> : ''}
-
-                  </CardContent>
-                </Card>
-                <br/>
-                <Card>
-                  <CardContent>
-                    <Typography className={classes.displayHeading} gutterBottom>
-                      Risks &nbsp;&nbsp;
-                      <Icon color="disabled" fontSize="small" style={{verticalAlign: 'middle', marginBottom: 4}}>
-                        help
-                      </Icon>
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                       <span className={classes.helpTipText}>List risks associated with the change that could effect the projects's success?</span>
                     </Typography>
                     <Divider/>
@@ -681,6 +590,86 @@ function Dashboard(props) {
                               onClick={handleClose.bind(null, 'risks')}>
                         Add
                       </Button> : ''}
+                  </CardContent>
+                </Card>
+                <br/>
+                <Card>
+                  <CardContent>
+                    <Typography className={classes.displayHeading} gutterBottom>
+                      Benefits &nbsp;&nbsp;
+                      <Icon color="disabled" fontSize="small" style={{verticalAlign: 'middle', marginBottom: 4}}>
+                        help
+                      </Icon>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <span className={classes.helpTipText}>List the project's benefit?</span>
+                    </Typography>
+                    <Divider/>
+                    <Grid
+                      container
+                      direction="row"
+                      justify="flex-end"
+                      alignItems="center"
+                    >
+                      <Grid item xs={8}>
+                        <Typography className={classes.columnsHeadings} gutterBottom style={{fontWeight: 'bold'}}>
+                          DESCRIPTION
+                        </Typography>
+
+                      </Grid>
+                      <Grid item xs={2}>
+                        <Typography className={classes.columnsHeadings} gutterBottom style={{fontWeight: 'bold'}}>
+                          STAKEHOLDERS
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
+
+                      </Grid>
+                    </Grid>
+                    <Divider/>
+                    {benefits.map((v, i) => {
+                      return <><Grid key={i}
+                                     container
+                                     direction="row"
+                                     justify="flex-end"
+                                     alignItems="center"
+                      >
+                        <Grid item xs={8} onClick={(e) => {
+                          editBenefits(i, v)
+                        }}>
+                          <Typography className={classes.detailValues} gutterBottom>
+                          {stringHelpers.limitCharacters(v.description, 92)}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={2} onClick={(e) => {
+                          editBenefits(i, v)
+                        }}>
+                          {v.stakeholders && v.stakeholders.length}
+                        </Grid>
+                        {((isAdmin && template && (template.companyId === currentCompany._id)) || isSuperAdmin || type === 'project' && (project && (isAdmin || isChangeManager))) ?
+                          <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
+                            <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {
+                              editBenefits(i, v)
+                            }}>
+                              edit
+                            </Icon>
+                            <Icon fontSize="small" style={{marginRight: 6, cursor: 'pointer'}} onClick={(e) => {
+                              deleteEntity(i, 'benefits')
+                            }}>
+                              delete
+                            </Icon>
+                          </Grid> : <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}></Grid>}
+                      </Grid>
+                        <Divider/>
+                      </>
+
+                    })}
+
+                    <Divider/>
+                    {((isAdmin && template && (template.companyId === currentCompany._id)) || isSuperAdmin || type === 'project' && (project && (isAdmin || isChangeManager))) ?
+                      <Button align="right" color="primary" variant="contained" fullWidth={true} style={{marginTop: 7}}
+                              onClick={handleClose.bind(null, 'benefits')}>
+                        Add
+                      </Button> : null}
                   </CardContent>
                 </Card>
               </CardContent>
