@@ -44,6 +44,7 @@ function Timeline(props) {
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
   const [exportType, setExportType] = useState(null);
+  const [extraType, setExtraType] = useState(null);
   const [edit, setEdit] = useState(false);
   const [data, setData] = useState({data: []});
   const [activityId, setActivityId] = useState(null);
@@ -133,6 +134,7 @@ function Timeline(props) {
         owner: '',
         completed: false,
         description: '',
+        type: '',
       });
       if (events) {
         events.filter(_event => _event.projectId === projectId).forEach(event => {
@@ -148,6 +150,7 @@ function Timeline(props) {
             owner: '',
             completed: false,
             description: '',
+            type: '',
           });
         });
       }
@@ -162,54 +165,108 @@ function Timeline(props) {
         owner: '',
         completed: false,
         description: '',
+        type: '',
       });
     }
-    for (i = 0; i < activities.length; i++) {
-      let type = activities[i].type;
-      if (activities[i].completed === true) {
+    activities.forEach(activity => {
+      let type = activity.type;
+      if (activity.buildStartDate !== null) {
         tempData.push({
-          id: activities[i]._id,
-          eventType: activities[i].label || defaultSteps[activities[i].step - 1],
-          text: type[0].toUpperCase() + type.slice(1),
-          start_date: moment(activities[i].completedAt).format("DD-MM-YYYY"),
+          id: activity._id + 1,
+          eventType: 'Activity Event',
+          text: 'Activity Design & Build',
+          start_date: moment(activity.buildStartDate).format('DD-MM-YYYY'),
+          end_date: moment(activity.buildEndDate).format('DD-MM-YYYY'),
           duration: 1,
-          color: colors.activity[activities[i].step - 1],
-          stakeholders: activities[i].stakeHolders.length,
-          owner: activities[i].deliverer && activities[i].personResponsible
-            ? `${activities[i].personResponsible.profile.firstName} ${activities[i].personResponsible.profile.lastName}`
+          color: colors.activity[activity.step - 1],
+          stakeholders: '',
+          owner: '',
+          completed: false,
+          description: '',
+          type: activity.label || defaultSteps[activity.step - 1],
+        });
+      }
+      if (activity.signOffDate !== null) {
+        tempData.push({
+          id: activity._id + 2,
+          eventType: 'Activity Event',
+          text: 'Activity sign off',
+          start_date: moment(activity.signOffDate).format('DD-MM-YYYY'),
+          duration: 1,
+          color: colors.activity[activity.step - 1],
+          stakeholders: '',
+          owner: '',
+          completed: false,
+          description: '',
+          type: activity.label || defaultSteps[activity.step - 1],
+        });
+      }
+      if (activity.dueDateToInviteSent !== null) {
+        tempData.push({
+          id: activity._id + 3,
+          eventType: 'Activity Event',
+          text: 'Activity invitation to be sent date due',
+          start_date: moment(activity.dueDateToInviteSent).format('DD-MM-YYYY'),
+          duration: 1,
+          color: colors.activity[activity.step - 1],
+          stakeholders: '',
+          owner: '',
+          completed: false,
+          description: '',
+          type: activity.label || defaultSteps[activity.step - 1],
+        });
+      }
+      if (activity.completed === true) {
+        tempData.push({
+          id: activity._id,
+          eventType: activity.label || defaultSteps[activity.step - 1],
+          text: type[0].toUpperCase() + type.slice(1),
+          start_date: moment(activity.completedAt).format("DD-MM-YYYY"),
+          duration: 1,
+          color: colors.activity[activity.step - 1],
+          stakeholders: activity.stakeHolders.length,
+          owner: activity.deliverer && activity.personResponsible
+            ? `${activity.personResponsible.profile.firstName} ${activity.personResponsible.profile.lastName}`
             : null,
-          completed: activities[i].completed,
-          description: activities[i].description,
+          completed: activity.completed,
+          description: activity.description,
+          type: '',
         });
       } else {
         tempData.push({
-          id: activities[i]._id,
-          eventType: activities[i].label || defaultSteps[activities[i].step - 1],
+          id: activity._id,
+          eventType: activity.label || defaultSteps[activity.step - 1],
           text: type[0].toUpperCase() + type.slice(1),
-          start_date: moment(activities[i].dueDate).format("DD-MM-YYYY"),
+          start_date: moment(activity.dueDate).format("DD-MM-YYYY"),
           duration: 1,
-          color: colors.activity[activities[i].step - 1],
-          stakeholders: activities[i].stakeHolders.length,
-          owner: activities[i].deliverer && activities[i].personResponsible
-            ? `${activities[i].personResponsible.profile.firstName} ${activities[i].personResponsible.profile.lastName}`
+          color: colors.activity[activity.step - 1],
+          stakeholders: activity.stakeHolders.length,
+          owner: activity.deliverer && activity.personResponsible
+            ? `${activity.personResponsible.profile.firstName} ${activity.personResponsible.profile.lastName}`
             : null,
-          completed: activities[i].completed,
-          description: activities[i].description,
+          completed: activity.completed,
+          description: activity.description,
+          type: '',
         });
       }
-    }
+    });
 
     if (!_.isEqual(data.data, tempData))
-      setData({data: tempData});
+    setData({data: tempData});
   }, [props]);
 
   useEffect(() => {
-    const activity = activities.find(({_id}) => _id === activityId) || {};
+    let activity = activities.find(({_id}) => _id === activityId);
+    if (!activity && activityId) {
+      const id = activityId.slice(0, -1);
+      activity = activities.find(({_id}) => _id === id) || {};
+    }
     const extraActivity = data.data.find(({id}) => id === activityId) || {};
     const projectEvents = events.filter(_event => _event.projectId === projectId);
     const projectEvent = projectEvents.find(_event => _event._id === activityId);
     setActivity(activity);
-    setEventType(extraActivity.eventType);
+    setExtraType(extraActivity.type);
+    setEventType(extraActivity && extraActivity.eventType);
     setEvent(projectEvent);
   }, [activityId, events, activities, projects0]);
 
@@ -220,7 +277,6 @@ function Timeline(props) {
   const handleCloseAddEventModal = () => {
     setShowAddEventModal(false);
   };
-
   return (
     <div>
       <TopNavBar menus={config.menus} {...props} />
@@ -269,39 +325,39 @@ function Timeline(props) {
 
           <Grid className={classes.flexBox}>
             {viewMode === 0 &&
-              <Grid className={classes.flexBox}>
-                <Button
-                  color="primary"
-                  onClick={() => setIsImporting(true)}
-                >
-                  Import
-                </Button>
-                <Button
-                  color="primary"
-                  onClick={() => setIsExporting(true)}
-                  style={{marginLeft: "20px"}}
-                >
-                  Export
-                </Button>
-                <Tabs
-                  value={Number(zoomMode)}
-                  onChange={(e, newValue) => changeZoom(newValue)}
-                  indicatorColor="primary"
-                  textColor="primary"
-                  style={{
-                    marginLeft: "20px",
-                    background: "white",
-                  }}
-                >
-                  {scaleTypes.map((unit, idx) =>
-                    <Tab
-                      key={`date-unit-tab-${idx}`}
-                      className={classes.activityTab}
-                      label={<div className={classes.iconTab}>&nbsp; {unit.toUpperCase()}</div>}
-                    />
-                  )}
-                </Tabs>
-              </Grid>
+            <Grid className={classes.flexBox}>
+              <Button
+                color="primary"
+                onClick={() => setIsImporting(true)}
+              >
+                Import
+              </Button>
+              <Button
+                color="primary"
+                onClick={() => setIsExporting(true)}
+                style={{marginLeft: "20px"}}
+              >
+                Export
+              </Button>
+              <Tabs
+                value={Number(zoomMode)}
+                onChange={(e, newValue) => changeZoom(newValue)}
+                indicatorColor="primary"
+                textColor="primary"
+                style={{
+                  marginLeft: "20px",
+                  background: "white",
+                }}
+              >
+                {scaleTypes.map((unit, idx) =>
+                  <Tab
+                    key={`date-unit-tab-${idx}`}
+                    className={classes.activityTab}
+                    label={<div className={classes.iconTab}>&nbsp; {unit.toUpperCase()}</div>}
+                  />
+                )}
+              </Tabs>
+            </Grid>
             }
             <Tabs
               value={viewMode}
@@ -352,7 +408,7 @@ function Timeline(props) {
           />
           {/* {(isAdmin && template && (template.companyId === companyId)) || isSuperAdmin ? */}
 
-          {(eventType === "Awareness") ? (<AddActivities
+          {(eventType === "Awareness" || (eventType === 'Activity Event' && extraType === 'Awareness')) ? (<AddActivities
             edit={edit}
             list={true}
             isOpen={false}
@@ -371,7 +427,7 @@ function Timeline(props) {
             isActivityDeliverer={isActivityDeliverer}
           />) : null}
 
-          {(eventType === "Ability") ? (<AddActivities
+          {(eventType === "Ability" || (eventType === 'Activity Event' && extraType === 'Ability')) ? (<AddActivities
             edit={edit}
             list={true}
             isOpen={false}
@@ -390,7 +446,7 @@ function Timeline(props) {
             isActivityDeliverer={isActivityDeliverer}
           />) : null}
 
-          {(eventType === "Reinforcement") ? (<AddActivities
+          {(eventType === "Reinforcement" || (eventType === 'Activity Event' && extraType === 'Reinforcement')) ? (<AddActivities
             edit={edit}
             list={true}
             isOpen={false}
@@ -409,7 +465,7 @@ function Timeline(props) {
             isActivityDeliverer={isActivityDeliverer}
           />) : null}
 
-          {(eventType === "Desire") ? (<AddActivities
+          {(eventType === "Desire" || (eventType === 'Activity Event' && extraType === 'Desire')) ? (<AddActivities
             edit={edit}
             list={true}
             isOpen={false}
@@ -428,7 +484,7 @@ function Timeline(props) {
             isActivityDeliverer={isActivityDeliverer}
           />) : null}
 
-          {(eventType === "Knowledge") ? (<AddActivities
+          {(eventType === "Knowledge" || (eventType === 'Activity Event' && extraType === 'Knowledge')) ? (<AddActivities
             edit={edit}
             list={true}
             isOpen={false}

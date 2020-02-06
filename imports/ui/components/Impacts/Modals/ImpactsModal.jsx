@@ -258,6 +258,23 @@ function AddImpact(props) {
     setShowActivities(false);
   };
 
+  const selectPhase = (phase) => {
+    switch (phase) {
+      case 1:
+        return '1';
+      case 2:
+        return '4';
+      case 3:
+        return '5';
+      case 4:
+        return '2';
+      case 5:
+        return '3';
+      default:
+        break;
+    }
+  };
+
   return (
     <div className={classes.createNewProject}>
       <Dialog onClose={isUpdated ? handleOpenModalDialog : handleClose} aria-labelledby="customized-dialog-title"
@@ -395,7 +412,7 @@ function AddImpact(props) {
                       return <TableRow key={index}>
                         <TableCell>{activity && activity.completedAt && moment(activity.completedAt).format('MM-DD-YYYY')
                         || activity && activity.dueDate && moment(activity.dueDate).format('MM-DD-YYYY')}</TableCell>
-                        <TableCell>{activity && activity.step}</TableCell>
+                        <TableCell>{activity && selectPhase(activity.step)}</TableCell>
                         <TableCell>{activity && activity.name}</TableCell>
                         <TableCell>{activity && activity.time}</TableCell>
                       </TableRow>

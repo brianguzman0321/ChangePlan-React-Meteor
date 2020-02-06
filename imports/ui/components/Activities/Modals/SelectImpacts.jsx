@@ -298,10 +298,10 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function SelectImpacts(props) {
   let {
-    impacts, selectedImpacts, handleClose, open, handleChange,
+    impacts, handleClose, open, handleChange,
   } = props;
   const classes = useStyles();
-  const [selImpacts, setSelImpacts] = React.useState(selectedImpacts || []);
+  const [selectedImpacts, setSelectedImpacts] = React.useState(props.selectedImpacts || []);
   const [showModalDialog, setShowModalDialog] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
 
@@ -323,13 +323,13 @@ export default function SelectImpacts(props) {
   };
 
   const updateImpacts = () => {
-    handleChange(selImpacts);
+    handleChange(selectedImpacts);
     closeModalDialog(isUpdated);
     handleClose();
   };
 
   const selectImpacts = (ids) => {
-    setSelImpacts(ids);
+    setSelectedImpacts(ids);
   };
 
   return (
@@ -346,7 +346,7 @@ export default function SelectImpacts(props) {
               Select Impacts
             </Typography>
             <Typography variant="h6" className={classes.title}>
-              Selected {selImpacts && selImpacts.length}
+              Selected {selectedImpacts && selectedImpacts.length}
             </Typography>
             <Button autoFocus color="inherit" onClick={updateImpacts}>
               save
@@ -355,7 +355,7 @@ export default function SelectImpacts(props) {
         </AppBar>
         <ListImpacts impacts={impacts}
                         selectImpacts={selectImpacts}
-                     selectedImpacts={selectedImpacts} update={updateValue}/>
+                     selectedImpacts={props.selectedImpacts} update={updateValue}/>
         <SaveChanges closeModalDialog={closeModalDialog}
                      handleClose={handleClose}
                      showModalDialog={showModalDialog}
