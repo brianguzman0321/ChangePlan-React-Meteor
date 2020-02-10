@@ -17,14 +17,11 @@ import DateFnsUtils from '@date-io/date-fns';
 import {
   DatePicker,
   MuiPickersUtilsProvider,
-  KeyboardDatePicker,
 } from '@material-ui/pickers';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import {data} from "/imports/activitiesContent.json";
-import {Peoples} from '/imports/api/peoples/peoples'
 import {Companies} from '/imports/api/companies/companies'
 import AutoComplete from '/imports/ui/components/utilityComponents/AutoCompleteInline'
 import {withRouter} from 'react-router'
@@ -43,35 +40,11 @@ const styles = theme => ({
   },
 });
 
-const gridStyles = makeStyles(theme => ({
-  root: {
-    cursor: 'pointer',
-    textAlign: 'center',
-    '&:hover': {
-      background: '#dae0e5;'
-    },
-    '&:selected': {
-      background: '#dae0e5;'
-    }
-  },
-  item: {
-    // background: '#dae0e5'
-  }
-}));
-
 const useStyles = makeStyles(theme => ({
-  AddNewActivity: {
+  AddNewProject: {
     flex: 1,
     marginTop: 2,
     marginLeft: 15
-  },
-  button: {
-    background: '#f1753e',
-    color: 'white',
-    '&:hover': {
-      background: '#f1753e',
-      color: 'white'
-    }
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
@@ -81,17 +54,6 @@ const useStyles = makeStyles(theme => ({
   secondaryHeading: {
     fontSize: theme.typography.pxToRem(15),
     color: theme.palette.text.secondary,
-  },
-  gridText: {
-    fontSize: theme.typography.pxToRem(12),
-    color: theme.palette.text.secondary,
-  },
-  avatar: {
-    position: 'absolute',
-    top: theme.spacing(1),
-    left: theme.spacing(1),
-    width: 15,
-    height: 15
   },
   panelSummary: {
     background: 'red',
@@ -128,66 +90,30 @@ const DialogActions = withStyles(theme => ({
   },
 }))(MuiDialogActions);
 
-function AddActivity(props) {
-  let {company, stakeHolders, local, match, edit, activity, isOpen} = props;
-  const [open, setOpen] = React.useState(edit || isOpen || false);
-  const [deleteModal, setDeleteModal] = React.useState(false);
-  const [age, setAge] = React.useState(5);
+function AddProject(props) {
+  let {company} = props;
+  const [open, setOpen] = React.useState(false);
   const [isNew, setIsNew] = React.useState(false);
   const [users, setUsers] = React.useState([]);
   const [name, setName] = React.useState('');
-  const [description, setDescription] = React.useState('');
   const [person, setPerson] = React.useState('');
-  const [peoples, setPeoples] = React.useState(stakeHolders.map(item => item._id));
-  const [activityType, setActivityType] = React.useState({});
   const [startingDate, setStartingDate] = React.useState(new Date());
-  const [dueDate, setDueDate] = React.useState(new Date());
-  const [startingDateOpen, setStartingDateOpen] = React.useState(false);
   const [endingDate, setEndingDate] = React.useState(new Date());
-  const [endingDateOpen, setEndingDateOpen] = React.useState(false);
-  const [selectOpen, setSelectOpen] = React.useState(false);
-  const [role, setRole] = React.useState('changeManager');
   const [expanded, setExpanded] = React.useState('panel1');
 
-  let {projectId} = match.params;
   const classes = useStyles();
-  const classes1 = gridStyles();
-
-  const updateValues = () => {
-    if (isNew) {
-      resetValues();
-      return false;
-    }
-    let selectedActivity = data.find(item => item.name === activity.type) || {};
-    setActivityType(selectedActivity);
-    setDueDate(activity.dueDate);
-    setDescription(activity.description);
-    let obj = {
-      label: `${activity.personResponsible.profile.firstName} ${activity.personResponsible.profile.lastName}`,
-      value: activity.personResponsible._id
-    };
-    setPerson(obj);
-    setAge(activity.time);
-    local.changed || updateFilter('localStakeHolders', 'ids', activity.stakeHolders);
-    let updatedStakeHolders = local.changed ? local.ids : activity.stakeHolders;
-    setPeoples(updatedStakeHolders);
-
-  };
 
   const resetValues = () => {
-    setActivityType({});
-    setDueDate(new Date());
-    setDescription('');
+    setEndingDate(new Date());
+    setStartingDate(new Date());
+    setName('');
     setPerson(null);
-    setAge(5);
-    setPeoples(stakeHolders.map(item => item._id));
-    updateFilter('localStakeHolders', 'ids', stakeHolders.map(item => item._id));
-
+    setExpanded('panel1')
   };
 
   const createProject = (e) => {
     e.preventDefault();
-    if (!(description && startingDate && endingDate)) {
+    if (!(name && startingDate && endingDate)) {
       props.enqueueSnackbar('Please fill all required fields', {variant: 'error'});
       return false;
     } else if (endingDate < startingDate) {
@@ -196,26 +122,22 @@ function AddActivity(props) {
     }
     let params = {
       project: {
-        name: description,
+        name: name,
         startingDate,
         endingDate,
         companyId: company._id,
         managers: person && person.map(p => p.value) || []
-
       }
     };
     Meteor.call('projects.insert', params, (err, res) => {
       if (err) {
         props.enqueueSnackbar(err.reason, {variant: 'error'})
       } else {
-        setName('');
         resetValues();
         props.enqueueSnackbar('New Project Created Successfully.', {variant: 'success'})
         setOpen(false);
       }
-
     })
-
   };
 
   const updateUsersList = () => {
@@ -237,19 +159,8 @@ function AddActivity(props) {
   };
 
   useEffect(() => {
-    setOpen(edit || open);
     updateUsersList();
-    if (isNew) {
-      let updatedStakeHolders = local.changed ? local.ids : stakeHolders.map(item => item._id);
-      setPeoples(updatedStakeHolders);
-    }
-    if (edit && activity && activity.name) {
-      setExpanded('panel1');
-      updateValues();
-    }
-
-
-  }, [props.company, stakeHolders, company, props.edit, props.activity, isNew, local]);
+  }, [company, isNew, open]);
 
   const handleChangePanel = panel => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
@@ -260,40 +171,35 @@ function AddActivity(props) {
     setExpanded('panel1');
     setOpen(true);
   };
+
   const handleClose = () => {
-    setName('');
-    setOpen(false);
     setIsNew(false);
-    // props.newActivity();
-    updateFilter('localStakeHolders', 'changed', false);
+    setOpen(false);
     resetValues()
   };
 
   const handleStartingDate = date => {
-    setStartingDate(date)
+    setStartingDate(date);
+    if (endingDate < date) {
+      setEndingDate(date);
+    }
   };
 
   const handleEndingDate = date => {
-    if (!(endingDate < startingDate)) {
-      setEndingDateOpen(false)
-    }
     setEndingDate(date);
   };
 
   const updateUsers = (value) => {
     setPerson(value)
   };
-  const handleDescriptionChange = (e) => {
-    setDescription(e.target.value)
-  };
 
-  function deleteActivity() {
-    setDeleteModal(true);
-  }
+  const handleNameChange = (e) => {
+    setName(e.target.value)
+  };
 
 
   return (
-    <div className={classes.AddNewActivity}>
+    <div className={classes.AddNewProject}>
       <Button variant="contained" color="primary" onClick={handleClickOpen}>
         Create New Project
       </Button>
@@ -319,10 +225,10 @@ function AddActivity(props) {
                   <TextField
                     autoFocus
                     margin="dense"
-                    id="description"
+                    id="name"
                     label="Project Name"
-                    value={description}
-                    onChange={handleDescriptionChange}
+                    value={name}
+                    onChange={handleNameChange}
                     required={true}
                     type="text"
                     fullWidth
@@ -406,12 +312,9 @@ function AddActivity(props) {
             </div>
           </DialogContent>
           <DialogActions>
-            {isNew ? <Button onClick={handleClose} color="secondary">
-                cancel
-              </Button> :
-              <Button onClick={deleteActivity} color="secondary">
-                Delete
-              </Button>}
+            <Button onClick={handleClose} color="secondary">
+              cancel
+            </Button>
 
             <Button type="submit" color="primary">
               Create Project
@@ -423,19 +326,14 @@ function AddActivity(props) {
   );
 }
 
-const AddActivityPage = withTracker(props => {
-  let local = LocalCollection.findOne({
-    name: 'localStakeHolders'
-  });
+const AddProjectPage = withTracker(props => {
   Meteor.subscribe('companies');
   let company = Companies.findOne() || {};
   let companyId = company._id || {};
   Meteor.subscribe('peoples', companyId);
   return {
-    stakeHolders: Peoples.find().fetch(),
-    local,
     company
   };
-})(withRouter(AddActivity));
+})(withRouter(AddProject));
 
-export default withSnackbar(AddActivityPage)
+export default withSnackbar(AddProjectPage)

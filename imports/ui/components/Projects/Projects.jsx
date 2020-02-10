@@ -377,7 +377,7 @@ function ProjectCard(props) {
         <Grid container className={classes.searchContainer}>
           <Grid item xs={2}>
             <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
-              Projects
+              My Projects
             </Typography>
           </Grid>
           <Grid item xs={4} className={classes.searchGrid}>
@@ -445,7 +445,9 @@ function ProjectCard(props) {
                     e.stopPropagation();
                     e.preventDefault();
                   }}
-                  action={<ProjectMenus project={project} company={company} activities={activities}/>}
+                  action={<ProjectMenus project={project} company={company} activities={activities} isManager={isManager}
+                                        isChangeManager={isChangeManager} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin}
+                                        isActivityOwner={isActivityOwner} isActivityDeliverer={isActivityDeliverer}/>}
                   classes={classes1}
                   style={{cursor: "auto"}}
                   title={projectName(project.name)}

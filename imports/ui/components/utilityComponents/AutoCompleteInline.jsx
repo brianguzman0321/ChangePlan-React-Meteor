@@ -354,7 +354,7 @@ export default function IntegrationReactSelect(props) {
               },
               disabled: (props.isManager || props.isActivityDeliverer || props.isActivityOwner) && !props.isSuperAdmin && !props.isAdmin && !props.isChangeManager,
             }}
-            defaultValue={props.selectedValue || props.currentChangeManager}
+            defaultValue={props.selectedValue}
             placeholder="Select Person"
             options={props.data}
             components={components}

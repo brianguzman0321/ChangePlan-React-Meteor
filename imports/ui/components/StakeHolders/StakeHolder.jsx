@@ -61,14 +61,14 @@ const StakeHolder = (props) => {
         />
       </TableCell>}
       <TableCell align="left" component="th" id={labelId} scope="row" onClick={handleOpenModalDialog}>
-        {smallTable ? `${row.firstName} ${row.lastName}` : row.firstName}
+        {smallTable ? `${row.firstName} ${row.lastName}` : (row.firstName ? `${row.firstName} ${row.lastName}` : row.groupName)}
       </TableCell>
-      {!smallTable && <TableCell align="left" component="th" id={labelId} scope="row" onClick={handleOpenModalDialog}>
-        {row.lastName}
-      </TableCell>}
       {smallTable && <TableCell align="left" onClick={handleOpenModalDialog}>{row.email}</TableCell>}
-      <TableCell align="left" onClick={handleOpenModalDialog}>{row.role}</TableCell>
+      <TableCell align="left" onClick={handleOpenModalDialog}>{row.jobTitle ? row.jobTitle : row.role}</TableCell>
       <TableCell align="left" onClick={handleOpenModalDialog}>{row.businessUnit}</TableCell>
+      {!smallTable && <TableCell align="left" onClick={handleOpenModalDialog}>{row.team}</TableCell>}
+      {!smallTable && <TableCell align="left" onClick={handleOpenModalDialog}>{row.roleTags && row.roleTags.map(tag => {return `${tag}`}).join(', ')}</TableCell>}
+      {!smallTable && <TableCell align="left" onClick={handleOpenModalDialog}>{row.location}</TableCell>}
       {!smallTable && <TableCell align="center" onClick={handleOpenModalDialog}>{row.influenceLevel}</TableCell>}
       {!smallTable && <TableCell align="center" onClick={handleOpenModalDialog}>{row.supportLevel}</TableCell>}
       {!smallTable && <TableCell align="center" onClick={event => deleteCell(event, row)}>
