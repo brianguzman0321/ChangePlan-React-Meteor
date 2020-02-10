@@ -82,7 +82,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 function AddNewPerson(props) {
   let {company, isActivity = false, isManager,
-    isSuperAdmin, isAdmin, isChangeManager, isActivityDeliverer, isActivityOwner } = props;
+    isSuperAdmin, isAdmin, isChangeManager, isActivityDeliverer, isActivityOwner, /*selectPerson */} = props;
   const [firstName, setFirstName] = React.useState('');
   const [lastName, setLastName] = React.useState('');
   const [email, setEmail] = React.useState('');
@@ -114,6 +114,9 @@ function AddNewPerson(props) {
         setEmail('');
         props.enqueueSnackbar('New Person Added Successfully.', {variant: 'success'});
         setOpen(false);
+        /*if (isActivity) {
+          selectPerson(res);
+        }*/
       }
 
     })

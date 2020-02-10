@@ -169,12 +169,12 @@ function Timeline(props) {
       });
     }
     activities.forEach(activity => {
-      let type = activity.type;
+      let type = activity.type[0].toUpperCase() + activity.type.slice(1);
       if (activity.buildStartDate !== null) {
         tempData.push({
           id: activity._id + 1,
           eventType: 'Activity Event',
-          text: 'Activity Design & Build',
+          text: `${type}: Design & Build`,
           start_date: moment(activity.buildStartDate).format('DD-MM-YYYY'),
           end_date: moment(activity.buildEndDate).format('DD-MM-YYYY'),
           duration: 1,
@@ -190,7 +190,7 @@ function Timeline(props) {
         tempData.push({
           id: activity._id + 2,
           eventType: 'Activity Event',
-          text: 'Activity sign off',
+          text: `${type}: Sign off`,
           start_date: moment(activity.signOffDate).format('DD-MM-YYYY'),
           duration: 1,
           color: colors.activity[activity.step - 1],
@@ -205,7 +205,7 @@ function Timeline(props) {
         tempData.push({
           id: activity._id + 3,
           eventType: 'Activity Event',
-          text: 'Activity invitation to be sent date due',
+          text: `${type}: Invitation`,
           start_date: moment(activity.dueDateToInviteSent).format('DD-MM-YYYY'),
           duration: 1,
           color: colors.activity[activity.step - 1],
@@ -220,7 +220,7 @@ function Timeline(props) {
         tempData.push({
           id: activity._id,
           eventType: activity.label || defaultSteps[activity.step - 1],
-          text: type[0].toUpperCase() + type.slice(1),
+          text: type,
           start_date: moment(activity.completedAt).format("DD-MM-YYYY"),
           duration: 1,
           color: colors.activity[activity.step - 1],
@@ -236,7 +236,7 @@ function Timeline(props) {
         tempData.push({
           id: activity._id,
           eventType: activity.label || defaultSteps[activity.step - 1],
-          text: type[0].toUpperCase() + type.slice(1),
+          text: type,
           start_date: moment(activity.dueDate).format("DD-MM-YYYY"),
           duration: 1,
           color: colors.activity[activity.step - 1],

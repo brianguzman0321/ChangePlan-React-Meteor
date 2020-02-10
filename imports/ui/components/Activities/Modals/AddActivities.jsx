@@ -329,6 +329,7 @@ function AddActivities(props) {
   const [showNotification, setShowNotification] = useState(false);
   const [checkSchedule, setCheckSchedule] = useState(false);
   const [timeSendEmail, setTimeSendEmail] = useState(null);
+  const [sentNotification, setSentNotification] = useState(false);
   const activityCategories = ["Engagement", "Communication", "Learning/coaching", "Other"];
   const disabled = (isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
     || (isActivityDeliverer && !isSuperAdmin && !isChangeManager && !isAdmin)
@@ -372,6 +373,7 @@ function AddActivities(props) {
           props.enqueueSnackbar(error.reason, {variant: 'error'});
         } else {
           props.enqueueSnackbar('Email send successful', {variant: 'success'});
+          setSentNotification(true);
         }
       });
   };
@@ -944,6 +946,37 @@ function AddActivities(props) {
     setIsUpdated(true);
   };
 
+/*  const handleActivityDeliverer = (id) => {
+    console.log('-person--', person);
+    let allUsers = [];
+    Meteor.call(`users.getAllUsersInCompany`, {company: company}, (err, res) => {
+      if (err) {
+        console.log('---', err)
+      } else {
+        if (res && res.length) {
+          allUsers = res.map(user => {
+            return {
+              label: `${user.profile.firstName} ${user.profile.lastName}`,
+              firstName: user.profile.firstName,
+              value: user._id,
+              role: user.roles,
+              email: user.emails
+            }
+          })
+          console.log('---', allUsers)
+          const deliverer = allUsers.filter(user => user.value === id);
+          console.log('--deliverer-', deliverer);
+          setPerson(deliverer);
+        }
+
+      }
+    })
+  };*/
+
+  const handleActivityOwner = (id) => {
+    setOwner(id);
+  };
+
   return (
     <div className={classes.AddNewActivity}>
       {!list && !disabled ?
@@ -1337,7 +1370,7 @@ function AddActivities(props) {
                     <Grid item xs={10}>
                       <DateTimePicker
                         variant="inline"
-                        format="yyyy/MM/dd hh:mm a"
+                        format="MM/dd/yyyy hh:mm a"
                         margin="normal"
                         id="date-time-schedule-picker-inline"
                         label="Time to send email*"
@@ -1389,7 +1422,7 @@ function AddActivities(props) {
                   <Button variant="text" color="primary" className={classes.buttonAsLink}
                           disabled={disabledManager}
                           onClick={() => {
-                            sendNotificationEmail(activityType.name, activity.dueDate, time, activity.name, description, stakeHolders.length, project, person, projectId, project.vision, project.objectives)
+                            sendNotificationEmail(activityType.name, activity.dueDate, time, activity.name, description, stakeHolders.length, project, person, projectId, project.vision, project.objectives);
                           }}>
                     Notify/Remind by email
                   </Button>
@@ -1541,7 +1574,7 @@ function AddActivities(props) {
                       disabled={disabled}>
                 Delete
               </Button>}
-            {isNew ? <Button color="primary" onClick={() => handleShowNotification()}>Save</Button> :
+            {isNew ? <Button color="primary" onClick={sentNotification ? (e) => createActivity(e, false) : handleShowNotification}>Save</Button> :
               <Button type="submit" color="primary"
                       disabled={disabled}>
                 Save

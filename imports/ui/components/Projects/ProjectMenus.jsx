@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -8,6 +8,7 @@ import ShareProject from "./Models/ShareProject";
 import DeleteProject from "./Models/DeleteProject";
 import EditProject from "./Models/EditProject";
 import DuplicateProject from "./Models/DuplicateProject";
+import {changeManagersNames} from "../Timeline/utils";
 
 export default function SimpleMenu(props) {
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -18,7 +19,7 @@ export default function SimpleMenu(props) {
         delete: false
     });
     const [openDuplicateModal, setOpenDuplicateModal] = useState(false)
-    let { project, company, activities } = props;
+    let { project, company, activities, isManager, isChangeManager, isAdmin, isSuperAdmin, isActivityOwner, isActivityDeliverer } = props;
     const allowedValues = ['share', 'delete', 'edit', 'duplicate'];
 
     const handleClick = event => {
@@ -50,6 +51,10 @@ export default function SimpleMenu(props) {
         handleClose();
     };
 
+    const isAdminOrChangeManager = (type) => {
+        return !(isAdmin || isSuperAdmin || (type !== "delete" && isChangeManager));
+    };
+
     return (
         <div>
             <IconButton aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick} style={{padding: 0}} onTouchEnd={e => e.preventDefault()}>
@@ -62,10 +67,10 @@ export default function SimpleMenu(props) {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
             >
-                <MenuItem onClick={handleClose.bind(null, 'share')} disabled={isAdminOrChangeManager(company, project)}>Share</MenuItem>
-                <MenuItem onClick={handleClose.bind(null, 'edit')} disabled={isAdminOrChangeManager(company, project)}>Edit</MenuItem>
-                <MenuItem onClick={handleOpenDuplicateModal} disabled={isAdminOrChangeManager(company, project)}>Duplicate</MenuItem>
-                <MenuItem onClick={handleClose.bind(null, 'delete')} disabled={isAdminOrChangeManager(company, project)}>Delete</MenuItem>
+                <MenuItem onClick={handleClose.bind(null, 'share')} disabled={isAdminOrChangeManager("share")}>Share</MenuItem>
+                <MenuItem onClick={handleClose.bind(null, 'edit')} disabled={isAdminOrChangeManager("edit")}>Edit</MenuItem>
+                <MenuItem onClick={handleOpenDuplicateModal} disabled={isAdminOrChangeManager("duplicate")}>Duplicate</MenuItem>
+                <MenuItem onClick={handleClose.bind(null, 'delete')} disabled={isAdminOrChangeManager("delete")}>Delete</MenuItem>
             </Menu>
             <ShareProject open={modals.share} handleModalClose={handleModalClose} project={project}/>
             <DeleteProject open={modals.delete} handleModalClose={handleModalClose} project={project} activities={activities}/>
@@ -76,16 +81,4 @@ export default function SimpleMenu(props) {
             <EditProject open={modals.edit} handleModalClose={handleModalClose} project={project}/>
         </div>
     );
-}
-
-function isAdminOrChangeManager(company, project){
-    let userId = Meteor.userId();
-    if ((company && company.admins.includes(userId))) {
-    }
-    else{
-        if(!project.changeManagers.includes(userId)){
-            return true
-        }
-    }
-
 }

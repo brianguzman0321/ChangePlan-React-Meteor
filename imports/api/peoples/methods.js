@@ -24,15 +24,31 @@ export const insert = new ValidatedMethod({
     },
     'people.firstName': {
       type: String,
+      optional: true,
     },
     'people.lastName': {
       type: String,
+      optional: true,
+    },
+    'people.groupName': {
+      type: String,
+      optional: true,
     },
     'people.email': {
       type: String,
+      optional: true,
     },
-    'people.role': {
+    'people.numberOfPeople': {
+      type: Number,
+      optional: true,
+    },
+    'people.jobTitle': {
       type: String,
+      optional: true,
+    },
+    'people.team': {
+      type: String,
+      optional: true,
     },
     'people.company': {
       type: String,
@@ -40,10 +56,23 @@ export const insert = new ValidatedMethod({
     },
     'people.businessUnit': {
       type: String,
+      optional: true,
+    },
+    'people.location': {
+      type: String,
+      optional: true,
     },
     'people.notes': {
       type: String,
       optional: true
+    },
+    'people.roleTags': {
+      type: Array,
+      optional: true,
+    },
+    'people.roleTags.$': {
+      type: String,
+      optional: true,
     },
     'people.projectId': {
       type: String,
@@ -77,7 +106,7 @@ export const insert = new ValidatedMethod({
     let alreadyExist = Peoples.findOne({
       email: people.email
     });
-    if (!alreadyExist) {
+    if (!alreadyExist || !people.email) {
       //throw new Meteor.Error(500, "A Stakeholder with given Email Already Exists");
       let personId = Peoples.insert(people);
 
@@ -88,17 +117,7 @@ export const insert = new ValidatedMethod({
           stakeHolders: personId
         }
       });
-
-
     }
-    // let personId = Peoples.insert(people);
-    // return Projects.update({
-    //     _id: projectId
-    // },{
-    //     $addToSet: {
-    //         stakeHolders: personId
-    //     }
-    // });
   }
 });
 
@@ -140,15 +159,31 @@ export const update = new ValidatedMethod({
     },
     'people.firstName': {
       type: String,
+      optional: true,
     },
     'people.lastName': {
       type: String,
+      optional: true,
+    },
+    'people.groupName': {
+      type: String,
+      optional: true,
     },
     'people.email': {
       type: String,
+      optional: true,
     },
-    'people.role': {
+    'people.numberOfPeople': {
+      type: Number,
+      optional: true,
+    },
+    'people.jobTitle': {
       type: String,
+      optional: true,
+    },
+    'people.team': {
+      type: String,
+      optional: true,
     },
     'people.company': {
       type: String,
@@ -156,6 +191,18 @@ export const update = new ValidatedMethod({
     },
     'people.businessUnit': {
       type: String,
+    },
+    'people.roleTags': {
+      type: Array,
+      optional: true,
+    },
+    'people.roleTags.$': {
+      type: String,
+      optional: true,
+    },
+    'people.location': {
+      type: String,
+      optional: true,
     },
     'people.notes': {
       type: String,

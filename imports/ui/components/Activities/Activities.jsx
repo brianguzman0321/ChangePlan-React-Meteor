@@ -69,6 +69,10 @@ const useStyles = makeStyles(theme => ({
       maxWidth: '49%',
     },
   },
+  mainContainer: {
+    paddingRight: '20px',
+    paddingLeft: '20px',
+  },
   gridContainer: {
     // marginBottom: 15,
     overFlow: 'hidden'
@@ -177,6 +181,7 @@ function ActivitiesCard(props) {
         justify="space-around"
         alignItems="flex-start"
         spacing={0}
+        className={classes.mainContainer}
       >
         <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
           <ActivitiesColumn activities={type === 'project' ?
