@@ -4,7 +4,7 @@ import {makeStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import IconButton from "@material-ui/core/IconButton/IconButton";
 import Grid from '@material-ui/core/Grid';
-import {InputBase} from '@material-ui/core';
+import {InputBase, InputLabel, Select} from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import {withTracker} from "meteor/react-meteor-data";
 import {Companies} from "/imports/api/companies/companies";
@@ -17,6 +17,9 @@ import StakeHolderList from './StakeHoldersList'
 import AddStakeHolder from './Modals/AddStakeHolder';
 import {Activities} from "../../../api/activities/activities";
 import {Meteor} from "meteor/meteor";
+import {withSnackbar} from "notistack";
+import FormControl from "@material-ui/core/FormControl";
+import MenuItem from "@material-ui/core/MenuItem";
 
 
 const useStyles = makeStyles(theme => ({
@@ -65,13 +68,22 @@ const useStyles = makeStyles(theme => ({
   stakeholdersCount: {
     fontSize: '30px'
   },
+  gridFiltering: {
+    marginTop: '-10px',
+  },
+  selectFiltering: {
+    width: '80%',
+  },
+  labelForSelect: {
+    top: '8px',
+  },
 }));
 
 function StakeHolders(props) {
   let menus = config.menus;
   const [search, setSearch] = React.useState('');
   const classes = useStyles();
-  let {match, project, template, stakeHoldersTemplate, stakeHolders, company, currentCompany} = props;
+  let {match, project, template, stakeHoldersTemplate, stakeHolders, company, currentCompany, activities} = props;
   let {projectId, templateId} = match.params;
   project = project || {};
   template = template || {};
@@ -82,7 +94,11 @@ function StakeHolders(props) {
   const [isManager, setIsManager] = useState(false);
   const [isActivityDeliverer, setIsActivityDeliverer] = useState(false);
   const [isActivityOwner, setIsActivityOwner] = useState(false);
+  const [filteringField, setFilteringField] = useState(0);
+  const [filteringValue, setFilteringValue] = useState(0);
   const [currentCompanyId, setCompanyId] = useState(null);
+  const [stakeholders, setStakeholders] = useState([]);
+  const [defaultStakeholders, setDefaultStakeholders] = useState([]);
 
   const searchFilter = event => {
     setSearch(event.target.value);
@@ -97,6 +113,35 @@ function StakeHolders(props) {
       setType('project')
     }
   }, [currentCompany, template, project]);
+
+  useEffect(() => {
+    let allStakeholders = [];
+    if (stakeHolders) {
+      allStakeholders = stakeHolders;
+      getTotalTime(allStakeholders, true)
+    } else if (stakeHoldersTemplate) {
+      allStakeholders = stakeHoldersTemplate;
+      getTotalTime(allStakeholders, true)
+    }
+  }, [stakeHolders, stakeHoldersTemplate, activities]);
+
+  const getTotalTime = (allStakeholders, isDefault = false) => {
+    if (activities) {
+      allStakeholders.map(stakeholder => {
+        const allActivities = activities.filter(activity => activity.stakeHolders.includes(stakeholder._id));
+        let totalTime = 0;
+        allActivities.forEach(activity => {
+          totalTime = totalTime + activity.time;
+        });
+        totalTime = totalTime < 60 ? totalTime + " mins" : parseFloat(totalTime / 60).toFixed(2) + " hrs";
+        stakeholder.totalTime = totalTime;
+      });
+      setStakeholders(allStakeholders);
+      if (isDefault) {
+        setDefaultStakeholders(allStakeholders);
+      }
+    }
+  };
 
   useEffect(() => {
     if (currentCompany) {
@@ -140,6 +185,124 @@ function StakeHolders(props) {
     }
   };
 
+  const selectFieldForFiltering = (e) => {
+    setFilteringField(e.target.value);
+    if (e.target.value === 0) {
+      setFilteringValue(0);
+    }
+  };
+
+  const selectValueForFiltering = (e) => {
+    setFilteringValue(e.target.value);
+  };
+
+  useEffect(() => {
+    let filteredStakeholders = [];
+    switch (filteringField) {
+      case 0:
+          filteredStakeholders = defaultStakeholders;
+         break;
+      case 1:
+        filteredStakeholders = defaultStakeholders.filter(stakeholder => stakeholder.businessUnit === filteringValue);
+        break;
+      case 2:
+        filteredStakeholders = defaultStakeholders.filter(stakeholder => stakeholder.team === filteringValue);
+        break;
+      case 3:
+        filteredStakeholders = defaultStakeholders.filter(stakeholder =>
+          stakeholder.role === filteringValue || stakeholder.jobTitle === filteringValue);
+        break;
+      case 4:
+        filteredStakeholders = defaultStakeholders.filter(stakeholder =>
+          stakeholder.roleTags && stakeholder.roleTags.includes(filteringValue));
+        break;
+      case 5:
+        filteredStakeholders = defaultStakeholders.filter(stakeholder => stakeholder.location === filteringValue);
+        break;
+      default:
+        break;
+    }
+    getTotalTime(filteredStakeholders);
+  }, [filteringValue, defaultStakeholders]);
+
+  const getFilteringValue = (field) => {
+    switch (field) {
+      case 'businessUnit':
+        let units = [];
+        defaultStakeholders.forEach(stakeholder => {
+          if (stakeholder.businessUnit) {
+            units.push(stakeholder.businessUnit);
+          }
+        });
+        const noReplayUnits = [...new Set(units)];
+        return noReplayUnits.map(businessUnit => {
+          return <MenuItem key={businessUnit} value={businessUnit}>
+            {businessUnit}</MenuItem>
+        });
+      case 'team':
+        let teams = [];
+        defaultStakeholders.forEach(stakeholder => {
+          if (stakeholder.team) {
+            teams.push(stakeholder.team);
+          }
+        });
+        const noReplayTeams = [...new Set(teams)];
+        return noReplayTeams.map(team => {
+          return <MenuItem key={team} value={team}>
+            {team}</MenuItem>
+        });
+      case 'jobTitle':
+        let jobs = [];
+        defaultStakeholders.forEach(stakeholder => {
+          if (stakeholder.jobTitle) {
+            jobs.push(stakeholder.jobTitle);
+          }
+          if (stakeholder.role) {
+            jobs.push(stakeholder.role);
+          }
+        });
+        const noReplayJobs = [...new Set(jobs)];
+        return noReplayJobs.map(job => {
+          if (job !== undefined) {
+            return <MenuItem key={job} value={job}>
+              {job}</MenuItem>
+          }
+        });
+      case 'roleTags':
+        let roleTags = [];
+        defaultStakeholders.forEach(stakeholder => {
+          if (stakeholder.roleTags) {
+            stakeholder.roleTags.forEach(roleTag => {
+              roleTags.push(roleTag);
+            })
+          }
+        });
+        const noReplayRoleTags = [...new Set(roleTags)];
+        return noReplayRoleTags.map(roleTag => {
+          if (!!roleTag) {
+            return <MenuItem key={roleTag} value={roleTag}>
+              {roleTag}</MenuItem>
+          }
+        });
+      case 'location':
+        let locations = [];
+        defaultStakeholders.forEach(stakeholder => {
+          if (stakeholder.location) {
+            locations.push(stakeholder.location);
+          }
+        });
+        const noReplayLocations = [...new Set(locations)];
+        return noReplayLocations.map(location => {
+          if (!!location) {
+            return <MenuItem key={location} value={location}>
+              {location}</MenuItem>
+          }
+        });
+      default:
+        break;
+    }
+  };
+
   return (
     <div>
       <TopNavBar menus={menus} {...props} />
@@ -152,12 +315,12 @@ function StakeHolders(props) {
         spacing={0}
       >
         <Grid container className={classes.topBar}>
-          <Grid item xs={12} sm={6} md={4}>
+          <Grid item xs={12} sm={6} md={3}>
             <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
               Stakeholders
               &nbsp;&nbsp;&nbsp;
               <span
-                className={classes.stakeholdersCount}>{type === 'project' ? stakeHolders.length : stakeHoldersTemplate.length}</span>
+                className={classes.stakeholdersCount}>{stakeholders && stakeholders.length}</span>
             </Typography>
           </Grid>
           <Grid item xs={4} className={classes.searchGrid} md={3} sm={6}>
@@ -173,17 +336,46 @@ function StakeHolders(props) {
             </IconButton>
           </Grid>
           {((isAdmin && template && (template.companyId === currentCompanyId)) || isSuperAdmin || (type === 'project' && (project && (isAdmin || isChangeManager)))) ?
-            <Grid item xs={4} className={classes.secondTab}>
+            <Grid item xs={4} md={2} sm={2} className={classes.secondTab}>
               <AddStakeHolder type={type} company={currentCompany} projectId={projectId} templateId={templateId}
                               project={project} template={template}/>
             </Grid>
             : ''}
+          <Grid item xs={2} md={2} sm={2} className={classes.gridFiltering}>
+            <FormControl className={classes.selectFiltering}>
+              <InputLabel id={'fields-for-filtering'} className={classes.labelForSelect}>Filtering by field</InputLabel>
+              <Select fullWidth id={'fields-for-filtering'} value={filteringField} onChange={selectFieldForFiltering}>
+                <MenuItem key={0} value={0}>None</MenuItem>
+                <MenuItem key={1} value={1}>Business unit</MenuItem>
+                <MenuItem key={2} value={2}>Team</MenuItem>
+                <MenuItem key={3} value={3}>Job Title</MenuItem>
+                <MenuItem key={4} value={4}>Tag</MenuItem>
+                <MenuItem key={5} value={5}>Location</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={2} md={2} sm={2} className={classes.gridFiltering}>
+            {filteringField !== 0 &&
+            <FormControl className={classes.selectFiltering}>
+              <InputLabel id={'fields-for-filtering'} className={classes.labelForSelect}>Filtering by value</InputLabel>
+              <Select fullWidth id={'fields-for-filtering'} value={filteringValue} onChange={selectValueForFiltering}>
+                {filteringField === 1 && getFilteringValue('businessUnit')}
+                {filteringField === 2 && getFilteringValue('team')}
+                {filteringField === 3 && getFilteringValue('jobTitle')}
+                {filteringField === 4 && getFilteringValue('roleTags')}
+                {filteringField === 5 && getFilteringValue('location')}
+              </Select>
+            </FormControl>
+            }
+
+          </Grid>
         </Grid>
         <StakeHolderList className={classes.stakeHoldersList} template={template} company={currentCompany}
-                         isChangeManager={isChangeManager} isActivityDeliverer={isActivityDeliverer} isActivityOwner={isActivityOwner}
+                         isChangeManager={isChangeManager} isActivityDeliverer={isActivityDeliverer}
+                         isActivityOwner={isActivityOwner}
                          isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isManager={isManager} projectId={projectId}
                          project={project}
-                         rows={type === 'project' ? stakeHolders : stakeHoldersTemplate} type={type}/>
+                         rows={stakeholders} type={type}/>
       </Grid>
 
     </div>
@@ -202,9 +394,11 @@ const StakeHoldersPage = withTracker(props => {
   Meteor.subscribe('compoundProject', projectId);
   Meteor.subscribe('templates');
   Meteor.subscribe('projects');
+  Meteor.subscribe('activities.notLoggedIn');
   let project = Projects.findOne({
     _id: projectId
   });
+  let activities = Activities.find({}).fetch();
   let template = Templates.findOne({_id: templateId});
   const companies = Companies.find({}).fetch();
   const company = Companies.findOne({_id: project && project.companyId || (template && template.companyId || '')});
@@ -230,7 +424,8 @@ const StakeHoldersPage = withTracker(props => {
     companies: Companies.find({}).fetch(),
     company,
     currentCompany,
+    activities,
   };
 })(withRouter(StakeHolders));
 
-export default StakeHoldersPage
+export default withSnackbar(StakeHoldersPage);

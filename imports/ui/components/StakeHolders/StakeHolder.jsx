@@ -69,6 +69,7 @@ const StakeHolder = (props) => {
       {!smallTable && <TableCell align="left" onClick={handleOpenModalDialog}>{row.team}</TableCell>}
       {!smallTable && <TableCell align="left" onClick={handleOpenModalDialog}>{row.roleTags && row.roleTags.map(tag => {return `${tag}`}).join(', ')}</TableCell>}
       {!smallTable && <TableCell align="left" onClick={handleOpenModalDialog}>{row.location}</TableCell>}
+      {!smallTable && <TableCell align="left" onClick={handleOpenModalDialog}>{row.totalTime}</TableCell>}
       {!smallTable && <TableCell align="center" onClick={handleOpenModalDialog}>{row.influenceLevel}</TableCell>}
       {!smallTable && <TableCell align="center" onClick={handleOpenModalDialog}>{row.supportLevel}</TableCell>}
       {!smallTable && <TableCell align="center" onClick={event => deleteCell(event, row)}>
