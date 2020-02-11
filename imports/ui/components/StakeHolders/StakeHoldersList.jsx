@@ -24,10 +24,44 @@ const tableHeadStyle = makeStyles(theme => ({
 }));
 
 function desc(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
+  let orderByA, orderByB = '';
+  switch (orderBy) {
+    case "name":
+      if (!a.groupName) {
+        orderByA = "lastName";
+      }
+      if (!b.groupName) {
+        orderByB = "lastName";
+      }
+      if (!a.lastName) {
+        orderByA = "groupName";
+      }
+      if (!b.lastName) {
+        orderByB = "groupName"
+      }
+      break;
+    case "jobTitle":
+      if (!a.jobTitle) {
+        orderByA = "role";
+      }
+      if (!b.jobTitle) {
+        orderByB = "role";
+      }
+      if (!a.role) {
+        orderByA = "jobTitle";
+      }
+      if (!b.role) {
+        orderByB = "jobTitle"
+      }
+      break;
+    default:
+      orderByA = orderByB = orderBy;
+      break;
+  }
+  if (b[orderByB] < a[orderByA]) {
     return -1;
   }
-  if (b[orderBy] > a[orderBy]) {
+  if (b[orderByB] > a[orderByA]) {
     return 1;
   }
   return 0;
@@ -49,11 +83,12 @@ function getSorting(order, orderBy) {
 
 const headCells = [
   {id: 'name', numeric: false, disablePadding: true, label: 'NAME'},
-  {id: 'jobTitle', numeric: true, disablePadding: false, label: 'JOB TITLE'},
-  {id: 'businessUnit', numeric: true, disablePadding: false, label: 'BUSINESS UNIT'},
+  {id: 'jobTitle', numeric: false, disablePadding: false, label: 'JOB TITLE'},
+  {id: 'businessUnit', numeric: false, disablePadding: false, label: 'BUSINESS UNIT'},
   {id: 'team', numeric: false, disablePadding: false, label: 'TEAM'},
-  {id: 'roleTags', numeric: true, disablePadding: false, label: 'ROLE TAGS'},
-  {id: 'location', numeric: true, disablePadding: false, label: 'LOCATION'},
+  {id: 'roleTags', numeric: false, disablePadding: false, label: 'ROLE TAGS'},
+  {id: 'location', numeric: false, disablePadding: false, label: 'LOCATION'},
+  {id: 'totalTime', numeric: true, disablePadding: false, label: 'TIME AWAY FROM BAU'},
   {id: 'influenceLevel', numeric: true, disablePadding: false, label: 'INFLUENCE'},
   {id: 'supportLevel', numeric: true, disablePadding: false, label: 'SUPPORT'},
   {id: 'action', numeric: true, disablePadding: false, label: 'ACTIONS'},
@@ -65,6 +100,8 @@ export function EnhancedTableHead(props) {
   const createSortHandler = property => event => {
     onRequestSort(event, property);
   };
+
+  const selectAlign = (id) => (['influenceLevel', 'supportLevel', 'action'].includes(id) ? 'center' : 'left');
 
   return (
     <TableHead classes={tableHeadClasses}>
@@ -82,7 +119,7 @@ export function EnhancedTableHead(props) {
         {headCells.map(headCell => (
           <TableCell style={{color: 'white'}}
                      key={headCell.id}
-                     align={headCell.id === 'name' || headCell.id === 'jobTitle' || headCell.id === 'businessUnit' || headCell.id === 'team' || headCell.id === 'roleTags' || headCell.id === 'location' ? 'left' : 'center'}
+                     align={selectAlign(headCell.id)}
                      sortDirection={orderBy === headCell.id ? order : false}
           >
             <TableSortLabel
