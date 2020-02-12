@@ -109,14 +109,14 @@ export const insert = new ValidatedMethod({
     if (!alreadyExist || !people.email) {
       //throw new Meteor.Error(500, "A Stakeholder with given Email Already Exists");
       let personId = Peoples.insert(people);
-
-      return collection.update({
+      collection.update({
         _id: id
       }, {
         $addToSet: {
           stakeHolders: personId
         }
       });
+      return personId;
     }
   }
 });
@@ -133,12 +133,19 @@ export const insertMany = new ValidatedMethod({
     if (!peoples || !Array.isArray(peoples)) {
       throw new Meteor.Error(500, "Stakeholders required");
     }
+    const peopleIds = [];
     _.each(peoples, function (doc) {
       let params = {
         people: doc
       }
-      Meteor.call('peoples.insert', params)
-    })
+
+      Meteor.call('peoples.insert', params, (err, res) => {
+        if (res) {
+          peopleIds.push({id: res, email: params.people.email});
+        }
+      })
+    });
+    return peopleIds;
   }
 });
 
@@ -220,7 +227,8 @@ export const update = new ValidatedMethod({
   run({people}) {
     let {_id} = people;
     delete people._id;
-    return Peoples.update(_id, {$set: people});
+    Peoples.update(_id, {$set: people});
+    return _id;
   }
 });
 

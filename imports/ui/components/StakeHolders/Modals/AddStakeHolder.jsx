@@ -154,6 +154,7 @@ function AddStakeHolder(props) {
   const [addConfirmation, setAddConfirmation] = React.useState(false);
   const [stakeHolderId, setStakeHolderId] = React.useState();
   const [stakeholdersToBoth, setStakeholdersToBoth] = React.useState([]);
+  const [existingStakeholders, setExistingStakeholders] = React.useState([]);
   const [tableData, setTableData] = React.useState({
     new: [],
     attached: [],
@@ -270,6 +271,15 @@ function AddStakeHolder(props) {
       if (!doc['Job Title']) {
         csvUploadErrorMessage = 'Job Title Value is empty or Invalid'
       }
+      /* if (!doc['Team']) {
+         csvUploadErrorMessage = 'Team Value is empty or Invalid'
+       }
+       if (!doc['Role Tags']) {
+         csvUploadErrorMessage = 'Role Tags Value is empty or Invalid'
+       }
+       if (!doc['Location']) {
+         csvUploadErrorMessage = 'Location Value is empty or Invalid'
+       }*/
       if (!doc['Business Unit']) {
         csvUploadErrorMessage = 'Business Unit Value is empty or Invalid'
       }
@@ -285,21 +295,18 @@ function AddStakeHolder(props) {
       let paramsObj = {
         firstName: doc['First Name'],
         lastName: doc['Last Name'],
-        jobTitle: doc['Job Title'],
         businessUnit: doc['Business Unit'],
         email: doc['Email'],
-        notes: doc['Notes'],
-        team: doc['Team'],
-        location: doc['Location'],
-        roleTags: doc['Role Tags']
         // company: project.companyId,
       };
+      doc['Job Title'] && (paramsObj.jobTitle = doc['Job Title']);
+      doc['Team'] && (paramsObj.team = doc['Team']);
+      doc['Role Tags'] && (paramsObj.roleTags = doc['Role Tags']);
+      doc['Location'] && (paramsObj.location = doc['Location']);
       doc['Level of Influence'] && (paramsObj.influenceLevel = Number(doc['Level of Influence']));
       doc['Level of support'] && (paramsObj.supportLevel = Number(doc['Level of support']));
       return paramsObj
     });
-
-
     const importedEmails = data1.map(csvRow => csvRow.email) || [];
 
     if (importedEmails.length && (project.companyId || template)) {
@@ -353,6 +360,7 @@ function AddStakeHolder(props) {
         if (addToProject.length && addToBoth.length) {
           tempTableDate = {...tempTableDate, attached: addToProject, new: addToBoth};
           setTableData(tempTableDate);
+          setExistingStakeholders(addToProject);
           setStakeholdersToBoth(addToBoth);
           setAddConfirmation(true);
         }
@@ -391,12 +399,29 @@ function AddStakeHolder(props) {
       if (err) {
         props.enqueueSnackbar(`Upload Aborted! ${err.reason}`, {variant: 'error'})
       } else {
-        setOpen(false);
-        setCsvfile(null);
-        if (tempTableDate.attached && !tempTableDate.attached.length) {
-          setOpenResultTable(true);
-          props.enqueueSnackbar('StakeHolders Added Successfully.', {variant: 'success'});
-        }
+        res.forEach(stakeholder => {
+          const people = params.peoples.filter(people => people.email === res.email);
+          const paramsInfo = {
+            additionalStakeholderInfo: {
+              projectId: projectId,
+              stakeholderId: stakeholder.id,
+              levelOfSupport: people.supportLevel || 0,
+              levelOfInfluence: people.influenceLevel || 0,
+            }
+          }
+          Meteor.call('additionalStakeholderInfo.insert', paramsInfo, (err, res) => {
+            if (err) {
+              props.enqueueSnackbar(err.reason, {variant: 'error'})
+            } else {
+              setOpen(false);
+              setCsvfile(null);
+              if (tempTableDate.attached && !tempTableDate.attached.length) {
+                setOpenResultTable(true);
+                props.enqueueSnackbar('StakeHolders Added Successfully.', {variant: 'success'});
+              }
+            }
+          })
+        });
       }
     });
   };
@@ -416,49 +441,61 @@ function AddStakeHolder(props) {
 
   const onSubmit = (e) => {
     e.preventDefault();
-      const allPeoples = Peoples.find({}).fetch();
-      const checkAllPeoples = allPeoples.find(people => people.email === email);
-      const newStakeholder = Peoples.findOne({email, company: project.companyId});
-      if (checkAllPeoples && newStakeholder) {
-        setNewStakeholder({...newStakeholder});
-        if (newStakeholder) {
-          setAgreedToAddModal(true);
-        }
-      } else if (checkAllPeoples && !newStakeholder) {
-        props.enqueueSnackbar(`This Stakeholder already exists in another company`, {variant: 'warning'});
-      } else {
-        let params = {
-          people: {
-            firstName: firstName,
-            lastName: lastName,
-            jobTitle: jobTitle,
-            location: location,
-            businessUnit: businessUnit,
-            email: email,
-            team: team,
-            notes: notes,
-            roleTags: roles,
-            [type === 'project' ? 'projectId' : 'templateId']: type === 'project' ? projectId : templateId,
-            company: type === 'project' ? project.companyId : (template.companyId || '')
-          }
-        };
-        project && project.companyId && (params.people.company = project.companyId);
-        if (template && template.companyId) {
-          params.people.company = template.companyId
-        } else if (!project && template && !template.companyId) {
-          params.people.company = '';
-        }
-        influenceLevel && (params.people.influenceLevel = influenceLevel);
-        supportLevel && (params.people.supportLevel = supportLevel);
-        Meteor.call('peoples.insert', params, (err, res) => {
-          if (err) {
-            props.enqueueSnackbar(err.reason, {variant: 'error'})
-          } else {
-            setOpen(false);
-            props.enqueueSnackbar('Stakeholder Added Successfully.', {variant: 'success'})
-          }
-        })
+    const allPeoples = Peoples.find({}).fetch();
+    const checkAllPeoples = allPeoples.find(people => people.email === email);
+    const newStakeholder = Peoples.findOne({email, company: project.companyId});
+    if (checkAllPeoples && newStakeholder) {
+      setNewStakeholder({...newStakeholder});
+      if (newStakeholder) {
+        setAgreedToAddModal(true);
       }
+    } else if (checkAllPeoples && !newStakeholder) {
+      props.enqueueSnackbar(`This Stakeholder already exists in another company`, {variant: 'warning'});
+    } else {
+      let params = {
+        people: {
+          firstName: firstName,
+          lastName: lastName,
+          jobTitle: jobTitle,
+          location: location,
+          businessUnit: businessUnit,
+          email: email,
+          team: team,
+          roleTags: roles,
+          [type === 'project' ? 'projectId' : 'templateId']: type === 'project' ? projectId : templateId,
+          company: type === 'project' ? project.companyId : (template.companyId || '')
+        }
+      };
+      project && project.companyId && (params.people.company = project.companyId);
+      if (template && template.companyId) {
+        params.people.company = template.companyId
+      } else if (!project && template && !template.companyId) {
+        params.people.company = '';
+      }
+      Meteor.call('peoples.insert', params, (err, res) => {
+        if (err) {
+          props.enqueueSnackbar(err.reason, {variant: 'error'})
+        } else {
+          const paramsInfo = {
+            additionalStakeholderInfo: {
+              projectId: projectId,
+              stakeholderId: res,
+              levelOfSupport: supportLevel || 0,
+              levelOfInfluence: influenceLevel || 0,
+              notes: notes || '',
+            }
+          };
+          Meteor.call('additionalStakeholderInfo.insert', paramsInfo, (err, res) => {
+            if (err) {
+              props.enqueueSnackbar(err.reason, {variant: 'error'});
+            } else {
+              setOpen(false);
+              props.enqueueSnackbar('Stakeholder Added Successfully.', {variant: 'success'})
+            }
+          });
+        }
+      })
+    }
   };
 
   const handleCloseModal = () => {
@@ -480,9 +517,28 @@ function AddStakeHolder(props) {
         };
         methodName = 'templates.update';
       }
+      stakeHolderId.stakeHolders.forEach(stakeholder => {
+        const people = Peoples.findOne({_id: stakeholder._id});
+        const _stakeholder = existingStakeholders.filter(currentStakeholder => currentStakeholder.email === people.email);
+        if (_stakeholder.length > 0) {
+          const paramsInfo = {
+            additionalStakeholderInfo: {
+              projectId: projectId,
+              stakeholderId: stakeholder,
+              levelOfSupport: _stakeholder.supportLevel || 0,
+              levelOfInfluence: _stakeholder.influenceLevel || 0,
+            }
+          };
+          Meteor.call('additionalStakeholderInfo.insert', paramsInfo, (err, res) => {
+            if (err) {
+              props.enqueueSnackbar(err.reason, {variant: 'error'});
+            }
+          });
+        }
+      });
       Meteor.call(methodName, params, (error, result) => {
         if (error) {
-          props.enqueueSnackbar(err.reason, {variant: 'error'})
+          props.enqueueSnackbar(error.reason, {variant: 'error'})
         } else {
           insertManyStakeholders({peoples: stakeholdersToBoth});
           props.enqueueSnackbar('Stakeholder Added Successful.', {variant: 'success'});
@@ -507,15 +563,30 @@ function AddStakeHolder(props) {
           const params = {
             project: currentProject
           };
-          Meteor.call('projects.update', params, (error, result) => {
-            if (error) {
-              props.enqueueSnackbar(err.reason, {variant: 'error'})
-            } else {
-              props.enqueueSnackbar('Stakeholder Added Successful.', {variant: 'success'});
-              closeAgreedToAddModal();
-              setOpen(false);
+          const paramsInfo = {
+            additionalStakeholderInfo: {
+              projectId: projectId,
+              stakeholderId: stakeholder._id,
+              levelOfSupport: supportLevel || 0,
+              levelOfInfluence: influenceLevel || 0,
+              notes: notes || '',
             }
-          })
+          }
+          Meteor.call('additionalStakeholderInfo.insert', paramsInfo, (err, res) => {
+            if (err) {
+              props.enqueueSnackbar(err.reason, {variant: 'error'});
+            } else {
+              Meteor.call('projects.update', params, (error, result) => {
+                if (error) {
+                  props.enqueueSnackbar(err.reason, {variant: 'error'})
+                } else {
+                  props.enqueueSnackbar('Stakeholder Added Successful.', {variant: 'success'});
+                  closeAgreedToAddModal();
+                  setOpen(false);
+                }
+              })
+            }
+          });
         }
       } else if (type === 'template') {
         const currentTemplate = Templates.findOne({_id: templateId});
@@ -538,7 +609,6 @@ function AddStakeHolder(props) {
           });
         }
       }
-
     }
   };
 
@@ -672,7 +742,7 @@ function AddStakeHolder(props) {
                       type="text"
                       fullWidth={true}
                     />
-                    <br />
+                    <br/>
                   </Grid>
                   <Grid item xs={6}>
                     <FormControl className={classes.formControl} fullWidth={true}>
@@ -697,7 +767,8 @@ function AddStakeHolder(props) {
 
                         {!showInput && <MenuItem value={customTag}>
                           <Checkbox checked={customTag.length > 0}/>
-                          <ListItemText primary={customTag.length > 0 ? customTag : 'Other'} onClick={() => setShowInput(true)}/>
+                          <ListItemText primary={customTag.length > 0 ? customTag : 'Other'}
+                                        onClick={() => setShowInput(true)}/>
                         </MenuItem>}
 
                         {showInput && <MenuItem>
@@ -710,9 +781,9 @@ function AddStakeHolder(props) {
                             }}
                           />
                         </MenuItem>}
-                        </Select>
+                      </Select>
                     </FormControl>
-                    <br />
+                    <br/>
                   </Grid>
 
                   <Grid item xs={6}>
@@ -785,8 +856,8 @@ function AddStakeHolder(props) {
             </form>
 
             <TabPanel index={1} value={value}>
-            <AddGroupStakeholders project={project} template={template} type={type} projectId={projectId}
-                                  templateId={templateId} handleCloseModal={handleCloseModal}/>
+              <AddGroupStakeholders project={project} template={template} type={type} projectId={projectId}
+                                    templateId={templateId} handleCloseModal={handleCloseModal}/>
             </TabPanel>
             <TabPanel value={value} index={2}>
               <div className="App">
@@ -835,7 +906,7 @@ function AddStakeHolder(props) {
                               closeModalDialog={() => setAddConfirmation(false)}
                               handleSave={() => addExistingStakeholder(true)}/>
     </div>
-);
+  );
 }
 
 const AddStakeHolderPage = withTracker(props => {
@@ -844,8 +915,8 @@ const AddStakeHolderPage = withTracker(props => {
   Meteor.subscribe('findAllPeoples');
   Meteor.subscribe('peoples', project.companyId);
   return {
-  people: Peoples.find({email}).fetch(),
-};
+    people: Peoples.find({email}).fetch(),
+  };
 })(withRouter(AddStakeHolder));
 
 export default withSnackbar(AddStakeHolderPage)

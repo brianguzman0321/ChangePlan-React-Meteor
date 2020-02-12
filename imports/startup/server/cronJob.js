@@ -4,6 +4,7 @@ import {Projects} from "../../api/projects/projects";
 import {Peoples} from "../../api/peoples/peoples";
 import {Companies} from "../../api/companies/companies";
 import {Meteor} from "meteor/meteor";
+import {AdditionalStakeholderInfo} from "../../api/additionalStakeholderInfo/additionalStakeholderInfo";
 
 
 SyncedCron.add({
@@ -240,5 +241,26 @@ SyncedCron.add({
   }
 });
 
-
+SyncedCron.add({
+  name: 'Add levels info to table',
+  schedule: function (parser) {
+    return parser.text('every 10 minutes');
+  },
+  job: function () {
+    const stakeholders = Peoples.find({});
+    stakeholders.forEach(stakeholder => {
+      const project = Projects.findOne({stakeHolders: {$in: [stakeholder._id]}});
+      if (project) {
+        const additionalStakeholderInfo = {
+          projectId: project._id,
+          stakeholderId: stakeholder._id,
+          levelOfSupport: stakeholder.supportLevel || 0,
+          levelOfInfluence: stakeholder.influenceLevel || 0,
+          notes: stakeholder.notes,
+        };
+        AdditionalStakeholderInfo.insert(additionalStakeholderInfo);
+      }
+    })
+  }
+});
 

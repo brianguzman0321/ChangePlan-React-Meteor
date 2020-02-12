@@ -33,6 +33,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Table from "@material-ui/core/Table";
 import {TableCell, TableHead, TableRow} from "@material-ui/core";
 import TableBody from "@material-ui/core/TableBody";
+import {AdditionalStakeholderInfo} from "../../../../api/additionalStakeholderInfo/additionalStakeholderInfo";
 
 const styles = theme => ({
   root: {
@@ -100,15 +101,18 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function EditStakeHolder(props) {
-  let {stakeholder, open, close, isAdmin, isSuperAdmin, isManager, isChangeManager, project, template, type, company, projectId, disabled} = props;
-  const [firstName, setFirstName] = React.useState(stakeholder.firstName);
-  const [lastName, setLastName] = React.useState(stakeholder.lastName);
+  let {
+    stakeholder, open, close, isAdmin, isSuperAdmin, isManager, isChangeManager, project, template, type, company,
+    projectId, disabled, additionalInfo
+  } = props;
+  const [firstName, setFirstName] = React.useState(stakeholder.firstName || '');
+  const [lastName, setLastName] = React.useState(stakeholder.lastName || '');
   const [jobTitle, setJobTitle] = React.useState(stakeholder.jobTitle ? stakeholder.jobTitle : stakeholder.role);
   const [businessUnit, setBusinessUnit] = React.useState(stakeholder.businessUnit);
   const [email, setEmail] = React.useState(stakeholder.email);
-  const [supportLevel, setSupportLevel] = React.useState(stakeholder.influenceLevel);
-  const [loI, setInfluenceLevel] = React.useState(stakeholder.supportLevel);
-  const [notes, setNotes] = React.useState(stakeholder.notes);
+  const [supportLevel, setSupportLevel] = React.useState(0);
+  const [loI, setInfluenceLevel] = React.useState(0);
+  const [notes, setNotes] = React.useState('');
   const [impacts, setImpacts] = useState([]);
   const [roles, setRoles] = useState(stakeholder.roleTags || []);
   const roleTags = ['SME', 'Sponsor', 'Leader', 'Business', 'SteerCo', 'ExecCo', 'Change champion/Ambassador', 'Customer'];
@@ -129,14 +133,19 @@ function EditStakeHolder(props) {
   const classes = useStyles();
 
   const resetChanges = () => {
-    setFirstName(stakeholder.firstName);
-    setLastName(stakeholder.lastName);
-    setJobTitle(stakeholder.jobTitle ? stakeholder.jobTitle : stakeholder.role);
-    setBusinessUnit(stakeholder.businessUnit);
-    setEmail(stakeholder.email);
-    setSupportLevel(stakeholder.supportLevel);
-    setInfluenceLevel(stakeholder.influenceLevel);
-    setNotes(stakeholder.notes);
+    setFirstName('');
+    setLastName('');
+    setJobTitle('');
+    setBusinessUnit('');
+    setLocation('');
+    setTeam('');
+    setEmail('');
+    setRoles([]);
+    setSupportLevel(0);
+    setGroupName('');
+    setNumberOfPeople(null);
+    setInfluenceLevel(0);
+    setNotes('');
   };
 
   useEffect(() => {
@@ -147,10 +156,18 @@ function EditStakeHolder(props) {
         setCustomTag(customRole);
       }
     }
-
   }, [roles]);
 
   const fetchStakeholderData = () => {
+    setFirstName(stakeholder.firstName || '');
+    setLastName(stakeholder.lastName || '');
+    setJobTitle(stakeholder.jobTitle ? stakeholder.jobTitle : stakeholder.role);
+    setBusinessUnit(stakeholder.businessUnit);
+    setLocation(stakeholder.location);
+    setTeam(stakeholder.team);
+    setRoles(stakeholder.roleTags || []);
+    setEmail(stakeholder.email || '');
+    setGroupName(stakeholder.groupName || '');
     let params = {
       activity: {
         stakeholderId: stakeholder._id
@@ -172,6 +189,9 @@ function EditStakeHolder(props) {
         setTotalTimeAwayBAU(totalTime);
       }
     });
+
+    getLevelsInfo();
+    getNotes();
 
     let projectPrams = {
       project: {
@@ -206,6 +226,44 @@ function EditStakeHolder(props) {
     setProjects(allProjects);
   };
 
+  const getLevelsInfoForProject = (currentProjectId, isLevelOfSupport = false) => {
+    const currentInfo = additionalInfo.find(info => info.projectId === currentProjectId && info.stakeholderId === stakeholder._id);
+    if (currentInfo && isLevelOfSupport) {
+      let levelOfSupport = currentInfo.levelOfSupport;
+      return levelOfSupport;
+    }
+    if (currentInfo && !isLevelOfSupport) {
+      let levelOfInfluence = currentInfo.levelOfInfluence;
+      return levelOfInfluence;
+    }
+  };
+
+  const getLevelsInfo = () => {
+    const currentInfo = additionalInfo.find(info => info.projectId === projectId && info.stakeholderId === stakeholder._id);
+    if (currentInfo) {
+      let levelOfSupport = currentInfo.levelOfSupport;
+      let levelOfInfluence = currentInfo.levelOfInfluence;
+      let stakeholdersInfo = additionalInfo.filter(_levelsInfo => _levelsInfo.stakeholderId === stakeholder._id);
+      if (stakeholdersInfo.length > 1 && levelOfSupport === 0) {
+        const sumLevels = stakeholdersInfo.reduce((a, b) => ({levelOfSupport: a.levelOfSupport + b.levelOfSupport})).levelOfSupport;
+        levelOfSupport = Math.round(sumLevels/stakeholdersInfo.length)
+      }
+      if (stakeholdersInfo.length > 1 && levelOfInfluence === 0) {
+        const sumLevels = stakeholdersInfo.reduce((a, b) => ({levelOfInfluence: a.levelOfInfluence + b.levelOfInfluence})).levelOfInfluence;
+        levelOfInfluence = Math.round(sumLevels/stakeholdersInfo.length);
+      }
+      setSupportLevel(levelOfSupport);
+      setInfluenceLevel(levelOfInfluence);
+    }
+  };
+
+  const getNotes = () => {
+    const currentInfo = additionalInfo.find(info => info.projectId === projectId && info.stakeholderId === stakeholder._id);
+    if (!!currentInfo) {
+      setNotes(currentInfo.notes || '')
+    }
+  };
+
   const handleClose = () => {
     setShowModalDialog(false);
     setIsUpdated(false);
@@ -236,17 +294,18 @@ function EditStakeHolder(props) {
         _id: stakeholder._id,
         location: location,
         businessUnit: businessUnit,
-        notes: notes,
         team: team,
-        influenceLevel: loI,
-        supportLevel: supportLevel,
       }
     };
     if (firstName) {
       params.people.firstName = firstName;
       params.people.lastName = lastName;
       params.people.email = email;
-      params.people.jobTitle = jobTitle;
+      if (stakeholder.role) {
+        params.people.role = jobTitle;
+      } else {
+        params.people.jobTitle = jobTitle;
+      }
       params.people.roleTags = roles;
     }
     if (groupName) {
@@ -257,10 +316,30 @@ function EditStakeHolder(props) {
       if (err) {
         props.enqueueSnackbar(err.reason, {variant: 'error'})
       } else {
-        handleClose();
-        props.enqueueSnackbar('Stakeholder Updated Successfully.', {variant: 'success'})
+        const _additionalInfo = additionalInfo.find(info => info.projectId === projectId && info.stakeholderId === stakeholder._id);
+        let methodName = 'additionalStakeholderInfo.insert';
+        const paramsInfo = {
+          additionalStakeholderInfo: {
+            projectId: projectId,
+            stakeholderId: stakeholder._id,
+            levelOfSupport: supportLevel || 0,
+            levelOfInfluence: loI || 0,
+            notes: notes || '',
+          }
+        };
+        if (!!_additionalInfo) {
+          paramsInfo.additionalStakeholderInfo._id = _additionalInfo._id;
+          methodName = 'additionalStakeholderInfo.update';
+        }
+        Meteor.call(methodName, paramsInfo, (err, res) => {
+          if (err) {
+            props.enqueueSnackbar(err.reason, {variant: 'error'});
+          } else {
+            handleClose();
+            props.enqueueSnackbar('Stakeholder Updated Successfully.', {variant: 'success'})
+          }
+        });
       }
-
     })
   };
 
@@ -307,7 +386,7 @@ function EditStakeHolder(props) {
     if (open) {
       fetchStakeholderData();
     }
-  }, [open]);
+  }, [open, stakeholder, additionalInfo]);
 
   return (
     <>
@@ -565,11 +644,12 @@ function EditStakeHolder(props) {
                           setIsUpdated(true);
                         }}
                       >
-                        <MenuItem value={1}>1 = Very low level of support</MenuItem>
-                        <MenuItem value={2}>2 = Low level of support</MenuItem>
-                        <MenuItem value={3}>3 = Moderate level of support</MenuItem>
-                        <MenuItem value={4}>4 = High level of support</MenuItem>
-                        <MenuItem value={5}>5 = Engaged and supportive</MenuItem>
+                        <MenuItem key={0} value={0}>None</MenuItem>
+                        <MenuItem key={1} value={1}>1 = Very low level of support</MenuItem>
+                        <MenuItem key={2} value={2}>2 = Low level of support</MenuItem>
+                        <MenuItem key={3} value={3}>3 = Moderate level of support</MenuItem>
+                        <MenuItem key={4} value={4}>4 = High level of support</MenuItem>
+                        <MenuItem key={5} value={5}>5 = Engaged and supportive</MenuItem>
                       </Select>
                     </FormControl>
                     <br/>
@@ -587,11 +667,12 @@ function EditStakeHolder(props) {
                           setIsUpdated(true);
                         }}
                       >
-                        <MenuItem value={1}>1 = Little influence over outcomes</MenuItem>
-                        <MenuItem value={2}>2 = Some influence over outcomes</MenuItem>
-                        <MenuItem value={3}>3 = Moderate influence over outcomes</MenuItem>
-                        <MenuItem value={4}>4 = Major influence over outcomes</MenuItem>
-                        <MenuItem value={5}>5 = Project will not succeed without their support</MenuItem>
+                        <MenuItem key={0} value={0}>None</MenuItem>
+                        <MenuItem key={1} value={1}>1 = Little influence over outcomes</MenuItem>
+                        <MenuItem key={2} value={2}>2 = Some influence over outcomes</MenuItem>
+                        <MenuItem key={3} value={3}>3 = Moderate influence over outcomes</MenuItem>
+                        <MenuItem key={4} value={4}>4 = Major influence over outcomes</MenuItem>
+                        <MenuItem key={5} value={5}>5 = Project will not succeed without their support</MenuItem>
                       </Select>
                     </FormControl>
                     <br/>
@@ -641,8 +722,8 @@ function EditStakeHolder(props) {
                         return <TableRow key={index}>
                           <TableCell>{project.name.toUpperCase()}</TableCell>
                           <TableCell>{stakeholder.roles}</TableCell>
-                          <TableCell>{stakeholder && stakeholder.supportLevel}</TableCell>
-                          <TableCell>{stakeholder.influenceLevel}</TableCell>
+                          <TableCell>{getLevelsInfoForProject(project._id, true)}</TableCell>
+                          <TableCell>{getLevelsInfoForProject(project._id)}</TableCell>
                           <TableCell>{stakeholder.notes && stakeholder.notes}</TableCell>
                         </TableRow>
                       })}
@@ -827,8 +908,10 @@ const EditStakeHolderPage = withTracker(props => {
   Meteor.subscribe('impacts.findAll');
   Meteor.subscribe('projects.notLoggedIn');
   Meteor.subscribe('activities.notLoggedIn');
+  Meteor.subscribe('additionalStakeholderInfo.findAll');
   return {
     company: Companies.findOne(),
+    additionalInfo: AdditionalStakeholderInfo.find({}).fetch(),
   };
 })(EditStakeHolder);
 
