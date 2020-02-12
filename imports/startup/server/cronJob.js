@@ -241,7 +241,7 @@ SyncedCron.add({
   }
 });
 
-SyncedCron.add({
+/*SyncedCron.add({
   name: 'Add levels info to table',
   schedule: function (parser) {
     return parser.text('every 10 minutes');
@@ -262,5 +262,5 @@ SyncedCron.add({
       }
     })
   }
-});
+});*/
 
