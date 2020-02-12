@@ -53,3 +53,8 @@ import '/imports/api/projectEvents/method';
 import '/imports/api/impacts/impacts';
 import '/imports/api/impacts/server/publications';
 import '/imports/api/impacts/methods';
+
+//levels info
+import '/imports/api/additionalStakeholderInfo/additionalStakeholderInfo';
+import '/imports/api/additionalStakeholderInfo/server/publications';
+import '/imports/api/additionalStakeholderInfo/methods';

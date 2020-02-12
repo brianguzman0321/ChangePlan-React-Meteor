@@ -20,6 +20,7 @@ import {Meteor} from "meteor/meteor";
 import {withSnackbar} from "notistack";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
+import {AdditionalStakeholderInfo} from "../../../api/additionalStakeholderInfo/additionalStakeholderInfo";
 
 
 const useStyles = makeStyles(theme => ({
@@ -83,7 +84,7 @@ function StakeHolders(props) {
   let menus = config.menus;
   const [search, setSearch] = React.useState('');
   const classes = useStyles();
-  let {match, project, template, stakeHoldersTemplate, stakeHolders, company, currentCompany, activities} = props;
+  let {match, project, template, stakeHoldersTemplate, stakeHolders, company, currentCompany, activities, additionalInfo} = props;
   let {projectId, templateId} = match.params;
   project = project || {};
   template = template || {};
@@ -118,12 +119,24 @@ function StakeHolders(props) {
     let allStakeholders = [];
     if (stakeHolders) {
       allStakeholders = stakeHolders;
-      getTotalTime(allStakeholders, true)
+      getTotalTime(allStakeholders, true);
+      getLevels(allStakeholders);
     } else if (stakeHoldersTemplate) {
       allStakeholders = stakeHoldersTemplate;
-      getTotalTime(allStakeholders, true)
+      getTotalTime(allStakeholders, true);
+      getLevels(allStakeholders);
     }
   }, [stakeHolders, stakeHoldersTemplate, activities]);
+
+  const getLevels = (allStakeholders) => {
+    allStakeholders.map(stakeholder => {
+      const currentLevels = additionalInfo.find(info => info.stakeholderId === stakeholder._id && info.projectId === projectId);
+      if (currentLevels) {
+        stakeholder.supportLevel = currentLevels.levelOfSupport;
+        stakeholder.influenceLevel = currentLevels.levelOfInfluence;
+      }
+    })
+  };
 
   const getTotalTime = (allStakeholders, isDefault = false) => {
     if (activities) {
@@ -200,8 +213,8 @@ function StakeHolders(props) {
     let filteredStakeholders = [];
     switch (filteringField) {
       case 0:
-          filteredStakeholders = defaultStakeholders;
-         break;
+        filteredStakeholders = defaultStakeholders;
+        break;
       case 1:
         filteredStakeholders = defaultStakeholders.filter(stakeholder => stakeholder.businessUnit === filteringValue);
         break;
@@ -395,6 +408,7 @@ const StakeHoldersPage = withTracker(props => {
   Meteor.subscribe('templates');
   Meteor.subscribe('projects');
   Meteor.subscribe('activities.notLoggedIn');
+  Meteor.subscribe('additionalStakeholderInfo.findAll');
   let project = Projects.findOne({
     _id: projectId
   });
@@ -408,6 +422,7 @@ const StakeHoldersPage = withTracker(props => {
   });
   Meteor.subscribe('activities.notLoggedIn');
   Meteor.subscribe('findAllPeoples');
+  const additionalInfo = AdditionalStakeholderInfo.find({}).fetch();
   return {
     stakeHolders: Peoples.find({
       _id: {
@@ -425,6 +440,7 @@ const StakeHoldersPage = withTracker(props => {
     company,
     currentCompany,
     activities,
+    additionalInfo,
   };
 })(withRouter(StakeHolders));
 
