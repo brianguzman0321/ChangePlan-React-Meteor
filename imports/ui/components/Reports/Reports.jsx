@@ -1,13 +1,11 @@
 import React from 'react';
-import { fade, makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import TopNavBar from '/imports/ui/components/App/App'
 import config from '/imports/utils/config';
 import Grid from "@material-ui/core/Grid/Grid";
 import Typography from "@material-ui/core/Typography/Typography";
-import Button from "@material-ui/core/Button/Button";
-import Tabs from "@material-ui/core/Tabs/Tabs";
-import Tab from "@material-ui/core/Tab/Tab";
-import ViewColumnIcon from "@material-ui/core/SvgIcon/SvgIcon";
+import ImpactReport from "./ImpactReport";
+
 
 const useStyles = makeStyles({
     root: {
@@ -81,6 +79,9 @@ export default function Reports(props){
                             Reports
                         </Typography>
                     </Grid>
+                </Grid>
+                <Grid container direction="row" justify="space-between">
+                    <ImpactReport match={props.match}/>
                 </Grid>
             </Grid>
         </div>
