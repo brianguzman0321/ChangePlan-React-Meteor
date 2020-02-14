@@ -435,15 +435,21 @@ const AddImpactPage = withTracker(props => {
   let localImpacts = LocalCollection.findOne({
     name: 'localStakeHoldersImpacts'
   });
+  let company = {};
   Meteor.subscribe('compoundProject', projectId);
   Meteor.subscribe('templates');
   Meteor.subscribe('companies');
   Meteor.subscribe('compoundActivities', projectId);
   let project = Projects.findOne({_id: projectId});
-  let company = Companies.findOne() || {};
   let template = Templates.findOne({_id: templateId});
   let companyProjectId = project && project.companyId;
   let companyTemplateId = template && template.companyId;
+  if (companyProjectId) {
+    company = Companies.findOne({_id: companyProjectId}) || {};
+  }
+  if (companyTemplateId) {
+    company = Companies.findOne({_id: companyTemplateId}) || {};
+  }
   let activities = Activities.find({projectId: projectId}).fetch();
   Meteor.subscribe('peoples', companyProjectId || companyTemplateId);
   return {
