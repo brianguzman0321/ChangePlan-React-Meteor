@@ -329,6 +329,7 @@ export default function StakeHolderList(props) {
                   const labelId = `enhanced-table-checkbox-${index}`;
                   return (
                     <StakeHolder
+                      index={index}
                       row={row}
                       isItemSelected={isItemSelected}
                       labelId={labelId}

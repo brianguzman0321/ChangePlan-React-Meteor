@@ -170,6 +170,7 @@ function AddStakeHolder(props) {
     setFirstName('');
     setLastName('');
     setJobTitle('');
+    setRoles([]);
     setLocation('');
     setTeam('');
     setBusinessUnit('');
@@ -189,7 +190,6 @@ function AddStakeHolder(props) {
         setCustomTag(customRole);
       }
     }
-
   }, [roles]);
 
   const handleChangeValue = (event, newValue) => {
@@ -571,7 +571,7 @@ function AddStakeHolder(props) {
               levelOfInfluence: influenceLevel || 0,
               notes: notes || '',
             }
-          }
+          };
           Meteor.call('additionalStakeholderInfo.insert', paramsInfo, (err, res) => {
             if (err) {
               props.enqueueSnackbar(err.reason, {variant: 'error'});
@@ -749,14 +749,10 @@ function AddStakeHolder(props) {
                       <InputLabel id="role-tags">Role Tags</InputLabel>
                       <Select
                         id="role-tags"
-                        fullWidth={true}
                         value={roles}
                         multiple
                         onChange={handleChangeSelect}
-                        input={<Input/>}
                         renderValue={selected => selected.join(', ')}
-                        className={influenceLevel === 0 && classes.menuItem}
-
                       >
                         {roleTags.map(tag => {
                           return <MenuItem key={tag} value={tag}>
@@ -765,38 +761,34 @@ function AddStakeHolder(props) {
                           </MenuItem>
                         })}
 
-                        {!showInput && <MenuItem value={customTag}>
+                        {!showInput && <MenuItem>
                           <Checkbox checked={customTag.length > 0}/>
                           <ListItemText primary={customTag.length > 0 ? customTag : 'Other'}
                                         onClick={() => setShowInput(true)}/>
                         </MenuItem>}
 
-                        {showInput && <MenuItem>
-                          <TextField
+                        {showInput && <TextField
                             placeholder={"Enter role tag"}
                             autoFocus
                             fullWidth type={"text"}
                             onKeyPress={(e) => {
                               (e.key === 'Enter' ? handleChangeInput(e.target.value) : null)
                             }}
-                          />
-                        </MenuItem>}
+                          />}
                       </Select>
                     </FormControl>
                     <br/>
                   </Grid>
-
                   <Grid item xs={6}>
                     <FormControl className={classes.formControl} fullWidth={true}>
                       <InputLabel htmlFor="demo-controlled-open-select-level">Level Of Support</InputLabel>
                       <Select
                         id="demo-controlled-open-select-level"
-                        fullWidth={true}
                         value={supportLevel}
                         onChange={(e) => {
                           setSupportLevel(e.target.value)
                         }}
-                        className={influenceLevel === 0 && classes.menuItem}
+                        className={supportLevel === 0 && classes.menuItem}
                       >
                         <MenuItem value={0}>Select</MenuItem>
                         <MenuItem value={1}>1 = Very low level of support</MenuItem>
@@ -814,7 +806,6 @@ function AddStakeHolder(props) {
                       <InputLabel htmlFor="demo-controlled-open-select">Level Of Influence</InputLabel>
                       <Select
                         id="demo-controlled-open-select"
-                        fullWidth={true}
                         value={influenceLevel}
                         onChange={(e) => {
                           setInfluenceLevel(e.target.value)

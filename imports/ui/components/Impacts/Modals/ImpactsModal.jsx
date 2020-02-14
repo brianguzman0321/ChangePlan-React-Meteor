@@ -117,7 +117,7 @@ const DialogActions = withStyles(theme => ({
 
 function AddImpact(props) {
   let {
-    open, handleModalClose, currentType, stakeHoldersImpacts, isNew,
+    open, handleModalClose, currentType, stakeHoldersImpacts, isNew, company,
     stakeHoldersTemplate, isSuperAdmin, isAdmin, isChangeManager, isManager, activities, projectId, templateId, impact
   } = props;
   const [peoples, setPeoples] = useState([]);
@@ -259,20 +259,7 @@ function AddImpact(props) {
   };
 
   const selectPhase = (phase) => {
-    switch (phase) {
-      case 1:
-        return '1';
-      case 2:
-        return '4';
-      case 3:
-        return '5';
-      case 4:
-        return '2';
-      case 5:
-        return '3';
-      default:
-        break;
-    }
+    return company.activityColumns[phase - 1];
   };
 
   return (
@@ -394,7 +381,7 @@ function AddImpact(props) {
                 <Button color="primary" className={classes.buttonActivities} onClick={handleShowActivities}>
                   Select Activities
                 </Button>
-                <SelectActivities handleClose={handleCloseActivities} handleChange={handleSelectActivities}
+                <SelectActivities handleClose={handleCloseActivities} handleChange={handleSelectActivities} company={company}
                                   open={showActivities} activities={activities} selectedActivities={selectedActivities}/>
               </Grid>
               <br/>
