@@ -295,7 +295,7 @@ function AddActivities(props) {
   } = props;
   const customActivityIcon = data.find(item => item.category === "Custom").iconSVG;
   const [open, setOpen] = useState(edit || isOpen || false);
-  const [phase, setPhase] = useState((step) || 1);
+  const [phase, setPhase] = useState(step || 1);
   const [color, setColor] = useState('#f1753e');
   const [deleteModal, setDeleteModal] = useState(false);
   const [time, setTime] = useState('');
@@ -515,7 +515,7 @@ function AddActivities(props) {
     setActivityType({});
     setSelectActivity({});
     setDueDate(new Date());
-    setPhase(1);
+    setPhase(step);
     setColor('');
     setCheckSchedule(false);
     setTimeSendEmail(null);
@@ -1102,7 +1102,7 @@ function AddActivities(props) {
                 <Grid item xs={5}>
                   <FormControl fullWidth disabled={disabledManager}>
                     <InputLabel id="select-phase">Change phase*</InputLabel>
-                    <Select fullWidth value={phase || 1} id="select-phase" onChange={handlePhaseChange}
+                    <Select fullWidth value={phase} id="select-phase" onChange={handlePhaseChange}
                             className={classes.selectPhase}>
                       <MenuItem
                         value={1}>{(company.activityColumns && company.activityColumns[0].toUpperCase()) || "AWARENESS"}</MenuItem>
