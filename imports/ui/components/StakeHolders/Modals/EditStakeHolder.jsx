@@ -766,7 +766,7 @@ function EditStakeHolder(props) {
                       <TableCell>{moment(activity.dueDate).format('DD-MMM-YY')}</TableCell>
                       <TableCell>{activity && selectPhase(activity.step)}</TableCell>
                       <TableCell>{activity && activity.type[0].toUpperCase() + activity.type.slice(1)}</TableCell>
-                      <TableCell>{activity && activity.time + activity.time}</TableCell>
+                      <TableCell>{activity && activity.time}</TableCell>
                     </TableRow>
                   })}
                 </TableBody>
@@ -801,7 +801,7 @@ function EditStakeHolder(props) {
                       <TableCell>{moment(activity.dueDate).format('DD-MMM-YY')}</TableCell>
                       <TableCell>{activity && selectPhase(activity.step)}</TableCell>
                       <TableCell>{activity && activity.type[0].toUpperCase() + activity.type.slice(1)}</TableCell>
-                      <TableCell>{activity && activity.time + activity.time}</TableCell>
+                      <TableCell>{activity && activity.time}</TableCell>
                       <TableCell>Yes</TableCell>
                       <TableCell>{activity && activity.sentEmail ? 'Yes' : 'No'}</TableCell>
                       <TableCell>{getFeedbackReceived(activity._id)}</TableCell>

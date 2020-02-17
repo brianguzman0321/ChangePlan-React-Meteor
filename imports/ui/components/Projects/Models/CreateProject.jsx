@@ -26,6 +26,10 @@ import {Companies} from '/imports/api/companies/companies'
 import AutoComplete from '/imports/ui/components/utilityComponents/AutoCompleteInline'
 import {withRouter} from 'react-router'
 import AddNewPerson from "../../Activities/Modals/AddNewPerson";
+import FormControl from "@material-ui/core/FormControl";
+import {InputLabel} from "@material-ui/core";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
 
 const styles = theme => ({
   root: {
@@ -91,7 +95,7 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function AddProject(props) {
-  let {company} = props;
+  let {company, companies, isSuperAdmin} = props;
   const [open, setOpen] = React.useState(false);
   const [isNew, setIsNew] = React.useState(false);
   const [users, setUsers] = React.useState([]);
@@ -100,6 +104,8 @@ function AddProject(props) {
   const [startingDate, setStartingDate] = React.useState(new Date());
   const [endingDate, setEndingDate] = React.useState(new Date());
   const [expanded, setExpanded] = React.useState('panel1');
+  const [currentCompany, setCurrentCompany] = React.useState('');
+
 
   const classes = useStyles();
 
@@ -108,8 +114,16 @@ function AddProject(props) {
     setStartingDate(new Date());
     setName('');
     setPerson(null);
+    setCurrentCompany('');
+    setUsers([]);
     setExpanded('panel1')
   };
+
+  useEffect(() => {
+    if (company && !isSuperAdmin) {
+      setCurrentCompany(company._id);
+    }
+  }, [companies, company]);
 
   const createProject = (e) => {
     e.preventDefault();
@@ -119,13 +133,16 @@ function AddProject(props) {
     } else if (endingDate < startingDate) {
       props.enqueueSnackbar('Please fix the date error', {variant: 'error'});
       return false;
+    } else if (isSuperAdmin && !currentCompany) {
+      props.enqueueSnackbar('Please choose company. This field is required', {variant: 'error'});
+      return false;
     }
     let params = {
       project: {
         name: name,
         startingDate,
         endingDate,
-        companyId: company._id,
+        companyId: currentCompany,
         managers: person && person.map(p => p.value) || []
       }
     };
@@ -141,7 +158,11 @@ function AddProject(props) {
   };
 
   const updateUsersList = () => {
-    Meteor.call(`users.getPersons`, {company: company}, (err, res) => {
+    let selectedCompany = company || {};
+    if (companies && currentCompany) {
+      selectedCompany = companies.find(_company => _company._id === currentCompany)
+    }
+    Meteor.call(`users.getPersons`, {company: selectedCompany}, (err, res) => {
       if (err) {
         props.enqueueSnackbar(err.reason, {variant: 'error'});
       }
@@ -160,7 +181,7 @@ function AddProject(props) {
 
   useEffect(() => {
     updateUsersList();
-  }, [company, isNew, open]);
+  }, [company, currentCompany, isNew, open]);
 
   const handleChangePanel = panel => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
@@ -235,6 +256,36 @@ function AddProject(props) {
                   />
                 </ExpansionPanelDetails>
               </ExpansionPanel>
+              {isSuperAdmin &&
+              <ExpansionPanel expanded={expanded === 'panel4'} onChange={handleChangePanel('panel4')}>
+                <ExpansionPanelSummary
+                  expandIcon={<ExpandMoreIcon/>}
+                  aria-controls="panel4bh-content"
+                  id="panel4bh-header"
+                >
+                  <Typography className={classes.heading}>Company</Typography>
+                  <Typography className={classes.secondaryHeading}>
+                    {currentCompany && companies ? companies.find(_company => _company._id === currentCompany).name : 'Choose the company (required for Super Admin)'}
+                  </Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                  <Grid container justify="space-between" spacing={2}>
+                    <Grid item xs={6}>
+                      <FormControl fullWidth>
+                        <InputLabel id="selectCompany">Company</InputLabel>
+                        <Select value={currentCompany} id="selectCompany"
+                                onChange={(e) => setCurrentCompany(e.target.value)}>
+                          {companies.map(_company => {
+                            return <MenuItem key={_company._id} value={_company._id}>
+                              {_company.name}
+                            </MenuItem>
+                          })}
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                  </Grid>
+                </ExpansionPanelDetails>
+              </ExpansionPanel>}
               <ExpansionPanel expanded={expanded === 'panel2'} onChange={handleChangePanel('panel2')}>
                 <ExpansionPanelSummary
                   expandIcon={<ExpandMoreIcon/>}
@@ -328,11 +379,16 @@ function AddProject(props) {
 
 const AddProjectPage = withTracker(props => {
   Meteor.subscribe('companies');
-  let company = Companies.findOne() || {};
-  let companyId = company._id || {};
-  Meteor.subscribe('peoples', companyId);
+  let allCompany = Companies.find({}).fetch();
+  let currentCompany = {};
+  if (allCompany) {
+    currentCompany = allCompany.find(company => company.peoples.includes(Meteor.userId()))
+  } else {
+    currentCompany = Companies.findOne() || {}
+  }
   return {
-    company
+    allCompany,
+    company: currentCompany || {},
   };
 })(withRouter(AddProject));
 
