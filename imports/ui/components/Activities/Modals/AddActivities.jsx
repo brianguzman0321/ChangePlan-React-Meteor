@@ -645,13 +645,15 @@ function AddActivities(props) {
     setShowModalDialog(false);
   };
 
-  const handleShowNotification = () => {
+  const handleShowNotification = (e) => {
     if (!dueDate) {
       props.enqueueSnackbar('Please fill all required fields', {variant: 'error'});
     } else if (!(activityType && activityType.name) && Array.isArray(stakeHolders)) {
       props.enqueueSnackbar('Please fill all required fields', {variant: 'error'});
+    } else if (!person) {
+      createActivity(e, false);
     } else {
-      setShowNotification(true)
+      setShowNotification(true);
     }
   };
 
@@ -1574,7 +1576,7 @@ function AddActivities(props) {
                       disabled={disabled}>
                 Delete
               </Button>}
-            {isNew ? <Button color="primary" onClick={sentNotification ? (e) => createActivity(e, false) : handleShowNotification}>Save</Button> :
+            {isNew ? <Button color="primary" onClick={sentNotification ? (e) => createActivity(e, false) : (e) => handleShowNotification(e)}>Save</Button> :
               <Button type="submit" color="primary"
                       disabled={disabled}>
                 Save

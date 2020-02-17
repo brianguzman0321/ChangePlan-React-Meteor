@@ -128,6 +128,18 @@ function StakeHolders(props) {
     }
   }, [stakeHolders, stakeHoldersTemplate, activities]);
 
+  const getNumberStakeholders = () => {
+    let numberStakeholders = 0;
+    stakeholders.forEach(stakeholder => {
+      if (stakeholder.numberOfPeople && stakeholder.numberOfPeople > 0) {
+        numberStakeholders = numberStakeholders + stakeholder.numberOfPeople;
+      } else {
+        numberStakeholders++;
+      }
+    });
+    return numberStakeholders;
+  };
+
   const getLevels = (allStakeholders) => {
     allStakeholders.map(stakeholder => {
       const currentLevels = additionalInfo.find(info => info.stakeholderId === stakeholder._id && info.projectId === projectId);
@@ -148,6 +160,7 @@ function StakeHolders(props) {
         });
         totalTime = totalTime < 60 ? totalTime + " mins" : parseFloat(totalTime / 60).toFixed(2) + " hrs";
         stakeholder.totalTime = totalTime;
+        return stakeholder
       });
       setStakeholders(allStakeholders);
       if (isDefault) {
@@ -333,7 +346,7 @@ function StakeHolders(props) {
               Stakeholders
               &nbsp;&nbsp;&nbsp;
               <span
-                className={classes.stakeholdersCount}>{stakeholders && stakeholders.length}</span>
+                className={classes.stakeholdersCount}>{getNumberStakeholders()}</span>
             </Typography>
           </Grid>
           <Grid item xs={4} className={classes.searchGrid} md={3} sm={6}>

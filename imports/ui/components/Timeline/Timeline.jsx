@@ -122,7 +122,7 @@ function Timeline(props) {
     const defaultSteps = ["Awareness", "Ability", "Reinforcement", "Desire", "Knowledge"];
     let startingDate = projects0 ? projects0.startingDate : new Date();
     let dueDate = projects0 ? projects0.endingDate : new Date();
-    if (activities.length > 0) {
+    if (activities.length > 0 || events.filter(event => event.projectId === projectId).length > 0) {
       tempData.unshift({
         id: `Project_Start`,
         eventType: 'Project_Start',

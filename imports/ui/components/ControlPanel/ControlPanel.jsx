@@ -58,7 +58,24 @@ const useStyles = makeStyles(theme => ({
 function FullWidthTabs(props) {
     const classes = useStyles();
     const theme = useTheme();
+    const [companies, setCompanies] = React.useState([]);
     const [value, setValue] = React.useState(0);
+    const [isSuperAdmin, setIsSuperAdmin] = React.useState(false);
+    const userId = Meteor.userId();
+
+    useEffect(() => {
+        if (props.companies && isSuperAdmin) {
+            setCompanies(props.companies)
+        } else if (props.companies) {
+            setCompanies(props.companies.filter(company => company.peoples.includes(userId)))
+        }
+    }, [props.companies, isSuperAdmin]);
+
+    useEffect(() => {
+        if (Roles.userIsInRole(userId, 'SuperAdmin')) {
+            setIsSuperAdmin(true);
+        }
+    }, [userId]);
 
     function handleChange(event, newValue) {
         setValue(newValue);
@@ -94,7 +111,7 @@ function FullWidthTabs(props) {
             >
                 <TabPanel value={value} index={0} dir={theme.direction}>
                     <br/>
-                    {props.companies ? <ControlledOpenSelect {...props} title="Companies" entity="Company" entities={props.companies} localCollection="localCompanies" id="companyId"/> : ''}
+                    {companies ? <ControlledOpenSelect {...props} title="Companies" entity="Company" entities={companies} localCollection="localCompanies" id="companyId"/> : ''}
                     <br/>
                     <ProjectsControlPanel {...props}/>
                 </TabPanel>

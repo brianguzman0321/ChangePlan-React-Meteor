@@ -393,7 +393,7 @@ function ProjectCard(props) {
           </Grid>
           <Grid item xs={4} className={(isAdmin || isSuperAdmin || isChangeManager) ? classes.secondTab : null}>
             {(isAdmin || isSuperAdmin || isChangeManager) &&
-            <NewProject {...props} className={classes.createNewProject}/>}
+            <NewProject {...props} className={classes.createNewProject} isSuperAdmin={isSuperAdmin}/>}
             <Typography color="textSecondary" variant="title" className={classes.sortBy}>
               Sort by
             </Typography>
