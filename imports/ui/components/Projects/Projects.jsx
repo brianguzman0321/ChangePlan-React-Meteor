@@ -23,6 +23,7 @@ import {Activities} from "../../../api/activities/activities";
 import ProjectNavBar from "./ProjectsNavBar";
 import {Templates} from "../../../api/templates/templates";
 import {Meteor} from "meteor/meteor";
+import {Peoples} from "../../../api/peoples/peoples";
 
 
 const useStyles = makeStyles(theme => ({
@@ -160,7 +161,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function ProjectCard(props) {
-  let {projects, company, activities, currentCompany, templates, history: {push}} = props;
+  let {projects, company, activities, currentCompany, templates, history: {push}, stakeholders} = props;
   const [selectedTab, setSelectedTab] = useState(0);
   const [currentCompanyId, setCompanyId] = useState(null);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
@@ -364,6 +365,19 @@ function ProjectCard(props) {
     updateFilter('localProjects', 'search', event.target.value);
   };
 
+  const getAmountStakeholder = (project) => {
+    let totalAmountStakeholders = 0;
+    let stakeholdersProject = stakeholders.filter(stakeholder => project.stakeHolders.includes(stakeholder._id));
+    stakeholdersProject.forEach(stakeholder => {
+      if (stakeholder.numberOfPeople > 0) {
+        totalAmountStakeholders = totalAmountStakeholders + stakeholder.numberOfPeople
+      } else {
+        totalAmountStakeholders++
+      }
+    });
+    return totalAmountStakeholders
+  };
+
   return (
     <>
       <Grid
@@ -459,7 +473,7 @@ function ProjectCard(props) {
                         STAKEHOLDERS
                       </Typography>
                       <Typography className={classes.pos} color="textSecondary">
-                        {project.stakeHolders.length}
+                        {getAmountStakeholder(project)}
                       </Typography>
                     </Grid>
                     <Grid item xs={4} className={classes.activities}>
@@ -568,6 +582,7 @@ const ProjectsPage = withTracker(props => {
   });
   Meteor.subscribe('templates');
   Meteor.subscribe('activities.notLoggedIn');
+  Meteor.subscribe('findAllPeoples');
   return {
     templates: Templates.find({}).fetch(),
     company: Companies.findOne({_id: currentCompany && currentCompany._id}),
@@ -575,6 +590,7 @@ const ProjectsPage = withTracker(props => {
     projects: sortingFunc(Projects.find().fetch(), local),
     companies: Companies.find({}).fetch(),
     currentCompany,
+    stakeholders: Peoples.find({}).fetch(),
   };
 })(ProjectCard);
 

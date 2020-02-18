@@ -6,6 +6,7 @@ import ImpactsModal from "./Modals/ImpactsModal";
 import DeleteImpactModal from "./Modals/DeleteImpactModal";
 import {stringHelpers} from "../../../helpers/stringHelpers";
 import {makeStyles} from "@material-ui/core";
+import getTotalStakeholders from "../../../utils/getTotalStakeholders";
 
 const useStyles = makeStyles(theme => ({
   cellInfo: {
@@ -15,7 +16,7 @@ const useStyles = makeStyles(theme => ({
 
 const Impact = (props) => {
   const {
-    row, isItemSelected, labelId, setRowSelected, deleteCell, selected, index, isAdmin, isSuperAdmin, match,
+    row, isItemSelected, labelId, setRowSelected, deleteCell, selected, index, isAdmin, isSuperAdmin, match, allStakeholders,
     isManager, isChangeManager, isActivityOwner, isActivityDeliverer, template, company, projectId, templateId, project, type
   } = props;
   const classes = useStyles();
@@ -76,8 +77,8 @@ const Impact = (props) => {
       </TableCell>
       <TableCell align="left" className={classes.cellInfo} onClick={handleOpenModalDialog}>{stringHelpers.limitCharacters(row.impact, 112)}</TableCell>
       <TableCell align="left" className={classes.cellInfo} onClick={handleOpenModalDialog}>{row.level[0].toUpperCase() + row.level.slice(1)}</TableCell>
-      <TableCell align="left" className={classes.cellInfo} onClick={handleOpenModalDialog}>{row.activities.length || '-'}</TableCell>
-      <TableCell align="left" className={classes.cellInfo} onClick={handleOpenModalDialog}>{row.stakeholders.length || '-'}</TableCell>
+      <TableCell align="left" className={classes.cellInfo} onClick={handleOpenModalDialog}>{row.activities.length || 0}</TableCell>
+      <TableCell align="left" className={classes.cellInfo} onClick={handleOpenModalDialog}>{getTotalStakeholders(allStakeholders, row.stakeholders)}</TableCell>
       <TableCell align="left" className={classes.cellInfo} onClick={event => deleteCell(event, row)}>
         <ImpactsModal isNew={false} projectId={projectId} impact={row} open={showEditModalDialog} match={match}
                              isChangeManager={isChangeManager} currentType={type} handleModalClose={handleCloseModalDialog} templateId={templateId}

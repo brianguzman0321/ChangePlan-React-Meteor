@@ -29,6 +29,7 @@ import {withSnackbar} from "notistack";
 import ChangeTemplate from "./Modals/ChangeTemplate";
 import {Activities} from "../../../api/activities/activities";
 import {Meteor} from "meteor/meteor";
+import getTotalStakeholders from '/imports/utils/getTotalStakeholders';
 
 
 const useStyles = makeStyles({
@@ -126,7 +127,7 @@ const useStyles = makeStyles({
 });
 
 function Dashboard(props) {
-  let {match, project: currentProject, template: currentTemplate, currentCompany, companies, company} = props;
+  let {match, project: currentProject, template: currentTemplate, currentCompany, companies, company, allStakeholders} = props;
   let {projectId, templateId} = match.params;
   const classes = useStyles();
   let {params} = props.match;
@@ -134,13 +135,11 @@ function Dashboard(props) {
   const [template, setTemplate] = useState({});
   const [index, setIndex] = React.useState('');
   const [type, setType] = useState(projectId && 'project' || templateId && 'template');
-  const [impactIndex, setImpactIndex] = React.useState('');
   const [benefitsIndex, setBenefitsIndex] = React.useState('');
   const [editValue, setEditValue] = React.useState('');
   const [deleteValue, setDeleteValue] = React.useState('');
   const [vision, setVision] = React.useState(project.vision || template.vision || []);
   const [objectives, setObjective] = React.useState(project.objectives || template.objectives || []);
-  const [impacts, setImpacts] = React.useState([]);
   const [risks, setRisks] = React.useState(project.risks || template.risks || []);
   const [benefits, setBenefits] = React.useState([]);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
@@ -305,7 +304,7 @@ function Dashboard(props) {
 
   const handleOpenChangeTemplateModal = () => {
     setIsOpen(false);
-  }
+  };
 
   return (
     <div>
@@ -643,7 +642,7 @@ function Dashboard(props) {
                         <Grid item xs={2} onClick={(e) => {
                           editBenefits(i, v)
                         }}>
-                          {v.stakeholders && v.stakeholders.length}
+                          {getTotalStakeholders(allStakeholders, v.stakeholders)}
                         </Grid>
                         {((isAdmin && template && (template.companyId === currentCompany._id)) || isSuperAdmin || type === 'project' && (project && (isAdmin || isChangeManager))) ?
                           <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
@@ -720,7 +719,7 @@ const DashboardPage = withTracker(props => {
   Meteor.subscribe('compoundActivities', projectId);
   Meteor.subscribe('compoundProject', projectId);
   Meteor.subscribe('companies');
-
+  Meteor.subscribe('findAllPeoples');
   const companies = Companies.find({}).fetch();
   const company = Companies.findOne({_id: project && project.companyId || template && template.companyId});
   if (!company) {
@@ -735,6 +734,7 @@ const DashboardPage = withTracker(props => {
     template: Templates.findOne({_id: templateId}),
     companies: Companies.find({}).fetch(),
     currentCompany,
+    allStakeholders: Peoples.find({company: currentCompany && currentCompany._id}).fetch(),
   };
 })(withRouter(Dashboard));
 

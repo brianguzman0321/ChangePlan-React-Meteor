@@ -4,7 +4,7 @@ import {makeStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import IconButton from "@material-ui/core/IconButton/IconButton";
 import Grid from '@material-ui/core/Grid';
-import {InputBase} from '@material-ui/core';
+import {InputBase, InputLabel, Select} from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import {withTracker} from "meteor/react-meteor-data";
 import {Companies} from "/imports/api/companies/companies";
@@ -19,6 +19,8 @@ import {Meteor} from "meteor/meteor";
 import ImpactsList from "./ImpactsList";
 import ImpactsModal from "./Modals/ImpactsModal";
 import Button from "@material-ui/core/Button";
+import FormControl from "@material-ui/core/FormControl";
+import MenuItem from "@material-ui/core/MenuItem";
 
 
 const useStyles = makeStyles(theme => ({
@@ -63,13 +65,22 @@ const useStyles = makeStyles(theme => ({
   impactsCount: {
     fontSize: '30px'
   },
+  gridFiltering: {
+    marginTop: '-10px',
+  },
+  selectFiltering: {
+    width: '80%',
+  },
+  labelForSelect: {
+    top: '8px',
+  },
 }));
 
 function ImpactsTable(props) {
   let menus = config.menus;
   const [search, setSearch] = React.useState('');
   const classes = useStyles();
-  let {match, project, impactsProject, impactsTemplate, template, currentCompany} = props;
+  let {match, project, impactsProject, impactsTemplate, template, currentCompany, stakeholders, stakeholdersTemplate} = props;
   let {projectId, templateId} = match.params;
   project = project || {};
   template = template || {};
@@ -82,6 +93,9 @@ function ImpactsTable(props) {
   const [isActivityDeliverer, setIsActivityDeliverer] = useState(false);
   const [isActivityOwner, setIsActivityOwner] = useState(false);
   const [showAddImpact, setShowAddImpact] = useState(false);
+  const [filteringValue, setFilteringValue] = useState(0);
+  const [filteringField, setFilteringField] = useState(0);
+  const [defaultImpacts, setDefaultImpacts] = useState([]);
   const [currentCompanyId, setCompanyId] = useState(null);
 
   const searchFilter = event => {
@@ -143,9 +157,11 @@ function ImpactsTable(props) {
   useEffect(() => {
     if (projectId && impactsProject) {
       setImpacts(impactsProject);
+      setDefaultImpacts(impactsProject)
     }
     if (templateId && impactsTemplate) {
       setImpacts(impactsTemplate);
+      setDefaultImpacts(impactsTemplate)
     }
   }, [impactsProject, impactsTemplate]);
 
@@ -155,6 +171,64 @@ function ImpactsTable(props) {
 
   const handleCloseModal = () => {
     setShowAddImpact(false);
+  };
+
+  const selectFieldForFiltering = (e) => {
+    setFilteringField(e.target.value);
+    if (e.target.value === 0) {
+      setFilteringValue(0);
+    }
+  };
+
+  const selectValueForFiltering = (e) => {
+    setFilteringValue(e.target.value);
+  };
+
+  useEffect(() => {
+    switch (filteringField) {
+      case 0:
+        setImpacts(defaultImpacts);
+        break;
+      case 1:
+        setImpacts(defaultImpacts.filter(impact => impact.type === filteringValue));
+        break;
+      case 2:
+        setImpacts(defaultImpacts.filter(impact => impact.level === filteringValue));
+        break;
+      default:
+        break;
+    }
+  }, [filteringValue, defaultImpacts]);
+
+  const getFilteringValue = (field) => {
+    switch (field) {
+      case 'type':
+        let types = [];
+        defaultImpacts.forEach(impact => {
+          if (impact.type) {
+            types.push(impact.type);
+          }
+        });
+        const noReplayTypes = [...new Set(types)];
+        return noReplayTypes.map(type => {
+          return <MenuItem key={type} value={type}>
+            {type}</MenuItem>
+        });
+      case 'level':
+        let levels = [];
+        defaultImpacts.forEach(impact => {
+          if (impact.level) {
+            levels.push(impact.level);
+          }
+        });
+        const noReplayLevels = [...new Set(levels)];
+        return noReplayLevels.map(level => {
+          return <MenuItem key={level} value={level}>
+            {level}</MenuItem>
+        });
+      default:
+        break;
+    }
   };
 
   return (
@@ -190,19 +264,41 @@ function ImpactsTable(props) {
             </IconButton>
           </Grid>
           {((isAdmin && template && (template.companyId === currentCompanyId)) || isSuperAdmin || (type === 'project' && (project && (isAdmin || isChangeManager)))) ?
-            <Grid item xs={4} className={classes.secondTab}>
+            <Grid item xs={4} md={1} sm={2} className={classes.secondTab}>
               <Button variant="outlined" color="primary" className={classes.createNewImpact} onClick={handleOpenModal}>
-                Add/Import
+                Add
               </Button>
               <ImpactsModal currentType={type} project={project} open={showAddImpact} handleModalClose={handleCloseModal}
-                            isNew={true} project={project} template={template} match={match} projectId={projectId} templateId={templateId}/>
+                            isNew={true} template={template} match={match} projectId={projectId} templateId={templateId}/>
             </Grid>
             : ''}
+          <Grid item xs={2} md={2} sm={2} className={classes.gridFiltering}>
+            <FormControl className={classes.selectFiltering}>
+              <InputLabel id={'fields-for-filtering'} className={classes.labelForSelect}>Filter by</InputLabel>
+              <Select fullWidth id={'fields-for-filtering'} value={filteringField} onChange={selectFieldForFiltering}>
+                <MenuItem key={0} value={0}>None</MenuItem>
+                <MenuItem key={1} value={1}>Type</MenuItem>
+                <MenuItem key={2} value={2}>Level</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={2} md={2} sm={2} className={classes.gridFiltering}>
+            {filteringField !== 0 &&
+            <FormControl className={classes.selectFiltering}>
+              <InputLabel id={'fields-for-filtering'} className={classes.labelForSelect}>Filter by value</InputLabel>
+              <Select fullWidth id={'fields-for-filtering'} value={filteringValue} onChange={selectValueForFiltering}>
+                {filteringField === 1 && getFilteringValue('type')}
+                {filteringField === 2 && getFilteringValue('level')}
+              </Select>
+            </FormControl>
+            }
+
+          </Grid>
         </Grid>
         <ImpactsList className={classes.impactsList} template={template} company={currentCompany}
                          isChangeManager={isChangeManager} isActivityDeliverer={isActivityDeliverer} isActivityOwner={isActivityOwner}
                          isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isManager={isManager} projectId={projectId}
-                         project={project} match={match}
+                         project={project} match={match} allStakeholders={type === 'project' ? stakeholders : stakeholdersTemplate}
                          rows={impacts} type={type}/>
       </Grid>
 
@@ -233,12 +329,12 @@ const ImpactsPage = withTracker(props => {
   Meteor.subscribe('activities.notLoggedIn');
   Meteor.subscribe('findAllPeoples');
   return {
-    stakeHolders: Peoples.find({
+    stakeholders: Peoples.find({
       _id: {
         $in: project && project.stakeHolders || []
       }
     }).fetch(),
-    stakeHoldersTemplate: Peoples.find({
+    stakeholdersTemplate: Peoples.find({
       _id: {
         $in: template && template.stakeHolders || []
       }

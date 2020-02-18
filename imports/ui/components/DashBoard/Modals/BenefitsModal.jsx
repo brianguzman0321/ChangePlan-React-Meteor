@@ -20,6 +20,7 @@ import {Peoples} from "../../../../api/peoples/peoples";
 import {withRouter} from "react-router";
 import {Projects} from "../../../../api/projects/projects";
 import {Templates} from "../../../../api/templates/templates";
+import getNumberOfStakeholders from "../../../../utils/getNumberOfStakeholders";
 
 
 const styles = theme => ({
@@ -221,9 +222,6 @@ function AddValue(props) {
     setIsUpdated(true);
   };
 
-  const onCalendarClick = (id) => {
-    document.getElementById(id).click();
-  };
 
   useEffect(() => {
     setName(editValue.description)
@@ -242,7 +240,7 @@ function AddValue(props) {
               <br/>
               <Typography className={classes.heading}>Stakeholders</Typography>
               <Typography className={classes.secondaryHeading}>
-                {peoples && peoples.length || 0} of {currentType === 'project' ? stakeHoldersBenefits.length : stakeHoldersTemplate.length}
+                {getNumberOfStakeholders(currentType === 'project' ? stakeHoldersBenefits : stakeHoldersTemplate, peoples)}
               </Typography>
               <SelectStakeHolders rows={currentType === 'project' ? stakeHoldersBenefits : stakeHoldersTemplate.length}
                                   local={localBenefits} isImpacts={false} disabled={disabled} isBenefits={true}/>

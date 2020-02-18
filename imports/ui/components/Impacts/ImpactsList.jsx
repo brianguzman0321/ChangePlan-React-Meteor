@@ -24,13 +24,23 @@ const tableHeadStyle = makeStyles(theme => ({
 }));
 
 function desc(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
+  if (orderBy === 'activities' || orderBy === 'stakeholders') {
+    if (b[orderBy].length < a[orderBy].length) {
+      return -1;
+    }
+    if (b[orderBy].length > a[orderBy].length) {
+      return 1;
+    }
+    return 0
+  } else {
+    if (b[orderBy] < a[orderBy]) {
+      return -1;
+    }
+    if (b[orderBy] > a[orderBy]) {
+      return 1;
+    }
+    return 0;
   }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
 }
 
 function stableSort(array, cmp) {
@@ -52,8 +62,8 @@ const headCells = [
   {id: 'change', numeric: false, disablePadding: true, label: 'CHANGE'},
   {id: 'impact', numeric: false, disablePadding: false, label: 'IMPACT'},
   {id: 'level', numeric: false, disablePadding: false, label: 'LEVEL'},
-  {id: 'activities', numeric: true, disablePadding: false, label: 'ACTIVITIES'},
-  {id: 'stakeholders', numeric: true, disablePadding: false, label: 'STAKEHOLDERS'},
+  {id: 'activities', numeric: true, disablePadding: false, label: 'MITIGATING ACTIVITIES'},
+  {id: 'stakeholders', numeric: true, disablePadding: false, label: 'STAKEHOLDERS IMPACTED'},
   {id: 'action', numeric: true, disablePadding: false, label: 'ACTIONS'},
 ];
 
@@ -245,7 +255,8 @@ export default function ImpactsList(props) {
   const [page, setPage] = React.useState(0);
   const dense = false;
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  let {rows, match, isAdmin, isSuperAdmin, isManager, isChangeManager, isActivityDeliverer, isActivityOwner, template, company, projectId, templateId, project, type} = props;
+  let {rows, match, isAdmin, isSuperAdmin, isManager, isChangeManager, isActivityDeliverer, isActivityOwner, template,
+    company, projectId, templateId, project, type, allStakeholders} = props;
   const disabled = (!(isAdmin && template && (template.companyId === company._id) || isSuperAdmin) && (projectId === undefined))
     || ((isManager || isActivityDeliverer || isActivityOwner) && !isChangeManager && !isAdmin && !isSuperAdmin);
 
@@ -322,6 +333,7 @@ export default function ImpactsList(props) {
                   return (
                     <Impact
                       row={row}
+                      allStakeholders={allStakeholders}
                       isItemSelected={isItemSelected}
                       labelId={labelId}
                       setRowSelected={setRowSelected}

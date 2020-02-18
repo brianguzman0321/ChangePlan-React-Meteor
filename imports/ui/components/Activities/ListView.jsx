@@ -18,11 +18,7 @@ import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import Tooltip from '@material-ui/core/Tooltip';
 import AddActivities from "./Modals/AddActivities";
-import AddActivity from '/imports/ui/components/Activities/Modals/AddActivity';
-import AddActivity2 from '/imports/ui/components/Activities/Modals/AddActivity2';
-import AddActivity3 from '/imports/ui/components/Activities/Modals/AddActivity3';
-import AWARENESSCard from "./step1";
-import EditProject from "../Projects/Models/EditProject";
+
 
 var sActivity = {};
 
@@ -33,13 +29,23 @@ const tableHeadStyle = makeStyles(theme => ({
 }));
 
 function desc(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
+  if (orderBy === 'activityDeliverer') {
+    if (b.personResponsible.profile.lastName < a.personResponsible.profile.lastName) {
+      return -1;
+    }
+    if (b.personResponsible.profile.lastName > a.personResponsible.profile.lastName) {
+      return 1;
+    }
+    return 0;
+  } else {
+    if (b[orderBy] < a[orderBy]) {
+      return -1;
+    }
+    if (b[orderBy] > a[orderBy]) {
+      return 1;
+    }
+    return 0;
   }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
 }
 
 function stableSort(array, cmp) {
@@ -60,8 +66,8 @@ const headCells = [
   {id: 'completed', numeric: true, disablePadding: false, label: 'MARK COMPLETE'},
   {id: 'dueDate', numeric: false, disablePadding: true, label: 'DUE DATE'},
   {id: 'completedAt', numeric: false, disablePadding: true, label: 'DATE COMPLETED'},
-  {id: 'name', numeric: true, disablePadding: false, label: 'ACTIVITY'},
-  {id: 'description', numeric: true, disablePadding: false, label: 'DESCRIPTION'},
+  {id: 'name', numeric: false, disablePadding: false, label: 'ACTIVITY'},
+  {id: 'description', numeric: false, disablePadding: false, label: 'DESCRIPTION'},
   {id: 'activityDeliverer', numeric: false, disablePadding: false, label: 'ACTIVITY DELIVERER'},
 ];
 
@@ -144,25 +150,12 @@ const EnhancedTableToolbar = props => {
           {numSelected} selected
         </Typography>
       ) : ''
-        /*(
-         <Typography className={classes.title} variant="h6" id="tableTitle">
-         Nutrition
-         </Typography>
-         )*/
       }
 
       {numSelected > 0 ? (
         <Tooltip title="Delete">
-          {/*<DeleteStakeHolder stakeholder={selected} multiple={true}/>*/}
         </Tooltip>
       ) : ''
-        /*(
-         <Tooltip title="Filter list">
-         <IconButton aria-label="filter list">
-         <FilterListIcon />
-         </IconButton>
-         </Tooltip>
-         )*/
       }
     </Toolbar>
   );

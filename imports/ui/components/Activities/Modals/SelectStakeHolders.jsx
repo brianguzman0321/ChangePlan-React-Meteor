@@ -30,10 +30,27 @@ const tableHeadStyle = makeStyles(theme => ({
 }));
 
 function desc(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
+  let orderByA, orderByB = '';
+  if (orderBy = "name") {
+    if (!a.groupName) {
+      orderByA = "lastName";
+    }
+    if (!b.groupName) {
+      orderByB = "lastName";
+    }
+    if (!a.lastName) {
+      orderByA = "groupName";
+    }
+    if (!b.lastName) {
+      orderByB = "groupName"
+    }
+  } else {
+    orderByA = orderByB = orderBy;
+  }
+  if (b[orderByB] < a[orderByA]) {
     return -1;
   }
-  if (b[orderBy] > a[orderBy]) {
+  if (b[orderByB] > a[orderByA]) {
     return 1;
   }
   return 0;
@@ -54,9 +71,8 @@ function getSorting(order, orderBy) {
 }
 
 const headCells = [
-  {id: 'firstName', numeric: true, disablePadding: true, label: 'First name'},
-  {id: 'lastName', numeric: false, disablePadding: true, label: 'Last Name'},
-  {id: 'role', numeric: true, disablePadding: false, label: 'ROLE'}
+  {id: 'name', numeric: true, disablePadding: true, label: 'NAME'},
+  {id: 'jobTitle', numeric: true, disablePadding: false, label: 'JOB TITLE'}
 ];
 
 function EnhancedTableHead(props) {
@@ -82,9 +98,7 @@ function EnhancedTableHead(props) {
         {headCells.map(headCell => (
           <TableCell
             key={headCell.id}
-            // align={headCell.numeric ? 'right' : 'left'}
             align={'left'}
-            // padding={headCell.disablePadding ? 'none' : 'default'}
             sortDirection={orderBy === headCell.id ? order : false}
           >
             <TableSortLabel
@@ -217,24 +231,24 @@ function StakeHolderList(props) {
   };
 
   const handleClick = (event, name) => {
-      const selectedIndex = selected.indexOf(name);
-      let newSelected = [];
+    const selectedIndex = selected.indexOf(name);
+    let newSelected = [];
 
-      if (selectedIndex === -1) {
-        newSelected = newSelected.concat(selected, name);
-      } else if (selectedIndex === 0) {
-        newSelected = newSelected.concat(selected.slice(1));
-      } else if (selectedIndex === selected.length - 1) {
-        newSelected = newSelected.concat(selected.slice(0, -1));
-      } else if (selectedIndex > 0) {
-        newSelected = newSelected.concat(
-          selected.slice(0, selectedIndex),
-          selected.slice(selectedIndex + 1),
-        );
-      }
-      setSelected(newSelected);
-      selectUsers(newSelected);
-      update();
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, name);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1),
+      );
+    }
+    setSelected(newSelected);
+    selectUsers(newSelected);
+    update();
   };
 
   const isSelected = name => selected.indexOf(name) !== -1;
@@ -291,9 +305,9 @@ function StakeHolderList(props) {
                           color="default"
                         />
                       </TableCell>
-                      <TableCell align="left">{row.firstName}</TableCell>
-                      <TableCell align="left">{row.lastName}</TableCell>
-                      <TableCell align="left">{row.role}</TableCell>
+                      <TableCell
+                        align="left">{row.groupName ? row.groupName : `${row.firstName} ${row.lastName}`}</TableCell>
+                      <TableCell align="left">{row.jobTitle}</TableCell>
                     </TableRow>
                   );
                 })}
@@ -400,6 +414,25 @@ export default function SelectStakeHolders(props) {
     }
   });
 
+  const getNumberStakeholders = () => {
+    if (stakeHolders) {
+      let allStakeholders = rows.filter(stakeholder => stakeHolders.includes(stakeholder._id));
+      if (allStakeholders) {
+        let totalSelectedStakeholders = 0;
+        allStakeholders.forEach(stakeholder => {
+          if (stakeholder.numberOfPeople > 0) {
+            totalSelectedStakeholders = totalSelectedStakeholders + stakeholder.numberOfPeople;
+          } else {
+            totalSelectedStakeholders++;
+          }
+        });
+        return `Selected ${totalSelectedStakeholders}`;
+      }
+    } else {
+      return 'Selected 0'
+    }
+  };
+
   return (
     <div>
       {!isBenefits ?
@@ -424,7 +457,7 @@ export default function SelectStakeHolders(props) {
               Select Stakeholders
             </Typography>
             <Typography variant="h6" className={classes.title}>
-              Selected {stakeHolders && stakeHolders.length}
+              {getNumberStakeholders()}
             </Typography>
             {disabledManager ?
               null :
