@@ -29,6 +29,7 @@ import {TableCell, TableHead, TableRow} from "@material-ui/core";
 import Table from "@material-ui/core/Table";
 import {Activities} from "../../../../api/activities/activities";
 import SelectActivities from "./SelectActivities";
+import getNumberOfStakeholders from "../../../../utils/getNumberOfStakeholders";
 
 const styles = theme => ({
   root: {
@@ -267,7 +268,7 @@ function AddImpact(props) {
       <Dialog onClose={isUpdated ? handleOpenModalDialog : handleClose} aria-labelledby="customized-dialog-title"
               open={open} maxWidth="md" fullWidth={true}>
         <DialogTitle id="customized-dialog-title" onClose={isUpdated ? handleOpenModalDialog : handleClose}>
-          Add a change impact
+          Change impact
         </DialogTitle>
         <DialogContent dividers>
           <Grid container spacing={2}>
@@ -345,7 +346,7 @@ function AddImpact(props) {
               </Grid>
               <Grid item xs={6}>
                 <Typography className={classes.secondaryHeading}>
-                  {peoples && peoples.length || 0} of {currentType === 'project' ? stakeHoldersImpacts.length : stakeHoldersTemplate.length}
+                  {getNumberOfStakeholders((currentType === 'project') ? stakeHoldersImpacts : stakeHoldersTemplate, peoples)}
                 </Typography>
               </Grid>
               <Grid item xs={3} className={classes.buttonContainer}>
@@ -391,16 +392,16 @@ function AddImpact(props) {
                   <TableHead>
                     <TableRow>
                       <TableCell align={"left"}>Date Due/Completed</TableCell>
-                      <TableCell align={"left"}>Phase</TableCell>
                       <TableCell align={"left"}>Type</TableCell>
+                      <TableCell align={"left"}>Phase</TableCell>
                       <TableCell align={"left"}>Time away from BAU</TableCell>
                     </TableRow>
                     {activitiesImpact.map((activity, index) => {
                       return <TableRow key={index}>
                         <TableCell>{activity && activity.completedAt && moment(activity.completedAt).format('MM-DD-YYYY')
                         || activity && activity.dueDate && moment(activity.dueDate).format('MM-DD-YYYY')}</TableCell>
-                        <TableCell>{activity && selectPhase(activity.step)}</TableCell>
                         <TableCell>{activity && activity.name}</TableCell>
+                        <TableCell>{activity && selectPhase(activity.step)}</TableCell>
                         <TableCell>{activity && activity.time}</TableCell>
                       </TableRow>
                     })}

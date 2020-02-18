@@ -302,10 +302,10 @@ const Gantt = props => {
     }
     gantt.config.autofit = true;
     gantt.config.columns = [
-      { name: "start_date", label: "Due Date", algin: "left", width: 100 },
+      { name: "start_date", label: "Due Date", align: "left", width: 100 },
       { name: "eventType", label: "Event type", align: "left", width: 100 },
       { name: "stakeholders", label: "👨‍💼👩‍💼", align: "left", width: 10 },
-      { name: "owner", label: "Owner", align: "left", width: 190 },
+      { name: "owner", label: "Deliverer", align: "left", width: 190 },
     ];
     gantt.config.tooltip_timeout = 200;
     // Gantt Template Styling 

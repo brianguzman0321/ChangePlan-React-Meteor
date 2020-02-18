@@ -341,7 +341,7 @@ function StakeHolders(props) {
         spacing={0}
       >
         <Grid container className={classes.topBar}>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={12} sm={6} md={filteringField === 0 ? 4 : 3}>
             <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
               Stakeholders
               &nbsp;&nbsp;&nbsp;
@@ -369,7 +369,7 @@ function StakeHolders(props) {
             : ''}
           <Grid item xs={2} md={2} sm={2} className={classes.gridFiltering}>
             <FormControl className={classes.selectFiltering}>
-              <InputLabel id={'fields-for-filtering'} className={classes.labelForSelect}>Filtering by field</InputLabel>
+              <InputLabel id={'fields-for-filtering'} className={classes.labelForSelect}>Filter by</InputLabel>
               <Select fullWidth id={'fields-for-filtering'} value={filteringField} onChange={selectFieldForFiltering}>
                 <MenuItem key={0} value={0}>None</MenuItem>
                 <MenuItem key={1} value={1}>Business unit</MenuItem>
@@ -383,7 +383,7 @@ function StakeHolders(props) {
           <Grid item xs={2} md={2} sm={2} className={classes.gridFiltering}>
             {filteringField !== 0 &&
             <FormControl className={classes.selectFiltering}>
-              <InputLabel id={'fields-for-filtering'} className={classes.labelForSelect}>Filtering by value</InputLabel>
+              <InputLabel id={'fields-for-filtering'} className={classes.labelForSelect}>Filter by value</InputLabel>
               <Select fullWidth id={'fields-for-filtering'} value={filteringValue} onChange={selectValueForFiltering}>
                 {filteringField === 1 && getFilteringValue('businessUnit')}
                 {filteringField === 2 && getFilteringValue('team')}

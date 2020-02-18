@@ -8,10 +8,8 @@ import Button from '@material-ui/core/Button';
 import Tab from '@material-ui/core/Tab';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import ViewColumnIcon from '@material-ui/icons/ViewColumn';
 import ListIcon from '@material-ui/icons/List';
-import PeopleOutlineIcon from '@material-ui/icons/PeopleOutline';
 
 import config from '/imports/utils/config';
 
@@ -32,10 +30,12 @@ import {Templates} from "../../../api/templates/templates";
 import {Companies} from "../../../api/companies/companies";
 import AddEventModal from "../Events/AddEventModal";
 import {ProjectEvents} from "../../../api/projectEvents/projectEvents";
+import {Peoples} from "../../../api/peoples/peoples";
+import getTotalStakeholders from "../../../utils/getTotalStakeholders";
 
 
 function Timeline(props) {
-  let {match, projects0, activities, currentCompany, template, project, company, events} = props;
+  let {match, projects0, activities, currentCompany, template, project, company, events, allStakeholders} = props;
   let {projectId, templateId} = match.params;
   const classes = useStyles();
   const [viewMode, setViewMode] = useState(Number(localStorage.getItem(`viewMode_${projectId}_${Meteor.userId()}`)) || 0);
@@ -224,7 +224,7 @@ function Timeline(props) {
           start_date: moment(activity.completedAt).format("DD-MM-YYYY"),
           duration: 1,
           color: colors.activity[activity.step - 1],
-          stakeholders: activity.stakeHolders.length,
+          stakeholders: getTotalStakeholders(allStakeholders, activity.stakeHolders),
           owner: activity.deliverer && activity.personResponsible
             ? `${activity.personResponsible.profile.firstName} ${activity.personResponsible.profile.lastName}`
             : null,
@@ -240,7 +240,7 @@ function Timeline(props) {
           start_date: moment(activity.dueDate).format("DD-MM-YYYY"),
           duration: 1,
           color: colors.activity[activity.step - 1],
-          stakeholders: activity.stakeHolders.length,
+          stakeholders: getTotalStakeholders(allStakeholders, activity.stakeHolders),
           owner: activity.deliverer && activity.personResponsible
             ? `${activity.personResponsible.profile.firstName} ${activity.personResponsible.profile.lastName}`
             : null,
@@ -406,7 +406,6 @@ function Timeline(props) {
             currentProject={projects0}
             activities={activities}
           />
-          {/* {(isAdmin && template && (template.companyId === companyId)) || isSuperAdmin ? */}
 
           {(eventType === "Awareness" || (eventType === 'Activity Event' && extraType === 'Awareness')) ? (<AddActivities
             edit={edit}
@@ -551,6 +550,7 @@ const TimelinePage = withTracker(props => {
   } else {
     currentCompany = company;
   }
+  Meteor.subscribe('findAllPeoples');
   Meteor.subscribe('compoundActivities', projectId);
   Meteor.subscribe('compoundActivitiesTemplate', templateId);
   // Meteor.subscribe('myProjects', null, {
@@ -568,6 +568,7 @@ const TimelinePage = withTracker(props => {
     events: ProjectEvents.find({}).fetch(),
     company,
     currentCompany,
+    allStakeholders: Peoples.find({}).fetch(),
   };
 })(withRouter(Timeline));
 

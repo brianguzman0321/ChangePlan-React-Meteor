@@ -48,6 +48,7 @@ import Table from "@material-ui/core/Table";
 import {stringHelpers} from "../../../../helpers/stringHelpers";
 import {Impacts} from "../../../../api/impacts/impacts";
 import SelectImpacts from "./SelectImpacts";
+import getNumberOfStakeholders from "../../../../utils/getNumberOfStakeholders";
 
 
 const styles = theme => ({
@@ -240,10 +241,10 @@ const useStyles = makeStyles(theme => ({
   },
   selectTypes: {
     [theme.breakpoints.only('md')]: {
-      width: '85vw'
+      width: '80vw'
     },
     [theme.breakpoints.only('lg')]: {
-      width: '48vw'
+      width: '50vw'
     },
     [theme.breakpoints.only('xl')]: {
       width: '40vw'
@@ -661,22 +662,8 @@ function AddActivities(props) {
     setShowSelect(true);
   };
 
-  const createActivity = (e, isMail = true) => {
-    e.preventDefault();
-    if (!(dueDate)) {
-      setShowNotification(false);
-      props.enqueueSnackbar('Please fill all required fields', {variant: 'error'});
-      return false;
-    } else if (!(activityType && activityType.name) && Array.isArray(stakeHolders)) {
-      setShowNotification(false);
-      props.enqueueSnackbar('Please fill all required fields', {variant: 'error'});
-      return false;
-    } else if (checkSchedule && !timeSendEmail) {
-      setShowNotification(false);
-      props.enqueueSnackbar('Please fill all required fields', {option: 'error'});
-      return false;
-    }
-    const oldImpacts = impacts.filter(impact => impact.activities.includes(activity._id));
+  const createImpact = (activityId) => {
+    const oldImpacts = impacts.filter(impact => impact.activities.includes(activityId));
     let sImpacts = [];
     selectedImpacts.forEach(_impact => {
       const newImpacts = impacts.find(impact => impact._id === _impact);
@@ -687,7 +674,7 @@ function AddActivities(props) {
     );
 
     deletedImpacts.forEach(deletedImpact => {
-      deletedImpact.activities = deletedImpact.activities.filter(_activity => _activity !== activity._id);
+      deletedImpact.activities = deletedImpact.activities.filter(_activity => _activity !== activityId);
     });
 
     const newImpacts = sImpacts.filter(_impact =>
@@ -695,9 +682,8 @@ function AddActivities(props) {
     );
 
     newImpacts.forEach(newImpact => {
-      newImpact.activities.push(activity._id)
+      newImpact.activities.push(activityId)
     });
-
     const allImpacts = deletedImpacts.concat(newImpacts);
     if (allImpacts.length > 0) {
       allImpacts.forEach(impact => {
@@ -713,7 +699,15 @@ function AddActivities(props) {
         });
       });
     }
+  };
 
+  const createActivity = (e, isMail = true) => {
+    e.preventDefault();
+    if (!(dueDate || activityType && activityType.name) && Array.isArray(stakeHolders) || (checkSchedule && !timeSendEmail)) {
+      setShowNotification(false);
+      props.enqueueSnackbar('Please fill all required fields', {variant: 'error'});
+      return false;
+    }
     let params;
     if (!isMail || !isNew) {
       params = {
@@ -745,7 +739,11 @@ function AddActivities(props) {
       if (completedDate) {
         params.activity.completed = true;
       }
-      let methodName = isNew ? 'activities.insert' : 'activities.update';
+      let methodName = 'activities.insert';
+      if (!isNew) {
+        methodName = 'activities.update';
+        createImpact(activity._id);
+      }
       !isNew && (params.activity._id = activity._id);
       if (!isNew && activity.sentEmail) {
         params.activity.sentEmail = false;
@@ -754,6 +752,9 @@ function AddActivities(props) {
         if (err) {
           props.enqueueSnackbar(err.reason, {variant: 'error'})
         } else {
+          if (isNew) {
+            createImpact(res)
+          }
           handleClose();
           props.enqueueSnackbar(`Activity ${isNew ? 'Added' : 'Updated'} Successfully.`, {variant: 'success'});
         }
@@ -784,7 +785,11 @@ function AddActivities(props) {
       if (completedDate) {
         params.activity.completed = true;
       }
-      let methodName = isNew ? 'activities.insert' : 'activities.update';
+      let methodName = 'activities.insert';
+      if (!isNew) {
+        methodName = 'activities.update';
+        createImpact(activity._id);
+      }
       !isNew && (params.activity._id = activity._id);
       if (!isNew && params.activity.sentEmail) {
         params.activity.sentEmail = false;
@@ -793,6 +798,9 @@ function AddActivities(props) {
         if (err) {
           props.enqueueSnackbar(err.reason, {variant: 'error'})
         } else {
+          if (isNew) {
+            createImpact(res);
+          }
           sendNotificationEmail(activityType.name, dueDate, time, activityType.buttonText, description, peoples.length, currentProject, person, projectId, vision, objectives);
           setShowNotification(false);
           handleClose();
@@ -1346,7 +1354,7 @@ function AddActivities(props) {
                 </Grid>
                 <Grid item xs={8}>
                   <Typography className={classes.secondaryHeading}>
-                    {peoples.length} of {type === 'project' ? stakeHolders.length : stakeHoldersTemplate.length}
+                    {getNumberOfStakeholders(type === 'project' ? stakeHolders : stakeHoldersTemplate, peoples)}
                   </Typography>
                   <SelectStakeHolders rows={type === 'project' ? stakeHolders : stakeHoldersTemplate} local={local}
                                       isImpacts={false} isBenefits={false} disabledManager={disabledManager}/>
@@ -1534,7 +1542,7 @@ function AddActivities(props) {
               <br/>
               <Grid container justify={"space-between"} direction={"row"} className={classes.containerImpacts}>
                 <Grid item xs={10}>
-                  <Typography className={classes.heading}>Change impacts this activity addresses</Typography>
+                  <Typography className={classes.heading}>Impact/s this activity mitigates</Typography>
                 </Grid>
                 <Grid item xs={2} className={classes.addImpacts}>
                   <Button color="primary" className={classes.buttonAsLink} onClick={handleShowImpacts}>
