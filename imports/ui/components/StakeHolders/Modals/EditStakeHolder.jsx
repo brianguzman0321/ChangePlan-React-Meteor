@@ -23,9 +23,6 @@ import {withTracker} from "meteor/react-meteor-data";
 import {Companies} from "/imports/api/companies/companies";
 import SaveChanges from "../../Modals/SaveChanges";
 import moment from "moment";
-import {data} from "/imports/activitiesContent.json";
-import {stringHelpers} from "../../../../helpers/stringHelpers";
-import SVGInline from "react-svg-inline";
 import {SurveysStakeholders} from "../../../../api/surveysStakeholders/surveysStakeholders";
 import Input from "@material-ui/core/Input";
 import Checkbox from "@material-ui/core/Checkbox";
@@ -110,8 +107,8 @@ function EditStakeHolder(props) {
   const [jobTitle, setJobTitle] = React.useState(stakeholder.jobTitle ? stakeholder.jobTitle : stakeholder.role);
   const [businessUnit, setBusinessUnit] = React.useState(stakeholder.businessUnit);
   const [email, setEmail] = React.useState(stakeholder.email);
-  const [supportLevel, setSupportLevel] = React.useState(0);
-  const [loI, setInfluenceLevel] = React.useState(0);
+  const [supportLevel, setSupportLevel] = React.useState('');
+  const [loI, setInfluenceLevel] = React.useState('');
   const [notes, setNotes] = React.useState('');
   const [impacts, setImpacts] = useState([]);
   const [roles, setRoles] = useState(stakeholder.roleTags || []);
@@ -241,19 +238,8 @@ function EditStakeHolder(props) {
   const getLevelsInfo = () => {
     const currentInfo = additionalInfo.find(info => info.projectId === projectId && info.stakeholderId === stakeholder._id);
     if (currentInfo) {
-      let levelOfSupport = currentInfo.levelOfSupport;
-      let levelOfInfluence = currentInfo.levelOfInfluence;
-      let stakeholdersInfo = additionalInfo.filter(_levelsInfo => _levelsInfo.stakeholderId === stakeholder._id);
-      if (stakeholdersInfo.length > 1 && levelOfSupport === 0) {
-        const sumLevels = stakeholdersInfo.reduce((a, b) => ({levelOfSupport: a.levelOfSupport + b.levelOfSupport})).levelOfSupport;
-        levelOfSupport = Math.round(sumLevels/stakeholdersInfo.length)
-      }
-      if (stakeholdersInfo.length > 1 && levelOfInfluence === 0) {
-        const sumLevels = stakeholdersInfo.reduce((a, b) => ({levelOfInfluence: a.levelOfInfluence + b.levelOfInfluence})).levelOfInfluence;
-        levelOfInfluence = Math.round(sumLevels/stakeholdersInfo.length);
-      }
-      setSupportLevel(levelOfSupport);
-      setInfluenceLevel(levelOfInfluence);
+      setSupportLevel(currentInfo.levelOfSupport === 0 ? '' : currentInfo.levelOfSupport);
+      setInfluenceLevel(currentInfo.levelOfInfluence === 0 ? '' : currentInfo.levelOfInfluence);
     }
   };
 
@@ -644,7 +630,6 @@ function EditStakeHolder(props) {
                           setIsUpdated(true);
                         }}
                       >
-                        <MenuItem key={0} value={0}>None</MenuItem>
                         <MenuItem key={1} value={1}>1 = Very low level of support</MenuItem>
                         <MenuItem key={2} value={2}>2 = Low level of support</MenuItem>
                         <MenuItem key={3} value={3}>3 = Moderate level of support</MenuItem>
@@ -667,7 +652,6 @@ function EditStakeHolder(props) {
                           setIsUpdated(true);
                         }}
                       >
-                        <MenuItem key={0} value={0}>None</MenuItem>
                         <MenuItem key={1} value={1}>1 = Little influence over outcomes</MenuItem>
                         <MenuItem key={2} value={2}>2 = Some influence over outcomes</MenuItem>
                         <MenuItem key={3} value={3}>3 = Moderate influence over outcomes</MenuItem>
