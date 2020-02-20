@@ -198,6 +198,7 @@ export const update = new ValidatedMethod({
     },
     'people.businessUnit': {
       type: String,
+      optional: true,
     },
     'people.roleTags': {
       type: Array,

@@ -79,8 +79,23 @@ function AddGroupStakeholders(props) {
       if (err) {
         props.enqueueSnackbar(err.reason, {variant: 'error'})
       } else {
-        props.enqueueSnackbar('Stakeholder Added Successfully.', {variant: 'success'})
-        handleCloseModal();
+        const paramsInfo = {
+          additionalStakeholderInfo: {
+            projectId: projectId,
+            stakeholderId: res,
+            levelOfSupport: supportLevel || 0,
+            levelOfInfluence: influenceLevel || 0,
+            notes: notes || '',
+          }
+        };
+        Meteor.call('additionalStakeholderInfo.insert', paramsInfo, (err, res) => {
+          if (err) {
+            props.enqueueSnackbar(err.reason, {variant: 'error'});
+          } else {
+            props.enqueueSnackbar('Stakeholder Added Successfully.', {variant: 'success'});
+            handleCloseModal();
+          }
+        });
       }
     })
   };
@@ -213,9 +228,9 @@ function AddGroupStakeholders(props) {
           </Grid>
         </Grid>
         <br/>
-          <Button color="primary" type="submit">
-            Add Stakeholder
-          </Button>
+        <Button color="primary" type="submit">
+          Add Stakeholder
+        </Button>
       </form>
     </div>
   );
