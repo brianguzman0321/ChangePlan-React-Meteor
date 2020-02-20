@@ -14,6 +14,7 @@ import {withTracker} from "meteor/react-meteor-data";
 import {Templates} from "../../../api/templates/templates";
 import {Companies} from "../../../api/companies/companies";
 import CompletedActivitiesReport from "./CompletedActivitiesReport";
+import StakeholderMatrixReport from "./StakeholderMatrixReport";
 
 
 const useStyles = makeStyles({
@@ -140,6 +141,9 @@ function Reports(props){
                             Reports
                         </Typography>
                     </Grid>
+                </Grid>
+                <Grid container direction="row" justify="space-between">
+                    <StakeholderMatrixReport match={props.match} />
                 </Grid>
                 <Grid container direction="row" justify="space-between">
                     <ImpactReport match={props.match}/>
