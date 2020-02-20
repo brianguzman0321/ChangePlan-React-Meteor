@@ -17,7 +17,7 @@ import getTotalStakeholders from "../../../utils/getTotalStakeholders";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    width: '50%',
+    width: '75%',
     margin: theme.spacing(3),
   },
   paper: {
