@@ -46,8 +46,8 @@ function StakeholderMatrixReport(props) {
   const [matrixData, setMatrixData] = useState([]);
 
   useEffect(() => {
-    if (allStakeholders.length > 0 && allInfo.length > 0) {
-      setTimeout(getDataMatrix, 100)
+    if (allStakeholders.length > 0 && allInfo.length > 0 && (allStakeholders.length === allInfo.length)) {
+      getDataMatrix();
     }
   }, [allStakeholders, allInfo, match]);
 
@@ -264,8 +264,7 @@ function StakeholderMatrixReport(props) {
             </Typography>
           </Grid>
           <div>
-            <Bubble data={matrixData} options={options} width={600}
-                    height={600}/>
+            <Bubble data={matrixData} options={options} width={600} height={600}/>
           </div>
           </Grid>
       </Paper>
