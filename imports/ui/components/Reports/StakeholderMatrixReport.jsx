@@ -12,6 +12,7 @@ import {AdditionalStakeholderInfo} from "../../../api/additionalStakeholderInfo/
 import {Bubble} from "react-chartjs-2";
 import 'chartjs-plugin-datalabels';
 import 'chartjs-plugin-annotation';
+import {Meteor} from "meteor/meteor";
 import * as chartjs from 'chart.js';
 import getTotalStakeholders from "../../../utils/getTotalStakeholders";
 
@@ -45,53 +46,57 @@ function StakeholderMatrixReport(props) {
   const [matrixData, setMatrixData] = useState([]);
 
   useEffect(() => {
-    if (allStakeholders.length > 0 && allInfo) {
-      let tempData = {labels: ['LOW', 'MEDIUM', 'HIGH'], datasets: []};
-      const projectInfo = allInfo.filter(info => info.projectId === projectId);
-      let datasets = {};
-      if (projectInfo.length > 0) {
-        for (let i = 1; i <= 5; i++) {
-          for (let j = 1; j <= 5; j++) {
-            const currentInfo = projectInfo.filter(info => info.levelOfSupport === i && info.levelOfInfluence === j);
-            if (currentInfo.length > 0) {
-              let arrayStakeholders = [];
-              let arrayStakeholdersId = [];
-              currentInfo.forEach(info => {
-                const stakeholders = allStakeholders.find(stakeholder => stakeholder._id === info.stakeholderId);
-                if (stakeholders) {
-                  arrayStakeholdersId.push(stakeholders._id);
-                  arrayStakeholders.push(stakeholders);
-                }
-              });
-              datasets = {
-                label: arrayStakeholders.length > 0 && arrayStakeholders,
-                fill: true,
-                lengthStakeholders: getTotalStakeholders(allStakeholders, arrayStakeholdersId),
-                backgroundColor: 'rgb(0,112,192)',
-                borderColor: 'rgb(0,112,192)',
-                lineTension: 20,
-                borderCapStyle: 'butt',
-                borderDash: [],
-                borderJoinStyle: 'miter',
-                pointBorderColor: 'rgb(0,112,192)',
-                pointBackgroundColor: '#fff',
-                pointBorderWidth: 1,
-                pointHoverRadius: 5,
-                pointHoverBackgroundColor: 'rgb(0,112,192)',
-                pointHoverBorderColor: 'rgb(0,112,192)',
-                pointHoverBorderWidth: 2,
-                pointRadius: 1,
-                pointHitRadius: 10,
-                data: [{x: i - 1, y: j - 1, r: getRadius(arrayStakeholdersId)}]
-              };
-              tempData.datasets.push(datasets);
-            }
+    if (allStakeholders.length > 0 && allInfo.length > 0) {
+      setTimeout(getDataMatrix, 100)
+    }
+  }, [allStakeholders, allInfo, match]);
+
+  const getDataMatrix = () => {
+    let tempData = {labels: ['LOW', 'MEDIUM', 'HIGH'], datasets: []};
+    const projectInfo = allInfo.filter(info => info.projectId === projectId);
+    let datasets = {};
+    if (projectInfo.length > 0) {
+      for (let i = 1; i <= 5; i++) {
+        for (let j = 1; j <= 5; j++) {
+          const currentInfo = projectInfo.filter(info => info.levelOfSupport === i && info.levelOfInfluence === j);
+          if (currentInfo.length > 0) {
+            let arrayStakeholders = [];
+            let arrayStakeholdersId = [];
+            currentInfo.forEach(info => {
+              const stakeholders = allStakeholders.find(stakeholder => stakeholder._id === info.stakeholderId);
+              if (stakeholders) {
+                arrayStakeholdersId.push(stakeholders._id);
+                arrayStakeholders.push(stakeholders);
+              }
+            });
+            datasets = {
+              label: arrayStakeholders.length > 0 && arrayStakeholders,
+              fill: true,
+              lengthStakeholders: getTotalStakeholders(allStakeholders, arrayStakeholdersId),
+              backgroundColor: 'rgb(0,112,192)',
+              borderColor: 'rgb(0,112,192)',
+              lineTension: 20,
+              borderCapStyle: 'butt',
+              borderDash: [],
+              borderJoinStyle: 'miter',
+              pointBorderColor: 'rgb(0,112,192)',
+              pointBackgroundColor: '#fff',
+              pointBorderWidth: 1,
+              pointHoverRadius: 5,
+              pointHoverBackgroundColor: 'rgb(0,112,192)',
+              pointHoverBorderColor: 'rgb(0,112,192)',
+              pointHoverBorderWidth: 2,
+              pointRadius: 1,
+              pointHitRadius: 10,
+              data: [{x: i, y: j, r: getRadius(arrayStakeholdersId)}]
+            };
+            tempData.datasets.push(datasets);
           }
         }
-        setMatrixData(tempData);
       }
+      setMatrixData(tempData);
     }
-  }, [allStakeholders, allInfo, projectId]);
+  };
 
   const getRadius = (stakeholders) => {
     let countStakeholders = getTotalStakeholders(allStakeholders, stakeholders);
@@ -103,7 +108,7 @@ function StakeholderMatrixReport(props) {
         totalStakeholders++
       }
     });
-    let radius = 10 + (100 * countStakeholders) / totalStakeholders;
+    let radius = Math.floor(10 + (100 * countStakeholders) / totalStakeholders);
 
 
     return (radius > 65) ? 65 : radius
@@ -111,15 +116,15 @@ function StakeholderMatrixReport(props) {
 
   const getTicksLabel = (value) => {
     switch (value) {
-      case 0:
-        return 'LOW';
       case 1:
-        return '';
+        return 'LOW';
       case 2:
-        return 'MEDIUM';
-      case 3:
         return '';
+      case 3:
+        return 'MEDIUM';
       case 4:
+        return '';
+      case 5:
         return 'HIGH';
       default:
         break;
@@ -158,8 +163,8 @@ function StakeholderMatrixReport(props) {
         },
         ticks: {
           autoSkip: false,
-          min: 0,
-          max: 4,
+          min: 1,
+          max: 5,
           callback: (value) => getTicksLabel(value),
         },
       }],
@@ -172,8 +177,8 @@ function StakeholderMatrixReport(props) {
           labelString: 'INFLUENCE',
         },
         ticks: {
-          min: 0,
-          max: 4,
+          min: 1,
+          max: 5,
           stepSize: 1,
           callback: (value) => getTicksLabel(value),
         },
@@ -206,10 +211,10 @@ function StakeholderMatrixReport(props) {
         id: 'a-box-1',
         xScaleID: 'x-axis-0',
         yScaleID: 'y-axis-0',
-        xMin: 0,
-        xMax: 2,
-        yMin: 0,
-        yMax: 2,
+        xMin: 1,
+        xMax: 3,
+        yMin: 1,
+        yMax: 3,
         borderColor: 'rgba(169,209,142, 0.7)',
         backgroundColor: 'rgba(169,209,142, 0.7)',
       }, {
@@ -217,10 +222,10 @@ function StakeholderMatrixReport(props) {
         id: 'a-box-2',
         xScaleID: 'x-axis-0',
         yScaleID: 'y-axis-0',
-        xMin: 2,
-        xMax: 4,
-        yMin: 0,
-        yMax: 2,
+        xMin: 3,
+        xMax: 5,
+        yMin: 1,
+        yMax: 3,
         borderColor: 'rgba(255,242,204, 0.7)',
         backgroundColor: 'rgba(255,242,204, 0.7)',
       }, {
@@ -228,10 +233,10 @@ function StakeholderMatrixReport(props) {
         id: 'a-box-3',
         xScaleID: 'x-axis-0',
         yScaleID: 'y-axis-0',
-        xMin: 0,
-        xMax: 2,
-        yMin: 2,
-        yMax: 4,
+        xMin: 1,
+        xMax: 3,
+        yMin: 3,
+        yMax: 5,
         borderColor: 'rgba(255,203,102, 0.7)',
         backgroundColor: 'rgba(255,203,102, 0.7)',
       }, {
@@ -239,10 +244,10 @@ function StakeholderMatrixReport(props) {
         id: 'a-box-4',
         xScaleID: 'x-axis-0',
         yScaleID: 'y-axis-0',
-        xMin: 2,
-        xMax: 4,
-        yMin: 2,
-        yMax: 4,
+        xMin: 3,
+        xMax: 5,
+        yMin: 3,
+        yMax: 5,
         borderColor: 'rgba(255,124,128, 0.7)',
         backgroundColor: 'rgba(255,124,128, 0.7)',
       }],
@@ -271,7 +276,7 @@ function StakeholderMatrixReport(props) {
 const StakeholderMatrixPage = withTracker(props => {
   let {match} = props;
   let {projectId} = match.params;
-  Meteor.subscribe('additionalStakeholderInfo.findAll');
+  Meteor.subscribe('additionalStakeholderInfo.findByProjectId', projectId);
   Meteor.subscribe('findAllPeoples');
   Meteor.subscribe('projects.notLoggedIn');
   const project = Projects.findOne({_id: projectId});
@@ -281,7 +286,7 @@ const StakeholderMatrixPage = withTracker(props => {
         $in: project && project.stakeHolders || []
       }
     }).fetch(),
-    allInfo: AdditionalStakeholderInfo.find({}).fetch(),
+    allInfo: AdditionalStakeholderInfo.find({projectId: projectId}).fetch(),
   };
 })(withRouter(StakeholderMatrixReport));
 
