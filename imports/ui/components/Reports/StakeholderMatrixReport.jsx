@@ -91,6 +91,7 @@ function StakeholderMatrixReport(props) {
               data: [{x: i, y: j, r: getRadius(arrayStakeholdersId)}]
             };
             tempData.datasets.push(datasets);
+            tempData.datasets = [...new Set(tempData.datasets)];
           }
         }
       }
