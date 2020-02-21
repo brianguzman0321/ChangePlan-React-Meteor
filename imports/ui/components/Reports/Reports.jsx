@@ -165,6 +165,7 @@ const ReportPage = withTracker(props => {
     let {match} = props;
     let {projectId, templateId} = match.params;
     let currentCompany = {};
+    const userId = Meteor.userId();
     Meteor.subscribe('projects');
     Meteor.subscribe('templates');
     const project = Projects.findOne({_id: projectId});
