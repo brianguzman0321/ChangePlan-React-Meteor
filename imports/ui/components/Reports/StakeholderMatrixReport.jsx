@@ -17,7 +17,7 @@ import getTotalStakeholders from "../../../utils/getTotalStakeholders";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    width: '75%',
+    width: '100%',
     margin: theme.spacing(3),
   },
   paper: {
@@ -34,7 +34,7 @@ const useStyles = makeStyles(theme => ({
     paddingTop: '10px',
   },
   gridTable: {
-    padding: '10px 24px 20px 24px',
+    padding: '0px 24px 20px 24px',
   },
 }));
 
@@ -64,24 +64,21 @@ function StakeholderMatrixReport(props) {
                 }
               });
               datasets = {
-                label: arrayStakeholders.length > 0 && arrayStakeholders.map(stakeholder => {
-                  return stakeholder.groupName ? stakeholder.groupName
-                    : `${stakeholder.firstName} ${stakeholder.lastName}`
-                }).join(', '),
+                label: arrayStakeholders.length > 0 && arrayStakeholders,
                 fill: true,
                 lengthStakeholders: getTotalStakeholders(allStakeholders, arrayStakeholdersId),
-                backgroundColor: 'rgba(0,112,192)',
-                borderColor: 'rgba(0,112,192)',
+                backgroundColor: 'rgb(0,112,192)',
+                borderColor: 'rgb(0,112,192)',
                 lineTension: 20,
                 borderCapStyle: 'butt',
                 borderDash: [],
                 borderJoinStyle: 'miter',
-                pointBorderColor: 'rgba(0,112,192)',
+                pointBorderColor: 'rgb(0,112,192)',
                 pointBackgroundColor: '#fff',
                 pointBorderWidth: 1,
                 pointHoverRadius: 5,
-                pointHoverBackgroundColor: 'rgba(0,112,192)',
-                pointHoverBorderColor: 'rgba(0,112,192)',
+                pointHoverBackgroundColor: 'rgb(0,112,192)',
+                pointHoverBorderColor: 'rgb(0,112,192)',
                 pointHoverBorderWidth: 2,
                 pointRadius: 1,
                 pointHitRadius: 10,
@@ -97,28 +94,36 @@ function StakeholderMatrixReport(props) {
   }, [allStakeholders, allInfo, projectId]);
 
   const getRadius = (stakeholders) => {
-    let radius = 0;
     let countStakeholders = getTotalStakeholders(allStakeholders, stakeholders);
-    if (countStakeholders <= 5) {
-      radius = 10
-    } else if (countStakeholders >= 6 && countStakeholders <= 15) {
-      radius = 15
-    } else if (countStakeholders >= 16 && countStakeholders <= 25) {
-      radius = 20
-    } else if (countStakeholders >= 26 && countStakeholders <= 35) {
-      radius = 25
-    } else if (countStakeholders >= 36 && countStakeholders <= 45) {
-      radius = 30
-    } else if (countStakeholders >= 46 && countStakeholders <= 55) {
-      radius = 35
-    } else if (countStakeholders >= 56 && countStakeholders <= 65) {
-      radius = 40
-    } else if (countStakeholders >= 66 && countStakeholders <= 75) {
-      radius = 45
-    } else if (countStakeholders > 76) {
-      radius = 50
+    let totalStakeholders = 0;
+    allStakeholders.forEach(stakeholder => {
+      if (stakeholder.numberOfPeople > 0) {
+        totalStakeholders = totalStakeholders + stakeholder.numberOfPeople
+      } else {
+        totalStakeholders++
+      }
+    });
+    let radius = 10 + (100 * countStakeholders) / totalStakeholders;
+
+
+    return (radius > 65) ? 65 : radius
+  };
+
+  const getTicksLabel = (value) => {
+    switch (value) {
+      case 0:
+        return 'LOW';
+      case 1:
+        return '';
+      case 2:
+        return 'MEDIUM';
+      case 3:
+        return '';
+      case 4:
+        return 'HIGH';
+      default:
+        break;
     }
-    return radius
   };
 
   const options = {
@@ -130,13 +135,22 @@ function StakeholderMatrixReport(props) {
         },
       },
     },
+    maintainAspectRatio: false,
     legend: {
       display: false,
+    },
+    layout: {
+      padding: {
+        left: 30,
+        right: 70,
+        top: 70,
+        bottom: 70
+      }
     },
     scales: {
       xAxes: [{
         gridLines: {
-          z: 1,
+          color: 'gray'
         },
         scaleLabel: {
           display: true,
@@ -146,27 +160,12 @@ function StakeholderMatrixReport(props) {
           autoSkip: false,
           min: 0,
           max: 4,
-          callback: function (value) {
-            switch (value) {
-              case 0:
-                return 'LOW';
-              case 1:
-                return '';
-              case 2:
-                return 'MEDIUM';
-              case 3:
-                return '';
-              case 4:
-                return 'HIGH';
-              default:
-                break;
-            }
-          }
+          callback: (value) => getTicksLabel(value),
         },
       }],
       yAxes: [{
         gridLines: {
-          z: 1,
+          color: 'gray'
         },
         scaleLabel: {
           display: true,
@@ -176,24 +175,29 @@ function StakeholderMatrixReport(props) {
           min: 0,
           max: 4,
           stepSize: 1,
-          callback: function (value) {
-            switch (value) {
-              case 0:
-                return 'LOW';
-              case 1:
-                return '';
-              case 2:
-                return 'MEDIUM';
-              case 3:
-                return '';
-              case 4:
-                return 'HIGH';
-              default:
-                break;
-            }
-          }
+          callback: (value) => getTicksLabel(value),
         },
       }],
+    },
+    tooltips: {
+      custom: function (tooltip) {
+        if (!tooltip) return;
+        tooltip.displayColors = false;
+      },
+      titleFontStyle: 400,
+      callbacks: {
+        title: function (tooltipItem, data) {
+          const labels = data.datasets[tooltipItem[0].datasetIndex].label;
+          const title = labels.map(stakeholder => {
+            return stakeholder.groupName ? `${stakeholder.groupName}`
+              : `${stakeholder.firstName} ${stakeholder.lastName}`
+          }).join('\n');
+          return title;
+        },
+        label: function () {
+          return;
+        }
+      }
     },
     annotation: {
       drawTime: 'beforeDatasetsDraw',
@@ -206,7 +210,8 @@ function StakeholderMatrixReport(props) {
         xMax: 2,
         yMin: 0,
         yMax: 2,
-        backgroundColor: 'rgb(169,209,142)',
+        borderColor: 'rgba(169,209,142, 0.7)',
+        backgroundColor: 'rgba(169,209,142, 0.7)',
       }, {
         type: 'box',
         id: 'a-box-2',
@@ -216,7 +221,8 @@ function StakeholderMatrixReport(props) {
         xMax: 4,
         yMin: 0,
         yMax: 2,
-        backgroundColor: 'rgb(255,242,204)',
+        borderColor: 'rgba(255,242,204, 0.7)',
+        backgroundColor: 'rgba(255,242,204, 0.7)',
       }, {
         type: 'box',
         id: 'a-box-3',
@@ -226,7 +232,8 @@ function StakeholderMatrixReport(props) {
         xMax: 2,
         yMin: 2,
         yMax: 4,
-        backgroundColor: 'rgb(255,203,102)',
+        borderColor: 'rgba(255,203,102, 0.7)',
+        backgroundColor: 'rgba(255,203,102, 0.7)',
       }, {
         type: 'box',
         id: 'a-box-4',
@@ -236,7 +243,8 @@ function StakeholderMatrixReport(props) {
         xMax: 4,
         yMin: 2,
         yMax: 4,
-        backgroundColor: 'rgb(255,124,128)',
+        borderColor: 'rgba(255,124,128, 0.7)',
+        backgroundColor: 'rgba(255,124,128, 0.7)',
       }],
     },
   };
@@ -250,10 +258,11 @@ function StakeholderMatrixReport(props) {
               Stakeholder matrix
             </Typography>
           </Grid>
-          <Grid item xs={12} className={classes.gridTable}>
-            <Bubble data={matrixData} options={options} />
+          <div>
+            <Bubble data={matrixData} options={options} width={600}
+                    height={600}/>
+          </div>
           </Grid>
-        </Grid>
       </Paper>
     </Grid>
   )
