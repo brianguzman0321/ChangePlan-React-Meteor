@@ -9,7 +9,7 @@ const getTotalStakeholders = (allStakeholders, currentStakeholders) => {
       totalStakeholders++
     }
   });
-  return totalStakeholders
+  return totalStakeholders || '-'
 };
 
 export default getTotalStakeholders;

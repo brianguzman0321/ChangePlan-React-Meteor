@@ -80,7 +80,7 @@ function UpcomingActivitiesReport(props) {
 
   const getImpacts = (activityId) => {
    const impacts = allImpacts.filter(impact => impact.activities.includes(activityId));
-    return impacts.length
+    return impacts.length || '-'
   };
 
   const editActivity = (activity) => {
@@ -103,8 +103,8 @@ function UpcomingActivitiesReport(props) {
               <TableHead>
                 <TableRow>
                   <TableCell size="small" className={classes.tableHead} align="center">DUE DATE</TableCell>
-                  <TableCell size="small" className={classes.tableHead} align="center">DELIVERER</TableCell>
                   <TableCell size="small" className={classes.tableHead} align="center">ACTIVITY TYPE</TableCell>
+                  <TableCell size="small" className={classes.tableHead} align="center">DELIVERER</TableCell>
                   <TableCell size="small" className={classes.tableHead} align="center">CHANGE PHASE</TableCell>
                   <TableCell size="small" className={classes.tableHead} align="center">STAKEHOLDERS</TableCell>
                   <TableCell size="small" className={classes.tableHead} align="center">DESCRIPTION</TableCell>
@@ -119,16 +119,16 @@ function UpcomingActivitiesReport(props) {
                   return <TableRow key={index} onClick={() => editActivity(activity)}>
                     <TableCell className={classes.tableCell} align="center" padding="none"
                                key={index}>{moment(activity.dueDate).format('DD-MMM-YY')}</TableCell>
+                    <TableCell size="small" className={classes.tableCell} align="center">{activity.name}</TableCell>
                     <TableCell size="small" className={classes.tableCell} align="center">
                       {activity.personResponsible ? `${activity.personResponsible.profile.firstName} ${activity.personResponsible.profile.lastName}` : ''}
                     </TableCell>
                     <TableCell size="small" className={classes.tableCell} align="center">{getPhase(activity.step)}</TableCell>
-                    <TableCell size="small" className={classes.tableCell} align="center">{activity.name}</TableCell>
                     <TableCell size="small" className={classes.tableCell} align="center">{getTotalStakeholders(allStakeholders, activity.stakeHolders)}</TableCell>
                     <TableCell size="small" className={classes.tableCell} align="center">{stringHelpers.limitCharacters(activity.description, 50)}</TableCell>
                     <TableCell size="small" className={classes.tableCell} align="center">{getImpacts(activity._id)}</TableCell>
-                    <TableCell size="small" className={classes.tableCell} align="center">{activity.time}</TableCell>
-                    <TableCell size="small" className={classes.tableCell} align="center">{`$${activity.cost}`}</TableCell>
+                    <TableCell size="small" className={classes.tableCell} align="center">{activity.time || '-'}</TableCell>
+                    <TableCell size="small" className={classes.tableCell} align="center">{activity.cost !== 0 ? `$${activity.cost}` : '-'}</TableCell>
                     <TableCell size="small" className={classes.tableCell} align="center">{activity.stakeholdersFeedback ? 'Yes' : 'No'}</TableCell>
                   </TableRow>
                 })}
