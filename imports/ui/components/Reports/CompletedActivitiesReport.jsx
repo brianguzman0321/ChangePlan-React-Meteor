@@ -150,8 +150,7 @@ function CompletedActivitiesReport(props) {
         </Grid>
         <AddActivities edit={showModal} activity={selectedActivity} newActivity={() => setShowModal(false)} list={true} isOpen={false}
                        type={'project'} match={match} step={step} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isManager={isManager}
-                       isActivityDeliverer={isActivityDeliverer} isChangeManager={isChangeManager} isActivityOwner={isActivityOwner}
-                       color={step === 1 ? '#f1753e' : step === 2 ? '#53cbd0' : step === 3 ? '#bbabd2' : step === 4 ? '#8BC34A' : step === 5 ? '#03A9F4' : null}/>
+                       isActivityDeliverer={isActivityDeliverer} isChangeManager={isChangeManager} isActivityOwner={isActivityOwner}/>
       </Paper>
     </Grid>
   )
