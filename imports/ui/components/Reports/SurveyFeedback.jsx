@@ -114,7 +114,7 @@ function SurveyFeedback(props) {
         <Grid container direction="row" justify="center" alignItems="center">
           <Grid item xs={12}>
             <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
-              Stakeholders survey feedback
+              {type === 'isStakeholders' ? 'Stakeholders survey feedback' : 'Activity deliverers survey feedback'}
             </Typography>
           </Grid>
           <Grid item xs={12} className={classes.gridTable}>
