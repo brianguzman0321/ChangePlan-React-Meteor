@@ -38,7 +38,7 @@ function SurveyStakeholder(props) {
   let {match, stakeholder, history: {push}} = props;
   const [answer, setAnswer] = useState('');
   const [isSurveyResponseCreated, setIsSurveyResponseCreated] = useState(false);
-  const [survey, setSurvey] = useState({});
+  const [survey, setSurvey] = useState('');
 
   const classes = useStyles();
 
@@ -142,6 +142,6 @@ const SurveyStakeholders = withTracker(props => {
   return {
     stakeholder: Peoples.findOne({_id: id}),
   };
-})(withRouter(withSnackbar(SurveyStakeholder)));
+})(withRouter(SurveyStakeholder));
 
-export default SurveyStakeholders;
+export default withSnackbar(SurveyStakeholders);

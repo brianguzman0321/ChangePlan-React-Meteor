@@ -43,7 +43,7 @@ function SurveyActivityDeliverer(props) {
   const [comments, setComments] = useState('');
   const [commentsStakeholders, setCommentsStakeholders] = useState('');
   const [isUpdatedActivity, setIsUpdatedActivity] = useState(false);
-  const [survey, setSurvey] = useState({});
+  const [survey, setSurvey] = useState('');
   const classes = useStyles();
 
   const handleChangeQuestion = event => {
@@ -86,7 +86,7 @@ function SurveyActivityDeliverer(props) {
         }
       });
       const paramsSurvey = {
-        surveyActivityDeliverer: {
+        surveyActivityDeliverers: {
           activityId: match.params.activityId,
           activityDelivererId: match.params.activityDelivererId,
           question1: Number(match.params.response),
@@ -218,12 +218,13 @@ function SurveyActivityDeliverer(props) {
 
 const SurveyActivityDeliverers = withTracker(props => {
   Meteor.subscribe('surveysActivityDeliverers');
-  Meteor.subscribe('activities.notLogin');
-  Meteor.subscribe('projects.notLogin');
-  Meteor.subscribe('users.notLogin');
+  Meteor.subscribe('activities.notLoggedIn');
+  Meteor.subscribe('projects.notLoggedIn');
+  Meteor.subscribe('users.notLoggedIn');
+  const id = props.match.params.activityId;
   return {
-    activity: Activities.findOne({_id: props.match.params.activityId})
+    activity: Activities.findOne({_id: id})
   };
-})(withRouter(withSnackbar(SurveyActivityDeliverer)));
+})(withRouter(SurveyActivityDeliverer));
 
-export default SurveyActivityDeliverers;
+export default withSnackbar(SurveyActivityDeliverers);

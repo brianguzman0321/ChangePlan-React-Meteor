@@ -48,10 +48,10 @@ export const update = new ValidatedMethod({
     'surveyActivityDeliverers': {
       type: Object,
     },
-    'surveyActivityDeliverers.activityId': {
+    'surveyActivityDeliverers._id': {
       type: String,
     },
-    'surveyActivityDeliverers._id': {
+    'surveyActivityDeliverers.activityId': {
       type: String,
     },
     'surveyActivityDeliverers.activityDelivererId': {

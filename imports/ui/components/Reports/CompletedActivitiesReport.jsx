@@ -17,6 +17,7 @@ import getTotalStakeholders from "../../../utils/getTotalStakeholders";
 import {stringHelpers} from "../../../helpers/stringHelpers";
 import {SurveysStakeholders} from "../../../api/surveysStakeholders/surveysStakeholders";
 import {SurveysActivityDeliverers} from "../../../api/surveysActivityDeliverers/surveysActivityDeliverers";
+import AddActivities from "../Activities/Modals/AddActivities";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -58,15 +59,26 @@ const useStyles = makeStyles(theme => ({
 
 function CompletedActivitiesReport(props) {
   const classes = useStyles();
-  const {match, allActivities, allStakeholders, company, allImpacts, allSurveysActivityDeliverers, allSurveysStakeholders} = props;
+  const {match, allActivities, allStakeholders, company, allImpacts, allSurveysActivityDeliverers, allSurveysStakeholders,
+    isSuperAdmin, isAdmin, isChangeManager, isManager, isActivityDeliverer, isActivityOwner} = props;
   const projectId = match.params.projectId;
   const [tableData, setTableData] = useState([]);
+  const [selectedActivity, setSelectedActivity] = useState({});
+  const [step, setStep] = useState(0);
+  const [showModal, setShowModal] = useState(false);
+
+  const editActivity = (activity) => {
+    setSelectedActivity(activity);
+    setShowModal(true);
+    setStep(activity.step);
+  };
 
   useEffect(() => {
     if (allActivities) {
       const todayDate = new Date();
       const previousWeekDate = new Date(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate() - 7);
-      const activities = allActivities.filter(activity => moment(moment(activity.dueDate).format()).isBetween(moment(previousWeekDate).format(), moment(todayDate).format()));
+      const activities = allActivities.filter(activity => moment(moment(activity.dueDate).format()).isBetween(moment(previousWeekDate).format(), moment(todayDate).format())
+        && activity.completed);
       activities.map(activity => {
         const surveysActivityDeliverer = allSurveysActivityDeliverers.filter(survey => survey.activityId === activity._id);
         const surveysStakeholders = allSurveysStakeholders.filter(survey => survey.activityId === activity._id);
@@ -84,7 +96,7 @@ function CompletedActivitiesReport(props) {
 
   const getImpacts = (activityId) => {
     const impacts = allImpacts.filter(impact => impact.activities.includes(activityId));
-    return impacts.length
+    return impacts.length || '-';
   };
 
   return (
@@ -115,19 +127,19 @@ function CompletedActivitiesReport(props) {
               </TableHead>
               <TableBody>
                 {tableData.map((activity, index) => {
-                  return <TableRow key={index}>
+                  return <TableRow key={index} onClick={() => editActivity(activity)}>
                     <TableCell className={classes.tableCell} align="center" padding="none"
                                key={index}>{activity.completedAt ? moment(activity.completedAt).format('DD-MMM-YY') : '-'}</TableCell>
-                    <TableCell size="small" className={classes.tableCell} align="center">{getPhase(activity.step)}</TableCell>
+                    <TableCell size="small" className={classes.tableCell} align="center">{activity.name}</TableCell>
                     <TableCell size="small" className={classes.tableCell} align="center">
                       {activity.personResponsible ? `${activity.personResponsible.profile.firstName} ${activity.personResponsible.profile.lastName}` : ''}
                     </TableCell>
-                    <TableCell size="small" className={classes.tableCell} align="center">{activity.name}</TableCell>
+                    <TableCell size="small" className={classes.tableCell} align="center">{getPhase(activity.step)}</TableCell>
                     <TableCell size="small" className={classes.tableCell} align="center">{getTotalStakeholders(allStakeholders, activity.stakeHolders)}</TableCell>
                     <TableCell size="small" className={classes.tableCell} align="center">{stringHelpers.limitCharacters(activity.description, 50)}</TableCell>
                     <TableCell size="small" className={classes.tableCell} align="center">{getImpacts(activity._id)}</TableCell>
-                    <TableCell size="small" className={classes.tableCell} align="center">{activity.time}</TableCell>
-                    <TableCell size="small" className={classes.tableCell} align="center">{`$${activity.cost}`}</TableCell>
+                    <TableCell size="small" className={classes.tableCell} align="center">{activity.time || '-'}</TableCell>
+                    <TableCell size="small" className={classes.tableCell} align="center">{activity.cost !== 0 ? `$${activity.cost}` : '-'}</TableCell>
                     <TableCell size="small" className={classes.tableCell} align="center">{activity.surveysActivityDeliverer}</TableCell>
                     <TableCell size="small" className={classes.tableCell} align="center">{activity.surveysStakeholders}</TableCell>
                   </TableRow>
@@ -136,6 +148,10 @@ function CompletedActivitiesReport(props) {
             </Table>
           </Grid>
         </Grid>
+        <AddActivities edit={showModal} activity={selectedActivity} newActivity={() => setShowModal(false)} list={true} isOpen={false}
+                       type={'project'} match={match} step={step} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isManager={isManager}
+                       isActivityDeliverer={isActivityDeliverer} isChangeManager={isChangeManager} isActivityOwner={isActivityOwner}
+                       color={step === 1 ? '#f1753e' : step === 2 ? '#53cbd0' : step === 3 ? '#bbabd2' : step === 4 ? '#8BC34A' : step === 5 ? '#03A9F4' : null}/>
       </Paper>
     </Grid>
   )
