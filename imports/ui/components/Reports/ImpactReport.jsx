@@ -11,6 +11,9 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import {Projects} from "../../../api/projects/projects";
 import Typography from "@material-ui/core/Typography";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import {_} from 'meteor/underscore';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -68,6 +71,23 @@ const useStyles = makeStyles(theme => ({
   gridTable: {
     padding: '10px 24px 20px 24px',
   },
+  tab: {
+    color: '#465563',
+    fontWeight: 700,
+    borderRight: '0.1em solid #eaecef',
+    padding: 0,
+    cursor: 'pointer',
+    '&:selected': {
+      color: '#1890ff',
+      fontWeight: theme.typography.fontWeightMedium,
+    },
+    whiteSpace: 'nowrap',
+    minWidth: '50px',
+    minHeight: '10px'
+  },
+  tabs: {
+    minHeight: '25px',
+  },
 }));
 
 function ImpactReport(props) {
@@ -75,23 +95,69 @@ function ImpactReport(props) {
   const {match, allImpacts, allStakeholders} = props;
   const projectId = match.params.projectId;
   const [tableData, setTableData] = useState([]);
+  const [selectedTab, setSelectedTab] = useState(0);
+  const [nameTableHead, setNameTableHead] = useState('STAKEHOLDER');
 
   useEffect(() => {
     if (allStakeholders && allImpacts) {
-      const stakeholders = allStakeholders.filter(stakeholder => !!stakeholder.firstName);
-      stakeholders.map(stakeholder => {
-        stakeholder.impactLevels = [];
-        const calculationLevel = [];
-        const impactsStakeholder = allImpacts.filter(impact => impact.stakeholders.includes(stakeholder._id));
-        ['ORGANIZATION', 'PEOPLE', 'PROCESS', 'TECHNOLOGY'].forEach(type => {
-          calculationLevel.push(calculationLevels(type, impactsStakeholder));
-        });
-        stakeholder.impactLevels = calculationLevel;
-        return stakeholder;
-      });
+      let stakeholders = [];
+      switch (selectedTab) {
+        case 0:
+          stakeholders = getStakeholdersGroup(allStakeholders.filter(stakeholder => !!stakeholder.firstName));
+          setNameTableHead('STAKEHOLDER');
+          break;
+        case 1:
+          stakeholders = getTableData(allStakeholders.filter(stakeholder => !!stakeholder.team), 'team');
+          setNameTableHead('TEAM');
+          break;
+        case 2:
+          stakeholders = getTableData(allStakeholders.filter(stakeholder => !!stakeholder.location), 'location');
+          setNameTableHead('LOCATION');
+          break;
+        case 3:
+          stakeholders = getTableData(allStakeholders.filter(stakeholder => !!stakeholder.businessUnit), 'businessUnit');
+          setNameTableHead('BUSINESS UNIT');
+          break;
+        case 4:
+          stakeholders = getStakeholdersGroup(allStakeholders.filter(stakeholder => !!stakeholder.groupName), true);
+          setNameTableHead('GROUP');
+          break;
+        default:
+          break;
+      }
       setTableData(stakeholders);
     }
-  }, [allStakeholders, allImpacts, projectId]);
+  }, [allStakeholders, allImpacts, projectId, selectedTab]);
+
+  const getTableData = (stakeholders, type) => {
+    let names = [];
+    stakeholders.forEach(stakeholder => {
+      names.push(stakeholder[type])
+    });
+    names = [...new Set(names)];
+    return names.map(name => {
+      const ids = stakeholders.filter(stakeholder => stakeholder[type] === name).map(stakeholder => stakeholder._id);
+      const impacts = allImpacts.filter(impact => !_.isEmpty(_.intersection(ids, impact.stakeholders)));
+      let calculationLevel = [];
+      ['ORGANIZATION', 'PEOPLE', 'PROCESS', 'TECHNOLOGY'].forEach(type => {
+        calculationLevel.push(calculationLevels(type, impacts));
+      });
+      return {name: name, impactLevels: calculationLevel};
+    });
+  };
+
+  const getStakeholdersGroup = (stakeholders, isGroup = false) => {
+    return stakeholders.map(stakeholder => {
+      const calculationLevel = [];
+      const impactsStakeholder = allImpacts.filter(impact => impact.stakeholders.includes(stakeholder._id));
+      ['ORGANIZATION', 'PEOPLE', 'PROCESS', 'TECHNOLOGY'].forEach(type => {
+        calculationLevel.push(calculationLevels(type, impactsStakeholder));
+      });
+      stakeholder.impactLevels = calculationLevel;
+      stakeholder.name = isGroup ? stakeholder.groupName : `${stakeholder.firstName} ${stakeholder.lastName}`;
+      return stakeholder;
+    })
+  };
 
   const calculationLevels = (type, impactLevel) => {
     let level = '';
@@ -132,16 +198,29 @@ function ImpactReport(props) {
     <Grid className={classes.root}>
       <Paper className={classes.paper}>
         <Grid container direction="row" justify="center" alignItems="center">
-          <Grid item xs={12}>
-            <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
-              Impact heat map
-            </Typography>
+          <Grid container direction="row" justify="space-between" alignItems="center">
+            <Grid item xs={5}>
+              <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
+                Impact heat map
+              </Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Tabs centered value={selectedTab} variant="fullWidth"
+                    onChange={(e, newValue) => setSelectedTab(newValue)} indicatorColor="primary"
+                    textColor="primary" className={classes.tabs}>
+                <Tab value={0} label="STAKEHOLDER" className={classes.tab}/>
+                <Tab value={1} label="TEAM" className={classes.tab}/>
+                <Tab value={2} label="LOCATION" className={classes.tab}/>
+                <Tab value={3} label="BUSINESS UNIT" className={classes.tab}/>
+                <Tab value={4} label="GROUP" className={classes.tab}/>
+              </Tabs>
+            </Grid>
           </Grid>
           <Grid item xs={12} className={classes.gridTable}>
             <Table className={classes.table}>
               <TableHead>
                 <TableRow>
-                  <TableCell size="small" className={classes.tableHead} align="left">STAKEHOLDER</TableCell>
+                  <TableCell size="small" className={classes.tableHead} align="left">{nameTableHead}</TableCell>
                   <TableCell size="small" className={classes.tableHead} align="center">ORGANIZATION</TableCell>
                   <TableCell size="small" className={classes.tableHead} align="center">PEOPLE</TableCell>
                   <TableCell size="small" className={classes.tableHead} align="center">PROCESS</TableCell>
@@ -152,7 +231,7 @@ function ImpactReport(props) {
                 {tableData.map((data, index) => {
                   return <TableRow key={index}>
                     <TableCell className={classes.nameTableCell} align="left" padding="none"
-                               key={index}>{`${data.firstName} ${data.lastName}`}</TableCell>
+                               key={index}>{data.name}</TableCell>
                     {data.impactLevels.map((impactLevel, index) => {
                       return <TableCell padding="none" className={getClassName(impactLevel.level)} align="center"
                                         key={index}>{impactLevel.type && impactLevel.level}</TableCell>
