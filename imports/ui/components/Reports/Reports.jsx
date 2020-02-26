@@ -16,6 +16,7 @@ import {Companies} from "../../../api/companies/companies";
 import CompletedActivitiesReport from "./CompletedActivitiesReport";
 import StakeholderMatrixReport from "./StakeholderMatrixReport";
 import SurveyFeedback from "./SurveyFeedback";
+import ActivityEventsReport from "./ActivityEventsReport";
 
 const useStyles = makeStyles({
   root: {
@@ -159,6 +160,21 @@ function Reports(props) {
         </Grid>
         <Grid container direction="row" justify="space-between">
           <SurveyFeedback match={props.match} company={company} type={'isActivityDeliverers'}/>
+        </Grid>
+        <Grid container direction="row" justify="space-between">
+          <ActivityEventsReport match={props.match} company={company} type={'Learning/coaching'}
+                                isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager}
+                                isManager={isManager} isActivityDeliverer={isActivityDeliverer} isActivityOwner={isActivityOwner}/>
+        </Grid>
+        <Grid container direction="row" justify="space-between">
+          <ActivityEventsReport match={props.match} company={company} type={'Communication'}
+                                isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager}
+                                isManager={isManager} isActivityDeliverer={isActivityDeliverer} isActivityOwner={isActivityOwner}/>
+        </Grid>
+        <Grid container direction="row" justify="space-between">
+          <ActivityEventsReport match={props.match} company={company} type={'Engagement'}
+                                isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager}
+                                isManager={isManager} isActivityDeliverer={isActivityDeliverer} isActivityOwner={isActivityOwner}/>
         </Grid>
       </Grid>
     </div>
