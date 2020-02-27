@@ -30,6 +30,7 @@ import Table from "@material-ui/core/Table";
 import {Activities} from "../../../../api/activities/activities";
 import SelectActivities from "./SelectActivities";
 import getNumberOfStakeholders from "../../../../utils/getNumberOfStakeholders";
+import SelectImpactType from "./SelectImpactType";
 
 const styles = theme => ({
   root: {
@@ -115,12 +116,12 @@ const DialogActions = withStyles(theme => ({
   },
 }))(MuiDialogActions);
 
-
 function AddImpact(props) {
   let {
     open, handleModalClose, currentType, stakeHoldersImpacts, isNew, company,
     stakeHoldersTemplate, isSuperAdmin, isAdmin, isChangeManager, isManager, activities, projectId, templateId, impact
   } = props;
+  const classes = useStyles();
   const [peoples, setPeoples] = useState([]);
   const [type, setType] = React.useState('');
   const [level, setLevel] = React.useState('');
@@ -131,6 +132,7 @@ function AddImpact(props) {
   const [activitiesImpact, setActivitiesImpact] = useState([]);
   const [selectedActivities, setSelectedActivities] = useState([]);
   const [showActivities, setShowActivities] = useState(false);
+  const [openSelect, setOpenSelect] = useState(false);
   const disabled = (isManager && !isSuperAdmin && !isChangeManager && !isAdmin)
     || (isChangeManager && currentType === 'template' && !isSuperAdmin && !isAdmin)
     || (isAdmin && currentType === 'template' && !isSuperAdmin);
@@ -151,26 +153,28 @@ function AddImpact(props) {
   }, [impact]);
 
   const resetValues = () => {
-    setType('');
-    setLevel('');
-    setChange('');
-    setDescribeImpact('');
-    setActivitiesImpact([]);
-    setSelectedActivities([]);
-    setPeoples([]);
+    if (isNew) {
+      setType('');
+      setLevel('');
+      setChange('');
+      setDescribeImpact('');
+      setActivitiesImpact([]);
+      setSelectedActivities([]);
+      setPeoples([]);
+    }
   };
-
-  const classes = useStyles();
 
   const handleClose = () => {
     handleModalClose();
     updateFilter('localStakeHoldersImpacts', 'changed', false);
+    resetValues();
     setIsUpdated(false);
   };
 
   const handleOpenModalDialog = () => {
     if (isUpdated) {
       handleModalClose();
+      resetValues();
     }
   };
 
@@ -241,13 +245,13 @@ function AddImpact(props) {
     setPeoples(newStakeholders);
   };
 
-  function handleLevelChange(event) {
+  const handleLevelChange = (event) => {
     setLevel(event.target.value);
     setIsUpdated(true);
   };
 
-  function handleTypeChange(event) {
-    setType(event.target.value);
+  const handleTypeChange = (selectedType) => {
+    setType(selectedType);
     setIsUpdated(true);
   };
 
@@ -263,6 +267,14 @@ function AddImpact(props) {
     return company.activityColumns[phase - 1];
   };
 
+  const handleSelectClose = () => {
+    setOpenSelect(false);
+  };
+
+  const handleSelectOpen = () => {
+    setOpenSelect(true);
+  };
+
   return (
     <div className={classes.createNewProject}>
       <Dialog onClose={isUpdated ? handleOpenModalDialog : handleClose} aria-labelledby="customized-dialog-title"
@@ -274,27 +286,8 @@ function AddImpact(props) {
           <Grid container spacing={2}>
             <Grid item xs={6}>
               <br/>
-              <FormControl className={classes.formControl} fullWidth={true}>
-                <InputLabel htmlFor="demo-controlled-open-select"
-                            required={true}>Impact type</InputLabel>
-                <Select
-                  id="type"
-                  label="type"
-                  fullWidth={true}
-                  value={type}
-                  disabled={disabled}
-                  onChange={handleTypeChange}
-                  inputProps={{
-                    name: 'type',
-                    id: 'demo-controlled-open-select',
-                  }}
-                >
-                  <MenuItem value={'Process'}>Process</MenuItem>
-                  <MenuItem value={'Technology'}>Technology</MenuItem>
-                  <MenuItem value={'People'}>People</MenuItem>
-                  <MenuItem value={'Organization'}>Organization</MenuItem>
-                </Select>
-              </FormControl>
+              <SelectImpactType openSelect={openSelect} type={type} handleSelectOpen={handleSelectOpen}
+                                handleSelectClose={handleSelectClose} handleTypeChange={handleTypeChange} disabled={disabled}/>
               <br/>
               <br/>
               <br/>
@@ -351,7 +344,8 @@ function AddImpact(props) {
               </Grid>
               <Grid item xs={3} className={classes.buttonContainer}>
                 <SelectStakeHolders rows={currentType === 'project' ? stakeHoldersImpacts : stakeHoldersTemplate}
-                                    local={peoples} handleChange={handleSelectStakeholders} disabled={disabled} isImpacts={true} isBenefits={false}/>
+                                    local={peoples} handleChange={handleSelectStakeholders} disabled={disabled}
+                                    isImpacts={true} isBenefits={false}/>
               </Grid>
               <br/>
               <br/>
@@ -382,8 +376,10 @@ function AddImpact(props) {
                 <Button color="primary" className={classes.buttonActivities} onClick={handleShowActivities}>
                   Select Activities
                 </Button>
-                <SelectActivities handleClose={handleCloseActivities} handleChange={handleSelectActivities} company={company}
-                                  open={showActivities} activities={activities} selectedActivities={selectedActivities}/>
+                <SelectActivities handleClose={handleCloseActivities} handleChange={handleSelectActivities}
+                                  company={company}
+                                  open={showActivities} activities={activities}
+                                  selectedActivities={selectedActivities}/>
               </Grid>
               <br/>
               <br/>
