@@ -13,6 +13,14 @@ import {ListItemIcon, makeStyles} from "@material-ui/core";
 import FormControl from "@material-ui/core/FormControl";
 
 const useStyles = makeStyles(theme => ({
+  dialog: {
+    '@media (min-height: 700px)': {
+      bottom: '240px !important'
+    },
+    '@media (max-height: 700px)': {
+      bottom: '200px !important'
+    }
+  },
   heading: {
     fontSize: theme.typography.pxToRem(15),
     flexBasis: '33.33%',
@@ -76,7 +84,7 @@ const SelectImpactType = (props) => {
               </Typography>
             </MenuItem>
           })}
-          <Dialog open={openSelect} onClose={handleSelectClose} fullWidth maxWidth={'md'}
+          <Dialog open={openSelect} onClose={handleSelectClose} fullWidth maxWidth={'md'} className={classes.dialog}
                   BackdropProps={{classes: {root: classes.backdrop}}}>
             <List>
               <Grid container direction={"row"}>
