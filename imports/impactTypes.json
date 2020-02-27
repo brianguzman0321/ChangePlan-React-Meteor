@@ -1,0 +1,24 @@
+{
+  "impactTypes": [
+    {
+      "type": "Process",
+      "iconSVG": "<svg width=\"100%\" height=\"100%\" viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <image xlink:href=\"/branding/process.svg\" x=\"0\" y=\"0\" height=\"100\" width=\"100\" /></svg>",
+      "helperText": "Type, number, complexity, interdependencies"
+    },
+    {
+      "type": "People",
+      "iconSVG": "<svg width=\"100%\" height=\"100%\" viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <image xlink:href=\"/branding/people.svg\" x=\"0\" y=\"0\" height=\"100\" width=\"100\" /></svg>",
+      "helperText": "Skills, knowledge, behaviours"
+    },
+    {
+      "type": "Technology",
+      "iconSVG": "<svg width=\"100%\" height=\"100%\" viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <image xlink:href=\"/branding/technology.svg\" x=\"0\" y=\"0\" height=\"100\" width=\"100\" /></svg>",
+      "helperText": "Systems, applications, hardware"
+    },
+    {
+      "type": "Organization",
+      "iconSVG": "<svg width=\"100%\" height=\"100%\" viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <image xlink:href=\"/branding/organization.svg\" x=\"0\" y=\"0\" height=\"100\" width=\"100\" /></svg>",
+      "helperText": "Structure, reporting, KPIs"
+    }
+  ]
+}
