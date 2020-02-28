@@ -12,15 +12,13 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import {withSnackbar} from 'notistack';
 import 'date-fns';
-import Tooltip from '@material-ui/core/Tooltip';
-import SVGInline from "react-svg-inline";
 import Grid from '@material-ui/core/Grid';
 import {withTracker} from "meteor/react-meteor-data";
 import DateFnsUtils from '@date-io/date-fns';
 import {
   MuiPickersUtilsProvider,
   DatePicker,
-  DateTimePicker, TimePicker,
+  DateTimePicker,
 } from '@material-ui/pickers';
 import {data} from "/imports/activitiesContent.json";
 import SelectStakeHolders from './SelectStakeHolders';
@@ -35,9 +33,7 @@ import {Projects} from "../../../../api/projects/projects";
 import {Templates} from "../../../../api/templates/templates";
 import NotificationModal from "./NotificationModal";
 import {
-  ClickAwayListener, InputAdornment,
-  ListSubheader,
-  Select,
+  InputAdornment, Select,
   Switch, TableCell, TableHead, TableRow
 } from "@material-ui/core";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -49,6 +45,7 @@ import {stringHelpers} from "../../../../helpers/stringHelpers";
 import {Impacts} from "../../../../api/impacts/impacts";
 import SelectImpacts from "./SelectImpacts";
 import getNumberOfStakeholders from "../../../../utils/getNumberOfStakeholders";
+import SelectActivityType from "./SelectActivityType";
 
 
 const styles = theme => ({
@@ -128,6 +125,9 @@ const useStyles = makeStyles(theme => ({
     },
     boxShadow: 'none',
   },
+  backdrop: {
+    backgroundColor: 'transparent',
+  },
   buttonSupport: {
     background: '#bbabd2',
     color: 'white',
@@ -156,6 +156,11 @@ const useStyles = makeStyles(theme => ({
   secondaryHeading: {
     fontSize: theme.typography.pxToRem(15),
     color: theme.palette.text.secondary,
+  },
+  dropdownStyle: {
+    width: '100%',
+    left: 'auto !important',
+    transformOrigin: 'unset !important',
   },
   gridText: {
     fontSize: '1em',
@@ -240,24 +245,14 @@ const useStyles = makeStyles(theme => ({
     height: '35px',
   },
   selectTypes: {
-    [theme.breakpoints.only('md')]: {
-      width: '80vw'
-    },
-    [theme.breakpoints.only('lg')]: {
-      width: '50vw'
-    },
-    [theme.breakpoints.only('xl')]: {
-      width: '40vw'
-    },
-    [theme.breakpoints.only('sm')]: {
-      width: '90vw'
-    },
-    [theme.breakpoints.only('xs')]: {
-      width: '90vw'
-    }
+    width: '918px'
   },
   addImpacts: {
     textAlign: 'right',
+  },
+  dialogPaper: {
+    width: '918px',
+    maxWidth: '920px',
   },
 }));
 
@@ -292,11 +287,10 @@ function AddActivities(props) {
   let {
     company, stakeHolders, local, project, match, edit, activity, list, isOpen, currentChangeManager, isActivityOwner,
     template, type, stakeHoldersTemplate, isSuperAdmin, isAdmin, isChangeManager, isManager, isActivityDeliverer, step,
-    impacts,
-  } = props;
+    impacts } = props;
   const customActivityIcon = data.find(item => item.category === "Custom").iconSVG;
   const [open, setOpen] = useState(edit || isOpen || false);
-  const [phase, setPhase] = useState(step || 1);
+  const [phase, setPhase] = useState(step);
   const [color, setColor] = useState('#f1753e');
   const [deleteModal, setDeleteModal] = useState(false);
   const [time, setTime] = useState('');
@@ -341,11 +335,12 @@ function AddActivities(props) {
   const [showSelect, setShowSelect] = useState(false);
   const [selectActivity, setSelectActivity] = useState({});
   const [showInputEditActivity, setShowInputEditActivity] = useState(isNew || false);
+  const [customType, setCustomType] = useState('');
 
 
   let {projectId, templateId} = match.params;
   const classes = useStyles();
-  const classes1 = gridStyles();
+  const gridClass = gridStyles();
 
   const sendNotificationEmail = (activityType,
                                  activityDueDate,
@@ -406,12 +401,11 @@ function AddActivities(props) {
         break;
     }
     setColor(phaseColor);
-  }, [phase]);
+  }, [phase, step]);
 
   const updateValues = () => {
     if (isNew) {
       resetValues();
-      return false;
     }
     let selectedActivity = data.find(item => (item.name === activity.type));
     if (!selectedActivity) {
@@ -424,7 +418,7 @@ function AddActivities(props) {
     setActivityType(selectedActivity);
     setSelectActivity(selectedActivity);
     setDueDate(activity.dueDate);
-    setPhase(activity.step);
+    setPhase(activity.step || step);
     setTimeSendEmail(activity.timeSchedule || null);
     setCheckSchedule(activity.stakeholdersFeedback || false);
     setBuildStartDate(activity.buildStartDate || null);
@@ -517,7 +511,6 @@ function AddActivities(props) {
     setSelectActivity({});
     setDueDate(new Date());
     setPhase(step);
-    setColor('');
     setCheckSchedule(false);
     setTimeSendEmail(null);
     setCompletedDate(null);
@@ -584,21 +577,10 @@ function AddActivities(props) {
   const changeActivityType = (item, custom = false) => {
     if (custom) {
       const activityCustom = {
-        buttonText: item,
-        name: item,
+        buttonText: customType,
+        name: customType,
         iconSVG: customActivityIcon,
-        category: "Custom",
-        engageSection: true,
-        equipSection: true,
-        embedSection: true,
-        helpArticleAvailable: false,
-        helpArticleText: "",
-        helpArticleLink: "",
-        resourceAvailable: false,
-        resourceText: "",
-        resourceFileName: "",
-        helpTextTitle: "Other",
-        helpText: "Describe the activity in the 'Description' field.",
+        category: 'Custom',
       };
       setActivityType(activityCustom);
       setSelectActivity(activityCustom);
@@ -607,8 +589,8 @@ function AddActivities(props) {
       setSelectActivity(item);
     }
     setIsUpdated(true);
-    setShowSelect(false);
     setShowInputEditActivity(false);
+    setShowSelect(false);
   };
 
   const handleClose = () => {
@@ -836,7 +818,6 @@ function AddActivities(props) {
     setIsUpdated(true);
   };
 
-
   const handleTimeChange = (e) => {
     setTime(Number(e.target.value));
     setIsUpdated(true);
@@ -937,7 +918,6 @@ function AddActivities(props) {
   };
 
   const resetActivityType = (e) => {
-    e.preventDefault();
     setActivityType({});
   };
 
@@ -956,36 +936,44 @@ function AddActivities(props) {
     setIsUpdated(true);
   };
 
-/*  const handleActivityDeliverer = (id) => {
-    console.log('-person--', person);
-    let allUsers = [];
-    Meteor.call(`users.getAllUsersInCompany`, {company: company}, (err, res) => {
-      if (err) {
-        console.log('---', err)
-      } else {
-        if (res && res.length) {
-          allUsers = res.map(user => {
-            return {
-              label: `${user.profile.firstName} ${user.profile.lastName}`,
-              firstName: user.profile.firstName,
-              value: user._id,
-              role: user.roles,
-              email: user.emails
-            }
-          })
-          console.log('---', allUsers)
-          const deliverer = allUsers.filter(user => user.value === id);
-          console.log('--deliverer-', deliverer);
-          setPerson(deliverer);
-        }
+  /*  const handleActivityDeliverer = (id) => {
+      console.log('-person--', person);
+      let allUsers = [];
+      Meteor.call(`users.getAllUsersInCompany`, {company: company}, (err, res) => {
+        if (err) {
+          console.log('---', err)
+        } else {
+          if (res && res.length) {
+            allUsers = res.map(user => {
+              return {
+                label: `${user.profile.firstName} ${user.profile.lastName}`,
+                firstName: user.profile.firstName,
+                value: user._id,
+                role: user.roles,
+                email: user.emails
+              }
+            })
+            console.log('---', allUsers)
+            const deliverer = allUsers.filter(user => user.value === id);
+            console.log('--deliverer-', deliverer);
+            setPerson(deliverer);
+          }
 
-      }
-    })
-  };*/
+        }
+      })
+    };*/
 
   const handleActivityOwner = (id) => {
     setOwner(id);
   };
+
+  const handleClickAwayListener = () => {
+    setActivityType(selectActivity);
+    setShowInputEditActivity(false);
+    setShowSelect(false);
+  };
+
+  const handleChangeTextField = e => (setCustomType(e.target.value));
 
   return (
     <div className={classes.AddNewActivity}>
@@ -1005,110 +993,20 @@ function AddActivities(props) {
         <DialogTitle id="customized-dialog-title" onClose={handleOpenModalDialog}>
           Activity
         </DialogTitle>
-        <form onSubmit={createActivity} noValidate>
+        <form onSubmit={createActivity}>
           <DialogContent>
             <div className={classes.root}>
               <Grid container justify="space-between">
                 <Grid item xs={5}>
-                  <FormControl fullWidth disabled={disabledManager}>
-                    <InputLabel id="select-activity-type">Type*</InputLabel>
-                    <Select fullWidth value={0} id="select-activity-type" open={showSelect} onOpen={handleShowSelect}>
-                      <MenuItem value={0} style={{display: 'none'}}>
-                        <Typography className={classes.secondaryHeading}>
-                          {activityType.category && `${activityType.category}: ${activityType.buttonText}` || 'Choose Activity*'}
-                          {activityType.iconSVG ? <SVGInline
-                            style={{position: 'absolute', marginTop: -8}}
-                            width="35px"
-                            height="35px"
-                            fill={color}
-                            svg={activityType.iconSVG || customActivityIcon}
-                          /> : null}
-                        </Typography>
-                      </MenuItem>
-                      <ClickAwayListener onClickAway={() => {
-                        setActivityType(selectActivity);
-                        setShowInputEditActivity(false);
-                        setShowSelect(false);
-                      }}>
-                        <Grid className={classes.selectTypes}>
-                          {activityCategories.map((activityCategory, index) => {
-                            return (<div>
-                              {activityCategory !== 'Engagement' &&  <hr/>}
-                              <ListSubheader disableSticky>{activityCategory.toUpperCase()}</ListSubheader>
-                              <Grid container key={index} direction="row" className={classes.selectTypes}>
-                                {data.filter(item => item.category === activityCategory).map((item, index) => {
-                                  return <Grid item key={index}
-                                               style={{background: activityType.name === item.name ? '#dae0e5' : '', width: '20%'}}>
-                                    <MenuItem value={item} onClick={() => {
-                                      changeActivityType(item)
-                                    }}>
-                                      <Tooltip title={item.helpText} key={index} enterDelay={600}>
-                                        <Grid item={true} xs={12} classes={classes1}>
-                                          <SVGInline
-                                            width="35px"
-                                            height="35px"
-                                            fill={color}
-                                            svg={item.iconSVG}
-                                          />
-                                          <Typography className={classes.gridText}>
-                                            {item.buttonText}
-                                          </Typography>
-                                        </Grid>
-                                      </Tooltip>
-                                    </MenuItem>
-                                  </Grid>
-                                })}
-                                {!showInputEditActivity && activityCategory === 'Other' &&
-                                  <Grid item onClick={handleShowEditActivity} style={{width: '20%'}}>
-                                    <MenuItem value={activityType}>
-                                      <Grid item={true} xs={12} classes={classes1}
-                                            style={{background: activityType.category === "Custom" ? '#dae0e5' : ''}}>
-                                        <SVGInline
-                                          width="35px"
-                                          height="35px"
-                                          fill={color}
-                                          svg={customActivityIcon}
-                                        />
-                                        <Typography className={classes.gridText}>
-                                          {(activityType.category !== "Custom") ? 'Custom' : activityType.buttonText}
-                                        </Typography>
-                                      </Grid>
-                                    </MenuItem>
-                                </Grid> }
-                              </Grid>
-                              <br/>
-                            </div>)
-                          })
-                          }
-
-                          {showInputEditActivity ?
-                            <Grid container direction="row" justify="flex-start" alignItems="flex-start"
-                                  className={classes.selectTypes}>
-                              <Grid item xs={1} style={{maxWidth: '5%'}}>
-                                <SVGInline
-                                  width="35px"
-                                  height="35px"
-                                  fill={color}
-                                  svg={customActivityIcon}
-                                />
-                              </Grid>
-                              <Grid item xs={11}>
-                                <TextField
-                                  placeholder={"Enter activity type"}
-                                  onFocus={resetActivityType}
-                                  fullWidth type={"text"}
-                                  defaultValue={activityType.category === "Custom" ? activityType.buttonText : ''}
-                                  onKeyPress={(e) => {
-                                    (e.key === 'Enter' ? changeActivityType(e.target.value, true) : null)
-                                  }}/>
-                              </Grid>
-                            </Grid> : null}
-                        </Grid>
-                      </ClickAwayListener>
-                    </Select>
-                  </FormControl>
+                  <SelectActivityType disabledManager={disabledManager} showSelect={showSelect}
+                                      handleShowSelect={handleShowSelect} activityType={activityType}
+                                      customActivityIcon={customActivityIcon}
+                                      handleClickAwayListener={handleClickAwayListener}
+                                      activityCategories={activityCategories} changeActivityType={changeActivityType}
+                                      color={color} showInputEditActivity={showInputEditActivity}
+                                      handleShowEditActivity={handleShowEditActivity} gridClass={gridClass}
+                                      classes={classes} customType={customType} handleChangeTextField={handleChangeTextField}/>
                 </Grid>
-
                 <Grid item xs={5}>
                   <FormControl fullWidth disabled={disabledManager}>
                     <InputLabel id="select-phase">Change phase*</InputLabel>
@@ -1584,7 +1482,8 @@ function AddActivities(props) {
                       disabled={disabled}>
                 Delete
               </Button>}
-            {isNew ? <Button color="primary" onClick={sentNotification ? (e) => createActivity(e, false) : (e) => handleShowNotification(e)}>Save</Button> :
+            {isNew ? <Button color="primary"
+                             onClick={sentNotification ? (e) => createActivity(e, false) : (e) => handleShowNotification(e)}>Save</Button> :
               <Button type="submit" color="primary"
                       disabled={disabled}>
                 Save

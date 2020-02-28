@@ -110,7 +110,10 @@ function DuplicateProject(props) {
           deliverer: newActivity.deliverer,
           dueDate: new Date(),
           stakeHolders: [],
+          completedAt: null,
           projectId: newProjectId,
+          cost: newActivity.cost,
+          stakeholdersFeedback: false,
           step: newActivity.step,
           time: newActivity.time
         }
