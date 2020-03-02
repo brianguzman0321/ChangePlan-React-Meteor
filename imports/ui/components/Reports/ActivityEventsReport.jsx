@@ -13,7 +13,7 @@ import {Projects} from "../../../api/projects/projects";
 import Typography from "@material-ui/core/Typography";
 import {Activities} from "../../../api/activities/activities";
 import moment from "moment";
-import getTotalStakeholders from "../../../utils/getTotalStakeholders";
+import {getPhase, getTotalStakeholders} from "../../../utils/utils";
 import {stringHelpers} from "../../../helpers/stringHelpers";
 import {SurveysStakeholders} from "../../../api/surveysStakeholders/surveysStakeholders";
 import {SurveysActivityDeliverers} from "../../../api/surveysActivityDeliverers/surveysActivityDeliverers";
@@ -99,10 +99,6 @@ function ActivityEventsReport(props) {
     }
   }, [allStakeholders, allActivities, projectId]);
 
-  const getPhase = (phase) => {
-    return company.activityColumns[phase - 1];
-  };
-
   const getImpacts = (activityId) => {
     const impacts = allImpacts.filter(impact => impact.activities.includes(activityId));
     return impacts.length || '-';
@@ -153,7 +149,7 @@ function ActivityEventsReport(props) {
                                key={index}>{moment(activity.dueDate).format('DD-MMM-YY')}</TableCell>
                     <TableCell size="small" className={classes.tableCell} align="center">{activity.name}</TableCell>
                     <TableCell size="small" className={classes.tableCell}
-                               align="center">{getPhase(activity.step)}</TableCell>
+                               align="center">{getPhase(activity.step, company)}</TableCell>
                     <TableCell size="small" className={classes.tableCell}
                                align="center">{getTotalStakeholders(allStakeholders, activity.stakeHolders)}</TableCell>
                     <TableCell size="small" className={classes.tableCell}

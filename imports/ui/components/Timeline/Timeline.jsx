@@ -31,7 +31,7 @@ import {Companies} from "../../../api/companies/companies";
 import AddEventModal from "../Events/AddEventModal";
 import {ProjectEvents} from "../../../api/projectEvents/projectEvents";
 import {Peoples} from "../../../api/peoples/peoples";
-import getTotalStakeholders from "../../../utils/getTotalStakeholders";
+import {getTotalStakeholders} from "../../../utils/utils";
 
 
 function Timeline(props) {

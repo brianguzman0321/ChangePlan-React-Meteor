@@ -20,7 +20,7 @@ import {Peoples} from "../../../../api/peoples/peoples";
 import {withRouter} from "react-router";
 import {Projects} from "../../../../api/projects/projects";
 import {Templates} from "../../../../api/templates/templates";
-import getNumberOfStakeholders from "../../../../utils/getNumberOfStakeholders";
+import {getNumberOfStakeholders} from "../../../../utils/utils";
 
 
 const styles = theme => ({

@@ -6,7 +6,7 @@ import ImpactsModal from "./Modals/ImpactsModal";
 import DeleteImpactModal from "./Modals/DeleteImpactModal";
 import {stringHelpers} from "../../../helpers/stringHelpers";
 import {makeStyles} from "@material-ui/core";
-import getTotalStakeholders from "../../../utils/getTotalStakeholders";
+import {getTotalStakeholders} from "../../../utils/utils";
 
 const useStyles = makeStyles(theme => ({
   cellInfo: {

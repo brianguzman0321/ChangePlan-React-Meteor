@@ -13,7 +13,7 @@ import {Projects} from "../../../api/projects/projects";
 import Typography from "@material-ui/core/Typography";
 import {Activities} from "../../../api/activities/activities";
 import moment from "moment";
-import getTotalStakeholders from "../../../utils/getTotalStakeholders";
+import {getPhase, getTotalStakeholders} from "../../../utils/utils";
 import AddActivities from "../Activities/Modals/AddActivities";
 import {stringHelpers} from "../../../helpers/stringHelpers";
 
@@ -74,10 +74,6 @@ function UpcomingActivitiesReport(props) {
     }
   }, [allStakeholders, allActivities, projectId]);
 
-  const getPhase = (phase) => {
-    return company.activityColumns[phase - 1];
-  };
-
   const getImpacts = (activityId) => {
    const impacts = allImpacts.filter(impact => impact.activities.includes(activityId));
     return impacts.length || '-'
@@ -123,7 +119,7 @@ function UpcomingActivitiesReport(props) {
                     <TableCell size="small" className={classes.tableCell} align="center">
                       {activity.personResponsible ? `${activity.personResponsible.profile.firstName} ${activity.personResponsible.profile.lastName}` : ''}
                     </TableCell>
-                    <TableCell size="small" className={classes.tableCell} align="center">{getPhase(activity.step)}</TableCell>
+                    <TableCell size="small" className={classes.tableCell} align="center">{getPhase(activity.step, company)}</TableCell>
                     <TableCell size="small" className={classes.tableCell} align="center">{getTotalStakeholders(allStakeholders, activity.stakeHolders)}</TableCell>
                     <TableCell size="small" className={classes.tableCell} align="center">{stringHelpers.limitCharacters(activity.description, 50)}</TableCell>
                     <TableCell size="small" className={classes.tableCell} align="center">{getImpacts(activity._id)}</TableCell>

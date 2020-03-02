@@ -14,6 +14,7 @@ import {Activities} from "../../../api/activities/activities";
 import moment from "moment";
 import {SurveysStakeholders} from "../../../api/surveysStakeholders/surveysStakeholders";
 import {SurveysActivityDeliverers} from "../../../api/surveysActivityDeliverers/surveysActivityDeliverers";
+import {getPhase} from "../../../utils/utils";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -87,10 +88,6 @@ function SurveyFeedback(props) {
     }
   }, [allStakeholdersSurveys, allDeliverersSurveys, allStakeholders, allActivities, projectId]);
 
-  const getPhase = (phase) => {
-    return company.activityColumns[phase - 1];
-  };
-
   const getAnswer = (answer) => {
     switch (answer) {
       case 1:
@@ -159,7 +156,7 @@ function SurveyFeedback(props) {
                     <TableCell className={classes.tableCell} align="center" padding="none"
                                key={index}>{moment(survey.activity.dueDate).format('DD-MMM-YY')}</TableCell>
                     <TableCell size="small" className={classes.tableCell}
-                               align="center">{getPhase(survey.activity.step)}</TableCell>
+                               align="center">{getPhase(survey.activity.step, company)}</TableCell>
                     {type === 'isStakeholders' && <TableCell size="small" className={classes.tableCell} align="center">
                       {survey.stakeholder.firstName ? `${survey.stakeholder.firstName} ${survey.stakeholder.lastName}` : survey.stakeholder.groupName}
                     </TableCell>}

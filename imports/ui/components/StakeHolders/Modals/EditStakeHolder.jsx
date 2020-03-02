@@ -31,6 +31,7 @@ import Table from "@material-ui/core/Table";
 import {TableCell, TableHead, TableRow} from "@material-ui/core";
 import TableBody from "@material-ui/core/TableBody";
 import {AdditionalStakeholderInfo} from "../../../../api/additionalStakeholderInfo/additionalStakeholderInfo";
+import {getPhase} from "../../../../utils/utils";
 
 const styles = theme => ({
   root: {
@@ -331,6 +332,7 @@ function EditStakeHolder(props) {
 
   const handleChangeSelect = (e) => {
     setRoles(e.target.value);
+    setIsUpdated(true);
   };
 
   const handleChangeInput = (newCustom) => {
@@ -342,30 +344,9 @@ function EditStakeHolder(props) {
     setShowInput(false);
   };
 
-  const selectPhase = (phase) => {
-    switch (phase) {
-      case 1:
-        return '1';
-      case 2:
-        return '4';
-      case 3:
-        return '5';
-      case 4:
-        return '2';
-      case 5:
-        return '3';
-      default:
-        break;
-    }
-  };
-
   const getFeedbackReceived = (id) => {
     const response = responseOnSurveys.filter(response => response.activityId === id);
-    if (response.length > 0) {
-      return "Yes"
-    } else {
-      return "No"
-    }
+    return response.length ? 'Yes' : 'No'
   };
 
   useEffect(() => {
@@ -737,9 +718,10 @@ function EditStakeHolder(props) {
                   <TableRow>
                     {(isAdmin || isSuperAdmin) && <TableCell align={"left"}>Project name</TableCell>}
                     <TableCell align={"left"}>Due date</TableCell>
-                    <TableCell align={"left"}>Phase</TableCell>
+                    <TableCell align={"left"}>Change phase</TableCell>
                     <TableCell align={"left"}>Type</TableCell>
                     <TableCell align={"left"}>Time away from BAU</TableCell>
+                    <TableCell align={"left"}>Feedback requested</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -748,9 +730,10 @@ function EditStakeHolder(props) {
                       {(isAdmin || isSuperAdmin) &&
                       <TableCell>{activity.projectName && activity.projectName.toUpperCase()}</TableCell>}
                       <TableCell>{moment(activity.dueDate).format('DD-MMM-YY')}</TableCell>
-                      <TableCell>{activity && selectPhase(activity.step)}</TableCell>
+                      <TableCell>{activity && getPhase(activity.step, company)}</TableCell>
                       <TableCell>{activity && activity.type[0].toUpperCase() + activity.type.slice(1)}</TableCell>
                       <TableCell>{activity && activity.time}</TableCell>
+                      <TableCell>{activity.stakeholdersFeedback ? 'Yes' : 'No'}</TableCell>
                     </TableRow>
                   })}
                 </TableBody>
@@ -768,11 +751,10 @@ function EditStakeHolder(props) {
                 <TableHead>
                   <TableRow>
                     {(isAdmin || isSuperAdmin) && <TableCell align={"left"}>Project name</TableCell>}
-                    <TableCell align={"left"}>Due date</TableCell>
-                    <TableCell align={"left"}>Phase</TableCell>
+                    <TableCell align={"left"}>Complete date</TableCell>
+                    <TableCell align={"left"}>Change phase</TableCell>
                     <TableCell align={"left"}>Type</TableCell>
                     <TableCell align={"left"}>Time away from BAU</TableCell>
-                    <TableCell align={"left"}>Attendance?</TableCell>
                     <TableCell align={"left"}>Feedback requested</TableCell>
                     <TableCell align={"left"}>Feedback received</TableCell>
                   </TableRow>
@@ -782,11 +764,10 @@ function EditStakeHolder(props) {
                     return <TableRow key={index}>
                       {(isAdmin || isSuperAdmin) &&
                       <TableCell>{activity.projectName && activity.projectName.toUpperCase()}</TableCell>}
-                      <TableCell>{moment(activity.dueDate).format('DD-MMM-YY')}</TableCell>
-                      <TableCell>{activity && selectPhase(activity.step)}</TableCell>
+                      <TableCell>{moment(activity.completedAt).format('DD-MMM-YY')}</TableCell>
+                      <TableCell>{activity && getPhase(activity.step, company)}</TableCell>
                       <TableCell>{activity && activity.type[0].toUpperCase() + activity.type.slice(1)}</TableCell>
                       <TableCell>{activity && activity.time}</TableCell>
-                      <TableCell>Yes</TableCell>
                       <TableCell>{activity && activity.sentEmail ? 'Yes' : 'No'}</TableCell>
                       <TableCell>{getFeedbackReceived(activity._id)}</TableCell>
                     </TableRow>
@@ -894,7 +875,6 @@ const EditStakeHolderPage = withTracker(props => {
   Meteor.subscribe('activities.notLoggedIn');
   Meteor.subscribe('additionalStakeholderInfo.findAll');
   return {
-    company: Companies.findOne(),
     additionalInfo: AdditionalStakeholderInfo.find({}).fetch(),
   };
 })(EditStakeHolder);

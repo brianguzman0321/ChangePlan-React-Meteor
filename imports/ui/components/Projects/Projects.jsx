@@ -24,6 +24,7 @@ import ProjectNavBar from "./ProjectsNavBar";
 import {Templates} from "../../../api/templates/templates";
 import {Meteor} from "meteor/meteor";
 import {Peoples} from "../../../api/peoples/peoples";
+import {getTotalStakeholders} from "../../../utils/utils";
 
 
 const useStyles = makeStyles(theme => ({
@@ -365,19 +366,6 @@ function ProjectCard(props) {
     updateFilter('localProjects', 'search', event.target.value);
   };
 
-  const getAmountStakeholder = (project) => {
-    let totalAmountStakeholders = 0;
-    let stakeholdersProject = stakeholders.filter(stakeholder => project.stakeHolders.includes(stakeholder._id));
-    stakeholdersProject.forEach(stakeholder => {
-      if (stakeholder.numberOfPeople > 0) {
-        totalAmountStakeholders = totalAmountStakeholders + stakeholder.numberOfPeople
-      } else {
-        totalAmountStakeholders++
-      }
-    });
-    return totalAmountStakeholders
-  };
-
   return (
     <>
       <Grid
@@ -473,7 +461,7 @@ function ProjectCard(props) {
                         STAKEHOLDERS
                       </Typography>
                       <Typography className={classes.pos} color="textSecondary">
-                        {getAmountStakeholder(project)}
+                        {getTotalStakeholders(stakeholders, project.stakeHolders)}
                       </Typography>
                     </Grid>
                     <Grid item xs={4} className={classes.activities}>

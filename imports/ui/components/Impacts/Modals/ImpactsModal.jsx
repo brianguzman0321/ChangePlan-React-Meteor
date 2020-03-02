@@ -29,7 +29,7 @@ import {TableCell, TableHead, TableRow} from "@material-ui/core";
 import Table from "@material-ui/core/Table";
 import {Activities} from "../../../../api/activities/activities";
 import SelectActivities from "./SelectActivities";
-import getNumberOfStakeholders from "../../../../utils/getNumberOfStakeholders";
+import {getNumberOfStakeholders, getPhase} from "../../../../utils/utils";
 import SelectImpactType from "./SelectImpactType";
 
 const styles = theme => ({
@@ -263,10 +263,6 @@ function AddImpact(props) {
     setShowActivities(false);
   };
 
-  const selectPhase = (phase) => {
-    return company.activityColumns[phase - 1];
-  };
-
   const handleSelectClose = () => {
     setOpenSelect(false);
   };
@@ -397,7 +393,7 @@ function AddImpact(props) {
                         <TableCell>{activity && activity.completedAt && moment(activity.completedAt).format('MM-DD-YYYY')
                         || activity && activity.dueDate && moment(activity.dueDate).format('MM-DD-YYYY')}</TableCell>
                         <TableCell>{activity && activity.name}</TableCell>
-                        <TableCell>{activity && selectPhase(activity.step)}</TableCell>
+                        <TableCell>{activity && getPhase(activity.step, company)}</TableCell>
                         <TableCell>{activity && activity.time}</TableCell>
                       </TableRow>
                     })}

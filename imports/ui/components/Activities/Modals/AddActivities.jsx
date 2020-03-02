@@ -44,7 +44,7 @@ import Table from "@material-ui/core/Table";
 import {stringHelpers} from "../../../../helpers/stringHelpers";
 import {Impacts} from "../../../../api/impacts/impacts";
 import SelectImpacts from "./SelectImpacts";
-import getNumberOfStakeholders from "../../../../utils/getNumberOfStakeholders";
+import {getNumberOfStakeholders} from "../../../../utils/utils";
 import SelectActivityType from "./SelectActivityType";
 
 

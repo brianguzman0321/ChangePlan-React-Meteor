@@ -29,7 +29,7 @@ import {withSnackbar} from "notistack";
 import ChangeTemplate from "./Modals/ChangeTemplate";
 import {Activities} from "../../../api/activities/activities";
 import {Meteor} from "meteor/meteor";
-import getTotalStakeholders from '/imports/utils/getTotalStakeholders';
+import {getTotalStakeholders} from '/imports/utils/utils';
 
 
 const useStyles = makeStyles({
