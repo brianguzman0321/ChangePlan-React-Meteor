@@ -43,13 +43,17 @@ function StakeholderMatrixReport(props) {
   const classes = useStyles();
   const {match, allInfo, allStakeholders} = props;
   const projectId = match.params.projectId;
-  const [matrixData, setMatrixData] = useState([]);
+  const [matrixData, setMatrixData] = useState({labels: ['LOW', 'MEDIUM', 'HIGH'], datasets: []});
 
   useEffect(() => {
-    if (allStakeholders.length > 0 && allInfo.length > 0 && (allStakeholders.length === allInfo.length)) {
+    setMatrixData({labels: ['LOW', 'MEDIUM', 'HIGH'], datasets: []});
+  }, [projectId]);
+
+  useEffect(() => {
+    if (allStakeholders.length > 0 && allInfo.length > 0) {
       getDataMatrix();
     }
-  }, [allStakeholders, allInfo, match]);
+  }, [allStakeholders, allInfo]);
 
   const getDataMatrix = () => {
     let tempData = {labels: ['LOW', 'MEDIUM', 'HIGH'], datasets: []};
@@ -71,7 +75,6 @@ function StakeholderMatrixReport(props) {
             });
             datasets = {
               label: arrayStakeholders.length > 0 && arrayStakeholders,
-              fill: true,
               lengthStakeholders: getTotalStakeholders(allStakeholders, arrayStakeholdersId),
               backgroundColor: 'rgba(0,112,192, 0.7)',
               borderColor: 'rgba(0,112,192, 0.7)',
@@ -255,6 +258,10 @@ function StakeholderMatrixReport(props) {
     },
   };
 
+  const datasetKeyProvider = () => {
+    return Math.random();
+  };
+
   return (
     <Grid className={classes.root}>
       <Paper className={classes.paper}>
@@ -265,7 +272,7 @@ function StakeholderMatrixReport(props) {
             </Typography>
           </Grid>
           <div>
-            <Bubble data={matrixData} options={options} width={600} height={600}/>
+            <Bubble data={matrixData} options={options} width={600} height={600} datasetKeyProvider={datasetKeyProvider}/>
           </div>
           </Grid>
       </Paper>
