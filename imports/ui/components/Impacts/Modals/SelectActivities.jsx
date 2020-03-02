@@ -16,6 +16,7 @@ import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import SaveChanges from "../../Modals/SaveChanges";
+import {getPhase} from "../../../../utils/utils";
 
 const tableHeadStyle = makeStyles(theme => ({
   root: {
@@ -233,10 +234,6 @@ const ListActivities = (props) => {
   const isSelected = name => selected.indexOf(name) !== -1;
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, activities.length - page * rowsPerPage);
 
-  const selectRow = (phase) => {
-    return company.activityColumns[phase - 1];
-  };
-
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
@@ -280,7 +277,7 @@ const ListActivities = (props) => {
                         />
                       </TableCell>
                       <TableCell align="left">{moment(row.dueDate).format('MM-DD-YYYY')}</TableCell>
-                      <TableCell align="left">{selectRow(row.step)}</TableCell>
+                      <TableCell align="left">{getPhase(row.step, company)}</TableCell>
                       <TableCell align="left">{row.name}</TableCell>
                       <TableCell align="left">{row.time}</TableCell>
                       <TableCell align="left">{`${row.personResponsible.profile.firstName} ${row.personResponsible.profile.lastName}`}</TableCell>

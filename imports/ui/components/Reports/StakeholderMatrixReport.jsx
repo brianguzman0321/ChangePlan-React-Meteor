@@ -13,8 +13,8 @@ import {Bubble} from "react-chartjs-2";
 import 'chartjs-plugin-datalabels';
 import 'chartjs-plugin-annotation';
 import {Meteor} from "meteor/meteor";
-import * as chartjs from 'chart.js';
-import getTotalStakeholders from "../../../utils/getTotalStakeholders";
+import 'chart.js';
+import {getTotalStakeholders }from "../../../utils/utils";
 
 const useStyles = makeStyles(theme => ({
   root: {
