@@ -3,10 +3,10 @@ import './register-api.js';
 import './securityImplementation';
 import './sampleData';
 import './mail';
-import './cronJob';
+/*import './cronJob';*/
 //comment below line (only for development)
-/*import '../../../process.env';
-import '../../../settings'*/
+// import '../../../process.env';
+// import '../../../settings'
 
 
-SyncedCron.start();
+/*SyncedCron.start();*/
