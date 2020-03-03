@@ -280,7 +280,7 @@ const ListActivities = (props) => {
                       <TableCell align="left">{getPhase(row.step, company)}</TableCell>
                       <TableCell align="left">{row.name}</TableCell>
                       <TableCell align="left">{row.time}</TableCell>
-                      <TableCell align="left">{`${row.personResponsible.profile.firstName} ${row.personResponsible.profile.lastName}`}</TableCell>
+                      <TableCell align="left">{row.personResponsible ? `${row.personResponsible.profile.firstName} ${row.personResponsible.profile.lastName}` : '-'}</TableCell>
                       <TableCell align="left">{row.description}</TableCell>
                     </TableRow>
                   );
