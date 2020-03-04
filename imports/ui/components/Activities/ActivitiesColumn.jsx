@@ -188,7 +188,7 @@ function ActivitiesColumn(props) {
     || (isManager && !isActivityDeliverer && !isActivityOwner && !isChangeManager && !isAdmin && !isSuperAdmin));
   const [currentProject, setProject] = useState({});
 
-  function completeActivity(activity) {
+  const completeActivity = (activity) => {
     activity.completed = !activity.completed;
     activity.completed ?
       activity.completedAt = activity.dueDate :
@@ -199,23 +199,20 @@ function ActivitiesColumn(props) {
     };
     Meteor.call('activities.update', params, (err, res) => {
     })
-  }
+  };
 
-  function editActivity(activity) {
+  const editActivity = (activity) => {
     sActivity = activity;
-    setEdit(false);
-    setTimeout(() => {
-      setEdit(true)
-    })
-  }
+    setEdit(true);
+  };
 
-  function iconSVG(activity) {
+  const iconSVG = (activity) => {
     let selectedActivity = data.find(item => (item.name === activity.type));
     if (!selectedActivity) {
       selectedActivity = data.find(item => (item.category === "Custom"));
     }
     return selectedActivity && selectedActivity.iconSVG
-  }
+  };
 
   const handleShowInput = () => {
     if ((isAdmin && type === 'project')) {
@@ -261,14 +258,20 @@ function ActivitiesColumn(props) {
 
   const updateColumnsName = () => {
     let allColumnsName = company.activityColumns;
-    allColumnsName[step - 1] = columnsName;
-    const params = {
-      company: {
-        _id: company._id,
-        name: company.name,
-        activityColumns: allColumnsName,
-      }
-    };
+    let params = {};
+    if (columnsName.length > 0) {
+      allColumnsName[step - 1] = columnsName;
+      params = {
+        company: {
+          _id: company._id,
+          name: company.name,
+          activityColumns: allColumnsName,
+        }
+      };
+    } else {
+      props.enqueueSnackbar('Please enter a new phase name', {variant: 'warning'});
+      return false
+    }
     Meteor.call('companies.update', params, (err, res) => {
       if (err) {
         props.enqueueSnackbar(err.reason, {variant: 'error'});
@@ -297,6 +300,15 @@ function ActivitiesColumn(props) {
     }
   }, [company]);
 
+  const handleKeyUp = (e) => {
+    if (e.key === 'Enter') {
+      updateColumnsName(e.target.value);
+    }
+    if (e.key === "Escape") {
+      setShowInput(false);
+    }
+  };
+
   return (
     <Card className={step === 4 ? classes.cardInterest :
       step === 5 ? classes.cardUnderstanding :
@@ -321,9 +333,8 @@ function ActivitiesColumn(props) {
           </IconButton>
         }
         title={showInput ?
-          <Input type="text" onChange={handleChangeName} onBlur={updateColumnsName} onKeyPress={(e) => {
-            (e.key === 'Enter' ? updateColumnsName(e.target.value) : null)
-          }}/> :
+          <Input type="text" onChange={handleChangeName} onBlur={updateColumnsName}
+                 onKeyUp={(e) => handleKeyUp(e)}/> :
           company.activityColumns && nameTitle !== '' ?
             <Typography variant="subtitle1" onDoubleClick={handleShowInput}>
               {nameTitle.toUpperCase()}

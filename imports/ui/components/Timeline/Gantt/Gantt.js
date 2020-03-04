@@ -221,6 +221,7 @@ const Gantt = props => {
     let params = {};
     params.activity = validActivity;
     delete params.activity.personResponsible;
+    delete params.activity.ownerInfo;
     switch (type) {
       case 'activity':
         if (updatedTask.completed) {
