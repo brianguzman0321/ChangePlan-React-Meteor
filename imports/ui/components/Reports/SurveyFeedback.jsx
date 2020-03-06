@@ -1,19 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Grid from "@material-ui/core/Grid/Grid";
-import {withRouter} from "react-router";
 import {withSnackbar} from "notistack";
-import {withTracker} from "meteor/react-meteor-data";
-import {Peoples} from "../../../api/peoples/peoples";
 import {Paper, Table, TableBody, TableCell} from "@material-ui/core";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import {Projects} from "../../../api/projects/projects";
 import Typography from "@material-ui/core/Typography";
-import {Activities} from "../../../api/activities/activities";
 import moment from "moment";
-import {SurveysStakeholders} from "../../../api/surveysStakeholders/surveysStakeholders";
-import {SurveysActivityDeliverers} from "../../../api/surveysActivityDeliverers/surveysActivityDeliverers";
 import {getPhase} from "../../../utils/utils";
 
 const useStyles = makeStyles(theme => ({
@@ -187,25 +180,4 @@ function SurveyFeedback(props) {
   )
 }
 
-const SurveyFeedbackReportPage = withTracker(props => {
-  let {match} = props;
-  let {projectId} = match.params;
-  Meteor.subscribe('findAllPeoples');
-  Meteor.subscribe('projects.notLoggedIn');
-  const project = Projects.findOne({_id: projectId});
-  Meteor.subscribe('compoundActivities', projectId);
-  Meteor.subscribe('impacts.findAll');
-  Meteor.subscribe('surveysStakeholders');
-  return {
-    allStakeholdersSurveys: SurveysStakeholders.find({}).fetch(),
-    allDeliverersSurveys: SurveysActivityDeliverers.find({}).fetch(),
-    allActivities: Activities.find({projectId: projectId}).fetch(),
-    allStakeholders: Peoples.find({
-      _id: {
-        $in: project && project.stakeHolders || []
-      }
-    }).fetch(),
-  };
-})(withRouter(SurveyFeedback));
-
-export default withSnackbar(SurveyFeedbackReportPage);
+export default withSnackbar(SurveyFeedback);

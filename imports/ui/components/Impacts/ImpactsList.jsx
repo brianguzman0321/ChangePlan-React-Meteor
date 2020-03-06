@@ -332,7 +332,7 @@ export default function ImpactsList(props) {
                   const labelId = `enhanced-table-checkbox-${index}`;
                   return (
                     <Impact
-                      row={row}
+                      row={row} key={index}
                       allStakeholders={allStakeholders}
                       isItemSelected={isItemSelected}
                       labelId={labelId}

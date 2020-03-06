@@ -177,7 +177,7 @@ function ProjectCard(props) {
     if (currentCompany) {
       setCompanyId(currentCompany._id);
     }
-  }, [currentCompany, projects]);
+  }, [currentCompany]);
 
   const checkRoles = () => {
     const userId = Meteor.userId();
@@ -268,7 +268,7 @@ function ProjectCard(props) {
         }
       }
     }
-  }, [projects, isActivityDeliverer, isActivityOwner, isManager, isChangeManager, isAdmin, isSuperAdmin]);
+  }, [isActivityDeliverer, isActivityOwner, isManager, isChangeManager, isAdmin, isSuperAdmin]);
 
   useEffect(() => {
     checkRoles();
@@ -289,7 +289,7 @@ function ProjectCard(props) {
       default:
         break;
     }
-  }, []);
+  }, [location.pathname]);
 
 
   const changeTab = (value) => {
@@ -312,22 +312,6 @@ function ProjectCard(props) {
     }
     window.scroll(0, 0);
   };
-
-
-  /*  if (projects && projects.length) {
-      projects = projects.map(project => {
-        const peoples = Peoples.find({
-          '_id': {
-            $in: project.stakeHolders
-          }
-        }).fetch();
-
-        return {
-          ...project,
-          stakeHolders: peoples.map(people => people._id),
-        }
-      });
-    }*/
 
   const useStyles1 = makeStyles(theme => ({
     title: {

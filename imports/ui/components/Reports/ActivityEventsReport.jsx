@@ -1,22 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Grid from "@material-ui/core/Grid/Grid";
-import {withRouter} from "react-router";
-import {withSnackbar} from "notistack";
-import {withTracker} from "meteor/react-meteor-data";
-import {Impacts} from "../../../api/impacts/impacts";
-import {Peoples} from "../../../api/peoples/peoples";
 import {Paper, Table, TableBody, TableCell} from "@material-ui/core";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import {Projects} from "../../../api/projects/projects";
 import Typography from "@material-ui/core/Typography";
-import {Activities} from "../../../api/activities/activities";
 import moment from "moment";
 import {getPhase, getTotalStakeholders} from "../../../utils/utils";
 import {stringHelpers} from "../../../helpers/stringHelpers";
-import {SurveysStakeholders} from "../../../api/surveysStakeholders/surveysStakeholders";
-import {SurveysActivityDeliverers} from "../../../api/surveysActivityDeliverers/surveysActivityDeliverers";
 import AddActivities from "../Activities/Modals/AddActivities";
 import {data} from "/imports/activitiesContent.json";
 
@@ -149,7 +140,7 @@ function ActivityEventsReport(props) {
                                key={index}>{moment(activity.dueDate).format('DD-MMM-YY')}</TableCell>
                     <TableCell size="small" className={classes.tableCell} align="center">{activity.name}</TableCell>
                     <TableCell size="small" className={classes.tableCell}
-                               align="center">{getPhase(activity.step, company)}</TableCell>
+                               align="center">{company && getPhase(activity.step, company)}</TableCell>
                     <TableCell size="small" className={classes.tableCell}
                                align="center">{getTotalStakeholders(allStakeholders, activity.stakeHolders)}</TableCell>
                     <TableCell size="small" className={classes.tableCell}
@@ -182,27 +173,4 @@ function ActivityEventsReport(props) {
   )
 }
 
-const ActivityEventsReportPage = withTracker(props => {
-  let {match} = props;
-  let {projectId} = match.params;
-  Meteor.subscribe('findAllPeoples');
-  Meteor.subscribe('projects.notLoggedIn');
-  const project = Projects.findOne({_id: projectId});
-  Meteor.subscribe('compoundActivities', projectId);
-  Meteor.subscribe('impacts.findAll');
-  Meteor.subscribe('surveysActivityDeliverers');
-  Meteor.subscribe('surveysStakeholders');
-  return {
-    allActivities: Activities.find({projectId: projectId}).fetch(),
-    allImpacts: Impacts.find({}).fetch(),
-    allStakeholders: Peoples.find({
-      _id: {
-        $in: project && project.stakeHolders || []
-      }
-    }).fetch(),
-    allSurveysStakeholders: SurveysStakeholders.find({}).fetch(),
-    allSurveysActivityDeliverers: SurveysActivityDeliverers.find({}).fetch(),
-  };
-})(withRouter(ActivityEventsReport));
-
-export default withSnackbar(ActivityEventsReportPage);
+export default ActivityEventsReport;

@@ -123,7 +123,7 @@ function AddProject(props) {
     if (company && !isSuperAdmin) {
       setCurrentCompany(company._id);
     }
-  }, [companies, company]);
+  }, [company]);
 
   const createProject = (e) => {
     e.preventDefault();
@@ -181,7 +181,7 @@ function AddProject(props) {
 
   useEffect(() => {
     updateUsersList();
-  }, [company, currentCompany, isNew, open]);
+  }, [currentCompany, isNew, open]);
 
   const handleChangePanel = panel => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
