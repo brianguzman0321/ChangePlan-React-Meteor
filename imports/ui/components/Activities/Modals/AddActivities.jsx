@@ -566,7 +566,7 @@ function AddActivities(props) {
     if (edit && activity && activity.name) {
       updateValues();
     }
-  }, [props.company, stakeHolders, company, props.edit, props.activity, isNew, local]);
+  }, [stakeHolders, company, edit, activity, isNew]);
 
 
   const handleClickOpen = () => {

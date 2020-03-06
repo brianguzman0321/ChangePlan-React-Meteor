@@ -329,7 +329,7 @@ function AddActivity(props) {
       setExpanded5(expandAccordian);
       updateValues();
     }
-  }, [props.company, stakeHolders, company, props.edit, props.activity, isNew, local]);
+  }, [stakeHolders, company, edit, activity, isNew, local]);
 
   const handleChangePanel = panel => (event, isExpanded) => {
     if(panel==='panel1') { setExpanded1(isExpanded ? panel : false); }

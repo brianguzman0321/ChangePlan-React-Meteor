@@ -17,6 +17,12 @@ import CompletedActivitiesReport from "./CompletedActivitiesReport";
 import StakeholderMatrixReport from "./StakeholderMatrixReport";
 import SurveyFeedback from "./SurveyFeedback";
 import ActivityEventsReport from "./ActivityEventsReport";
+import {Peoples} from "../../../api/peoples/peoples";
+import {Impacts} from "../../../api/impacts/impacts";
+import {withSnackbar} from "notistack";
+import {SurveysStakeholders} from "../../../api/surveysStakeholders/surveysStakeholders";
+import {SurveysActivityDeliverers} from "../../../api/surveysActivityDeliverers/surveysActivityDeliverers";
+import TimeAndActivitiesReport from "./TimeAndActivitiesReport";
 
 const useStyles = makeStyles({
   root: {
@@ -63,7 +69,7 @@ const useStyles = makeStyles({
 
 function Reports(props) {
   let menus = config.menus;
-  let {match, project, template, company, currentCompany} = props;
+  let {match, project, template, company, currentCompany, allActivities, allStakeholders, allImpacts, allSurveysStakeholders, allSurveysActivityDeliverers} = props;
   let {projectId} = match.params;
   const classes = useStyles();
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
@@ -140,40 +146,55 @@ function Reports(props) {
           </Grid>
         </Grid>
         <Grid container direction="row" justify="space-between">
-          <StakeholderMatrixReport match={props.match}/>
+          <TimeAndActivitiesReport match={props.match} allStakeholders={allStakeholders} allActivities={allActivities} type={"time"}/>
         </Grid>
         <Grid container direction="row" justify="space-between">
-          <ImpactReport match={props.match}/>
+          <TimeAndActivitiesReport match={props.match} allStakeholders={allStakeholders} allActivities={allActivities} type={"activities"}/>
         </Grid>
         <Grid container direction="row" justify="space-between">
-          <UpcomingActivitiesReport match={props.match} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
-                                    isChangeManager={isChangeManager} isManager={isManager} company={company}
+          <StakeholderMatrixReport match={props.match} allStakeholders={allStakeholders}/>
+        </Grid>
+        <Grid container direction="row" justify="space-between">
+          <ImpactReport match={props.match} allStakeholders={allStakeholders} allImpacts={allImpacts}/>
+        </Grid>
+        <Grid container direction="row" justify="space-between">
+          <UpcomingActivitiesReport match={props.match} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} allActivities={allActivities} allImpacts={allImpacts}
+                                    isChangeManager={isChangeManager} isManager={isManager} company={company} allStakeholders={allStakeholders}
                                     isActivityDeliverer={isActivityDeliverer} isActivityOwner={isActivityOwner}/>
         </Grid>
         <Grid container direction="row" justify="space-between">
-          <CompletedActivitiesReport match={props.match} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
-                                     isChangeManager={isChangeManager} isManager={isManager} company={company}
+          <CompletedActivitiesReport match={props.match} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} allActivities={allActivities} allImpacts={allImpacts}
+                                     allSurveysActivityDeliverers={allSurveysActivityDeliverers} allSurveysStakeholders={allSurveysStakeholders}
+                                     isChangeManager={isChangeManager} isManager={isManager} company={company} allStakeholders={allStakeholders}
                                      isActivityDeliverer={isActivityDeliverer} isActivityOwner={isActivityOwner}/>
         </Grid>
         <Grid container direction="row" justify="space-between">
-        <SurveyFeedback match={props.match} company={company} type={'isStakeholders'}/>
+        <SurveyFeedback match={props.match} company={company} type={'isStakeholders'} allActivities={allActivities}
+                        allStakeholders={allStakeholders} allDeliverersSurveys={allSurveysActivityDeliverers}
+                        allStakeholdersSurveys={allSurveysStakeholders}/>
         </Grid>
         <Grid container direction="row" justify="space-between">
-          <SurveyFeedback match={props.match} company={company} type={'isActivityDeliverers'}/>
+          <SurveyFeedback match={props.match} company={company} type={'isActivityDeliverers'} allActivities={allActivities}
+                          allStakeholders={allStakeholders} allDeliverersSurveys={allSurveysActivityDeliverers}
+                          allStakeholdersSurveys={allSurveysStakeholders}/>
         </Grid>
         <Grid container direction="row" justify="space-between">
-          <ActivityEventsReport match={props.match} company={company} type={'Learning/coaching'}
-                                isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager}
+          <ActivityEventsReport match={props.match} company={company} type={'Learning/coaching'} allStakeholders={allStakeholders} allImpacts={allImpacts}
+                                allSurveysActivityDeliverers={allSurveysActivityDeliverers} allSurveysStakeholders={allSurveysStakeholders}
+                                allActivities={allActivities} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager}
                                 isManager={isManager} isActivityDeliverer={isActivityDeliverer} isActivityOwner={isActivityOwner}/>
         </Grid>
         <Grid container direction="row" justify="space-between">
-          <ActivityEventsReport match={props.match} company={company} type={'Communication'}
-                                isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager}
-                                isManager={isManager} isActivityDeliverer={isActivityDeliverer} isActivityOwner={isActivityOwner}/>
+          <ActivityEventsReport match={props.match} company={company} type={'Communication'} allActivities={allActivities}
+                                allImpacts={allImpacts} allStakeholders={allStakeholders} allSurveysActivityDeliverers={allSurveysActivityDeliverers}
+                                allSurveysStakeholders={allSurveysStakeholders} isSuperAdmin={isSuperAdmin}
+                                isAdmin={isAdmin} isChangeManager={isChangeManager} isManager={isManager}
+                                isActivityDeliverer={isActivityDeliverer} isActivityOwner={isActivityOwner}/>
         </Grid>
         <Grid container direction="row" justify="space-between">
-          <ActivityEventsReport match={props.match} company={company} type={'Engagement'}
-                                isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager}
+          <ActivityEventsReport match={props.match} company={company} type={'Engagement'} allStakeholders={allStakeholders} allImpacts={allImpacts}
+                                allSurveysActivityDeliverers={allSurveysActivityDeliverers} allSurveysStakeholders={allSurveysStakeholders}
+                                allActivities={allActivities} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager}
                                 isManager={isManager} isActivityDeliverer={isActivityDeliverer} isActivityOwner={isActivityOwner}/>
         </Grid>
       </Grid>
@@ -188,6 +209,11 @@ const ReportPage = withTracker(props => {
   const userId = Meteor.userId();
   Meteor.subscribe('projects');
   Meteor.subscribe('templates');
+  Meteor.subscribe('compoundActivities', projectId);
+  Meteor.subscribe('findAllPeoples');
+  Meteor.subscribe('impacts.findAll');
+  Meteor.subscribe('surveysActivityDeliverers');
+  Meteor.subscribe('surveysStakeholders');
   const project = Projects.findOne({_id: projectId});
   const template = Templates.findOne({_id: templateId});
   Meteor.subscribe('companies');
@@ -203,7 +229,16 @@ const ReportPage = withTracker(props => {
     currentCompany,
     project,
     template,
+    allActivities: Activities.find({projectId: projectId}).fetch(),
+    allStakeholders: Peoples.find({
+      _id: {
+        $in: project && project.stakeHolders || []
+      }
+    }).fetch(),
+    allImpacts: Impacts.find({}).fetch(),
+    allSurveysStakeholders: SurveysStakeholders.find({}).fetch(),
+    allSurveysActivityDeliverers: SurveysActivityDeliverers.find({}).fetch(),
   }
 })(withRouter(Reports));
 
-export default ReportPage;
+export default withSnackbar(ReportPage);

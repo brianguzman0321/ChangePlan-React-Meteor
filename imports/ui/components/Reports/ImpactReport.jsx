@@ -1,15 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Grid from "@material-ui/core/Grid/Grid";
-import {withRouter} from "react-router";
 import {withSnackbar} from "notistack";
-import {withTracker} from "meteor/react-meteor-data";
-import {Impacts} from "../../../api/impacts/impacts";
-import {Peoples} from "../../../api/peoples/peoples";
 import {Paper, Table, TableBody, TableCell} from "@material-ui/core";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import {Projects} from "../../../api/projects/projects";
 import Typography from "@material-ui/core/Typography";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
@@ -247,22 +242,4 @@ function ImpactReport(props) {
   )
 }
 
-const ImpactReportPage = withTracker(props => {
-  let {match} = props;
-  let {projectId} = match.params;
-  Meteor.subscribe('impacts.findAll');
-  Meteor.subscribe('findAllPeoples');
-  Meteor.subscribe('projects.notLoggedIn');
-  const allImpacts = Impacts.find({}).fetch();
-  const project = Projects.findOne({_id: projectId});
-  return {
-    allImpacts,
-    allStakeholders: Peoples.find({
-      _id: {
-        $in: project && project.stakeHolders || []
-      }
-    }).fetch(),
-  };
-})(withRouter(ImpactReport));
-
-export default withSnackbar(ImpactReportPage);
+export default withSnackbar(ImpactReport);

@@ -120,9 +120,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function TopNavBar(props) {
-  let { menus, projectExists, history, match, projects, company, currentCompany } = props;
+  let {menus, projectExists, history, match, projects, company, currentCompany} = props;
   let {projectId, templateId} = match.params;
-  const [type, setType] = useState(templateId && 'template' ||  projectId && 'project');
+  const [type, setType] = useState(templateId && 'template' || projectId && 'project');
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isChangeManager, setIsChangeManager] = useState(false);
@@ -130,7 +130,7 @@ function TopNavBar(props) {
   const [isActivityDeliverer, setIsActivityDeliverer] = useState(false);
   let currentLocation = history.location.pathname.split("/");
   let currentNav = currentLocation[currentLocation.length - 1], selectedTab = 0;
-  if(currentNav === '/'){
+  if (currentNav === '/') {
     selectedTab = 0;
   }
   switch (currentNav) {
@@ -160,6 +160,7 @@ function TopNavBar(props) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+  const [projectsTab, setProjectsTab] = useState(0);
   const [value, setValue] = React.useState(selectedTab);
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -206,7 +207,26 @@ function TopNavBar(props) {
 
   useEffect(() => {
     checkRole()
-  }, [projectExists]);
+  }, [projectExists, company, projects]);
+
+  useEffect(() => {
+    switch (projectsTab) {
+      case 10: {
+        props.history.push('/all-stakeholders');
+        break;
+      }
+      case 11: {
+        props.history.push(`/all-stakeholders`);
+        break;
+      }
+      case 12: {
+        props.history.push(`/reports`);
+        break;
+      }
+      default:
+        break;
+    }
+  }, [projectsTab]);
 
   function handleProfileMenuOpen(event) {
     setAnchorEl(event.currentTarget);
@@ -257,30 +277,30 @@ function TopNavBar(props) {
           break;
       }
     }
-  if (type === 'template') {
-    switch (value) {
-      case 0:
-        props.history.push(`/templates/${templateId}`);
-        break;
-      case 1:
-        props.history.push(`/templates/${templateId}/timeline`);
-        break;
-      case 2:
-        props.history.push(`/templates/${templateId}/activities`);
-        break;
-      case 3:
-        props.history.push(`/templates/${templateId}/impacts`);
-        break;
-      case 4:
-        props.history.push(`/templates/${templateId}/stake-holders`);
-        break;
-      case 5:
-        props.history.push(`/templates/${templateId}/reports`);
-        break;
-      default:
-        break;
+    if (type === 'template') {
+      switch (value) {
+        case 0:
+          props.history.push(`/templates/${templateId}`);
+          break;
+        case 1:
+          props.history.push(`/templates/${templateId}/timeline`);
+          break;
+        case 2:
+          props.history.push(`/templates/${templateId}/activities`);
+          break;
+        case 3:
+          props.history.push(`/templates/${templateId}/impacts`);
+          break;
+        case 4:
+          props.history.push(`/templates/${templateId}/stake-holders`);
+          break;
+        case 5:
+          props.history.push(`/templates/${templateId}/reports`);
+          break;
+        default:
+          break;
+      }
     }
-  }
   }
 
   function handleMobileMenuOpen(event) {
@@ -359,6 +379,14 @@ function TopNavBar(props) {
             </div>
           </Tabs> : <div>
             <div className={classes.sectionDesktop}>
+              {(isAdmin || isChangeManager) && <Tabs centered value={projectsTab} variant="fullWidth"
+                    onChange={(e, newValue) => setProjectsTab(newValue)} indicatorColor="primary"
+                    textColor="primary">
+                <Tab label="My Projects" value={0} style={{display: 'none'}}/>
+                <Tab label="Timeline" value={10} style={{display: 'none'}}/>
+                <Tab label="All Stakeholders" value={11} style={{display: 'none'}}/>
+                <Tab label="Reports" value={12} />
+              </Tabs>}
               <IconButton
                 edge="end"
                 aria-label="account of current user"

@@ -4,9 +4,7 @@ import Grid from "@material-ui/core/Grid/Grid";
 import {withRouter} from "react-router";
 import {withSnackbar} from "notistack";
 import {withTracker} from "meteor/react-meteor-data";
-import {Peoples} from "../../../api/peoples/peoples";
 import {Paper} from "@material-ui/core";
-import {Projects} from "../../../api/projects/projects";
 import Typography from "@material-ui/core/Typography";
 import {AdditionalStakeholderInfo} from "../../../api/additionalStakeholderInfo/additionalStakeholderInfo";
 import {Bubble} from "react-chartjs-2";
@@ -284,15 +282,7 @@ const StakeholderMatrixPage = withTracker(props => {
   let {match} = props;
   let {projectId} = match.params;
   Meteor.subscribe('additionalStakeholderInfo.findByProjectId', projectId);
-  Meteor.subscribe('findAllPeoples');
-  Meteor.subscribe('projects.notLoggedIn');
-  const project = Projects.findOne({_id: projectId});
   return {
-    allStakeholders: Peoples.find({
-      _id: {
-        $in: project && project.stakeHolders || []
-      }
-    }).fetch(),
     allInfo: AdditionalStakeholderInfo.find({projectId: projectId}).fetch(),
   };
 })(withRouter(StakeholderMatrixReport));

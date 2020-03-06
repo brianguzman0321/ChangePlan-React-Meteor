@@ -25,6 +25,8 @@ import Templates from "../../ui/components/Templates/Templates";
 import SurveyActivityDeliverer from "../../ui/components/Survey/SurveyActivityDeliverers/SurveyActivityDeliverers";
 import SurveyStakeholder from "../../ui/components/Survey/SurveyStakeholders/SurveyStakeholders";
 import ImpactsPage from "../../ui/components/Impacts/Impacts";
+import AllStakeholders from "../../ui/components/admin/Stakeholders/AllStakeholders";
+import AdminReportsPage from "../../ui/components/admin/Reports/Reports"
 
 //list of Public Routes
 
@@ -88,6 +90,9 @@ const Routes = appProps => (
         <Authenticated exact path="/projects/:projectId/impacts" component={ImpactsPage} {...appProps}/>
         <Authenticated exact path="/projects/:projectId/reports" component={ReportsCard} {...appProps}/>
         <Authenticated exact path="/projects/:projectId/timeline" component={Timeline} {...appProps}/>
+        <Authenticated exact path="/all-stakeholders" component={AllStakeholders} {...appProps}/>
+        <Authenticated exact path="/timeline" component={AllStakeholders} {...appProps}/>
+        <Authenticated exact path="/reports" component={AdminReportsPage} {...appProps}/>
         <AdminRoute exact path="/admin/control-panel" component={MaterialTableDemo} {...appProps}/>
         <AdminRoute exact path="/admin/companies" component={CompaniesListPage} {...appProps}/>
         <Public path="/signup" component={Signup} {...appProps}/>
