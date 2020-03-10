@@ -12,10 +12,9 @@ Meteor.publish('activities.notLoggedIn', function () {
 });
 
 Meteor.publishTransformed('compoundActivities', function (projectId) {
-
-  return Activities.find({
-    projectId: projectId
-  }).serverTransform({
+  let query = {};
+  projectId && (query._id = projectId);
+  return Activities.find(query).serverTransform({
     'personResponsible': function (doc) {
       return Meteor.users.findOne({_id: doc.deliverer}, {
         fields: {

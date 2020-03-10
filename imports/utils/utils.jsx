@@ -23,6 +23,43 @@ export const getTotalStakeholders = (allStakeholders, currentStakeholders) => {
 };
 
 export const getPhase = (phase, company) => {
-  return company.activityColumns[phase - 1].toUpperCase();
+  const phaseName = company.activityColumns[phase - 1];
+  return phaseName[0].toUpperCase() + phaseName.slice(1).toLowerCase();
+};
+
+export const calculationLevels = (type, currentImpacts) => {
+  let level = '';
+  if (currentImpacts.length > 1) {
+    const highImpacts = currentImpacts.filter(currentImpact => currentImpact.level.toUpperCase() === 'HIGH');
+    const mediumImpacts = currentImpacts.filter(currentImpact => currentImpact.level.toUpperCase() === 'MEDIUM');
+    const lowImpacts = currentImpacts.filter(currentImpact => currentImpact.level.toUpperCase() === 'LOW');
+    if (highImpacts.length > 0) {
+      level = 'H'
+    } else if (mediumImpacts.length > 0) {
+      level = 'M'
+    } else if (lowImpacts.length > 0) {
+      level = 'L'
+    }
+  } else if (currentImpacts.length === 1) {
+    level = currentImpacts[0].level.toUpperCase().slice(0, 1)
+  }
+  if (type !== 'stakeholders') {
+    return {type: type, level: level}
+  } else {
+    return level;
+  }
+};
+
+export const ChangeManagersNames = (project) => {
+  if (project.changeManagerDetails) {
+    let changeManagers = project.changeManagerDetails.map(changeManager => {
+      return `${changeManager.profile.firstName} ${changeManager.profile.lastName}`
+    });
+    if (changeManagers.length) {
+      return changeManagers.join(", ")
+    } else {
+      return "-"
+    }
+  }
 };
 

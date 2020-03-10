@@ -21,6 +21,8 @@ import {withSnackbar} from "notistack";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
 import {AdditionalStakeholderInfo} from "../../../api/additionalStakeholderInfo/additionalStakeholderInfo";
+import {Impacts} from "../../../api/impacts/impacts";
+import {calculationLevels} from "../../../utils/utils";
 
 
 const useStyles = makeStyles(theme => ({
@@ -84,7 +86,7 @@ function StakeHolders(props) {
   let menus = config.menus;
   const [search, setSearch] = React.useState('');
   const classes = useStyles();
-  let {match, project, template, stakeHoldersTemplate, stakeHolders, company, currentCompany, activities, additionalInfo} = props;
+  let {match, project, template, stakeHoldersTemplate, stakeHolders, company, currentCompany, activities, additionalInfo, allImpacts} = props;
   let {projectId, templateId} = match.params;
   project = project || {};
   template = template || {};
@@ -117,14 +119,16 @@ function StakeHolders(props) {
 
   useEffect(() => {
     let allStakeholders = [];
-    if (stakeHolders) {
+    if (stakeHolders && allImpacts) {
       allStakeholders = stakeHolders;
       getTotalTime(allStakeholders, true);
       getLevels(allStakeholders);
+      getImpactsLevel(allStakeholders);
     } else if (stakeHoldersTemplate) {
       allStakeholders = stakeHoldersTemplate;
       getTotalTime(allStakeholders, true);
       getLevels(allStakeholders);
+      getImpactsLevel(allStakeholders);
     }
   }, [stakeHolders, stakeHoldersTemplate, activities]);
 
@@ -147,7 +151,18 @@ function StakeHolders(props) {
         stakeholder.supportLevel = currentLevels.levelOfSupport;
         stakeholder.influenceLevel = currentLevels.levelOfInfluence;
       }
+      return stakeholder
     })
+  };
+
+  const getImpactsLevel = (allStakeholders) => {
+    allStakeholders.map(stakeholder => {
+      const currentImpacts = allImpacts.filter(impact => impact.stakeholders.includes(stakeholder._id));
+      if (currentImpacts.length > 0) {
+        stakeholder.impactLevel = calculationLevels('stakeholders', currentImpacts)
+      }
+      return stakeholder
+    });
   };
 
   const getTotalTime = (allStakeholders, isDefault = false) => {
@@ -422,6 +437,7 @@ const StakeHoldersPage = withTracker(props => {
   Meteor.subscribe('projects');
   Meteor.subscribe('activities.notLoggedIn');
   Meteor.subscribe('additionalStakeholderInfo.findAll');
+  Meteor.subscribe('impacts.findAll');
   let project = Projects.findOne({
     _id: projectId
   });
@@ -447,6 +463,7 @@ const StakeHoldersPage = withTracker(props => {
         $in: template && template.stakeHolders || []
       }
     }).fetch(),
+    allImpacts: Impacts.find({projectId: projectId}).fetch(),
     project: Projects.findOne({_id: projectId}),
     template: Templates.findOne({_id: templateId}),
     companies: Companies.find({}).fetch(),

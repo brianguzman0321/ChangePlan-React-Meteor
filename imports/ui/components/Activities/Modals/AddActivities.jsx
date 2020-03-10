@@ -287,7 +287,8 @@ function AddActivities(props) {
   let {
     company, stakeHolders, local, project, match, edit, activity, list, isOpen, currentChangeManager, isActivityOwner,
     template, type, stakeHoldersTemplate, isSuperAdmin, isAdmin, isChangeManager, isManager, isActivityDeliverer, step,
-    impacts } = props;
+    impacts
+  } = props;
   const customActivityIcon = data.find(item => item.category === "Custom").iconSVG;
   const [open, setOpen] = useState(edit || isOpen || false);
   const [phase, setPhase] = useState(step);
@@ -339,6 +340,7 @@ function AddActivities(props) {
 
 
   let {projectId, templateId} = match.params;
+  projectId = (!projectId && !templateId) ? props.activity.projectId : match.params.projectId;
   const classes = useStyles();
   const gridClass = gridStyles();
 
@@ -1005,7 +1007,8 @@ function AddActivities(props) {
                                       activityCategories={activityCategories} changeActivityType={changeActivityType}
                                       color={color} showInputEditActivity={showInputEditActivity}
                                       handleShowEditActivity={handleShowEditActivity} gridClass={gridClass}
-                                      classes={classes} customType={customType} handleChangeTextField={handleChangeTextField}/>
+                                      classes={classes} customType={customType}
+                                      handleChangeTextField={handleChangeTextField}/>
                 </Grid>
                 <Grid item xs={5}>
                   <FormControl fullWidth disabled={disabledManager}>
@@ -1508,6 +1511,7 @@ function AddActivities(props) {
 const AddActivityPage = withTracker(props => {
   let {match} = props;
   let {projectId, templateId} = match.params;
+  projectId = (!projectId && !templateId) ? props.activity.projectId : match.params.projectId;
   let local = LocalCollection.findOne({
     name: 'localStakeHolders'
   });

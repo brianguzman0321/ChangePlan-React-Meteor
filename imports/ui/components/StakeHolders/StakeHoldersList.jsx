@@ -54,6 +54,11 @@ function desc(a, b, orderBy) {
         orderByB = "jobTitle"
       }
       break;
+    case "impact": {
+      a[orderByA] = sortByImpactLevel(a.impactLevel);
+      b[orderByB] = sortByImpactLevel(b.impactLevel);
+      break;
+    }
     default:
       orderByA = orderByB = orderBy;
       break;
@@ -66,6 +71,11 @@ function desc(a, b, orderBy) {
   }
   return 0;
 }
+
+const sortByImpactLevel = (impactLevel) => {
+  const impactLevels = ['', 'L', 'M', 'H'];
+  return impactLevels.indexOf(impactLevel);
+};
 
 function stableSort(array, cmp) {
   const stabilizedThis = array.map((el, index) => [el, index]);
@@ -91,6 +101,7 @@ const headCells = [
   {id: 'totalTime', numeric: true, disablePadding: false, label: 'TIME AWAY FROM BAU'},
   {id: 'influenceLevel', numeric: true, disablePadding: false, label: 'INFLUENCE'},
   {id: 'supportLevel', numeric: true, disablePadding: false, label: 'SUPPORT'},
+  {id: 'impact', numeric: false, disablePadding: false, label: 'Impact'},
   {id: 'action', numeric: true, disablePadding: false, label: 'ACTIONS'},
 ];
 
@@ -301,7 +312,8 @@ export default function StakeHolderList(props) {
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar numSelected={selected.length} selected={selected} type={type} project={project} template={template}/>
+        <EnhancedTableToolbar numSelected={selected.length} selected={selected} type={type} project={project}
+                              template={template}/>
         <div className={classes.tableWrapper}>
           <Table
             className={classes.table}
@@ -339,8 +351,10 @@ export default function StakeHolderList(props) {
                       projectId={projectId}
                       project={project}
                       type={type}
-                      template={template} company={company} isChangeManager={isChangeManager} isActivityOwner={isActivityOwner}
-                      isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isManager={isManager} isActivityDeliverer={isActivityDeliverer}
+                      template={template} company={company} isChangeManager={isChangeManager}
+                      isActivityOwner={isActivityOwner}
+                      isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isManager={isManager}
+                      isActivityDeliverer={isActivityDeliverer}
                     />
                   );
                 })}

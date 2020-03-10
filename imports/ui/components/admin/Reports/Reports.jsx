@@ -12,10 +12,10 @@ import {Peoples} from "../../../../api/peoples/peoples";
 import {Projects} from "../../../../api/projects/projects";
 import {withSnackbar} from "notistack";
 import TimeAndActivitiesReport from '../../Reports/TimeAndActivitiesReport';
+import AllUpcomingActivities from "./AllUpcomingActivities/AllUpcomingActivities";
 
 const useStyles = makeStyles({
-  root: {
-  },
+  root: {},
   activitiesGrid: {
     paddingRight: 20
   },
@@ -130,10 +130,16 @@ function AdminReports(props) {
           </Grid>
         </Grid>
         <Grid container direction="row" justify="space-between">
-          <TimeAndActivitiesReport match={props.match} allStakeholders={currentStakeholders} allActivities={allActivities} type={"time"}/>
+          <TimeAndActivitiesReport match={props.match} allStakeholders={currentStakeholders}
+                                   allActivities={allActivities} type={"time"}/>
         </Grid>
         <Grid container direction="row" justify="space-between">
-          <TimeAndActivitiesReport match={props.match} allStakeholders={currentStakeholders} allActivities={allActivities} type={"activities"}/>
+          <TimeAndActivitiesReport match={props.match} allStakeholders={currentStakeholders}
+                                   allActivities={allActivities} type={"activities"}/>
+        </Grid>
+        <Grid container direction="row" justify="space-between">
+          <AllUpcomingActivities match={props.match} allActivities={allActivities} allProjects={allProjects}
+                                 company={company} isAdmin={isAdmin} isChangeManager={isChangeManager} allStakeholders={allStakeholders}/>
         </Grid>
       </Grid>
     </div>
@@ -142,9 +148,9 @@ function AdminReports(props) {
 
 const AdminReportsPage = withTracker(props => {
   const userId = Meteor.userId();
-  Meteor.subscribe('activities.notLoggedIn');
+  Meteor.subscribe('compoundActivities');
   Meteor.subscribe('findAllPeoples');
-  Meteor.subscribe('projects.notLoggedIn');
+  Meteor.subscribe('compoundProject');
   Meteor.subscribe('companies');
   return {
     company: Companies.findOne({peoples: userId}),
