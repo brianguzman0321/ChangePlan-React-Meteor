@@ -80,11 +80,11 @@ function TimeAndActivitiesReport(props) {
     if (allStakeholders && allActivities) {
       let stakeholders = [];
       let weeks = getTableHead();
-      if (weeks.length > 0) {
+      if (weeks) {
         switch (selectedTab) {
           case 0:
-            stakeholders = getTableDataGroup(weeks, allStakeholders.filter(stakeholder => !!stakeholder.firstName));
-            setNameTableHead('STAKEHOLDER');
+            stakeholders = getTableDataGroup(weeks, allStakeholders.filter(stakeholder => !!stakeholder.groupName), true);
+            setNameTableHead('GROUP');
             break;
           case 1:
             stakeholders = getTableData(weeks, allStakeholders.filter(stakeholder => !!stakeholder.team), 'team');
@@ -99,8 +99,8 @@ function TimeAndActivitiesReport(props) {
             setNameTableHead('BUSINESS UNIT');
             break;
           case 4:
-            stakeholders = getTableDataGroup(weeks, allStakeholders.filter(stakeholder => !!stakeholder.groupName), true);
-            setNameTableHead('GROUP');
+            stakeholders = getTableDataGroup(weeks, allStakeholders.filter(stakeholder => !!stakeholder.firstName));
+            setNameTableHead('STAKEHOLDER');
             break;
           default:
             break;
@@ -112,22 +112,23 @@ function TimeAndActivitiesReport(props) {
 
   const getTableHead = () => {
     const today = new Date();
+    let date = {
+      weeks: []
+    };
     const currentActivities = allActivities.filter(activity => activity.dueDate >= today && !activity.completed);
-      const sortActivities = _.sortBy(currentActivities, 'dueDate');
-      let date = {
-        weeks: []
-      };
-      sortActivities.forEach(activity => {
+    const sortActivities = _.sortBy(currentActivities, 'dueDate');
+    if (sortActivities.length > 0) {
+      let startDueDate = new Date(sortActivities[0].dueDate);
+      let endDueDate = new Date(sortActivities[sortActivities.length - 1].dueDate);
+      for (startDueDate; moment(startDueDate).isBefore(moment(endDueDate));startDueDate.setDate(startDueDate.getDate() + 7)) {
         date.weeks.push({
-          startDate: moment(moment(activity.dueDate)).startOf('isoWeek').toDate(),
-          endDate: moment(moment(activity.dueDate)).endOf('isoWeek').toDate()
+          startDate: moment(moment(startDueDate)).startOf('isoWeek').toDate(),
+          endDate: moment(moment(startDueDate)).endOf('isoWeek').toDate()
         })
-      });
-      const noRepeatingDate = [];
-      date.weeks.map(week => noRepeatingDate.filter(noRepeatingWeek => moment(noRepeatingWeek.startDate).format('DD-MM-YYYY') === moment(week.startDate).format('DD-MM-YYYY')
-        && moment(noRepeatingWeek.endDate).format('DD-MM-YYYY') === moment(week.endDate).format('DD-MM-YYYY')).length > 0 ? null : noRepeatingDate.push(week));
-      setTableHeadData(noRepeatingDate);
-      return noRepeatingDate;
+      }
+      setTableHeadData(date.weeks);
+      return date.weeks;
+    }
   };
 
   const getTableData = (weeks, stakeholders, selectedType) => {
@@ -195,18 +196,18 @@ function TimeAndActivitiesReport(props) {
           <Grid container direction="row" justify="space-between" alignItems="center">
             <Grid item xs={5}>
               <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
-                {type === "time" ? "Time away from BAU" : "Activities"}
+                {type === "time" ? "Time away from BAU" : "Activity count"}
               </Typography>
             </Grid>
             <Grid item xs={6}>
               <Tabs centered value={selectedTab} variant="fullWidth"
                     onChange={(e, newValue) => setSelectedTab(newValue)} indicatorColor="primary"
                     textColor="primary" className={classes.tabs}>
-                <Tab value={0} label="STAKEHOLDER" className={classes.tab}/>
+                <Tab value={0} label="GROUP" className={classes.tab}/>
                 <Tab value={1} label="TEAM" className={classes.tab}/>
                 <Tab value={2} label="LOCATION" className={classes.tab}/>
                 <Tab value={3} label="BUSINESS UNIT" className={classes.tab}/>
-                <Tab value={4} label="GROUP" className={classes.tab}/>
+                <Tab value={4} label="STAKEHOLDER" className={classes.tab}/>
               </Tabs>
             </Grid>
           </Grid>
@@ -217,7 +218,7 @@ function TimeAndActivitiesReport(props) {
                   <TableCell size="small" className={classes.tableHead} align="left">{nameTableHead}</TableCell>
                   {tableHeadData.length > 0 && tableHeadData.map((week, index) => {
                     return <TableCell className={classes.nameTableCell} align="center"
-                      key={index}>{`${moment(week.startDate).format('DD MMM')} - ${moment(week.endDate).format('DD MMM')}`}</TableCell>
+                                      key={index}>{`${moment(week.startDate).format('DD MMM')} - ${moment(week.endDate).format('DD MMM')}`}</TableCell>
                   })}
                 </TableRow>
               </TableHead>

@@ -9,6 +9,7 @@ import Typography from "@material-ui/core/Typography";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import {_} from 'meteor/underscore';
+import {calculationLevels} from "../../../utils/utils";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -98,8 +99,8 @@ function ImpactReport(props) {
       let stakeholders = [];
       switch (selectedTab) {
         case 0:
-          stakeholders = getStakeholdersGroup(allStakeholders.filter(stakeholder => !!stakeholder.firstName));
-          setNameTableHead('STAKEHOLDER');
+          stakeholders = getStakeholdersGroup(allStakeholders.filter(stakeholder => !!stakeholder.groupName), true);
+          setNameTableHead('GROUP');
           break;
         case 1:
           stakeholders = getTableData(allStakeholders.filter(stakeholder => !!stakeholder.team), 'team');
@@ -114,8 +115,8 @@ function ImpactReport(props) {
           setNameTableHead('BUSINESS UNIT');
           break;
         case 4:
-          stakeholders = getStakeholdersGroup(allStakeholders.filter(stakeholder => !!stakeholder.groupName), true);
-          setNameTableHead('GROUP');
+          stakeholders = getStakeholdersGroup(allStakeholders.filter(stakeholder => !!stakeholder.firstName));
+          setNameTableHead('STAKEHOLDER');
           break;
         default:
           break;
@@ -146,32 +147,13 @@ function ImpactReport(props) {
       const calculationLevel = [];
       const impactsStakeholder = allImpacts.filter(impact => impact.stakeholders.includes(stakeholder._id));
       ['ORGANIZATION', 'PEOPLE', 'PROCESS', 'TECHNOLOGY'].forEach(type => {
-        calculationLevel.push(calculationLevels(type, impactsStakeholder));
+        const currentImpacts = impactsStakeholder.filter(impact => impact.type.toUpperCase() === type);
+        calculationLevel.push(calculationLevels(type, currentImpacts));
       });
       stakeholder.impactLevels = calculationLevel;
       stakeholder.name = isGroup ? stakeholder.groupName : `${stakeholder.firstName} ${stakeholder.lastName}`;
       return stakeholder;
     })
-  };
-
-  const calculationLevels = (type, impactLevel) => {
-    let level = '';
-    const currentImpacts = impactLevel.filter(impact => impact.type.toUpperCase() === type);
-    if (currentImpacts.length > 1) {
-      const highImpacts = currentImpacts.filter(currentImpact => currentImpact.level.toUpperCase() === 'HIGH');
-      const mediumImpacts = currentImpacts.filter(currentImpact => currentImpact.level.toUpperCase() === 'MEDIUM');
-      const lowImpacts = currentImpacts.filter(currentImpact => currentImpact.level.toUpperCase() === 'LOW');
-      if (highImpacts.length > 0) {
-        level = 'H'
-      } else if (mediumImpacts.length > 0) {
-        level = 'M'
-      } else if (lowImpacts.length > 0) {
-        level = 'L'
-      }
-    } else if (currentImpacts.length === 1) {
-      level = currentImpacts[0].level.toUpperCase().slice(0, 1)
-    }
-    return {type: type, level: level}
   };
 
   const getClassName = (level) => {
@@ -203,11 +185,11 @@ function ImpactReport(props) {
               <Tabs centered value={selectedTab} variant="fullWidth"
                     onChange={(e, newValue) => setSelectedTab(newValue)} indicatorColor="primary"
                     textColor="primary" className={classes.tabs}>
-                <Tab value={0} label="STAKEHOLDER" className={classes.tab}/>
+                <Tab value={0} label="GROUP" className={classes.tab}/>
                 <Tab value={1} label="TEAM" className={classes.tab}/>
                 <Tab value={2} label="LOCATION" className={classes.tab}/>
                 <Tab value={3} label="BUSINESS UNIT" className={classes.tab}/>
-                <Tab value={4} label="GROUP" className={classes.tab}/>
+                <Tab value={4} label="STAKEHOLDER" className={classes.tab}/>
               </Tabs>
             </Grid>
           </Grid>

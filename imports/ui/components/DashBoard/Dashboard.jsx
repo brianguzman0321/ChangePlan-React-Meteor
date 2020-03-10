@@ -30,6 +30,7 @@ import ChangeTemplate from "./Modals/ChangeTemplate";
 import {Activities} from "../../../api/activities/activities";
 import {Meteor} from "meteor/meteor";
 import {getTotalStakeholders} from '/imports/utils/utils';
+import {ChangeManagersNames} from "../../../utils/utils";
 
 
 const useStyles = makeStyles({
@@ -679,19 +680,6 @@ function Dashboard(props) {
 
     </div>
   )
-}
-
-function ChangeManagersNames(project) {
-  if (project.changeManagerDetails) {
-    let changeManagers = project.changeManagerDetails.map(changeManager => {
-      return `${changeManager.profile.firstName} ${changeManager.profile.lastName}`
-    });
-    if (changeManagers.length) {
-      return changeManagers.join(", ")
-    } else {
-      return "-"
-    }
-  }
 }
 
 function ManagersNames(project) {

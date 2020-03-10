@@ -72,6 +72,7 @@ const StakeHolder = (props) => {
       {!smallTable && <TableCell align="left" onClick={handleOpenModalDialog}>{row.totalTime}</TableCell>}
       {!smallTable && <TableCell align="center" onClick={handleOpenModalDialog}>{row.influenceLevel}</TableCell>}
       {!smallTable && <TableCell align="center" onClick={handleOpenModalDialog}>{row.supportLevel}</TableCell>}
+      {!smallTable && <TableCell align="center" onClick={handleOpenModalDialog}>{row.impactLevel ? row.impactLevel : '-'}</TableCell>}
       {!smallTable && <TableCell align="center" onClick={event => deleteCell(event, row)}>
         {/*<IconButton aria-label="edit" onClick={handleOpenModalDialog}>*/}
         {/*    <EditIcon />*/}
