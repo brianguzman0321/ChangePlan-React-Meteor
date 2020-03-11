@@ -28,6 +28,11 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid rgba(224, 224, 224, 1)',
     padding: '14px 30px 14px 30px',
   },
+  dueDate: {
+    border: '1px solid rgba(224, 224, 224, 1)',
+    padding: '14px 30px 14px 30px',
+    color: 'red',
+  },
   tableHead: {
     border: '1px solid rgba(224, 224, 224, 1)',
     color: 'black',
@@ -53,7 +58,7 @@ const useStyles = makeStyles(theme => ({
 function UpcomingActivitiesReport(props) {
   const classes = useStyles();
   const {match, allActivities, allStakeholders, company, allImpacts, isSuperAdmin, isAdmin, isChangeManager, isManager,
-    isActivityDeliverer, isActivityOwner} = props;
+    isActivityDeliverer, isActivityOwner, type} = props;
   const projectId = match.params.projectId;
   const [tableData, setTableData] = useState([]);
   const [selectedActivity, setSelectedActivity] = useState({});
@@ -62,9 +67,14 @@ function UpcomingActivitiesReport(props) {
 
   useEffect(() => {
     if (allActivities) {
-      const todayDate = new Date();
-      const nextTwoWeeksDate = new Date(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate() + 14);
-      const activities = allActivities.filter(activity => moment(moment(activity.dueDate).format()).isBetween(moment(todayDate).format(), moment(nextTwoWeeksDate).format()));
+      let todayDate = new Date();
+      let activities = [];
+      if (type === 'upcoming') {
+        const nextTwoWeeksDate = new Date(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate() + 14);
+        activities = allActivities.filter(activity => moment(moment(activity.dueDate).format()).isBetween(moment(todayDate).format(), moment(nextTwoWeeksDate).format()) && !activity.completed);
+      } else if (type === 'overdue') {
+        activities = allActivities.filter(activity => moment(activity.dueDate).isBefore(moment(todayDate)) && !activity.completed);
+      }
       setTableData(activities);
     }
   }, [allStakeholders, allActivities, projectId]);
@@ -86,7 +96,7 @@ function UpcomingActivitiesReport(props) {
         <Grid container direction="row" justify="center" alignItems="center">
           <Grid item xs={12}>
             <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
-              Next two weeks activities
+              {type === 'upcoming' ? 'Next two weeks activities' : 'Overdue Activities'}
             </Typography>
           </Grid>
           <Grid item xs={12} className={classes.gridTable}>
@@ -108,7 +118,7 @@ function UpcomingActivitiesReport(props) {
               <TableBody>
                 {tableData.map((activity, index) => {
                   return <TableRow key={index} onClick={() => editActivity(activity)}>
-                    <TableCell className={classes.tableCell} align="center" padding="none"
+                    <TableCell className={classes.dueDate} align="center" padding="none"
                                key={index}>{moment(activity.dueDate).format('DD-MMM-YY')}</TableCell>
                     <TableCell size="small" className={classes.tableCell} align="center">{activity.name}</TableCell>
                     <TableCell size="small" className={classes.tableCell} align="center">

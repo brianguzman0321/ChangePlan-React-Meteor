@@ -138,7 +138,11 @@ function AdminReports(props) {
                                    allActivities={allActivities} type={"activities"}/>
         </Grid>
         <Grid container direction="row" justify="space-between">
-          <AllUpcomingActivities match={props.match} allActivities={allActivities} allProjects={allProjects}
+          <AllUpcomingActivities match={props.match} allActivities={allActivities} allProjects={allProjects} type={'upcoming'}
+                                 company={company} isAdmin={isAdmin} isChangeManager={isChangeManager} allStakeholders={allStakeholders}/>
+        </Grid>
+        <Grid container direction="row" justify="space-between">
+          <AllUpcomingActivities match={props.match} allActivities={allActivities} allProjects={allProjects} type={'overdue'}
                                  company={company} isAdmin={isAdmin} isChangeManager={isChangeManager} allStakeholders={allStakeholders}/>
         </Grid>
       </Grid>

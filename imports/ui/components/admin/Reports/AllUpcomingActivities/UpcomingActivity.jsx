@@ -4,9 +4,17 @@ import moment from "moment";
 import TableRow from "@material-ui/core/TableRow";
 import React from "react";
 import {getPhase, getTotalStakeholders} from "../../../../../utils/utils";
+import {makeStyles} from "@material-ui/core";
+
+const useStyles = makeStyles(() => ({
+  dueDate: {
+    color: 'red',
+  },
+}));
 
 export default function UpcomingActivity(props) {
-  const {row, editActivity, completeActivity, labelId, company, allStakeholders} = props;
+  const {row, editActivity, completeActivity, labelId, company, allStakeholders, type} = props;
+  const classes = useStyles();
 
   return (
     <TableRow
@@ -25,7 +33,7 @@ export default function UpcomingActivity(props) {
           color="default"
         />
       </TableCell>
-      <TableCell align="center" component="th" id={labelId} scope="row">
+      <TableCell align="center" className={type === 'overdue' && classes.dueDate} component="th" id={labelId} scope="row">
         {moment(row.dueDate).format('DD-MMM-YYYY')}
       </TableCell>
       <TableCell align="left" style={{whiteSpace: 'nowrap'}}>{row.project && row.project}</TableCell>
@@ -37,7 +45,7 @@ export default function UpcomingActivity(props) {
       <TableCell
         align="left">{row.ownerInfo ? `${row.ownerInfo.profile.firstName} ${row.ownerInfo.profile.lastName}` : '-'}</TableCell>
       <TableCell align="left">{getTotalStakeholders(allStakeholders, row.stakeHolders)}</TableCell>
-      <TableCell align="left">{row.impacts && row.impacts.length}</TableCell>
+      <TableCell align="left">{row.impacts && row.impacts}</TableCell>
       <TableCell align="left">{row.stakeholdersFeedback ? 'Yes' : 'No'}</TableCell>
       <TableCell align="left">{row.cost}</TableCell>
       <TableCell align="left">{row.changeManagers && row.changeManagers.map(changeManager => {

@@ -158,7 +158,12 @@ function Reports(props) {
           <ImpactReport match={props.match} allStakeholders={allStakeholders} allImpacts={allImpacts}/>
         </Grid>
         <Grid container direction="row" justify="space-between">
-          <UpcomingActivitiesReport match={props.match} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} allActivities={allActivities} allImpacts={allImpacts}
+          <UpcomingActivitiesReport match={props.match} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} type={'upcoming'} allActivities={allActivities} allImpacts={allImpacts}
+                                    isChangeManager={isChangeManager} isManager={isManager} company={company} allStakeholders={allStakeholders}
+                                    isActivityDeliverer={isActivityDeliverer} isActivityOwner={isActivityOwner}/>
+        </Grid>
+        <Grid container direction="row" justify="space-between">
+          <UpcomingActivitiesReport match={props.match} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} type={'overdue'} allActivities={allActivities} allImpacts={allImpacts}
                                     isChangeManager={isChangeManager} isManager={isManager} company={company} allStakeholders={allStakeholders}
                                     isActivityDeliverer={isActivityDeliverer} isActivityOwner={isActivityOwner}/>
         </Grid>

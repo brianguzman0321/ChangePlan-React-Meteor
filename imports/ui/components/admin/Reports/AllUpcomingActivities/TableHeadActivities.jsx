@@ -23,11 +23,11 @@ const headCells = [
   {id: 'name', numeric: false, disablePadding: false, label: 'ACTIVITY'},
   {id: 'phase', numeric: false, disablePadding: false, label: 'CHANGE PHASE'},
   {id: 'time', numeric: true, disabledPadding: false, label: 'TIME AWAY FROM BAU'},
-  {id: 'activityDeliverer', numeric: false, disablePadding: false, label: 'DELIVERER'},
+  {id: 'deliverer', numeric: false, disablePadding: false, label: 'DELIVERER'},
   {id: 'owner', numeric: false, disabledPadding: false, label: 'OWNER'},
   {id: 'stakeholders', numeric: true, disabledPadding: false, label: 'STAKEHOLDERS'},
   {id: 'impacts', numeric: true, disabledPadding: false, label: 'IMPACTS ADDRESSED'},
-  {id: 'feedback', numeric: false, disablePadding: false, label: 'FEEDBACK'},
+  {id: 'stakeholdersFeedback', numeric: false, disablePadding: false, label: 'FEEDBACK'},
   {id: 'cost', numeric: true, disablePadding: false, label: 'COST'},
   {id: 'changeManager', numeric: false, disablePadding: false, label: 'CHANGE MANAGER/S'},
 ];

@@ -9,6 +9,7 @@ import moment from "moment";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import {_} from 'meteor/underscore';
+import MaterialTable from "material-table";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -16,11 +17,11 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(3),
   },
   paper: {
-    width: '100%',
+    width: '98%',
     marginBottom: theme.spacing(2),
   },
   table: {
-    minWidth: '80vw'
+    minWidth: '750px'
   },
   tableHead: {
     border: '1px solid rgba(224, 224, 224, 1)',
@@ -47,6 +48,7 @@ const useStyles = makeStyles(theme => ({
   },
   gridTable: {
     padding: '10px 24px 20px 24px',
+    overflowX: 'auto',
   },
   tab: {
     color: '#465563',
@@ -110,23 +112,47 @@ function TimeAndActivitiesReport(props) {
     }
   }, [allStakeholders, allActivities, projectId, selectedTab]);
 
+  const getName = () => {
+    switch (selectedTab) {
+      case 0:
+        return 'GROUP';
+      case 1:
+        return 'TEAM';
+      case 2:
+        return 'LOCATION';
+      case 3:
+        return 'BUSINESS UNIT';
+      case 4:
+        return 'STAKEHOLDER';
+      default:
+        break;
+    }
+  };
+
   const getTableHead = () => {
     const today = new Date();
     let date = {
-      weeks: []
+      weeks: [],
+      table: [{title: getName(), field: 'name', width: 200}]
     };
     const currentActivities = allActivities.filter(activity => activity.dueDate >= today && !activity.completed);
     const sortActivities = _.sortBy(currentActivities, 'dueDate');
     if (sortActivities.length > 0) {
       let startDueDate = new Date(sortActivities[0].dueDate);
       let endDueDate = new Date(sortActivities[sortActivities.length - 1].dueDate);
-      for (startDueDate; moment(startDueDate).isBefore(moment(endDueDate));startDueDate.setDate(startDueDate.getDate() + 7)) {
+      for (startDueDate; moment(startDueDate).isBefore(moment(endDueDate)); startDueDate.setDate(startDueDate.getDate() + 7)) {
         date.weeks.push({
           startDate: moment(moment(startDueDate)).startOf('isoWeek').toDate(),
           endDate: moment(moment(startDueDate)).endOf('isoWeek').toDate()
-        })
+        });
+
+        date.table.push({
+          title: `${moment(moment(moment(startDueDate)).startOf('isoWeek').toDate()).format('DD MMM')} - ${moment(moment(moment(startDueDate)).endOf('isoWeek').toDate()).format('DD MMM')}`,
+          field: `${moment(moment(moment(startDueDate)).startOf('isoWeek').toDate()).format('DD MMM')} - ${moment(moment(moment(startDueDate)).endOf('isoWeek').toDate()).format('DD MMM')}`,
+          width: 200
+        });
       }
-      setTableHeadData(date.weeks);
+      setTableHeadData(date.table);
       return date.weeks;
     }
   };
@@ -143,16 +169,17 @@ function TimeAndActivitiesReport(props) {
         const activities = allActivities.filter(activity => !_.isEmpty(_.intersection(ids, activity.stakeHolders)));
         const calculationActivity = [];
         weeks.forEach(week => {
-          calculationActivity.push(calculationActivities(week, activities))
+          const result = calculationActivities(week, activities);
+          calculationActivity[result.field] = result.weekActivities;
         });
-        return {name: name, info: calculationActivity};
+        return {name: name, ...calculationActivity};
       })
     }
   };
 
   const getTableDataGroup = (weeks, stakeholders, isGroup) => {
     let names = [];
-    if (weeks) {
+    if (weeks.length > 0) {
       stakeholders.forEach(stakeholder => {
         names.push(isGroup ? stakeholder.groupName : `${stakeholder.firstName} ${stakeholder.lastName}`)
       });
@@ -165,11 +192,12 @@ function TimeAndActivitiesReport(props) {
           ids = stakeholders.filter(stakeholder => `${stakeholder.firstName} ${stakeholder.lastName}` === name).map(stakeholder => stakeholder._id);
         }
         const activities = allActivities.filter(activity => !_.isEmpty(_.intersection(ids, activity.stakeHolders)));
-        const calculationActivity = [];
+        const calculationActivity = {};
         weeks.forEach(week => {
-          calculationActivity.push(calculationActivities(week, activities))
+          const result = calculationActivities(week, activities);
+          calculationActivity[result.field] = result.weekActivities;
         });
-        return {name: name, info: calculationActivity};
+        return {name: name, ...calculationActivity};
       })
     }
   };
@@ -186,7 +214,8 @@ function TimeAndActivitiesReport(props) {
       });
       weekActivities = totalTime < 60 ? totalTime + " mins" : parseFloat(totalTime / 60).toFixed(2) + " hrs";
     }
-    return {week: week, activities: weekActivities}
+    const field = `${moment(week.startDate).format('DD MMM')} - ${moment(week.endDate).format('DD MMM')}`;
+    return {field, weekActivities}
   };
 
   return (
@@ -212,29 +241,28 @@ function TimeAndActivitiesReport(props) {
             </Grid>
           </Grid>
           <Grid item xs={12} className={classes.gridTable}>
-            <Table className={classes.table}>
-              <TableHead>
-                <TableRow>
-                  <TableCell size="small" className={classes.tableHead} align="left">{nameTableHead}</TableCell>
-                  {tableHeadData.length > 0 && tableHeadData.map((week, index) => {
-                    return <TableCell className={classes.nameTableCell} align="center"
-                                      key={index}>{`${moment(week.startDate).format('DD MMM')} - ${moment(week.endDate).format('DD MMM')}`}</TableCell>
-                  })}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {tableData.length > 0 && tableData.map((data, index) => {
-                  return <TableRow key={index}>
-                    <TableCell className={classes.nameTableCell} align="left" padding="none"
-                               key={index}>{data.name}</TableCell>
-                    {data.info.map((info, index) => {
-                      return <TableCell padding="none" align="center" className={classes.tableCell}
-                                        key={index}>{info.week && ((info.activities !== 0 && info.activities !== '0 mins') ? info.activities : '-')}</TableCell>
-                    })}
-                  </TableRow>
-                })}
-              </TableBody>
-            </Table>
+            <MaterialTable columns={tableHeadData}
+                           data={tableData}
+                           options={{
+                             fixedColumns: {
+                               left: 1,
+                               right: 0
+                             },
+                             search: false,
+                             paging: false,
+                             showTitle: false,
+                             toolbar: false,
+                             draggable: false,
+                             sorting: false,
+                             cellStyle: {
+                               border: '1px solid rgba(224, 224, 224, 1)',
+                               whiteSpace: 'nowrap'
+                             },
+                             headerStyle: {
+                               border: '1px solid rgba(224, 224, 224, 1)',
+                               whiteSpace: 'nowrap'
+                             },
+                           }}/>
           </Grid>
         </Grid>
       </Paper>
