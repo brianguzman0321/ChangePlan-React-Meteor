@@ -101,7 +101,7 @@ const headCells = [
   {id: 'totalTime', numeric: true, disablePadding: false, label: 'TIME AWAY FROM BAU'},
   {id: 'influenceLevel', numeric: true, disablePadding: false, label: 'INFLUENCE'},
   {id: 'supportLevel', numeric: true, disablePadding: false, label: 'SUPPORT'},
-  {id: 'impact', numeric: false, disablePadding: false, label: 'Impact'},
+  {id: 'impact', numeric: false, disablePadding: false, label: 'IMPACT'},
   {id: 'action', numeric: true, disablePadding: false, label: 'ACTIONS'},
 ];
 

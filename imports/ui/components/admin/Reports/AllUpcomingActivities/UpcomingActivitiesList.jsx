@@ -8,25 +8,40 @@ import React, {useState} from "react";
 import UpcomingActivity from "./UpcomingActivity";
 import {EnhancedTableHead, EnhancedTableToolbar} from "./TableHeadActivities";
 import AddActivities from "../../../Activities/Modals/AddActivities";
+import {getPhase, getTotalStakeholders} from "../../../../../utils/utils";
 
-function desc(a, b, orderBy) {
-  if (orderBy === 'activityDeliverer') {
-    if (b.personResponsible.profile.lastName < a.personResponsible.profile.lastName) {
-      return -1;
-    }
-    if (b.personResponsible.profile.lastName > a.personResponsible.profile.lastName) {
-      return 1;
-    }
-    return 0;
-  } else {
-    if (b[orderBy] < a[orderBy]) {
-      return -1;
-    }
-    if (b[orderBy] > a[orderBy]) {
-      return 1;
-    }
-    return 0;
+function desc(a, b, orderBy, allStakeholders, company) {
+  switch (orderBy) {
+    case 'deliverer':
+      a[orderBy] = a.personResponsible ? a.personResponsible.profile.lastName : '';
+      b[orderBy] = b.personResponsible ? b.personResponsible.profile.lastName : '';
+      break;
+    case 'owner':
+      a[orderBy] = a.ownerInfo ? a.ownerInfo.profile.lastName : '';
+      b[orderBy] = b.ownerInfo ? b.ownerInfo.profile.lastName : '';
+      break;
+    case 'stakeholders':
+      a[orderBy] = getTotalStakeholders(allStakeholders, a.stakeHolders);
+      b[orderBy] = getTotalStakeholders(allStakeholders, b.stakeHolders);
+      break;
+    case 'phase':
+      a[orderBy] = getPhase(a.step, company);
+      b[orderBy] = getPhase(b.step, company);
+      break;
+    case 'changeManager':
+      a[orderBy] = a.changeManagers[0] ? a.changeManagers[0].profile.lastName : '';
+      b[orderBy] = b.changeManagers[0] ? b.changeManagers[0].profile.lastName : '';
+      break;
+    default:
+      break;
   }
+  if (b[orderBy] < a[orderBy]) {
+    return -1;
+  }
+  if (b[orderBy] > a[orderBy]) {
+    return 1;
+  }
+  return 0;
 }
 
 function stableSort(array, cmp) {
@@ -39,8 +54,8 @@ function stableSort(array, cmp) {
   return stabilizedThis.map(el => el[0]);
 }
 
-function getSorting(order, orderBy) {
-  return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
+function getSorting(order, orderBy, allStakeholdrs, company) {
+  return order === 'desc' ? (a, b) => desc(a, b, orderBy, allStakeholdrs, company) : (a, b) => -desc(a, b, orderBy, allStakeholdrs, company);
 }
 
 export default function UpcomingActivitiesList(props) {
@@ -73,6 +88,9 @@ export default function UpcomingActivitiesList(props) {
   const completeActivity = (activity) => {
     activity.completed = !activity.completed;
     delete activity.personResponsible;
+    delete activity.changeManagers;
+    delete activity.impacts;
+    delete activity.project;
     if (activity.completed) {
       activity.completedAt = activity.dueDate;
     } else {
@@ -126,13 +144,14 @@ export default function UpcomingActivitiesList(props) {
               stakeHolders={props.stakeHolders}
             />
             <TableBody>
-              {stableSort(rows, getSorting(order, orderBy))
+              {stableSort(rows, getSorting(order, orderBy, allStakeholders, company))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   const labelId = `enhanced-table-checkbox-${index}`;
                   return (
-                    <UpcomingActivity key={index} row={row} company={company} labelId={labelId}
-                                      editActivity={editActivity} completeActivity={completeActivity} allStakeholders={allStakeholders}/>
+                    <UpcomingActivity key={index} row={row} company={company} labelId={labelId} type={type}
+                                      editActivity={editActivity} completeActivity={completeActivity}
+                                      allStakeholders={allStakeholders}/>
                   );
                 })}
               {emptyRows > 0 && (

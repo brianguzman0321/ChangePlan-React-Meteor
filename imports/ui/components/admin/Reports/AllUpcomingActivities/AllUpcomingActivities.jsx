@@ -7,6 +7,7 @@ import {Impacts} from "../../../../../api/impacts/impacts";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import {Paper} from "@material-ui/core";
+import moment from "moment";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -28,6 +29,7 @@ const useStyles = makeStyles(theme => ({
   },
   gridTable: {
     padding: '10px 24px 20px 0px',
+    overflowX: 'auto',
   },
   topHeading: {
     fontSize: '1.8rem',
@@ -56,12 +58,12 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function AllUpcomingActivities(props) {
-  const {allActivities, allStakeholders, allProjects, allImpacts, company, match, isChangeManager, isAdmin} = props;
+  const {allActivities, allStakeholders, allProjects, allImpacts, company, match, isChangeManager, isAdmin, type} = props;
   const [activities, setActivities] = useState([]);
   const classes = useStyles();
 
   useEffect(() => {
-    if (allActivities && allProjects) {
+    if (allActivities && allProjects && allImpacts) {
       let currentActivities = [];
       let projects = [];
       if (isAdmin) {
@@ -70,17 +72,23 @@ function AllUpcomingActivities(props) {
         projects = allProjects.filter(project => project.changeManagers.includes(Meteor.userId()));
       }
       projects.forEach(project => {
-        const projectActivities = allActivities.filter(activity => activity.projectId === project._id && !activity.completed);
+        let projectActivities = [];
+        let today = new Date();
+        if (type === 'upcoming') {
+          projectActivities = allActivities.filter(activity => activity.projectId === project._id && !activity.completed && moment(activity.dueDate).isAfter(moment(today)));
+        } else if (type === 'overdue') {
+          projectActivities = allActivities.filter(activity => activity.projectId === project._id && !activity.completed && moment(activity.dueDate).isBefore(moment(today)));
+        }
         projectActivities.map(activity => {
           activity.project = project.name;
           activity.changeManagers = project.changeManagerDetails;
-          activity.impacts = allImpacts.filter(impact => impact.activities.includes(activity._id));
+          activity.impacts = allImpacts.filter(impact => impact.activities.includes(activity._id)).length;
         });
         currentActivities.push(...projectActivities);
       });
       setActivities(currentActivities);
     }
-  }, [isChangeManager, isAdmin, allActivities]);
+  }, [isChangeManager, isAdmin, allActivities, allProjects, allImpacts]);
 
   return (
     <div className={classes.root}>
@@ -88,12 +96,12 @@ function AllUpcomingActivities(props) {
         <Grid container direction="row" justify="space-between" alignItems="center">
           <Grid item xs={12}>
             <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
-              Upcoming activities
+              {type === 'upcoming' ? 'Upcoming activities' : 'Overdue Activities'}
             </Typography>
           </Grid>
           <Grid item xs={12} className={classes.gridTable}>
             <UpcomingActivitiesList rows={activities} classes={classes} match={match} isChangeManager={isChangeManager}
-                                    isAdmin={isAdmin} company={company} allStakeholders={allStakeholders}/>
+                                    isAdmin={isAdmin} company={company} allStakeholders={allStakeholders} type={type}/>
           </Grid>
         </Grid>
       </Paper>
