@@ -147,6 +147,17 @@ const useStyles = makeStyles(theme => ({
     boxShadow: 'none',
     fontWeight: 300,
   },
+  buttonImpact: {
+    background: 'transparent',
+    color: 'rgba(0, 0, 0, 0.87)',
+    '&:hover': {
+      background: 'rgba(0, 0, 0, 0.08)',
+      color: 'black'
+    },
+    paddingTop: '8px',
+    boxShadow: 'none',
+    fontWeight: 500,
+  },
   heading: {
     fontSize: theme.typography.pxToRem(14),
     flexBasis: '33.33%',
@@ -287,7 +298,7 @@ function AddActivities(props) {
   let {
     company, stakeHolders, local, project, match, edit, activity, list, isOpen, currentChangeManager, isActivityOwner,
     template, type, stakeHoldersTemplate, isSuperAdmin, isAdmin, isChangeManager, isManager, isActivityDeliverer, step,
-    impacts
+    impacts, isImpact, isOneImpact,
   } = props;
   const customActivityIcon = data.find(item => item.category === "Custom").iconSVG;
   const [open, setOpen] = useState(edit || isOpen || false);
@@ -977,15 +988,29 @@ function AddActivities(props) {
 
   const handleChangeTextField = e => (setCustomType(e.target.value));
 
+  const getClass = () => {
+    switch (step) {
+      case 1:
+        return classes.buttonAwareness;
+      case 2:
+        return classes.buttonPreparedness;
+      case 3:
+        return classes.buttonSupport;
+      case 4:
+        return classes.buttonInterest;
+      case 5:
+        return classes.buttonUnderstanding;
+      default:
+        return isImpact ? classes.buttonImpact : classes.button;
+    }
+  };
+
   return (
     <div className={classes.AddNewActivity}>
       {!list && !disabled ?
-        <Button variant="contained"
-                className={step === 4 ? classes.buttonInterest : step === 5 ? classes.buttonUnderstanding :
-                  step === 1 ? classes.buttonAwareness :
-                    step === 2 ? classes.buttonPreparedness :
-                      step === 3 ? classes.buttonSupport : classes.button}
-                fullWidth={true} onClick={handleClickOpen}
+        <Button variant={!isImpact ? "contained" : null} color={isImpact && 'inherit'}
+                className={getClass()}
+                fullWidth={!isImpact ? true : false} onClick={handleClickOpen}
         >
           Add Activity
         </Button> : null
@@ -1449,8 +1474,10 @@ function AddActivities(props) {
                   <Button color="primary" className={classes.buttonAsLink} onClick={handleShowImpacts}>
                     ADD/EDIT
                   </Button>
-                  <SelectImpacts handleClose={handleCloseImpacts} handleChange={handleSelectImpacts}
-                                 open={showImpacts} impacts={impacts} selectedImpacts={selectedImpacts}/>
+                  <SelectImpacts handleClose={handleCloseImpacts} handleChange={handleSelectImpacts} isOneImpact={isOneImpact}
+                                 open={showImpacts} impacts={impacts} selectedImpacts={selectedImpacts}
+                                 project={project} template={template} type={type} projectId={projectId}
+                                 templateId={templateId} match={match}/>
                 </Grid>
                 <br/>
                 <br/>

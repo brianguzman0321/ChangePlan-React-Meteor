@@ -80,7 +80,7 @@ function ImpactsTable(props) {
   let menus = config.menus;
   const [search, setSearch] = React.useState('');
   const classes = useStyles();
-  let {match, project, impactsProject, impactsTemplate, template, currentCompany, stakeholders, stakeholdersTemplate} = props;
+  let {match, project, impactsProject, impactsTemplate, template, currentCompany, stakeholders, stakeholdersTemplate, allActivities} = props;
   let {projectId, templateId} = match.params;
   project = project || {};
   template = template || {};
@@ -292,10 +292,9 @@ function ImpactsTable(props) {
               </Select>
             </FormControl>
             }
-
           </Grid>
         </Grid>
-        <ImpactsList className={classes.impactsList} template={template} company={currentCompany}
+        <ImpactsList className={classes.impactsList} template={template} company={currentCompany} activities={allActivities}
                          isChangeManager={isChangeManager} isActivityDeliverer={isActivityDeliverer} isActivityOwner={isActivityOwner}
                          isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isManager={isManager} projectId={projectId}
                          project={project} match={match} allStakeholders={type === 'project' ? stakeholders : stakeholdersTemplate}
@@ -344,6 +343,7 @@ const ImpactsPage = withTracker(props => {
     companies: Companies.find({}).fetch(),
     impactsProject: Impacts.find({projectId: projectId}).fetch(),
     impactsTemplates: Impacts.find({templateId: templateId}).fetch(),
+    allActivities: Activities.find({projectId: projectId}).fetch(),
     company,
     currentCompany,
   };

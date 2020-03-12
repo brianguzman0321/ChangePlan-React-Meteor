@@ -15,6 +15,8 @@ import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import SaveChanges from "../../Modals/SaveChanges";
+import Grid from "@material-ui/core/Grid";
+import ImpactsModal from "../../Impacts/Modals/ImpactsModal";
 
 const tableHeadStyle = makeStyles(theme => ({
   root: {
@@ -132,7 +134,6 @@ EnhancedTableToolbar.propTypes = {
 const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
-    margin: theme.spacing(3),
   },
   head: {
     background: 'red'
@@ -298,12 +299,13 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function SelectImpacts(props) {
   let {
-    impacts, handleClose, open, handleChange,
+    impacts, handleClose, open, handleChange, project, template, projectId, templateId, type, match, isImpact, isOneImpact
   } = props;
   const classes = useStyles();
   const [selectedImpacts, setSelectedImpacts] = React.useState(props.selectedImpacts || []);
   const [showModalDialog, setShowModalDialog] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
+  const [showAddImpact, setShowAddImpact] = useState(false);
 
   const handleOpenModalDialog = () => {
     if (isUpdated) {
@@ -332,35 +334,68 @@ export default function SelectImpacts(props) {
     setSelectedImpacts(ids);
   };
 
+  const handleOpenModal = () => {
+    setShowAddImpact(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowAddImpact(false);
+  };
+
   return (
     <div>
 
       <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
         <AppBar className={classes.appBar} color="default">
           <Toolbar>
-            <IconButton edge="start" color="inherit" onClick={isUpdated ? handleOpenModalDialog : handleClose}
-                        aria-label="close">
-              <CloseIcon/>
-            </IconButton>
-            <Typography variant="h6" className={classes.title}>
-              Select Impacts
-            </Typography>
-            <Typography variant="h6" className={classes.title}>
-              Selected {selectedImpacts && selectedImpacts.length}
-            </Typography>
-            <Button autoFocus color="inherit" onClick={updateImpacts}>
-              save
-            </Button>
+            <Grid container direction={'row'} alignItems={'center'} justify={'space-between'}>
+              <Grid item xs={2}>
+                <Grid container direction={'row'} alignItems={'center'} justify={'flex-start'}>
+                  <Grid item xs={1}>
+                    <IconButton edge="start" color="inherit" onClick={isUpdated ? handleOpenModalDialog : handleClose}
+                                aria-label="close">
+                      <CloseIcon/>
+                    </IconButton>
+                  </Grid>
+                  <Grid item xs={11}>
+                    <Typography variant="h6" className={classes.title}>
+                      Select Impacts
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid item xs={8}>
+                <Typography variant="h6" className={classes.title} style={{textAlign: 'center'}}>
+                  Selected {selectedImpacts && selectedImpacts.length}
+                </Typography>
+              </Grid>
+              <Grid item xs={2}>
+                <Grid container direction={'row'} alignItems={"center"} justify={'flex-end'}>
+                  {!isOneImpact && <Grid item xs={10} style={{textAlign: 'right'}}>
+                    <Button color="inherit" onClick={handleOpenModal}>
+                      Add Impact
+                    </Button>
+                  </Grid>}
+                  <Grid item xs={2}>
+                    <Button autoFocus color="inherit" onClick={updateImpacts}>
+                      save
+                    </Button>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
           </Toolbar>
         </AppBar>
         <ListImpacts impacts={impacts}
-                        selectImpacts={selectImpacts}
+                     selectImpacts={selectImpacts}
                      selectedImpacts={props.selectedImpacts} update={updateValue}/>
         <SaveChanges closeModalDialog={closeModalDialog}
                      handleClose={handleClose}
                      showModalDialog={showModalDialog}
                      handleSave={updateImpacts}
         />
+        <ImpactsModal currentType={type} project={project} isOneCreate={true} open={showAddImpact} handleModalClose={handleCloseModal}
+                      isNew={true} template={template} match={match} projectId={projectId} templateId={templateId}/>
       </Dialog>
     </div>
   );
