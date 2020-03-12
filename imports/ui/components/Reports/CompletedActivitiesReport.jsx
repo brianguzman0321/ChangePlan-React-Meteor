@@ -12,7 +12,7 @@ import AddActivities from "../Activities/Modals/AddActivities";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    width: '96%',
+    width: '98%',
     margin: theme.spacing(3),
   },
   paper: {

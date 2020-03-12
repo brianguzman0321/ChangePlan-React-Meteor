@@ -13,11 +13,11 @@ import MaterialTable from "material-table";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    width: '100%',
+    width: '98%',
     margin: theme.spacing(3),
   },
   paper: {
-    width: '98%',
+    width: '100%',
     marginBottom: theme.spacing(2),
   },
   table: {
@@ -133,7 +133,10 @@ function TimeAndActivitiesReport(props) {
     const today = new Date();
     let date = {
       weeks: [],
-      table: [{title: getName(), field: 'name', width: 200}]
+      table: [{title: getName(), field: 'name', width: 200, cellStyle: {
+        textAlign: 'left', border: '1px solid rgba(224, 224, 224, 1)',},
+        headerStyle: {
+          textAlign: 'left', border: '1px solid rgba(224, 224, 224, 1)', whiteSpace: 'nowrap',}}]
     };
     const currentActivities = allActivities.filter(activity => activity.dueDate >= today && !activity.completed);
     const sortActivities = _.sortBy(currentActivities, 'dueDate');
@@ -149,7 +152,11 @@ function TimeAndActivitiesReport(props) {
         date.table.push({
           title: `${moment(moment(moment(startDueDate)).startOf('isoWeek').toDate()).format('DD MMM')} - ${moment(moment(moment(startDueDate)).endOf('isoWeek').toDate()).format('DD MMM')}`,
           field: `${moment(moment(moment(startDueDate)).startOf('isoWeek').toDate()).format('DD MMM')} - ${moment(moment(moment(startDueDate)).endOf('isoWeek').toDate()).format('DD MMM')}`,
-          width: 200
+          width: 200,
+          cellStyle: {
+            textAlign: 'center', border: '1px solid rgba(224, 224, 224, 1)', whiteSpace: 'nowrap',
+          }, headerStyle: {
+            textAlign: 'center', border: '1px solid rgba(224, 224, 224, 1)', whiteSpace: 'nowrap',}
         });
       }
       setTableHeadData(date.table);
@@ -215,6 +222,7 @@ function TimeAndActivitiesReport(props) {
       weekActivities = totalTime < 60 ? totalTime + " mins" : parseFloat(totalTime / 60).toFixed(2) + " hrs";
     }
     const field = `${moment(week.startDate).format('DD MMM')} - ${moment(week.endDate).format('DD MMM')}`;
+    weekActivities = (weekActivities === 0 || weekActivities === '0 mins') ? '-' : weekActivities;
     return {field, weekActivities}
   };
 
@@ -254,10 +262,6 @@ function TimeAndActivitiesReport(props) {
                              toolbar: false,
                              draggable: false,
                              sorting: false,
-                             cellStyle: {
-                               border: '1px solid rgba(224, 224, 224, 1)',
-                               whiteSpace: 'nowrap'
-                             },
                              headerStyle: {
                                border: '1px solid rgba(224, 224, 224, 1)',
                                whiteSpace: 'nowrap'

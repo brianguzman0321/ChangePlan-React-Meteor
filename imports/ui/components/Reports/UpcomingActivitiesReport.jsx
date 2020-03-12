@@ -14,7 +14,7 @@ import {stringHelpers} from "../../../helpers/stringHelpers";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    width: '96%',
+    width: '98%',
     margin: theme.spacing(3),
   },
   paper: {
@@ -118,7 +118,7 @@ function UpcomingActivitiesReport(props) {
               <TableBody>
                 {tableData.map((activity, index) => {
                   return <TableRow key={index} onClick={() => editActivity(activity)}>
-                    <TableCell className={classes.dueDate} align="center" padding="none"
+                    <TableCell className={type === 'overdue' ? classes.dueDate : classes.tableCell} align="center" padding="none"
                                key={index}>{moment(activity.dueDate).format('DD-MMM-YY')}</TableCell>
                     <TableCell size="small" className={classes.tableCell} align="center">{activity.name}</TableCell>
                     <TableCell size="small" className={classes.tableCell} align="center">

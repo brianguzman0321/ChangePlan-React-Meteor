@@ -11,7 +11,7 @@ import {getPhase} from "../../../utils/utils";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    width: '96%',
+    width: '98%',
     margin: theme.spacing(3),
   },
   paper: {
