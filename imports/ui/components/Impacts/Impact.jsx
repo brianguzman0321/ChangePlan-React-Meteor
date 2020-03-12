@@ -82,7 +82,7 @@ const Impact = (props) => {
       <TableCell align="left" className={classes.cellInfo} onClick={event => deleteCell(event, row)}>
         <ImpactsModal isNew={false} projectId={projectId} impact={row} open={showEditModalDialog} match={match}
                              isChangeManager={isChangeManager} currentType={type} handleModalClose={handleCloseModalDialog} templateId={templateId}
-                             isAdmin={isAdmin} isSuperAdmin={isSuperAdmin}
+                             isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} project={project} template={template}
                              isManager={isManager} disabled={disabled}/>
         {(isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || (type === 'project' && (project && (isAdmin || isChangeManager))) ?
           <DeleteImpactModal impact={row} type={type} /> : null}

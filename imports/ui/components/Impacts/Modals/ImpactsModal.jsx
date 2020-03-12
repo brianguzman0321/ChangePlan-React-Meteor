@@ -28,7 +28,7 @@ import {Projects} from "../../../../api/projects/projects";
 import {TableCell, TableHead, TableRow} from "@material-ui/core";
 import Table from "@material-ui/core/Table";
 import {Activities} from "../../../../api/activities/activities";
-import SelectActivities from "./SelectActivities";
+import SelectActivities from "./SelectActivities/SelectActivities";
 import {getNumberOfStakeholders, getPhase} from "../../../../utils/utils";
 import SelectImpactType from "./SelectImpactType";
 
@@ -118,8 +118,8 @@ const DialogActions = withStyles(theme => ({
 
 function AddImpact(props) {
   let {
-    open, handleModalClose, currentType, stakeHoldersImpacts, isNew, company,
-    stakeHoldersTemplate, isSuperAdmin, isAdmin, isChangeManager, isManager, activities, projectId, templateId, impact
+    open, handleModalClose, currentType, stakeHoldersImpacts, isNew, company,projectId, templateId, impact, project, template,
+    stakeHoldersTemplate, isSuperAdmin, isAdmin, isChangeManager, isManager, activities, match, isOneCreate
   } = props;
   const classes = useStyles();
   const [peoples, setPeoples] = useState([]);
@@ -373,7 +373,9 @@ function AddImpact(props) {
                   Select Activities
                 </Button>
                 <SelectActivities handleClose={handleCloseActivities} handleChange={handleSelectActivities}
-                                  company={company}
+                                  company={company} projectId={projectId} project={project} template={template}
+                                  isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} match={match} isOneImpact={true}
+                                  isChangeManager={isChangeManager} isManager={isManager} isOneCreate={isOneCreate}
                                   open={showActivities} activities={activities}
                                   selectedActivities={selectedActivities}/>
               </Grid>

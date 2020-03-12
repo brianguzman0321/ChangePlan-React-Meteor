@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import {makeStyles} from '@material-ui/core/styles';
@@ -16,6 +16,10 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Tooltip from '@material-ui/core/Tooltip';
 import DeleteImpactModal from "./Modals/DeleteImpactModal";
 import Impact from "./Impact";
+import SelectActivities from "./Modals/SelectActivities/SelectActivities";
+import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
+import {withSnackbar} from "notistack";
 
 const tableHeadStyle = makeStyles(theme => ({
   root: {
@@ -167,7 +171,38 @@ const useToolbarStyles = makeStyles(theme => ({
 
 const EnhancedTableToolbar = props => {
   const classes = useToolbarStyles();
-  const {numSelected, selected, type} = props;
+  const {
+    numSelected, selected, type, company, projectId, project, template, isSuperAdmin, isAdmin, match,
+    isChangeManager, isManager, activities, impacts, enqueueSnackbar
+  } = props;
+  const [openSelectActivity, setOpenSelectActivity] = useState(false);
+
+  const handleOpenSelectActivity = () => {
+    setOpenSelectActivity(true);
+  };
+
+  const handleCloseSelectActivity = () => {
+    setOpenSelectActivity(false);
+  };
+
+  const updateImpacts = (selectedActivity) => {
+    let selectedImpacts = impacts.filter(impact => selected.includes(impact._id));
+    const sImpacts = selectedImpacts.map(impact => {
+      const newImpact = {...impact};
+      newImpact.activities = [...new Set([...impact.activities, ...selectedActivity])];
+      return newImpact;
+    });
+    const params = {
+      impacts: sImpacts
+    };
+    Meteor.call('impacts.updateMany', params, (err, res) => {
+      if (err) {
+        enqueueSnackbar(err.reason, {variant: 'error'})
+      } else {
+        enqueueSnackbar('Impacts successfully attached to Activities', {variant: 'success'})
+      }
+    })
+  };
 
   return (
     <Toolbar
@@ -175,15 +210,37 @@ const EnhancedTableToolbar = props => {
         [classes.highlight]: false,
       })}
     >
-      <Typography className={classes.title} variant="subtitle1">
-        {numSelected} selected
-      </Typography>
-      {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <DeleteImpactModal impact={selected} multiple={true} type={type}/>
-        </Tooltip>
-      ) : ''
-      }
+      <Grid container direction={'row'} alignItems={'center'} justify={'space-between'}>
+        <Grid item xs={6}>
+          <Typography className={classes.title} variant="subtitle1">
+            {numSelected} selected
+          </Typography>
+        </Grid>
+        {numSelected > 0 ? (
+          <Grid item xs={6}>
+            <Grid container direction={'row'} alignItems={'center'} justify={'flex-end'}>
+              <Grid item xs={11}  style={{textAlign: 'right'}} >
+                <Button color={'inherit'} onClick={handleOpenSelectActivity}>
+                  Attach Activity
+                </Button>
+              </Grid>
+              <Grid item xs={1}>
+                <Tooltip title="Delete">
+                  <DeleteImpactModal impact={selected} multiple={true} type={type}/>
+                </Tooltip>
+              </Grid>
+            </Grid>
+          </Grid>
+        ) : ''
+        }
+        <SelectActivities impact={selected} type={type} handleClose={handleCloseSelectActivity}
+                          handleChange={updateImpacts}
+                          company={company} projectId={projectId} project={project} template={template}
+                          isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} match={match} isOneImpact={true}
+                          isChangeManager={isChangeManager} isManager={isManager}
+                          open={openSelectActivity} activities={activities}
+                          selectedActivities={null}/>
+      </Grid>
     </Toolbar>
   );
 };
@@ -247,7 +304,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ImpactsList(props) {
+const ImpactsList = (props) => {
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
@@ -255,8 +312,10 @@ export default function ImpactsList(props) {
   const [page, setPage] = React.useState(0);
   const dense = false;
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  let {rows, match, isAdmin, isSuperAdmin, isManager, isChangeManager, isActivityDeliverer, isActivityOwner, template,
-    company, projectId, templateId, project, type, allStakeholders} = props;
+  let {
+    rows, match, isAdmin, isSuperAdmin, isManager, isChangeManager, isActivityDeliverer, isActivityOwner, template,
+    company, projectId, templateId, project, type, allStakeholders, activities
+  } = props;
   const disabled = (!(isAdmin && template && (template.companyId === company._id) || isSuperAdmin) && (projectId === undefined))
     || ((isManager || isActivityDeliverer || isActivityOwner) && !isChangeManager && !isAdmin && !isSuperAdmin);
 
@@ -303,8 +362,10 @@ export default function ImpactsList(props) {
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar numSelected={selected.length} selected={selected} type={type} project={project}
-                              template={template}/>
+        <EnhancedTableToolbar numSelected={selected.length} selected={selected} type={type} template={template}
+                              company={company} projectId={projectId} project={project} impacts={rows} enqueueSnackbar={props.enqueueSnackbar}
+                              isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} match={match} isManager={isManager}
+                              isChangeManager={isChangeManager} activities={activities}/>
         <div className={classes.tableWrapper}>
           <Table
             className={classes.table}
@@ -378,3 +439,5 @@ export default function ImpactsList(props) {
     </div>
   );
 }
+
+export default withSnackbar(ImpactsList);

@@ -78,9 +78,11 @@ export const update = new ValidatedMethod({
     },
     'impact.type': {
       type: String,
+      optional: true,
     },
     'impact.level': {
       type: String,
+      optional: true,
     },
     'impact.change': {
       type: String,
@@ -121,6 +123,21 @@ export const update = new ValidatedMethod({
   }
 });
 
+export const updateManyImpacts = new ValidatedMethod({
+  name: 'impacts.updateMany',
+  mixins: [LoggedInMixin],
+  checkLoggedInError: {
+    error: 'notLogged',
+    message: 'You need to be logged in to create people'
+  },
+  validate: null,
+  run({impacts}) {
+    _.each(impacts, function (impact) {
+      Impacts.update({_id: impact._id}, {$set: {activities: impact.activities}})
+    })
+  }
+});
+
 export const remove = new ValidatedMethod({
   name: 'impacts.remove',
   mixins: [LoggedInMixin],
@@ -146,6 +163,7 @@ export const remove = new ValidatedMethod({
 const IMPACTS_METHODS = _.pluck([
   insert,
   update,
+  updateManyImpacts,
   remove,
 ], 'name');
 
