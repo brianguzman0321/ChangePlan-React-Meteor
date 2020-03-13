@@ -23,6 +23,7 @@ import {withSnackbar} from "notistack";
 import {SurveysStakeholders} from "../../../api/surveysStakeholders/surveysStakeholders";
 import {SurveysActivityDeliverers} from "../../../api/surveysActivityDeliverers/surveysActivityDeliverers";
 import TimeAndActivitiesReport from "./TimeAndActivitiesReport";
+import StakeholderMatrixImpacts from "./StakeholderMatrixImpacts";
 
 const useStyles = makeStyles({
   root: {
@@ -155,6 +156,9 @@ function Reports(props) {
           <StakeholderMatrixReport match={props.match} allStakeholders={allStakeholders}/>
         </Grid>
         <Grid container direction="row" justify="space-between">
+          <StakeholderMatrixImpacts match={props.match} allStakeholders={allStakeholders} allImpacts={allImpacts}/>
+        </Grid>
+        <Grid container direction="row" justify="space-between">
           <ImpactReport match={props.match} allStakeholders={allStakeholders} allImpacts={allImpacts}/>
         </Grid>
         <Grid container direction="row" justify="space-between">
@@ -240,7 +244,7 @@ const ReportPage = withTracker(props => {
         $in: project && project.stakeHolders || []
       }
     }).fetch(),
-    allImpacts: Impacts.find({}).fetch(),
+    allImpacts: Impacts.find({projectId: projectId}).fetch(),
     allSurveysStakeholders: SurveysStakeholders.find({}).fetch(),
     allSurveysActivityDeliverers: SurveysActivityDeliverers.find({}).fetch(),
   }

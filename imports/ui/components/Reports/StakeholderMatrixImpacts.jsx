@@ -12,10 +12,10 @@ import 'chartjs-plugin-datalabels';
 import 'chartjs-plugin-annotation';
 import {Meteor} from "meteor/meteor";
 import 'chart.js';
-import {getTotalStakeholders }from "../../../utils/utils";
+import {calculationLevels, getTotalStakeholders} from "../../../utils/utils";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import {options} from '../../../utils/сonstants';
+import {optionsImpact} from '../../../utils/сonstants';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -57,12 +57,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function StakeholderMatrixReport(props) {
+function StakeholderMatrixImpacts(props) {
   const classes = useStyles();
-  const {match, allInfo, allStakeholders} = props;
+  const {match, allInfo, allStakeholders, allImpacts, measurement} = props;
   const projectId = match.params.projectId;
   const [matrixData, setMatrixData] = useState({labels: ['LOW', 'MEDIUM', 'HIGH'], datasets: []});
-  const [selectedTab, setSelectedTab] =useState(0);
+  const [selectedTab, setSelectedTab] = useState(0);
 
   useEffect(() => {
     setMatrixData({labels: ['LOW', 'MEDIUM', 'HIGH'], datasets: []});
@@ -100,52 +100,58 @@ function StakeholderMatrixReport(props) {
   }, [allStakeholders, allInfo, selectedTab]);
 
   const getDataMatrix = (currentStakeholders, type) => {
-    let tempData = {labels: ['LOW', 'MEDIUM', 'HIGH'], datasets: []};
-    const projectInfo = allInfo.filter(info => info.projectId === projectId);
-    let datasets = {};
-    if (projectInfo.length > 0) {
-      for (let i = 1; i <= 5; i++) {
-        for (let j = 1; j <= 5; j++) {
-          const currentInfo = projectInfo.filter(info => info.levelOfSupport === i && info.levelOfInfluence === j);
-          if (currentInfo.length > 0) {
+      let tempData = {labels: ['LOW', 'MEDIUM', 'HIGH'], datasets: []};
+      const projectInfo = allInfo.filter(info => info.projectId === projectId);
+      let datasets = {};
+      if (projectInfo.length > 0) {
+        for (let i = 1; i <= 5; i++) {
+          for (let j = 1; j <= 5; j++) {
+            const currentInfo = projectInfo.filter(info => info.levelOfInfluence === i);
             let arrayStakeholders = [];
             let arrayStakeholdersId = [];
+            let impactLevel = 0;
             currentInfo.forEach(info => {
-              const stakeholders = currentStakeholders.find(stakeholder => stakeholder._id === info.stakeholderId);
-              if (stakeholders) {
-                arrayStakeholdersId.push(stakeholders._id);
-                arrayStakeholders.push(stakeholders);
+              const stakeholder = currentStakeholders.find(stakeholder => stakeholder._id === info.stakeholderId);
+              if (stakeholder) {
+                const currentImpacts = allImpacts.filter(impact => impact.stakeholders.includes(stakeholder._id) && impact.projectId === projectId);
+                if (currentImpacts.length > 0) {
+                  impactLevel = calculationLevels('stakeholders', currentImpacts, true);
+                }
+                arrayStakeholdersId.push(stakeholder._id);
+                arrayStakeholders.push(stakeholder);
               }
             });
-            datasets = {
-              label: arrayStakeholders.length > 0 && arrayStakeholders,
-              selectedTab: type,
-              lengthStakeholders: getTotalStakeholders(allStakeholders, arrayStakeholdersId),
-              backgroundColor: 'rgba(0,112,192, 0.7)',
-              borderColor: 'rgba(0,112,192, 0.7)',
-              lineTension: 20,
-              borderCapStyle: 'butt',
-              borderDash: [],
-              borderJoinStyle: 'miter',
-              pointBorderColor: 'rgba(0,112,192, 0.7)',
-              pointBackgroundColor: '#fff',
-              pointBorderWidth: 1,
-              pointHoverRadius: 5,
-              pointHoverBackgroundColor: 'rgba(0,112,192, 0.7)',
-              pointHoverBorderColor: 'rgba(0,112,192, 0.7)',
-              pointHoverBorderWidth: 2,
-              pointRadius: 1,
-              pointHitRadius: 10,
-              data: [{x: i, y: j, r: getRadius(arrayStakeholdersId)}]
-            };
-            tempData.datasets.push(datasets);
-            tempData.datasets = [...new Set(tempData.datasets)];
+            if (j === impactLevel) {
+              datasets = {
+                label: arrayStakeholders.length > 0 && arrayStakeholders,
+                selectedTab: type,
+                lengthStakeholders: getTotalStakeholders(allStakeholders, arrayStakeholdersId),
+                backgroundColor: 'rgba(0,112,192, 0.7)',
+                borderColor: 'rgba(0,112,192, 0.7)',
+                lineTension: 20,
+                borderCapStyle: 'butt',
+                borderDash: [],
+                borderJoinStyle: 'miter',
+                pointBorderColor: 'rgba(0,112,192, 0.7)',
+                pointBackgroundColor: '#fff',
+                pointBorderWidth: 1,
+                pointHoverRadius: 5,
+                pointHoverBackgroundColor: 'rgba(0,112,192, 0.7)',
+                pointHoverBorderColor: 'rgba(0,112,192, 0.7)',
+                pointHoverBorderWidth: 2,
+                pointRadius: 1,
+                pointHitRadius: 10,
+                data: [{x: impactLevel, y: i, r: getRadius(arrayStakeholdersId)}]
+              };
+              tempData.datasets.push(datasets);
+              tempData.datasets = [...new Set(tempData.datasets)];
+            }
           }
         }
+        setMatrixData(tempData);
       }
-      setMatrixData(tempData);
     }
-  };
+  ;
 
   const getRadius = (stakeholders) => {
     let countStakeholders = getTotalStakeholders(allStakeholders, stakeholders);
@@ -171,7 +177,7 @@ function StakeholderMatrixReport(props) {
         <Grid container direction="row" justify="center" alignItems="center">
           <Grid item xs={6}>
             <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
-              Stakeholder matrix: Influence/Support
+              Stakeholder matrix: Influence/Impact
             </Typography>
           </Grid>
           <Grid item xs={6}>
@@ -186,9 +192,10 @@ function StakeholderMatrixReport(props) {
             </Tabs>
           </Grid>
           <div>
-            <Bubble data={matrixData} options={options} width={600} height={600} datasetKeyProvider={datasetKeyProvider}/>
+            <Bubble data={matrixData} options={optionsImpact} width={600} height={600}
+                    datasetKeyProvider={datasetKeyProvider}/>
           </div>
-          </Grid>
+        </Grid>
       </Paper>
     </Grid>
   )
@@ -201,6 +208,6 @@ const StakeholderMatrixPage = withTracker(props => {
   return {
     allInfo: AdditionalStakeholderInfo.find({projectId: projectId}).fetch(),
   };
-})(withRouter(StakeholderMatrixReport));
+})(withRouter(StakeholderMatrixImpacts));
 
 export default withSnackbar(StakeholderMatrixPage);
