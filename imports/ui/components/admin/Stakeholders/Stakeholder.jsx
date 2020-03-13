@@ -8,7 +8,7 @@ import EditStakeHolderPage from "../../StakeHolders/Modals/EditStakeHolder";
 const Stakeholder = (props) => {
   const {
     row, isItemSelected, labelId, setRowSelected, deleteCell, selected,
-    index, isAdmin, isSuperAdmin, isChangeManager, company, type,
+    index, isAdmin, isSuperAdmin, isChangeManager, company, type, projects, project
   } = props;
   const [showEditModalDialog, setShowEditModalDialog] = React.useState(false);
 
@@ -67,7 +67,8 @@ const Stakeholder = (props) => {
       <TableCell align="left" onClick={handleOpenModalDialog}>{row.businessUnit}</TableCell>
       <TableCell align="left" onClick={handleOpenModalDialog}>{row.totalTime}</TableCell>
       <TableCell align="center" onClick={event => deleteCell(event, row)}>
-          <DeleteStakeHolder stakeholder={row} type={type}/>
+        <DeleteStakeHolder stakeholder={row} type={type} project={project} projects={projects} isAdmin={isAdmin}
+                           isSuperAdmin={isSuperAdmin} isChangeManager={isChangeManager}/>
       </TableCell>
       <EditStakeHolderPage stakeholder={row} open={showEditModalDialog}
                            isChangeManager={isChangeManager} isManager={false}

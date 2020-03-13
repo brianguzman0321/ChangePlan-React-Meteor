@@ -54,6 +54,7 @@ const AllStakeholders = (props) => {
   const [isManager, setIsManager] = useState(false);
   const [filteringField, setFilteringField] = useState(0);
   const [filteringValue, setFilteringValue] = useState(0);
+  const [currentProjects, setCurrentProjects] = useState(allProjects ? allProjects : []);
   const [currentStakeholders, setCurrentStakeholders] = useState([]);
   const [defaultStakeholders, setDefaultStakeholders] = useState([]);
 
@@ -88,19 +89,22 @@ const AllStakeholders = (props) => {
 
   useEffect(() => {
     let stakeholders = [];
+    let projects = [];
     if (isAdmin) {
-      stakeholders = allStakeholders.filter(stakeholder => stakeholder.company === company._id)
+      stakeholders = allStakeholders.filter(stakeholder => stakeholder.company === company._id && !stakeholder.archived);
+      projects = allProjects.filter(project => project.companyId === company._id);
     }
     if (isChangeManager && !isAdmin) {
-      const projects = allProjects.filter(project => project.changeManagers.includes(Meteor.userId()));
+      projects = allProjects.filter(project => project.changeManagers.includes(Meteor.userId()));
       const projectStakeholders = [];
       projects.forEach(project => {
         projectStakeholders.push(...new Set(project.stakeHolders))
       });
-      stakeholders = allStakeholders.filter(stakeholder => projectStakeholders.includes(stakeholder._id))
+      stakeholders = allStakeholders.filter(stakeholder => projectStakeholders.includes(stakeholder._id) && !stakeholder.archived);
     }
+    setCurrentProjects(projects);
     getTotalTime(stakeholders, true)
-  }, [isAdmin, isChangeManager, allStakeholders, allAdditionalInfo]);
+  }, [isAdmin, isChangeManager, allStakeholders, allProjects, allAdditionalInfo]);
 
   const getNumberStakeholders = () => {
     let numberStakeholders = 0;
@@ -339,7 +343,7 @@ const AllStakeholders = (props) => {
             }
           </Grid>
           <AllStakeholderList className={classes.stakeHoldersList} company={company}
-                              isChangeManager={isChangeManager}
+                              isChangeManager={isChangeManager} projects={currentProjects}
                               isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isManager={isManager}
                               rows={currentStakeholders}/>
         </Grid>

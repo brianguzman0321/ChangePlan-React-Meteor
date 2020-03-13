@@ -1,7 +1,6 @@
-import React, {useEffect, useState} from "react";
-import {withStyles, makeStyles} from '@material-ui/core/styles';
+import React, {useState} from "react";
+import {makeStyles} from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import MuiDialogActions from '@material-ui/core/DialogActions';
 import TextField from '@material-ui/core/TextField';
 import {withSnackbar} from 'notistack';
 import 'date-fns';
@@ -37,6 +36,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function AddGroupStakeholders(props) {
+  let {type, projectId, templateId, project, template, handleCloseModal, projects} = props;
   const [name, setName] = useState('');
   const [businessUnit, setBusinessUnit] = useState('');
   const [numberOfPeople, setNumberOfPeople] = useState(0);
@@ -45,8 +45,8 @@ function AddGroupStakeholders(props) {
   const [supportLevel, setSupportLevel] = useState(0);
   const [influenceLevel, setInfluenceLevel] = useState(0);
   const [notes, setNotes] = useState('');
+  const [selectedProject, setSelectedProject] = useState(project);
 
-  let {type, projectId, templateId, project, template, handleCloseModal} = props;
   const classes = useStyles();
 
   const createStakeholderGroup = (e) => {
@@ -63,14 +63,14 @@ function AddGroupStakeholders(props) {
         team: team,
         businessUnit: businessUnit,
         notes: notes,
-        [type === 'project' ? 'projectId' : 'templateId']: type === 'project' ? projectId : templateId,
-        company: type === 'project' ? project.companyId : (template.companyId || '')
+        [type === 'project' ? 'projectId' : 'templateId']: type === 'project' ? selectedProject._id : templateId,
+        company: type === 'project' ? selectedProject.companyId : (template.companyId || '')
       }
     };
-    project && project.companyId && (params.people.company = project.companyId);
+    selectedProject && selectedProject.companyId && (params.people.company = selectedProject.companyId);
     if (template && template.companyId) {
       params.people.company = template.companyId
-    } else if (!project && template && !template.companyId) {
+    } else if (!selectedProject && template && !template.companyId) {
       params.people.company = '';
     }
     influenceLevel && (params.people.influenceLevel = influenceLevel);
@@ -81,7 +81,7 @@ function AddGroupStakeholders(props) {
       } else {
         const paramsInfo = {
           additionalStakeholderInfo: {
-            projectId: projectId,
+            projectId: selectedProject._id,
             stakeholderId: res,
             levelOfSupport: supportLevel || 0,
             levelOfInfluence: influenceLevel || 0,
@@ -104,6 +104,24 @@ function AddGroupStakeholders(props) {
     <div className={classes.createNewProject}>
       <form onSubmit={createStakeholderGroup}>
         <Grid container spacing={2}>
+          {!project &&
+          <Grid item xs={12}>
+            <FormControl className={classes.formControl} fullWidth={true}>
+              <InputLabel htmlFor="select-project">Project</InputLabel>
+              <Select
+                id="select-project"
+                value={selectedProject}
+                onChange={(e) => {
+                  setSelectedProject(e.target.value)
+                }}
+              >
+                {projects.map(project => {
+                  return <MenuItem key={project._id} value={project}>{project.name}</MenuItem>
+                })}
+              </Select>
+            </FormControl>
+            <br/>
+          </Grid>}
           <Grid item xs={6}>
             <TextField
               autoFocus

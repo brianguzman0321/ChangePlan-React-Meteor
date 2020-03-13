@@ -101,9 +101,10 @@ const DialogActions = withStyles(theme => ({
 function EditStakeHolder(props) {
   let {
     stakeholder, open, close, isAdmin, isSuperAdmin, isManager, isChangeManager, project, template, type, company,
-    projectId, disabled, additionalInfo
+    projectId, disabled, additionalInfo,
   } = props;
   const [firstName, setFirstName] = React.useState(stakeholder.firstName || '');
+  const [selectedProject, setSelectedProject] = useState(project || '');
   const [lastName, setLastName] = React.useState(stakeholder.lastName || '');
   const [jobTitle, setJobTitle] = React.useState(stakeholder.jobTitle ? stakeholder.jobTitle : stakeholder.role);
   const [businessUnit, setBusinessUnit] = React.useState(stakeholder.businessUnit);
@@ -154,7 +155,7 @@ function EditStakeHolder(props) {
         setCustomTag(customRole);
       }
     }
-  }, [roles]);
+  }, [roles, selectedProject]);
 
   const fetchStakeholderData = () => {
     setFirstName(stakeholder.firstName || '');
@@ -191,13 +192,13 @@ function EditStakeHolder(props) {
     getLevelsInfo();
     getNotes();
 
-    let projectPrams = {
+    let projectParams = {
       project: {
         stakeholderId: stakeholder._id
       }
     };
 
-    Meteor.call('projects.getStakeholderProjects', projectPrams, (err, res) => {
+    Meteor.call('projects.getStakeholderProjects', projectParams, (err, res) => {
       if (err) {
         props.enqueueSnackbar(err.reason, {variant: 'error'})
       } else {
@@ -237,7 +238,7 @@ function EditStakeHolder(props) {
   };
 
   const getLevelsInfo = () => {
-    const currentInfo = additionalInfo.find(info => info.projectId === projectId && info.stakeholderId === stakeholder._id);
+    const currentInfo = additionalInfo.find(info => info.projectId === selectedProject._id && info.stakeholderId === stakeholder._id);
     if (currentInfo) {
       setSupportLevel(currentInfo.levelOfSupport === 0 ? '' : currentInfo.levelOfSupport);
       setInfluenceLevel(currentInfo.levelOfInfluence === 0 ? '' : currentInfo.levelOfInfluence);
@@ -245,7 +246,7 @@ function EditStakeHolder(props) {
   };
 
   const getNotes = () => {
-    const currentInfo = additionalInfo.find(info => info.projectId === projectId && info.stakeholderId === stakeholder._id);
+    const currentInfo = additionalInfo.find(info => info.projectId === selectedProject._id && info.stakeholderId === stakeholder._id);
     if (!!currentInfo) {
       setNotes(currentInfo.notes || '')
     }
@@ -288,11 +289,7 @@ function EditStakeHolder(props) {
       params.people.firstName = firstName;
       params.people.lastName = lastName;
       params.people.email = email;
-      if (stakeholder.role) {
-        params.people.role = jobTitle;
-      } else {
-        params.people.jobTitle = jobTitle;
-      }
+      params.people.jobTitle = jobTitle;
       params.people.roleTags = roles;
     }
     if (groupName) {
@@ -303,11 +300,11 @@ function EditStakeHolder(props) {
       if (err) {
         props.enqueueSnackbar(err.reason, {variant: 'error'})
       } else {
-        const _additionalInfo = additionalInfo.find(info => info.projectId === projectId && info.stakeholderId === stakeholder._id);
+        const _additionalInfo = additionalInfo.find(info => info.projectId === selectedProject._id && info.stakeholderId === stakeholder._id);
         let methodName = 'additionalStakeholderInfo.insert';
         const paramsInfo = {
           additionalStakeholderInfo: {
-            projectId: projectId,
+            projectId: selectedProject._id,
             stakeholderId: stakeholder._id,
             levelOfSupport: supportLevel || 0,
             levelOfInfluence: loI || 0,
@@ -355,6 +352,11 @@ function EditStakeHolder(props) {
     }
   }, [open, stakeholder, additionalInfo]);
 
+  useEffect(() => {
+    getLevelsInfo();
+    getNotes();
+  }, [selectedProject]);
+
   return (
     <>
       <Dialog onClose={isUpdated ? handleOpenModalDialog : () => close()} aria-labelledby="customized-dialog-title"
@@ -365,6 +367,24 @@ function EditStakeHolder(props) {
         <form onSubmit={onSubmit}>
           <DialogContent>
             <Grid container spacing={2}>
+              {!project && (isAdmin || isChangeManager) &&
+              <Grid item xs={12}>
+                <FormControl className={classes.formControl} fullWidth={true}>
+                  <InputLabel id="select-project">Project</InputLabel>
+                  <Select
+                    id="select-project"
+                    value={selectedProject}
+                    onChange={(e) => {
+                      setSelectedProject(e.target.value)
+                    }}
+                  >
+                    {projects.map(_project => {
+                      return <MenuItem key={_project._id} value={_project}>{_project.name}</MenuItem>
+                    })}
+                  </Select>
+                </FormControl>
+                <br/>
+              </Grid>}
               {stakeholder && stakeholder.firstName &&
               <Grid item xs={12}>
                 <Grid container spacing={2}>
@@ -548,12 +568,10 @@ function EditStakeHolder(props) {
               </Grid>
               }
 
-
-              {(!isAdmin && !isSuperAdmin) &&
               <Grid item xs={12}>
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
-                    <Typography variant="subtitle1">PROJECT: {project.name.toUpperCase()}</Typography>
+                    <Typography variant="subtitle1">PROJECT: {selectedProject && selectedProject.name.toUpperCase()}</Typography>
                   </Grid>
 
                   <Grid item xs={6}>
@@ -662,9 +680,8 @@ function EditStakeHolder(props) {
                   </Grid>
                 </Grid>
               </Grid>
-              }
 
-              {(isAdmin || isSuperAdmin) &&
+              {(isAdmin || isSuperAdmin || (isChangeManager && !project)) &&
               <Grid item xs={12}>
                 <Grid item xs={12}>
                   <Typography gutterBottom variant={"subtitle1"}>
@@ -716,7 +733,7 @@ function EditStakeHolder(props) {
               <Table size={"small"}>
                 <TableHead>
                   <TableRow>
-                    {(isAdmin || isSuperAdmin) && <TableCell align={"left"}>Project name</TableCell>}
+                    {(isAdmin || isSuperAdmin || (isChangeManager && !project)) && <TableCell align={"left"}>Project name</TableCell>}
                     <TableCell align={"left"}>Due date</TableCell>
                     <TableCell align={"left"}>Change phase</TableCell>
                     <TableCell align={"left"}>Type</TableCell>
@@ -727,7 +744,7 @@ function EditStakeHolder(props) {
                 <TableBody>
                   {upcomingActivities.map((activity, index) => {
                     return <TableRow key={index}>
-                      {(isAdmin || isSuperAdmin) &&
+                      {(isAdmin || isSuperAdmin || (isChangeManager && !project)) &&
                       <TableCell>{activity.projectName && activity.projectName.toUpperCase()}</TableCell>}
                       <TableCell>{moment(activity.dueDate).format('DD-MMM-YY')}</TableCell>
                       <TableCell>{activity && getPhase(activity.step, company)}</TableCell>
@@ -750,7 +767,7 @@ function EditStakeHolder(props) {
               <Table size={"small"}>
                 <TableHead>
                   <TableRow>
-                    {(isAdmin || isSuperAdmin) && <TableCell align={"left"}>Project name</TableCell>}
+                    {(isAdmin || isSuperAdmin || (isChangeManager && !project)) && <TableCell align={"left"}>Project name</TableCell>}
                     <TableCell align={"left"}>Complete date</TableCell>
                     <TableCell align={"left"}>Change phase</TableCell>
                     <TableCell align={"left"}>Type</TableCell>
@@ -762,7 +779,7 @@ function EditStakeHolder(props) {
                 <TableBody>
                   {completedActivities.map((activity, index) => {
                     return <TableRow key={index}>
-                      {(isAdmin || isSuperAdmin) &&
+                      {(isAdmin || isSuperAdmin || (isChangeManager && !project)) &&
                       <TableCell>{activity.projectName && activity.projectName.toUpperCase()}</TableCell>}
                       <TableCell>{moment(activity.completedAt).format('DD-MMM-YY')}</TableCell>
                       <TableCell>{activity && getPhase(activity.step, company)}</TableCell>
@@ -787,7 +804,7 @@ function EditStakeHolder(props) {
               <Table size={"small"}>
                 <TableHead>
                   <TableRow>
-                    {(isAdmin || isSuperAdmin) && <TableCell align={"left"}>Project name</TableCell>}
+                    {(isAdmin || isSuperAdmin || (isChangeManager && !project)) && <TableCell align={"left"}>Project name</TableCell>}
                     <TableCell align={"left"}>Level</TableCell>
                     <TableCell align={"left"}>Change</TableCell>
                     <TableCell align={"left"}>Impact type</TableCell>
@@ -797,7 +814,7 @@ function EditStakeHolder(props) {
                 <TableBody>
                   {impacts.map((impact, index) => {
                     return <TableRow key={index}>
-                      {(isAdmin || isSuperAdmin) &&
+                      {(isAdmin || isSuperAdmin || (isChangeManager && !project)) &&
                       <TableCell>{impact.projectName && impact.projectName.toUpperCase()}</TableCell>}
                       <TableCell>{impact && impact.level[0].toUpperCase() + impact.level.slice(1)}</TableCell>
                       <TableCell>{impact && impact.change}</TableCell>
@@ -820,7 +837,7 @@ function EditStakeHolder(props) {
               <Table size="small" aria-label="a dense table">
                 <TableHead>
                   <TableRow>
-                    {(isAdmin || isSuperAdmin) && <TableCell align={"left"}>Project name</TableCell>}
+                    {(isAdmin || isSuperAdmin || (isChangeManager && !project)) && <TableCell align={"left"}>Project name</TableCell>}
                     <TableCell align={"left"}>Date</TableCell>
                     <TableCell align={"left"}>Survey type</TableCell>
                     <TableCell align={"left"}>Response</TableCell>
@@ -829,7 +846,7 @@ function EditStakeHolder(props) {
                 <TableBody>
                   {responseOnSurveys && responseOnSurveys.map((response, index) => {
                     return <TableRow key={index}>
-                      {(isAdmin || isSuperAdmin) &&
+                      {(isAdmin || isSuperAdmin || (isChangeManager && !project)) &&
                       <TableCell>{response.projectName && response.projectName.toUpperCase()}</TableCell>}
                       <TableCell component="th"
                                  scope="row">{response && moment(response.createdAt).format('DD-MMM-YY')}</TableCell>
@@ -844,14 +861,14 @@ function EditStakeHolder(props) {
             </Grid>
           </DialogContent>
           <DialogActions>
-            {(isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || (type === 'project' && (project && !isManager)) ?
+            {(isAdmin && template && (template.companyId === company._id)) || (isAdmin && type === 'project') || isSuperAdmin || (type === 'project' && (project && !isManager)) ?
               <Button onClick={isUpdated ? handleOpenModalDialog : () => close()} color="secondary">
                 Cancel
               </Button> :
               <Button onClick={() => close()} color="secondary">
                 OK
               </Button>}
-            {(isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || (type === 'project' && (project && !isManager && (isChangeManager || isAdmin))) ?
+            {(isAdmin && template && (template.companyId === company._id)) || (isAdmin && type === 'project')  || isSuperAdmin || (type === 'project' && (project && !isManager && (isChangeManager || isAdmin))) ?
               <Button color="primary" type="submit">
                 Update
               </Button> : null}

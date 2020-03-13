@@ -154,8 +154,8 @@ function AddValue(props) {
     }
     if (currentType === 'project') {
       let benefitsObj = {
-        description: name,
         stakeholders: peoples,
+        description: name,
       };
 
       let newBenefits = benefits;
@@ -187,8 +187,8 @@ function AddValue(props) {
       })
     } else if (currentType === 'template') {
       let benefitsObj = {
-        description: name,
         stakeholders: peoples,
+        description: name,
       };
 
       let newBenefits = benefits;

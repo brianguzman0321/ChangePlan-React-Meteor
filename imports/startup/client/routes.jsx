@@ -91,8 +91,8 @@ const Routes = appProps => (
         <Authenticated exact path="/projects/:projectId/reports" component={ReportsCard} {...appProps}/>
         <Authenticated exact path="/projects/:projectId/timeline" component={Timeline} {...appProps}/>
         <Authenticated exact path="/all-stakeholders" component={AllStakeholders} {...appProps}/>
-        <Authenticated exact path="/timeline" component={AllStakeholders} {...appProps}/>
-        <Authenticated exact path="/reports" component={AdminReportsPage} {...appProps}/>
+        <Authenticated exact path="/timeline-for-all-projects" component={AllStakeholders} {...appProps}/>
+        <Authenticated exact path="/all-reports" component={AdminReportsPage} {...appProps}/>
         <AdminRoute exact path="/admin/control-panel" component={MaterialTableDemo} {...appProps}/>
         <AdminRoute exact path="/admin/companies" component={CompaniesListPage} {...appProps}/>
         <Public path="/signup" component={Signup} {...appProps}/>

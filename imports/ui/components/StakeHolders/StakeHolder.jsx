@@ -74,16 +74,13 @@ const StakeHolder = (props) => {
       {!smallTable && <TableCell align="center" onClick={handleOpenModalDialog}>{row.supportLevel}</TableCell>}
       {!smallTable && <TableCell align="center" onClick={handleOpenModalDialog}>{row.impactLevel ? row.impactLevel : '-'}</TableCell>}
       {!smallTable && <TableCell align="center" onClick={event => deleteCell(event, row)}>
-        {/*<IconButton aria-label="edit" onClick={handleOpenModalDialog}>*/}
-        {/*    <EditIcon />*/}
-        {/*</IconButton>*/}
         <EditStakeHolderPage projectId={projectId} stakeholder={row} open={showEditModalDialog}
                              isChangeManager={isChangeManager}
                              close={handleCloseModalDialog} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin}
                              isManager={isManager} disabled={disabled}
                              template={template} project={project} company={company} type={type}/>
         {(isAdmin && template && (template.companyId === company._id)) || isSuperAdmin || (type === 'project' && (project && (isAdmin || isChangeManager))) ?
-          <DeleteStakeHolder stakeholder={row} project={project} type={type} template={template}/> : null}
+          <DeleteStakeHolder stakeholder={row} project={project} type={type} template={template} isChangeManager={isChangeManager} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin}/> : null}
       </TableCell>}
     </TableRow>
   )

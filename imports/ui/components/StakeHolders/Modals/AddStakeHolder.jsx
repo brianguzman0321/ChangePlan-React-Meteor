@@ -34,6 +34,8 @@ import Input from "@material-ui/core/Input";
 import Checkbox from "@material-ui/core/Checkbox";
 import ListItemText from "@material-ui/core/ListItemText";
 import AddGroupStakeholders from "./AddGroupStakeholders";
+import {Companies} from "../../../../api/companies/companies";
+import {Meteor} from "meteor/meteor";
 
 function TabPanel(props) {
   const {children, value, index, ...other} = props;
@@ -131,10 +133,12 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function AddStakeHolder(props) {
+  let {company, type, projectId, templateId, project, template, projects} = props;
   const [firstName, setFirstName] = React.useState('');
   const [lastName, setLastName] = React.useState('');
   const roleTags = ['SME', 'Sponsor', 'Leader', 'Business', 'SteerCo', 'ExecCo', 'Change champion/Ambassador', 'Customer'];
   const [roles, setRoles] = React.useState([]);
+  const [selectedProject, setSelectedProject] = React.useState(project);
   const [jobTitle, setJobTitle] = React.useState('');
   const [businessUnit, setBusinessUnit] = React.useState('');
   const [email, setEmail] = React.useState('');
@@ -161,7 +165,6 @@ function AddStakeHolder(props) {
   });
   const [openResultTable, setOpenResultTable] = React.useState(false);
 
-  let {company, type, projectId, templateId, project, template} = props;
   let both = false;
 
   const classes = useStyles();
@@ -213,7 +216,7 @@ function AddStakeHolder(props) {
   const checkEmail = (stakeholderEmail) => {
     const allPeoples = Peoples.find({}).fetch();
     const checkAllPeoples = allPeoples.find(people => people.email === stakeholderEmail);
-    const newStakeholder = Peoples.findOne({email: stakeholderEmail, company: project.companyId});
+    const newStakeholder = Peoples.findOne({email: stakeholderEmail, company: selectedProject.companyId});
     if (checkAllPeoples && newStakeholder) {
       setNewStakeholder({...newStakeholder});
       if (newStakeholder) {
@@ -309,12 +312,12 @@ function AddStakeHolder(props) {
     });
     const importedEmails = data1.map(csvRow => csvRow.email) || [];
 
-    if (importedEmails.length && (project.companyId || template)) {
+    if (importedEmails.length && (selectedProject.companyId || template)) {
       let peoples = {};
       let currentProject = {};
       if (type === 'project') {
         peoples = Peoples.find({
-          company: project.companyId
+          company: selectedProject.companyId
         }).fetch();
       } else if (type === 'template') {
         peoples = Peoples.find({
@@ -326,7 +329,7 @@ function AddStakeHolder(props) {
       const peoplesEmails = peoples.map(people => people.email);
 
       if (type === 'project') {
-        currentProject = Projects.findOne({_id: projectId});
+        currentProject = Projects.findOne({_id: selectedProject._id});
         delete currentProject.peoplesDetails;
         delete currentProject.changeManagerDetails;
         delete currentProject.managerDetails;
@@ -381,10 +384,10 @@ function AddStakeHolder(props) {
   const insertManyStakeholders = (params, tempTableDate = {}) => {
     if (type === 'project') {
       params.peoples.map(people => {
-        return people['projectId'] = projectId
+        return people['projectId'] = selectedProject._id
       });
       params.peoples.map(people => {
-        return people['company'] = project.companyId
+        return people['company'] = selectedProject.companyId
       });
     } else if (type === 'template') {
       params.peoples.map(people => {
@@ -403,12 +406,12 @@ function AddStakeHolder(props) {
           const people = params.peoples.filter(people => people.email === res.email);
           const paramsInfo = {
             additionalStakeholderInfo: {
-              projectId: projectId,
+              projectId: selectedProject._id,
               stakeholderId: stakeholder.id,
               levelOfSupport: people.supportLevel || 0,
               levelOfInfluence: people.influenceLevel || 0,
             }
-          }
+          };
           Meteor.call('additionalStakeholderInfo.insert', paramsInfo, (err, res) => {
             if (err) {
               props.enqueueSnackbar(err.reason, {variant: 'error'})
@@ -443,7 +446,7 @@ function AddStakeHolder(props) {
     e.preventDefault();
     const allPeoples = Peoples.find({}).fetch();
     const checkAllPeoples = allPeoples.find(people => people.email === email);
-    const newStakeholder = Peoples.findOne({email, company: project.companyId});
+    const newStakeholder = Peoples.findOne({email, company: selectedProject.companyId});
     if (checkAllPeoples && newStakeholder) {
       setNewStakeholder({...newStakeholder});
       if (newStakeholder) {
@@ -462,14 +465,14 @@ function AddStakeHolder(props) {
           email: email,
           team: team,
           roleTags: roles,
-          [type === 'project' ? 'projectId' : 'templateId']: type === 'project' ? projectId : templateId,
-          company: type === 'project' ? project.companyId : (template.companyId || '')
+          [type === 'project' ? 'projectId' : 'templateId']: type === 'project' ? selectedProject._id : templateId,
+          company: type === 'project' ? selectedProject.companyId : (template.companyId || '')
         }
       };
-      project && project.companyId && (params.people.company = project.companyId);
+      selectedProject && selectedProject.companyId && (params.people.company = selectedProject.companyId);
       if (template && template.companyId) {
         params.people.company = template.companyId
-      } else if (!project && template && !template.companyId) {
+      } else if (!selectedProject && template && !template.companyId) {
         params.people.company = '';
       }
       Meteor.call('peoples.insert', params, (err, res) => {
@@ -478,7 +481,7 @@ function AddStakeHolder(props) {
         } else {
           const paramsInfo = {
             additionalStakeholderInfo: {
-              projectId: projectId,
+              projectId: selectedProject._id,
               stakeholderId: res,
               levelOfSupport: supportLevel || 0,
               levelOfInfluence: influenceLevel || 0,
@@ -523,7 +526,7 @@ function AddStakeHolder(props) {
         if (_stakeholder.length > 0) {
           const paramsInfo = {
             additionalStakeholderInfo: {
-              projectId: projectId,
+              projectId: selectedProject._id,
               stakeholderId: stakeholder,
               levelOfSupport: _stakeholder.supportLevel || 0,
               levelOfInfluence: _stakeholder.influenceLevel || 0,
@@ -549,7 +552,7 @@ function AddStakeHolder(props) {
       });
     } else {
       if (type === 'project') {
-        const currentProject = Projects.findOne({_id: projectId});
+        const currentProject = Projects.findOne({_id: selectedProject._id});
 
         delete currentProject.peoplesDetails;
         delete currentProject.changeManagerDetails;
@@ -565,7 +568,7 @@ function AddStakeHolder(props) {
           };
           const paramsInfo = {
             additionalStakeholderInfo: {
-              projectId: projectId,
+              projectId: selectedProject._id,
               stakeholderId: stakeholder._id,
               levelOfSupport: supportLevel || 0,
               levelOfInfluence: influenceLevel || 0,
@@ -657,6 +660,24 @@ function AddStakeHolder(props) {
             <form onSubmit={onSubmit}>
               <TabPanel value={value} index={0}>
                 <Grid container spacing={2}>
+                  {!project &&
+                  <Grid item xs={12}>
+                    <FormControl className={classes.formControl} fullWidth={true}>
+                      <InputLabel htmlFor="select-project">Project</InputLabel>
+                      <Select
+                        id="select-project"
+                        value={selectedProject}
+                        onChange={(e) => {
+                          setSelectedProject(e.target.value)
+                        }}
+                      >
+                        {projects.map(project => {
+                          return <MenuItem key={project._id} value={project}>{project.name}</MenuItem>
+                        })}
+                      </Select>
+                    </FormControl>
+                    <br/>
+                  </Grid>}
                   <Grid item xs={6}>
                     <TextField
                       autoFocus
@@ -768,13 +789,13 @@ function AddStakeHolder(props) {
                         </MenuItem>}
 
                         {showInput && <TextField
-                            placeholder={"Enter role tag"}
-                            autoFocus
-                            fullWidth type={"text"}
-                            onKeyPress={(e) => {
-                              (e.key === 'Enter' ? handleChangeInput(e.target.value) : null)
-                            }}
-                          />}
+                          placeholder={"Enter role tag"}
+                          autoFocus
+                          fullWidth type={"text"}
+                          onKeyPress={(e) => {
+                            (e.key === 'Enter' ? handleChangeInput(e.target.value) : null)
+                          }}
+                        />}
                       </Select>
                     </FormControl>
                     <br/>
@@ -847,7 +868,7 @@ function AddStakeHolder(props) {
             </form>
 
             <TabPanel index={1} value={value}>
-              <AddGroupStakeholders project={project} template={template} type={type} projectId={projectId}
+              <AddGroupStakeholders project={selectedProject} template={template} type={type} projectId={projectId} projects={projects}
                                     templateId={templateId} handleCloseModal={handleCloseModal}/>
             </TabPanel>
             <TabPanel value={value} index={2}>
@@ -904,7 +925,9 @@ const AddStakeHolderPage = withTracker(props => {
   const {email, project} = props;
   Meteor.subscribe('findByEmail', email);
   Meteor.subscribe('findAllPeoples');
-  Meteor.subscribe('peoples', project.companyId);
+  Meteor.subscribe('companies');
+  const company = Companies.findOne({peoples: Meteor.userId()}) || '';
+  Meteor.subscribe('peoples', company._id);
   return {
     people: Peoples.find({email}).fetch(),
   };

@@ -106,7 +106,7 @@ export default function AllStakeholderList(props) {
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  let {rows, isAdmin, isSuperAdmin, isChangeManager, template, company, projectId, project, type} = props;
+  let {rows, isAdmin, isSuperAdmin, isChangeManager, template, company, projectId, project, type, projects} = props;
 
   const handleRequestSort = (event, property) => {
     const isDesc = orderBy === property && order === 'desc';
@@ -151,7 +151,9 @@ export default function AllStakeholderList(props) {
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar numSelected={selected.length} selected={selected} type={type} project={project} template={template}/>
+        <EnhancedTableToolbar numSelected={selected.length} isChangeManager={isChangeManager}
+                              isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
+                              selected={selected} type={type} project={project} template={template} projects={projects}/>
         <div className={classes.tableWrapper}>
           <Table
             className={classes.table}
@@ -177,7 +179,7 @@ export default function AllStakeholderList(props) {
                   const isItemSelected = isSelected(row._id);
                   const labelId = `enhanced-table-checkbox-${index}`;
                   return (
-                    <Stakeholder key={index}
+                    <Stakeholder key={index} project={project} projects={projects}
                       index={index} row={row} isItemSelected={isItemSelected}
                       labelId={labelId} setRowSelected={setRowSelected} deleteCell={deleteCell} selected={selected}
                       type={type} company={company} isChangeManager={isChangeManager}
