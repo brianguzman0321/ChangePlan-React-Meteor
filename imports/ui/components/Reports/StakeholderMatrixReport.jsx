@@ -13,6 +13,9 @@ import 'chartjs-plugin-annotation';
 import {Meteor} from "meteor/meteor";
 import 'chart.js';
 import {getTotalStakeholders }from "../../../utils/utils";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import {options} from '../../../utils/сonstants';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -35,6 +38,23 @@ const useStyles = makeStyles(theme => ({
   gridTable: {
     padding: '0px 24px 20px 24px',
   },
+  tab: {
+    color: '#465563',
+    fontWeight: 700,
+    borderRight: '0.1em solid #eaecef',
+    padding: 0,
+    cursor: 'pointer',
+    '&:selected': {
+      color: '#1890ff',
+      fontWeight: theme.typography.fontWeightMedium,
+    },
+    whiteSpace: 'nowrap',
+    minWidth: '50px',
+    minHeight: '10px'
+  },
+  tabs: {
+    minHeight: '25px',
+  },
 }));
 
 function StakeholderMatrixReport(props) {
@@ -42,6 +62,7 @@ function StakeholderMatrixReport(props) {
   const {match, allInfo, allStakeholders} = props;
   const projectId = match.params.projectId;
   const [matrixData, setMatrixData] = useState({labels: ['LOW', 'MEDIUM', 'HIGH'], datasets: []});
+  const [selectedTab, setSelectedTab] =useState(0);
 
   useEffect(() => {
     setMatrixData({labels: ['LOW', 'MEDIUM', 'HIGH'], datasets: []});
@@ -49,11 +70,36 @@ function StakeholderMatrixReport(props) {
 
   useEffect(() => {
     if (allStakeholders.length > 0 && allInfo.length > 0) {
-      getDataMatrix();
+      let currentStakeholders = [], type = 'group';
+      switch (selectedTab) {
+        case 0:
+          currentStakeholders = allStakeholders.filter(stakeholder => !stakeholder.firstName);
+          type = 'group';
+          break;
+        case 1:
+          currentStakeholders = allStakeholders.filter(stakeholder => stakeholder.team);
+          type = 'team';
+          break;
+        case 2:
+          currentStakeholders = allStakeholders.filter(stakeholder => stakeholder.location);
+          type = 'location';
+          break;
+        case 3:
+          currentStakeholders = allStakeholders.filter(stakeholder => stakeholder.businessUnit);
+          type = 'businessUnit';
+          break;
+        case 4:
+          currentStakeholders = allStakeholders.filter(stakeholder => !stakeholder.groupName);
+          type = 'firstName';
+          break;
+        default:
+          break;
+      }
+      getDataMatrix(currentStakeholders, type);
     }
-  }, [allStakeholders, allInfo]);
+  }, [allStakeholders, allInfo, selectedTab]);
 
-  const getDataMatrix = () => {
+  const getDataMatrix = (currentStakeholders, type) => {
     let tempData = {labels: ['LOW', 'MEDIUM', 'HIGH'], datasets: []};
     const projectInfo = allInfo.filter(info => info.projectId === projectId);
     let datasets = {};
@@ -65,7 +111,7 @@ function StakeholderMatrixReport(props) {
             let arrayStakeholders = [];
             let arrayStakeholdersId = [];
             currentInfo.forEach(info => {
-              const stakeholders = allStakeholders.find(stakeholder => stakeholder._id === info.stakeholderId);
+              const stakeholders = currentStakeholders.find(stakeholder => stakeholder._id === info.stakeholderId);
               if (stakeholders) {
                 arrayStakeholdersId.push(stakeholders._id);
                 arrayStakeholders.push(stakeholders);
@@ -73,6 +119,7 @@ function StakeholderMatrixReport(props) {
             });
             datasets = {
               label: arrayStakeholders.length > 0 && arrayStakeholders,
+              selectedTab: type,
               lengthStakeholders: getTotalStakeholders(allStakeholders, arrayStakeholdersId),
               backgroundColor: 'rgba(0,112,192, 0.7)',
               borderColor: 'rgba(0,112,192, 0.7)',
@@ -111,149 +158,7 @@ function StakeholderMatrixReport(props) {
       }
     });
     let radius = Math.floor(10 + (100 * countStakeholders) / totalStakeholders);
-
-
     return (radius > 65) ? 65 : radius
-  };
-
-  const getTicksLabel = (value) => {
-    switch (value) {
-      case 1:
-        return 'LOW';
-      case 2:
-        return '';
-      case 3:
-        return 'MEDIUM';
-      case 4:
-        return '';
-      case 5:
-        return 'HIGH';
-      default:
-        break;
-    }
-  };
-
-  const options = {
-    plugins: {
-      datalabels: {
-        color: 'white',
-        formatter: function (value, context) {
-          return context.chart.data.datasets[context.datasetIndex].lengthStakeholders;
-        },
-      },
-    },
-    maintainAspectRatio: false,
-    legend: {
-      display: false,
-    },
-    layout: {
-      padding: {
-        left: 30,
-        right: 70,
-        top: 70,
-        bottom: 70
-      }
-    },
-    scales: {
-      xAxes: [{
-        gridLines: {
-          color: 'gray'
-        },
-        scaleLabel: {
-          display: true,
-          labelString: 'SUPPORT',
-        },
-        ticks: {
-          autoSkip: false,
-          min: 1,
-          max: 5,
-          callback: (value) => getTicksLabel(value),
-        },
-      }],
-      yAxes: [{
-        gridLines: {
-          color: 'gray'
-        },
-        scaleLabel: {
-          display: true,
-          labelString: 'INFLUENCE',
-        },
-        ticks: {
-          min: 1,
-          max: 5,
-          stepSize: 1,
-          callback: (value) => getTicksLabel(value),
-        },
-      }],
-    },
-    tooltips: {
-      custom: function (tooltip) {
-        if (!tooltip) return;
-        tooltip.displayColors = false;
-      },
-      titleFontStyle: 400,
-      callbacks: {
-        title: function (tooltipItem, data) {
-          const labels = data.datasets[tooltipItem[0].datasetIndex].label;
-          const title = labels.map(stakeholder => {
-            return stakeholder.groupName ? `${stakeholder.groupName}`
-              : `${stakeholder.firstName} ${stakeholder.lastName}`
-          }).join('\n');
-          return title;
-        },
-        label: function () {
-          return;
-        }
-      }
-    },
-    annotation: {
-      drawTime: 'beforeDatasetsDraw',
-      annotations: [{
-        type: 'box',
-        id: 'a-box-1',
-        xScaleID: 'x-axis-0',
-        yScaleID: 'y-axis-0',
-        xMin: 1,
-        xMax: 3,
-        yMin: 1,
-        yMax: 3,
-        borderColor: 'rgba(169,209,142, 0.7)',
-        backgroundColor: 'rgba(169,209,142, 0.7)',
-      }, {
-        type: 'box',
-        id: 'a-box-2',
-        xScaleID: 'x-axis-0',
-        yScaleID: 'y-axis-0',
-        xMin: 3,
-        xMax: 5,
-        yMin: 1,
-        yMax: 3,
-        borderColor: 'rgba(255,242,204, 0.7)',
-        backgroundColor: 'rgba(255,242,204, 0.7)',
-      }, {
-        type: 'box',
-        id: 'a-box-3',
-        xScaleID: 'x-axis-0',
-        yScaleID: 'y-axis-0',
-        xMin: 1,
-        xMax: 3,
-        yMin: 3,
-        yMax: 5,
-        borderColor: 'rgba(255,203,102, 0.7)',
-        backgroundColor: 'rgba(255,203,102, 0.7)',
-      }, {
-        type: 'box',
-        id: 'a-box-4',
-        xScaleID: 'x-axis-0',
-        yScaleID: 'y-axis-0',
-        xMin: 3,
-        xMax: 5,
-        yMin: 3,
-        yMax: 5,
-        borderColor: 'rgba(255,124,128, 0.7)',
-        backgroundColor: 'rgba(255,124,128, 0.7)',
-      }],
-    },
   };
 
   const datasetKeyProvider = () => {
@@ -264,10 +169,21 @@ function StakeholderMatrixReport(props) {
     <Grid className={classes.root}>
       <Paper className={classes.paper}>
         <Grid container direction="row" justify="center" alignItems="center">
-          <Grid item xs={12}>
+          <Grid item xs={6}>
             <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
               Stakeholder matrix
             </Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Tabs centered value={selectedTab} variant="fullWidth"
+                  onChange={(e, newValue) => setSelectedTab(newValue)} indicatorColor="primary"
+                  textColor="primary" className={classes.tabs}>
+              <Tab value={0} label="GROUP" className={classes.tab}/>
+              <Tab value={1} label="TEAM" className={classes.tab}/>
+              <Tab value={2} label="LOCATION" className={classes.tab}/>
+              <Tab value={3} label="BUSINESS UNIT" className={classes.tab}/>
+              <Tab value={4} label="STAKEHOLDER" className={classes.tab}/>
+            </Tabs>
           </Grid>
           <div>
             <Bubble data={matrixData} options={options} width={600} height={600} datasetKeyProvider={datasetKeyProvider}/>
