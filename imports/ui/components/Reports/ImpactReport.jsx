@@ -176,7 +176,7 @@ function ImpactReport(props) {
       <Paper className={classes.paper}>
         <Grid container direction="row" justify="center" alignItems="center">
           <Grid container direction="row" justify="space-between" alignItems="center">
-            <Grid item xs={5}>
+            <Grid item xs={6}>
               <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
                 Impact heat map
               </Typography>
