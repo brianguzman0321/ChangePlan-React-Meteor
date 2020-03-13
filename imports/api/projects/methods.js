@@ -99,12 +99,20 @@ export const insert = new ValidatedMethod({
     },
     'project.benefits': {
       type: Array,
-      optional: true
+      optional: true,
     },
     'project.benefits.$': {
       type: Object,
-      blackbox: true,
       optional: true
+    },
+    'project.benefits.$.stakeholders': {
+      type: Array,
+    },
+    'project.benefits.$.stakeholders.$': {
+      type: String,
+    },
+    'project.benefits.$.description': {
+      type: String,
     },
     'project.startingDate': {
       type: Date,
@@ -206,8 +214,16 @@ export const update = new ValidatedMethod({
     },
     'project.benefits.$': {
       type: Object,
-      blackbox: true,
-      optional: true,
+      optional: true
+    },
+    'project.benefits.$.stakeholders': {
+      type: Array,
+    },
+    'project.benefits.$.stakeholders.$': {
+      type: String,
+    },
+    'project.benefits.$.description': {
+      type: String,
     },
     'project.risks': {
       type: Array,

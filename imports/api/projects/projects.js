@@ -98,7 +98,16 @@ Projects.schema = new SimpleSchema({
   },
   'benefits.$': {
     type: Object,
-    blackbox: true,
+    optional: true,
+  },
+  'benefits.$.stakeholders': {
+    type: Array,
+  },
+  'benefits.$.stakeholders.$': {
+    type: String,
+  },
+  'benefits.$.description': {
+    type: String,
   },
   risks: {
     type: Array,

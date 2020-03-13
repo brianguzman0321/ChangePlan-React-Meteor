@@ -10,6 +10,9 @@ import {LoggedInMixin} from 'meteor/tunifight:loggedin-mixin';
 import {Peoples} from './peoples.js';
 import {Projects} from '/imports/api/projects/projects';
 import {Templates} from "../templates/templates";
+import {Activities} from "../activities/activities";
+import {Impacts} from "../impacts/impacts";
+import {AdditionalStakeholderInfo} from "../additionalStakeholderInfo/additionalStakeholderInfo";
 
 export const insert = new ValidatedMethod({
   name: 'peoples.insert',
@@ -90,6 +93,11 @@ export const insert = new ValidatedMethod({
       type: Number,
       optional: true
     },
+    'people.archived': {
+      type: Boolean,
+      optional: true,
+      defaultValue: false,
+    }
   }).validator(),
   run({people}) {
     let {projectId, templateId} = people;
@@ -224,6 +232,10 @@ export const update = new ValidatedMethod({
       type: Number,
       optional: true
     },
+    'people.archived': {
+      type: Boolean,
+      optional: true,
+    },
   }).validator(),
   run({people}) {
     let {_id} = people;
@@ -269,7 +281,7 @@ export const remove = new ValidatedMethod({
     const {_id, _ids, projectId} = people;
     let update = {
       $pull: {}
-    }
+    };
     _ids && (update.$pull.stakeHolders = {$in: _ids});
     _id && (update.$pull.stakeHolders = _id);
     _ids ? Peoples.remove({
@@ -283,11 +295,80 @@ export const remove = new ValidatedMethod({
   }
 });
 
+export const archive = new ValidatedMethod({
+  name: 'peoples.archive',
+  mixins: [LoggedInMixin],
+  checkLoggedInError: {
+    error: 'notLogged',
+    message: 'You need to be logged in to remove people'
+  },
+  validate: new SimpleSchema({
+    'people': {
+      type: Object,
+    },
+    'people.ids': {
+      type: Array,
+      optional: true,
+    },
+    'people.ids.$': {
+      type: String,
+    }
+  }).validator(),
+  run({people}) {
+    const {ids} = people;
+    if (ids) {
+      Projects.update({}, {$pull: {stakeHolders: {$in: ids}}}, {multi: true});
+      Projects.update({'benefits.stakeholders': {$in: ids}}, {$pull: {'benefits.$.stakeholders': {$in: ids}}}, {multi: true});
+      Activities.update({}, {$pull: {stakeHolders: {$in: ids}}}, {multi: true});
+      Impacts.update({}, {$pull: {stakeholder: {$in: ids}}}, {multi: true});
+      Peoples.update({_id: {$in: ids}}, {$set: {archived: true}});
+    }
+  }
+});
+
+export const removeFromProject = new ValidatedMethod({
+  name: 'peoples.removeFromProject',
+  mixins: [LoggedInMixin],
+  checkLoggedInError: {
+    error: 'notLogged',
+    message: 'You need to be logged in to remove people'
+  },
+  validate: new SimpleSchema({
+    'people': {
+      type: Object,
+    },
+    'people.ids': {
+      type: Array,
+      optional: true,
+    },
+    'people.ids.$': {
+      type: String,
+    },
+    'people.projectId': {
+      type: String,
+      optional: true,
+    }
+  }).validator(),
+  run({people}) {
+    const {ids, projectId} = people;
+    if (ids) {
+      Projects.update({_id: projectId}, {$pull: {stakeHolders: {$in: ids}}});
+      Projects.update({_id: projectId, 'benefits.stakeholders': {$in: ids}}, {$pull: {'benefits.$.stakeholders': {$in: ids}}}, {multi: true});
+      Activities.update({projectId: projectId}, {$pull: {stakeHolders: {$in: ids}}}, {multi: true});
+      Impacts.update({projectId: projectId}, {$pull: {stakeholder: {$in: ids}}}, {multi: true});
+      AdditionalStakeholderInfo.update({projectId: projectId}, {$pull: {stakeholder: {$in: ids}}});
+    }
+  }
+});
+
+
 // Get list of all method names on Companies
 const PEOPLES_METHODS = _.pluck([
   insert,
   update,
   remove,
+  archive,
+  removeFromProject,
   insertMany
 ], 'name');
 

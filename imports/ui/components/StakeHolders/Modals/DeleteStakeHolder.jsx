@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -9,11 +9,31 @@ import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import {withSnackbar} from 'notistack';
 import {withRouter} from 'react-router';
+import FormControl from "@material-ui/core/FormControl";
+import InputLabel from "@material-ui/core/InputLabel";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
+import {makeStyles} from "@material-ui/core";
+import Grid from "@material-ui/core/Grid";
+
+const useStyles = makeStyles(() => ({
+  formControl: {
+    padding: '8px 24px',
+  },
+  button: {
+    whiteSpace: 'nowrap',
+  },
+  grid: {
+    textAlign: 'right',
+  },
+}));
 
 function DeleteStakeHolder(props) {
-  let {project, template, type} = props;
+  let {project, template, type, projects, isChangeManager, isAdmin, isSuperAdmin} = props;
   const [open, setOpen] = React.useState(props.open || false);
   const {stakeholder, multiple} = props;
+  const [projectId, setProjectId] = useState(project ? project._id : '');
+  const classes = useStyles();
 
   const handleClickOpen = (e) => {
     setOpen(true);
@@ -23,70 +43,56 @@ function DeleteStakeHolder(props) {
     setOpen(false);
   };
 
-  const removeStakeHolder = () => {
-    let params = {};
-    let methodName = '';
-    if (type === 'project') {
-      if (multiple) {
-        project.stakeHolders = project.stakeHolders.filter(_stakeholder => !stakeholder.includes(_stakeholder));
-      } else {
-        project.stakeHolders = project.stakeHolders.filter(_stakeholder => _stakeholder !== stakeholder._id);
+  const removeStakeholderFromCompany = () => {
+    let params = {
+      people: {
+        ids: [stakeholder._id],
       }
-
-      delete project.peoplesDetails;
-      delete project.changeManagerDetails;
-      delete project.managerDetails;
-
-      params = {
-        project
-      };
-      methodName = 'projects.update';
+    };
+    if (multiple) {
+      params.people.ids = stakeholder
     }
-    if (type === 'template') {
-      if (multiple) {
-        template.stakeHolders = template.stakeHolders.filter(_stakeholder => !stakeholder.includes(_stakeholder));
-      } else {
-        template.stakeHolders = template.stakeHolders.filter(_stakeholder => _stakeholder !== stakeholder);
-      }
-      params = {
-        template
-      };
-      methodName = 'templates.update'
-    }
-    Meteor.call(methodName, params, (err, res) => {
+    Meteor.call('peoples.archive', params, (err, res) => {
       if (err) {
         props.enqueueSnackbar(err.reason, {variant: 'error'})
       } else {
         props.enqueueSnackbar('Stakeholder Removed Successfully.', {variant: 'success'});
         setOpen(false);
       }
-    });
-    /*let params = {
-        people: {
-            _id: stakeholder._id,
-            projectId
-        }
-    };*/
-    /*        if(multiple){
-                params.people._ids = stakeholder
-            }
-            Meteor.call('peoples.remove', params, (err, res) => {
-                if (err) {
-                    props.enqueueSnackbar(err.reason, {variant: 'error'})
-                } else {
-                    props.enqueueSnackbar('Stakeholder Removed Successfully.', {variant: 'success'});
-                    setOpen(false);
-                }
-            })*/
+    })
+  };
+
+  const removeStakeholderFromProject = () => {
+    let params = {
+      people: {
+        ids: [stakeholder._id],
+        projectId: projectId
+      }
+    };
+    if (multiple) {
+      params.people.ids = stakeholder
+    }
+    Meteor.call('peoples.removeFromProject', params, (err, res) => {
+      if (err) {
+        props.enqueueSnackbar(err.reason, {variant: 'error'})
+      } else {
+        props.enqueueSnackbar('Stakeholder removed from project successfully.', {variant: 'success'});
+        setOpen(false);
+      }
+    })
+  };
+
+  const handleChange = (e) => {
+    setProjectId(e.target.value)
   };
 
   return (
     <>
       {multiple ? <IconButton aria-label="delete" onClick={handleClickOpen}>
-          <DeleteIcon/>
-        </IconButton> : <IconButton aria-label="delete" onClick={handleClickOpen}>
-          <DeleteIcon/>
-        </IconButton>
+        <DeleteIcon/>
+      </IconButton> : <IconButton aria-label="delete" onClick={handleClickOpen}>
+        <DeleteIcon/>
+      </IconButton>
       }
 
       <Dialog open={open}
@@ -104,12 +110,35 @@ function DeleteStakeHolder(props) {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={removeStakeHolder} color="secondary">
-            Remove
-          </Button>
+          <Grid container direction={'row'} alignItems={'center'} justify={'flex-end'}>
+            {projects && <Grid item xs={12} className={classes.formControl}><FormControl fullWidth={true}>
+              <InputLabel htmlFor="age-native-simple">Select project</InputLabel>
+              <Select
+                value={projectId}
+                onChange={(e) => handleChange(e)}
+              >
+                {projects.map((_project, index) => {
+                  return <MenuItem key={index} value={_project._id}>{_project.name}</MenuItem>
+                })}
+              </Select>
+            </FormControl>
+            </Grid>}
+            <Grid item xs={6} className={classes.grid}>
+              <Button onClick={removeStakeholderFromProject} disabled={!projectId} className={classes.button} color="secondary">
+                Remove from project
+              </Button>
+            </Grid>
+            <Grid item xs={4}>
+              <Button onClick={removeStakeholderFromCompany} disabled={isChangeManager && !isAdmin} className={classes.button} color="secondary">
+                Remove from company
+              </Button>
+            </Grid>
+            <Grid item xs={2}>
+              <Button onClick={handleClose} color="primary">
+                Cancel
+              </Button>
+            </Grid>
+          </Grid>
         </DialogActions>
       </Dialog>
     </>

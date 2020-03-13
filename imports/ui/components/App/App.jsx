@@ -149,6 +149,15 @@ function TopNavBar(props) {
     case 'reports':
       selectedTab = 5;
       break;
+    case 'all-stakeholders':
+      selectedTab = 11;
+      break;
+    case 'all-reports':
+      selectedTab = 10;
+      break;
+    case 'timeline-for-all-projects':
+      selectedTab = 12;
+      break;
     default:
       break;
   }
@@ -212,7 +221,7 @@ function TopNavBar(props) {
   useEffect(() => {
     switch (projectsTab) {
       case 10: {
-        props.history.push('/all-stakeholders');
+        props.history.push('/timeline-for-all-projects');
         break;
       }
       case 11: {
@@ -220,9 +229,25 @@ function TopNavBar(props) {
         break;
       }
       case 12: {
-        props.history.push(`/reports`);
+        props.history.push(`/all-reports`);
         break;
       }
+      default:
+        break;
+    }
+  }, [projectsTab]);
+
+  useEffect(() => {
+    switch (projectsTab) {
+      case 'timeline-for-all-projects':
+        selectedTab = 10;
+        break;
+      case 'all-stakeholders':
+        selectedTab = 11;
+        break;
+      case 'all-reports':
+        selectedTab = 12;
+        break;
       default:
         break;
     }
@@ -380,12 +405,13 @@ function TopNavBar(props) {
           </Tabs> : <div>
             <div className={classes.sectionDesktop}>
               {(isAdmin || isChangeManager) && <Tabs centered value={projectsTab} variant="fullWidth"
-                    onChange={(e, newValue) => setProjectsTab(newValue)} indicatorColor="primary"
-                    textColor="primary">
+                                                     onChange={(e, newValue) => setProjectsTab(newValue)}
+                                                     indicatorColor="primary"
+                                                     textColor="primary">
                 <Tab label="My Projects" value={0} style={{display: 'none'}}/>
                 <Tab label="Timeline" value={10} style={{display: 'none'}}/>
-                <Tab label="All Stakeholders" value={11} style={{display: 'none'}}/>
-                <Tab label="Reports" value={12} />
+                <Tab label="All Stakeholders" value={11}/>
+                <Tab label="Reports" value={12}/>
               </Tabs>}
               <IconButton
                 edge="end"

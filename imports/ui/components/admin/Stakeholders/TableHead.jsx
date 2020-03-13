@@ -13,7 +13,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import DeleteStakeHolder from "../../StakeHolders/Modals/DeleteStakeHolder";
 
 const headCells = [
-  {id: 'projectName', numeric: false, disablePadding: false, label: 'PROJECT'},
+  {id: 'projectName', numeric: false, disablePadding: false, label: 'PROJECTS'},
   {id: 'name', numeric: false, disablePadding: true, label: 'NAME'},
   {id: 'email', numeric: false, disablePadding: false, label: 'EMAIL'},
   {id: 'location', numeric: false, disablePadding: false, label: 'LOCATION'},
@@ -109,7 +109,7 @@ const useToolbarStyles = makeStyles(theme => ({
 
 export const EnhancedTableToolbar = props => {
   const classes = useToolbarStyles();
-  const {numSelected, selected, type, project, template} = props;
+  const {numSelected, selected, type, project, template, projects, isChangeManager, isAdmin, isSuperAdmin} = props;
 
   return (
     <Toolbar
@@ -122,7 +122,8 @@ export const EnhancedTableToolbar = props => {
       </Typography>
       {numSelected > 0 ? (
         <Tooltip title="Delete">
-          <DeleteStakeHolder stakeholder={selected} multiple={true} type={type} project={project} template={template}/>
+          <DeleteStakeHolder stakeholder={selected} multiple={true} type={type} project={project} template={template}
+                             projects={projects}  isChangeManager={isChangeManager} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin}/>
         </Tooltip>
       ) : ''
       }

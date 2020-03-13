@@ -96,6 +96,12 @@ Peoples.schema = new SimpleSchema({
     label: 'stakeholder notes',
     optional: true,
   },
+  archived: {
+    type: Boolean,
+    label: 'Remote Stakeholder Flag',
+    defaultValue: false,
+    optional: true,
+  },
   createdAt: {
     type: Date,
     label: 'Created At Company',
