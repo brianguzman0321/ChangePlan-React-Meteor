@@ -78,7 +78,9 @@ export default function SimpleMenu(props) {
                               handleClose={handleCloseDuplicateModal}
                               project={project}
                               company={company}/>
-            <EditProject open={modals.edit} handleModalClose={handleModalClose} project={project}/>
+            <EditProject open={modals.edit} handleModalClose={handleModalClose} project={project}
+                         isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager}
+                         isManger={isManager} isActivityOwner={isActivityOwner} isActivityDeliverer={isActivityDeliverer}/>
         </div>
     );
 }

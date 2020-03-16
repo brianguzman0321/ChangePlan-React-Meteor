@@ -25,6 +25,7 @@ import {Templates} from "../../../api/templates/templates";
 import {Meteor} from "meteor/meteor";
 import {Peoples} from "../../../api/peoples/peoples";
 import {getTotalStakeholders} from "../../../utils/utils";
+import Chip from "@material-ui/core/Chip";
 
 
 const useStyles = makeStyles(theme => ({
@@ -158,7 +159,27 @@ const useStyles = makeStyles(theme => ({
   },
   selected: {
     background: 'white'
-  }
+  },
+  active: {
+    backgroundColor: 'orange',
+    color: 'white',
+    marginBottom: '5px',
+  },
+  onHold: {
+    backgroundColor: 'lightblue',
+    color: 'darkslategrey',
+    marginBottom: '5px',
+  },
+  canceled: {
+    backgroundColor: 'grey',
+    color: 'white',
+    marginBottom: '5px',
+  },
+  completed: {
+    backgroundColor: 'limegreen',
+    color: 'white',
+    marginBottom: '5px',
+  },
 }));
 
 function ProjectCard(props) {
@@ -268,7 +289,7 @@ function ProjectCard(props) {
         }
       }
     }
-  }, [isActivityDeliverer, isActivityOwner, isManager, isChangeManager, isAdmin, isSuperAdmin]);
+  }, [isActivityDeliverer, isActivityOwner, isManager, isChangeManager, isAdmin, isSuperAdmin, projects]);
 
   useEffect(() => {
     checkRoles();
@@ -348,6 +369,10 @@ function ProjectCard(props) {
   const searchFilter = event => {
     setSearch(event.target.value);
     updateFilter('localProjects', 'search', event.target.value);
+  };
+
+  const getClass = (status) => {
+    return status !== 'on-hold' ? classes[status] : classes.onHold;
   };
 
   return (
@@ -439,6 +464,7 @@ function ProjectCard(props) {
                   title={projectName(project.name)}
                 />
                 <CardContent className={classes.cardContent}>
+                  {project.status && <Chip size="small" label={project.status[0].toUpperCase() + project.status.slice(1)} className={getClass(project.status)}/>}
                   <Grid container>
                     <Grid item xs={4}>
                       <Typography className={classes.title} gutterBottom>

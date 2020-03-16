@@ -140,6 +140,7 @@ function AddProject(props) {
     let params = {
       project: {
         name: name,
+        status: 'active',
         startingDate,
         endingDate,
         companyId: currentCompany,

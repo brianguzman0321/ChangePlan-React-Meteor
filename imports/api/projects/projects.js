@@ -34,6 +34,11 @@ Projects.schema = new SimpleSchema({
     type: String,
     label: 'company ID'
   },
+  status: {
+    type: String,
+    label: 'Project Status',
+    defaultValue: 'active',
+  },
   peoples: {
     type: Array,
     defaultValue: [],
