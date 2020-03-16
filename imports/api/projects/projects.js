@@ -136,6 +136,16 @@ Projects.schema = new SimpleSchema({
     type: Date,
     label: 'End Date',
   },
+  organization: {
+    type: String,
+    label: 'Project Organization',
+    optional: true,
+  },
+  function: {
+    type: String,
+    label: 'Project Function',
+    optional: true,
+  },
   createdAt: {
     type: Date,
     label: 'Created At Company',

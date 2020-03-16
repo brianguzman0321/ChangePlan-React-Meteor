@@ -55,6 +55,26 @@ export const insert = new ValidatedMethod({
       type: String,
       optional: true
     },
+    'company.organizationField': {
+      type: Boolean,
+    },
+    'company.organization': {
+      type: Array,
+      optional: true,
+    },
+    'company.organization.$': {
+      type: String,
+    },
+    'company.functionField': {
+      type: Boolean,
+    },
+    'company.function': {
+      type: Array,
+      optional: true,
+    },
+    'company.function.$': {
+      type: String,
+    }
   }).validator(),
   run({company}) {
     company.owner = this.userId;
@@ -75,7 +95,8 @@ export const update = new ValidatedMethod({
       type: Object
     },
     'company.name': {
-      type: String
+      type: String,
+      optional: true,
     },
     'company._id': {
       type: String
@@ -116,6 +137,28 @@ export const update = new ValidatedMethod({
       type: String,
       optional: true
     },
+    'company.organizationField': {
+      type: Boolean,
+      optional: true,
+    },
+    'company.organization': {
+      type: Array,
+      optional: true,
+    },
+    'company.organization.$': {
+      type: String,
+    },
+    'company.functionField': {
+      type: Boolean,
+      optional: true,
+    },
+    'company.function': {
+      type: Array,
+      optional: true,
+    },
+    'company.function.$': {
+      type: String,
+    }
   }).validator(),
   run({company}) {
     const {_id} = company;
