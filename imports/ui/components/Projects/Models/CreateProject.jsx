@@ -263,7 +263,7 @@ function AddProject(props) {
                         fullWidth
                       />
                     </Grid>
-                    <Grid item xs={5}>
+                    {company && company.organizationField &&<Grid item xs={5}>
                       <FormControl fullWidth={true}>
                         <InputLabel id={'select-project-status'}>Organization</InputLabel>
                         <Select id={'select-project-status'} value={organization} onChange={(e) => setOrganization(e.target.value)}>
@@ -272,7 +272,7 @@ function AddProject(props) {
                           )}
                         </Select>
                       </FormControl>
-                    </Grid>
+                    </Grid>}
                     {company && company.functionField && <Grid item xs={5}>
                       <FormControl fullWidth={true}>
                         <InputLabel id={'select-project-status'}>Function</InputLabel>
