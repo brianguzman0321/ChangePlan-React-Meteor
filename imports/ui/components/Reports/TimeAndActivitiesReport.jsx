@@ -1,9 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Grid from "@material-ui/core/Grid/Grid";
-import {Paper, Table, TableBody, TableCell} from "@material-ui/core";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
+import {Paper} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import moment from "moment";
 import Tabs from "@material-ui/core/Tabs";

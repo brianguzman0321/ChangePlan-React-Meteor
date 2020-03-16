@@ -8,7 +8,6 @@ import {DDPRateLimiter} from 'meteor/ddp-rate-limiter';
 import {LoggedInMixin} from 'meteor/tunifight:loggedin-mixin';
 
 import {Projects} from './projects.js';
-import {Activities} from "../activities/activities";
 
 export const insert = new ValidatedMethod({
   name: 'projects.insert',
@@ -126,6 +125,14 @@ export const insert = new ValidatedMethod({
     },
     'project.endingDate': {
       type: Date,
+    },
+    'project.organization': {
+      type: String,
+      optional: true,
+    },
+    'project.function': {
+      type: String,
+      optional: true,
     },
   }).validator(),
   run({project}) {
@@ -248,6 +255,14 @@ export const update = new ValidatedMethod({
     },
     'project.endingDate': {
       type: Date,
+    },
+    'project.organization': {
+      type: String,
+      optional: true,
+    },
+    'project.function': {
+      type: String,
+      optional: true,
     },
     'project.createdAt': {
       type: Date,

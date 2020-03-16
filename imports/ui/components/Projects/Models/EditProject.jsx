@@ -134,8 +134,6 @@ const DialogActions = withStyles(theme => ({
 function AddActivity(props) {
   let {company, open, handleModalClose, handleType, project, template, stakeHolders, local, match, edit, activity, isOpen, displayEditButton, isSuperAdmin, isAdmin, isChangeManager, isManager, isActivityDeliverer = false} = props;
   project = project || {}
-  const [deleteModal, setDeleteModal] = React.useState(false);
-  const [age, setAge] = React.useState(5);
   const [isNew, setIsNew] = React.useState(false);
   const [status, setStatus] = React.useState(project.status || 'Active');
   const [users, setUsers] = React.useState([]);
@@ -159,6 +157,8 @@ function AddActivity(props) {
   const [activityType, setActivityType] = React.useState({});
   const [startingDate, setStartingDate] = React.useState(project.startingDate || new Date());
   const [dueDate, setDueDate] = React.useState(project.endingDate || new Date());
+  const [func, setFunc] = React.useState(project.function);
+  const [organization, setOrganization] = React.useState(project.organization);
   const [expanded, setExpanded] = React.useState('panel1');
 
   const modalName = 'edit';
@@ -178,7 +178,9 @@ function AddActivity(props) {
     setDescription(project.name);
     setStartingDate(project.startingDate);
     setDueDate(project.endingDate);
-
+    setStatus(project.status);
+    setOrganization(project.organization);
+    setFunc(project.function);
   };
 
   const resetValues = () => {
@@ -186,7 +188,9 @@ function AddActivity(props) {
     setDueDate(new Date());
     setDescription('');
     setPerson(null);
-    setAge(5);
+    setStatus('');
+    setOrganization('');
+    setFunc('');
     setPeoples(stakeHolders.map(item => item._id));
     updateFilter('localStakeHolders', 'ids', stakeHolders.map(item => item._id));
 
@@ -212,6 +216,8 @@ function AddActivity(props) {
     project.startingDate = startingDate;
     project.status = status;
     project.endingDate = dueDate;
+    project.organization = organization;
+    project.function = func;
     project.managers = person && person.map(p => p.value) || [];
     let params = {
       project
@@ -360,6 +366,26 @@ function AddActivity(props) {
                         </Select>
                       </FormControl>
                     </Grid>}
+                    {company && company.organizationField && <Grid item xs={6}>
+                      <FormControl fullWidth={true}>
+                        <InputLabel id={'select-project-organization'}>Organization</InputLabel>
+                        <Select id={'select-project-organization'} value={organization} onChange={(e) => setOrganization(e.target.value)}>
+                          {company.organization && company.organization.map(_organization => {
+                            return <MenuItem value={_organization}>{_organization[0].toUpperCase() + _organization.slice(1)}</MenuItem>}
+                          )}
+                        </Select>
+                      </FormControl>
+                    </Grid>}
+                    {company && company.functionField && <Grid item xs={5}>
+                      <FormControl fullWidth={true}>
+                        <InputLabel id={'select-project-function'}>Function</InputLabel>
+                        <Select id={'select-project-function'} value={func} onChange={(e) => setFunc(e.target.value)}>
+                          {company.function && company.function.map(_func => {
+                            return <MenuItem value={_func}>{_func[0].toUpperCase() + _func.slice(1)}</MenuItem>}
+                          )}
+                        </Select>
+                      </FormControl>
+                    </Grid>}
                   </Grid>
                 </ExpansionPanelDetails>
               </ExpansionPanel>
@@ -467,13 +493,19 @@ const AddActivityPage = withTracker(props => {
     name: 'localStakeHolders'
   });
   Meteor.subscribe('companies');
-  let company = Companies.findOne() || {};
-  let companyId = company._id || {};
+  let allCompany = Companies.find({}).fetch();
+  let currentCompany = {};
+  if (allCompany) {
+    currentCompany = allCompany.find(company => company.peoples.includes(Meteor.userId()))
+  } else {
+    currentCompany = Companies.findOne() || {}
+  }
+  let companyId = currentCompany._id || {};
   Meteor.subscribe('peoples', companyId);
   return {
     stakeHolders: Peoples.find().fetch(),
     local,
-    company
+    company: currentCompany || {}
   };
 })(withRouter(AddActivity));
 

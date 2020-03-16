@@ -95,7 +95,7 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function AddProject(props) {
-  let {company, companies, isSuperAdmin} = props;
+  let {company, companies, allCompany, isSuperAdmin} = props;
   const [open, setOpen] = React.useState(false);
   const [isNew, setIsNew] = React.useState(false);
   const [users, setUsers] = React.useState([]);
@@ -103,9 +103,10 @@ function AddProject(props) {
   const [person, setPerson] = React.useState('');
   const [startingDate, setStartingDate] = React.useState(new Date());
   const [endingDate, setEndingDate] = React.useState(new Date());
+  const [organization, setOrganization] =React.useState('');
+  const [func, setFunc] =React.useState('');
   const [expanded, setExpanded] = React.useState('panel1');
-  const [currentCompany, setCurrentCompany] = React.useState('');
-
+  const [currentCompany, setCurrentCompany] = React.useState({});
 
   const classes = useStyles();
 
@@ -114,14 +115,16 @@ function AddProject(props) {
     setStartingDate(new Date());
     setName('');
     setPerson(null);
-    setCurrentCompany('');
+    setCurrentCompany({});
     setUsers([]);
+    setOrganization('');
+    setFunc('');
     setExpanded('panel1')
   };
 
   useEffect(() => {
     if (company && !isSuperAdmin) {
-      setCurrentCompany(company._id);
+      setCurrentCompany(company);
     }
   }, [company]);
 
@@ -143,7 +146,9 @@ function AddProject(props) {
         status: 'active',
         startingDate,
         endingDate,
-        companyId: currentCompany,
+        organization: organization,
+        function: func,
+        companyId: currentCompany._id,
         managers: person && person.map(p => p.value) || []
       }
     };
@@ -152,16 +157,16 @@ function AddProject(props) {
         props.enqueueSnackbar(err.reason, {variant: 'error'})
       } else {
         resetValues();
-        props.enqueueSnackbar('New Project Created Successfully.', {variant: 'success'})
+        props.enqueueSnackbar('New Project Created Successfully.', {variant: 'success'});
         setOpen(false);
       }
     })
   };
 
   const updateUsersList = () => {
-    let selectedCompany = company || {};
+    let selectedCompany = company._id || {};
     if (companies && currentCompany) {
-      selectedCompany = companies.find(_company => _company._id === currentCompany)
+      selectedCompany = allCompany.find(_company => _company._id === currentCompany._id)
     }
     Meteor.call(`users.getPersons`, {company: selectedCompany}, (err, res) => {
       if (err) {
@@ -244,17 +249,41 @@ function AddProject(props) {
                   </Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
-                  <TextField
-                    autoFocus
-                    margin="dense"
-                    id="name"
-                    label="Project Name"
-                    value={name}
-                    onChange={handleNameChange}
-                    required={true}
-                    type="text"
-                    fullWidth
-                  />
+                  <Grid container direction={'row'} alignItems={"center"} justify={"space-between"}>
+                    <Grid item xs={12}>
+                      <TextField
+                        autoFocus
+                        margin="dense"
+                        id="name"
+                        label="Project Name"
+                        value={name}
+                        onChange={handleNameChange}
+                        required={true}
+                        type="text"
+                        fullWidth
+                      />
+                    </Grid>
+                    <Grid item xs={5}>
+                      <FormControl fullWidth={true}>
+                        <InputLabel id={'select-project-status'}>Organization</InputLabel>
+                        <Select id={'select-project-status'} value={organization} onChange={(e) => setOrganization(e.target.value)}>
+                          {company.organization.map(organization => {
+                            return <MenuItem value={organization}>{organization[0].toUpperCase() + organization.slice(1)}</MenuItem>}
+                          )}
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    {company && company.functionField && <Grid item xs={5}>
+                      <FormControl fullWidth={true}>
+                        <InputLabel id={'select-project-status'}>Function</InputLabel>
+                        <Select id={'select-project-status'} value={func} onChange={(e) => setFunc(e.target.value)}>
+                          {company.function.map(func => {
+                            return <MenuItem value={func}>{func[0].toUpperCase() + func.slice(1)}</MenuItem>}
+                          )}
+                        </Select>
+                      </FormControl>
+                    </Grid>}
+                  </Grid>
                 </ExpansionPanelDetails>
               </ExpansionPanel>
               {isSuperAdmin &&
@@ -266,7 +295,7 @@ function AddProject(props) {
                 >
                   <Typography className={classes.heading}>Company</Typography>
                   <Typography className={classes.secondaryHeading}>
-                    {currentCompany && companies ? companies.find(_company => _company._id === currentCompany).name : 'Choose the company (required for Super Admin)'}
+                    {currentCompany && companies ? companies.find(_company => _company._id === currentCompany._id).name : 'Choose the company (required for Super Admin)'}
                   </Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
@@ -277,7 +306,7 @@ function AddProject(props) {
                         <Select value={currentCompany} id="selectCompany"
                                 onChange={(e) => setCurrentCompany(e.target.value)}>
                           {companies.map(_company => {
-                            return <MenuItem key={_company._id} value={_company._id}>
+                            return <MenuItem key={_company._id} value={_company}>
                               {_company.name}
                             </MenuItem>
                           })}
@@ -356,7 +385,7 @@ function AddProject(props) {
                                     isActivity={false} label={'Users'}/>
                     </Grid>
                     <Grid item={true} xs={5}>
-                      <AddNewPerson company={company}/>
+                      <AddNewPerson company={company._id}/>
                     </Grid>
                   </Grid>
                 </ExpansionPanelDetails>
