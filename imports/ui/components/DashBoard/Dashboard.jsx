@@ -5,7 +5,6 @@ import Typography from "@material-ui/core/Typography/Typography";
 import Button from "@material-ui/core/Button/Button";
 import {makeStyles} from "@material-ui/core";
 import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import {withTracker} from "meteor/react-meteor-data";
 import {Projects} from "../../../api/projects/projects";
@@ -31,6 +30,7 @@ import {Activities} from "../../../api/activities/activities";
 import {Meteor} from "meteor/meteor";
 import {getTotalStakeholders} from '/imports/utils/utils';
 import {ChangeManagersNames} from "../../../utils/utils";
+import Chip from "@material-ui/core/Chip";
 
 
 const useStyles = makeStyles({
@@ -124,7 +124,27 @@ const useStyles = makeStyles({
   helpTipText: {
     color: '#bebebe',
     fontSize: 16
-  }
+  },
+  active: {
+    backgroundColor: 'orange',
+    color: 'white',
+    marginBottom: '5px',
+  },
+  onHold: {
+    backgroundColor: 'lightblue',
+    color: 'darkslategrey',
+    marginBottom: '5px',
+  },
+  canceled: {
+    backgroundColor: 'grey',
+    color: 'white',
+    marginBottom: '5px',
+  },
+  completed: {
+    backgroundColor: 'limegreen',
+    color: 'white',
+    marginBottom: '5px',
+  },
 });
 
 function Dashboard(props) {
@@ -307,6 +327,10 @@ function Dashboard(props) {
     setIsOpen(false);
   };
 
+  const getClass = (status) => {
+    return status !== 'on-hold' ? classes[status] : classes.onHold;
+  };
+
   return (
     <div>
       <VisionModal open={modals.vision} handleModalClose={handleModalClose} project={project} index={index}
@@ -365,6 +389,8 @@ function Dashboard(props) {
               <b>Due date:</b> {moment(project.endingDate).format('DD-MMM-YY')}
             </Typography>
             }
+            {type === 'project' && project.status &&
+            <Chip label={project.status[0].toUpperCase() + project.status.slice(1)} className={getClass(project.status)}/>}
           </Grid>
           {type === 'project' && project &&
           <Grid item xs={4} style={{paddingLeft: 39}}>
@@ -384,6 +410,8 @@ function Dashboard(props) {
           {(type === 'project' && (project && (isSuperAdmin || isAdmin || isChangeManager))) &&
           <Grid item xs={2} onClick={handleClose.bind(null, 'edit')}>
             <EditProject open={modals.edit} handleModalClose={handleModalClose} project={project} template={template}
+                         isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager}
+                         isManger={isManager} isActivityOwner={isActivityOwner} isActivityDeliverer={isActivityDeliverer}
                          displayEditButton={true}/>
           </Grid>
           }

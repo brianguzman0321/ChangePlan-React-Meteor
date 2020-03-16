@@ -31,6 +31,9 @@ export const insert = new ValidatedMethod({
     'project.companyId': {
       type: String,
     },
+    'project.status': {
+      type: String,
+    },
     'project.peoples': {
       type: Array,
       optional: true
@@ -157,6 +160,9 @@ export const update = new ValidatedMethod({
       type: String,
     },
     'project.companyId': {
+      type: String,
+    },
+    'project.status': {
       type: String,
     },
     'project.peoples': {
