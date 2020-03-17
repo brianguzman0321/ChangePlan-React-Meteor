@@ -53,7 +53,7 @@ export const calculationLevels = (type, currentImpacts, isMatrix = false) => {
   }
 };
 
-export const ChangeManagersNames = (project) => {
+export const changeManagersNames = (project) => {
   if (project.changeManagerDetails) {
     let changeManagers = project.changeManagerDetails.map(changeManager => {
       return `${changeManager.profile.firstName} ${changeManager.profile.lastName}`

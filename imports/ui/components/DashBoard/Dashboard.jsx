@@ -29,7 +29,7 @@ import ChangeTemplate from "./Modals/ChangeTemplate";
 import {Activities} from "../../../api/activities/activities";
 import {Meteor} from "meteor/meteor";
 import {getTotalStakeholders} from '/imports/utils/utils';
-import {ChangeManagersNames} from "../../../utils/utils";
+import {changeManagersNames} from "../../../utils/utils";
 import Chip from "@material-ui/core/Chip";
 
 
@@ -400,7 +400,7 @@ function Dashboard(props) {
             <Typography gutterBottom>
               <b>{project.changeManagers && project.changeManagers.length > 1 ? "Change managers" : "Change manager"}:</b>
               &nbsp;&nbsp;&nbsp;&nbsp;
-              {ChangeManagersNames(project) || '-'}
+              {changeManagersNames(project) || '-'}
             </Typography>
             <Typography gutterBottom>
               <b>{project.managers && project.managers.length > 1 ? "Managers" : "Manager"}:</b>

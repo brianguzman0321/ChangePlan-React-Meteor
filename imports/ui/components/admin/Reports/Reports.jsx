@@ -13,6 +13,8 @@ import {Projects} from "../../../../api/projects/projects";
 import {withSnackbar} from "notistack";
 import TimeAndActivitiesReport from '../../Reports/TimeAndActivitiesReport';
 import AllUpcomingActivities from "./AllUpcomingActivities/AllUpcomingActivities";
+import {Impacts} from "../../../../api/impacts/impacts";
+import AllProjectsReport from "./ProjectReports/AllProjects";
 
 const useStyles = makeStyles({
   root: {},
@@ -58,7 +60,7 @@ const useStyles = makeStyles({
 
 function AdminReports(props) {
   let menus = [];
-  let {company, allActivities, allStakeholders, allProjects} = props;
+  let {company, allActivities, allStakeholders, allProjects, allImpacts} = props;
   const classes = useStyles();
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -145,6 +147,10 @@ function AdminReports(props) {
           <AllUpcomingActivities match={props.match} allActivities={allActivities} allProjects={allProjects} type={'overdue'}
                                  company={company} isAdmin={isAdmin} isChangeManager={isChangeManager} allStakeholders={allStakeholders}/>
         </Grid>
+        <Grid container direction="row" justify="space-between">
+          <AllProjectsReport allActivities={allActivities} allProjects={allProjects} allImpacts={allImpacts} allStakeholders={allStakeholders}
+                                 company={company} isAdmin={isAdmin} isChangeManager={isChangeManager} {...props}/>
+        </Grid>
       </Grid>
     </div>
   )
@@ -156,11 +162,13 @@ const AdminReportsPage = withTracker(props => {
   Meteor.subscribe('findAllPeoples');
   Meteor.subscribe('compoundProject');
   Meteor.subscribe('companies');
+  Meteor.subscribe('impacts.findAll');
   return {
     company: Companies.findOne({peoples: userId}),
     allActivities: Activities.find({}).fetch(),
     allStakeholders: Peoples.find({}).fetch(),
     allProjects: Projects.find({}).fetch(),
+    allImpacts: Impacts.find({}).fetch(),
   }
 })(withRouter(AdminReports));
 
