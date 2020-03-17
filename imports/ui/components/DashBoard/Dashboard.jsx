@@ -381,16 +381,19 @@ function Dashboard(props) {
           <Grid item xs={6}>
             <Typography variant="h4" className={classes.projectName}>
               {type === 'project' ? project && project.name : template && template.name}
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              {type === 'project' && project.status &&
+              <Chip label={project.status[0].toUpperCase() + project.status.slice(1)}
+                    className={getClass(project.status)}/>}
             </Typography>
-            {type === 'project' &&
-            <Typography gutterBottom style={{marginTop: 5}}>
-              <b>Start date:</b> {moment(project.startingDate).format('DD-MMM-YY')}
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <b>Due date:</b> {moment(project.endingDate).format('DD-MMM-YY')}
-            </Typography>
+            {type === 'project' && <Grid>
+              <Typography gutterBottom style={{marginTop: 5}}>
+                <b>Start date:</b> {moment(project.startingDate).format('DD-MMM-YY')}
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <b>Due date:</b> {moment(project.endingDate).format('DD-MMM-YY')}
+              </Typography>
+            </Grid>
             }
-            {type === 'project' && project.status &&
-            <Chip label={project.status[0].toUpperCase() + project.status.slice(1)} className={getClass(project.status)}/>}
           </Grid>
           {type === 'project' && project &&
           <Grid item xs={4} style={{paddingLeft: 39}}>
@@ -405,13 +408,25 @@ function Dashboard(props) {
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               {ManagersNames(project)}
             </Typography>
+            {company && company.organizationField && <Typography gutterBottom>
+              <b>Organization:</b>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              {project.organization ? project.organization : '-'}
+            </Typography>}
+            {company && company.functionField && <Typography gutterBottom>
+              <b>Function:</b>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              {project.function ? project.function : '-'}
+            </Typography>}
           </Grid>
           }
           {(type === 'project' && (project && (isSuperAdmin || isAdmin || isChangeManager))) &&
           <Grid item xs={2} onClick={handleClose.bind(null, 'edit')}>
             <EditProject open={modals.edit} handleModalClose={handleModalClose} project={project} template={template}
                          isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager}
-                         isManger={isManager} isActivityOwner={isActivityOwner} isActivityDeliverer={isActivityDeliverer}
+                         isManger={isManager} isActivityOwner={isActivityOwner}
+                         isActivityDeliverer={isActivityDeliverer}
                          displayEditButton={true}/>
           </Grid>
           }
@@ -665,7 +680,7 @@ function Dashboard(props) {
                           editBenefits(i, v)
                         }}>
                           <Typography className={classes.detailValues} gutterBottom>
-                          {stringHelpers.limitCharacters(v.description, 92)}
+                            {stringHelpers.limitCharacters(v.description, 92)}
                           </Typography>
                         </Grid>
                         <Grid item xs={2} onClick={(e) => {

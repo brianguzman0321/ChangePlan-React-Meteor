@@ -11,7 +11,6 @@ import {Typography} from "@material-ui/core";
 function FunctionSettings(props) {
   let {company, companies} = props;
   const [currentCompany, setCurrentCompany] = useState({});
-  const [functionField, setFunctionField] = useState(false);
 
   const [state, setState] = React.useState({
     columns: [
@@ -24,7 +23,6 @@ function FunctionSettings(props) {
     if (company) {
       let data = [...state.data];
       setCurrentCompany(company);
-      setFunctionField(company.functionField);
       data = company.function && company.function.map(func => {
         if (func) {
           return {
@@ -37,37 +35,12 @@ function FunctionSettings(props) {
     }
   }, [company]);
 
-  const handleSwitchChange = (e) => {
-    setFunctionField(e.target.checked);
-    let company = {
-      _id: currentCompany._id,
-      functionField: e.target.checked
-    };
-
-    Meteor.call('companies.update', {
-      company
-    }, (err, res) => {
-      if (err) {
-        props.enqueueSnackbar(err.reason, {variant: 'error'});
-        return false;
-      } else {
-        props.enqueueSnackbar('Function Settings Updated Successfully.', {variant: 'success'})
-      }
-    })
-  };
-
   return (
     <div>
       <Grid container direction={'row'} alignItems={'flex-start'} justify={'flex-start'}>
         <Grid item xs={12}>
-          <Typography>{`Function field ${functionField ? 'on' : 'off'}`}</Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <Switch checked={functionField} onChange={handleSwitchChange} value={functionField} color={"primary"}/>
-        </Grid>
-        <Grid item xs={12}>
           {
-            company && company.functionField ?
+            company ?
               <MaterialTable
                 title="Function Settings"
                 columns={state.columns}
