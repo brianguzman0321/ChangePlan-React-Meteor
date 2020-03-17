@@ -11,7 +11,6 @@ import {Typography} from "@material-ui/core";
 function OrganizationSettings(props) {
   let {company, companies} = props;
   const [currentCompany, setCurrentCompany] = useState({});
-  const [organizationField, setOrganizationField] = useState(false);
 
   const [state, setState] = React.useState({
     columns: [
@@ -24,7 +23,6 @@ function OrganizationSettings(props) {
     if (company) {
       let data = [...state.data];
       setCurrentCompany(company);
-      setOrganizationField(company.organizationField);
       data = company.organization && company.organization.map(organization => {
         if (organization) {
           return {
@@ -37,35 +35,9 @@ function OrganizationSettings(props) {
     }
   }, [company]);
 
-  const handleSwitchChange = (e) => {
-    setOrganizationField(e.target.checked);
-    let company = {
-      _id: currentCompany._id,
-      organizationField: e.target.checked
-    };
-
-    Meteor.call('companies.update', {
-      company
-    }, (err, res) => {
-      if (err) {
-        props.enqueueSnackbar(err.reason, {variant: 'error'});
-        return false;
-      } else {
-        props.enqueueSnackbar('Function Settings Updated Successfully.', {variant: 'success'})
-      }
-    })
-  };
-
   return (
     <div>
       <Grid container direction={'row'} alignItems={'flex-start'} justify={'flex-start'}>
-        <Grid item xs={12}>
-          <Typography>{`Organization field ${organizationField ? 'on' : 'off'}`}</Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <Switch checked={organizationField} onChange={handleSwitchChange} value={organizationField}
-                  color={"primary"}/>
-        </Grid>
         <Grid item xs={12}>
           {
             company && company.organizationField ?

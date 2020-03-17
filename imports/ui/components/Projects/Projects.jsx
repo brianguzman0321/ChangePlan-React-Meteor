@@ -456,7 +456,8 @@ function ProjectCard(props) {
                     e.stopPropagation();
                     e.preventDefault();
                   }}
-                  action={<ProjectMenus project={project} company={company} activities={activities} isManager={isManager}
+                  action={<ProjectMenus project={project} company={company} activities={activities}
+                                        isManager={isManager}
                                         isChangeManager={isChangeManager} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin}
                                         isActivityOwner={isActivityOwner} isActivityDeliverer={isActivityDeliverer}/>}
                   classes={classes1}
@@ -464,8 +465,10 @@ function ProjectCard(props) {
                   title={projectName(project.name)}
                 />
                 <CardContent className={classes.cardContent}>
-                  {project.status && <Chip size="small" label={project.status[0].toUpperCase() + project.status.slice(1)} className={getClass(project.status)}/>}
-                  <Grid container>
+                  {project.status &&
+                  <Chip size="small" label={project.status[0].toUpperCase() + project.status.slice(1)}
+                        className={getClass(project.status)}/>}
+                  <Grid container direction={"row"} alignItems={"center"} justify={"flex-start"}>
                     <Grid item xs={4}>
                       <Typography className={classes.title} gutterBottom>
                         STAKEHOLDERS
@@ -491,12 +494,28 @@ function ProjectCard(props) {
                       </Typography>
                     </Grid>
 
+                    <Grid item xs={4}>
+                      <Typography variant="body2" component="p" className={classes.bottomText}>
+                        {project.changeManagers.length > 1 ? "CHANGE MANAGERS" : "CHANGE MANAGER"}
+                        <br/>
+                        {ChangeManagersNames(project)}
+                      </Typography>
+                    </Grid>
+                    {company.organizationField && project.organization && <Grid item xs={4}>
+                      <Typography variant={"body2"} component="p" className={classes.bottomText}>
+                        ORGANIZATION:
+                        <br/>
+                        {project.organization && project.organization[0].toUpperCase() + project.organization.slice(1)}
+                      </Typography>
+                    </Grid>}
+                    {company.functionField && project.function && <Grid item xs={4}>
+                      <Typography variant={"body2"} component="p" className={classes.bottomText}>
+                        FUNCTION:
+                        <br/>
+                        {project.function && project.function[0].toUpperCase() + project.function.slice(1)}
+                      </Typography>
+                    </Grid>}
                   </Grid>
-                  <Typography variant="body2" component="p" className={classes.bottomText}>
-                    {project.changeManagers.length > 1 ? "CHANGE MANAGERS" : "CHANGE MANAGER"}
-                    <br/>
-                    {ChangeManagersNames(project)}
-                  </Typography>
                 </CardContent>
               </Card>
             </Grid>
