@@ -501,14 +501,14 @@ function ProjectCard(props) {
                         {ChangeManagersNames(project)}
                       </Typography>
                     </Grid>
-                    {company.organizationField && project.organization && <Grid item xs={4}>
+                    {company && company.organizationField && project.organization && <Grid item xs={4}>
                       <Typography variant={"body2"} component="p" className={classes.bottomText}>
                         ORGANIZATION:
                         <br/>
                         {project.organization && project.organization[0].toUpperCase() + project.organization.slice(1)}
                       </Typography>
                     </Grid>}
-                    {company.functionField && project.function && <Grid item xs={4}>
+                    {company && company.functionField && project.function && <Grid item xs={4}>
                       <Typography variant={"body2"} component="p" className={classes.bottomText}>
                         FUNCTION:
                         <br/>
