@@ -500,7 +500,7 @@ const AddActivityPage = withTracker(props => {
   } else {
     currentCompany = Companies.findOne() || {}
   }
-  let companyId = currentCompany._id || {};
+  let companyId = currentCompany && currentCompany._id || {};
   Meteor.subscribe('peoples', companyId);
   return {
     stakeHolders: Peoples.find().fetch(),
