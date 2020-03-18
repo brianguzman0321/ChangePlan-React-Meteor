@@ -40,7 +40,7 @@ const Project = (props) => {
                  className={row.impacts === 0 ? classes.zeroCell : classes.tableCellPadding}>{row.impacts}</TableCell>
       <TableCell align="center" padding={"checkbox"} onClick={() => getProjectPage(row._id)}
                  className={row.activities === '0 scheduled' ? classes.zeroCell : classes.tableCellPadding}>{row.activities}</TableCell>
-      <TableCell align="center" padding={"checkbox"} className={row.overdue !== '-' ? classes.tableCellPadding : classes.zeroCell}
+      <TableCell align="center" padding={"checkbox"} className={row.overdue === '-' ? classes.tableCellPadding : classes.zeroCell}
                  onClick={() => getProjectPage(row._id)}>{row.overdue}</TableCell>
       <TableCell align="center" padding={"checkbox"} className={classes.tableCellPadding}
                  onClick={() => getProjectPage(row._id)}>{row.timeConsumed}</TableCell>
