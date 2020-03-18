@@ -20,30 +20,45 @@ const Project = (props) => {
       key={row._id || index}
       selected={isItemSelected}
     >
-      <TableCell align={"left"} onClick={() => getProjectPage(row._id)}>{row.status}</TableCell>
-      <TableCell align="left" component="th" id={labelId} scope="row" onClick={() => getProjectPage(row._id)}>
+      <TableCell align={"left"} padding={"checkbox"} className={classes.tableCellPadding}
+                 onClick={() => getProjectPage(row._id)}>{row.status[0].toUpperCase() + row.status.slice(1)}</TableCell>
+      <TableCell align="left" padding={"checkbox"} className={classes.tableCellPadding} component="th" id={labelId}
+                 scope="row" onClick={() => getProjectPage(row._id)}>
         {moment(row.startingDate).format('DD/M/YY')}
       </TableCell>
-      <TableCell align="left" onClick={() => getProjectPage(row._id)}>{row.name}</TableCell>
+      <TableCell align="left" padding={"checkbox"} className={classes.tableCellPadding}
+                 onClick={() => getProjectPage(row._id)}>{row.name}</TableCell>
       {company.organizationField &&
-      <TableCell align="left" onClick={() => getProjectPage(row._id)}>{row.organization}</TableCell>}
+      <TableCell align="left" padding={"checkbox"} className={classes.tableCellPadding}
+                 onClick={() => getProjectPage(row._id)}>{row.organization}</TableCell>}
       {company.functionField &&
-      <TableCell align="left" onClick={() => getProjectPage(row._id)}>{row.function}</TableCell>}
-      <TableCell align="center" onClick={() => getProjectPage(row._id)}>{row.people}</TableCell>
-      <TableCell align="center" onClick={() => getProjectPage(row._id)}>{row.impacts}</TableCell>
-      <TableCell align="center" onClick={() => getProjectPage(row._id)}>{row.activities}</TableCell>
-      <TableCell align="center" className={row.overdue !== '-' && classes.overdue}
+      <TableCell align="left" padding={"checkbox"} className={classes.tableCellPadding}
+                 onClick={() => getProjectPage(row._id)}>{row.function}</TableCell>}
+      <TableCell align="center" padding={"checkbox"} onClick={() => getProjectPage(row._id)}
+                 className={row.people === '-' ? classes.zeroCell : classes.tableCellPadding}>{row.people === '-' ? 0 : row.people}</TableCell>
+      <TableCell align="center" padding={"checkbox"} onClick={() => getProjectPage(row._id)}
+                 className={row.impacts === 0 ? classes.zeroCell : classes.tableCellPadding}>{row.impacts}</TableCell>
+      <TableCell align="center" padding={"checkbox"} onClick={() => getProjectPage(row._id)}
+                 className={row.activities === '0' ? classes.zeroCell : classes.tableCellPadding}>{row.activities}</TableCell>
+      <TableCell align="center" padding={"checkbox"} className={classes.zeroCell}
                  onClick={() => getProjectPage(row._id)}>{row.overdue}</TableCell>
-      <TableCell align="center" onClick={() => getProjectPage(row._id)}>{row.timeConsumed}</TableCell>
-      <TableCell align="center"
+      <TableCell align="center" padding={"checkbox"} className={classes.tableCellPadding}
+                 onClick={() => getProjectPage(row._id)}>{row.timeConsumed}</TableCell>
+      <TableCell align="center" padding={"checkbox"} className={classes.tableCellPadding}
                  onClick={() => getProjectPage(row._id)}>{`${parseFloat(row.adoption).toFixed(2)}%`}</TableCell>
-      <TableCell align="left" onClick={() => getProjectPage(row._id)}>{row.changeManagersNames}</TableCell>
-      <TableCell align="left"
+      <TableCell align="left" padding={"checkbox"} className={classes.tableCellPadding}
+                 onClick={() => getProjectPage(row._id)}>{row.changeManagersNames}</TableCell>
+      <TableCell align="left" padding={"checkbox"} className={classes.tableCellPadding}
                  onClick={() => getProjectPage(row._id)}>{moment(row.lastLogin).format('DD/M/YY')}</TableCell>
-      <TableCell><ProjectMenus project={row} company={company} activities={activities}
-                               isManager={isManager}
-                               isChangeManager={isChangeManager} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin}
-                               isActivityOwner={isActivityOwner} isActivityDeliverer={isActivityDeliverer}/></TableCell>
+      <TableCell className={classes.tableCellPadding}>
+        <ProjectMenus project={row} company={company}
+                      activities={activities}
+                      isManager={isManager}
+                      isChangeManager={isChangeManager} isAdmin={isAdmin}
+                      isSuperAdmin={isSuperAdmin}
+                      isActivityOwner={isActivityOwner}
+                      isActivityDeliverer={isActivityDeliverer}/>
+      </TableCell>
     </TableRow>
   )
 };

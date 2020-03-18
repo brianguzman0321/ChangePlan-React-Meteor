@@ -7,20 +7,20 @@ import React from "react";
 import {makeStyles} from "@material-ui/core";
 
 const headCells = [
-  {id: 'status', numeric: false, disablePadding: false, label: 'STATUS'},
-  {id: 'dueDate', numeric: false, disablePadding: false, label: 'DUE DATE'},
+  {id: 'status', numeric: false, disablePadding: true, label: 'STATUS'},
+  {id: 'startingDate', numeric: false, disablePadding: true, label: 'DUE DATE'},
   {id: 'name', numeric: false, disablePadding: true, label: 'NAME'},
-  {id: 'organization', numeric: false, disablePadding: false, label: 'ORGANIZATION'},
-  {id: 'function', numeric: false, disablePadding: false, label: 'FUNCTION'},
-  {id: 'people', numeric: true, disablePadding: false, label: 'PEOPLE'},
-  {id: 'impacts', numeric: true, disablePadding: false, label: 'IMPACTS'},
-  {id: 'activities', numeric: false, disablePadding: false, label: 'ACTIVITIES'},
-  {id: 'overdue', numeric: true, disablePadding: false, label: 'OVERDUE'},
-  {id: 'timeConsumed', numeric: true, disablePadding: false, label: 'TIME CONSUMED'},
-  {id: 'adoption', numeric: true, disablePadding: false, label: 'ADOPTION'},
-  {id: 'changeManagers', numeric: false, disablePadding: false, label: 'CHANGE MANAGER/S'},
-  {id: 'lastLogin', numeric: false, disablePadding: false, label: 'LAST LOGIN'},
-  {id: 'action', numeric: false, disablePadding: false, label: ''},
+  {id: 'organization', numeric: false, disablePadding: true, label: 'ORGANIZATION'},
+  {id: 'function', numeric: false, disablePadding: true, label: 'FUNCTION'},
+  {id: 'people', numeric: true, disablePadding: true, label: 'PEOPLE'},
+  {id: 'impacts', numeric: true, disablePadding: true, label: 'IMPACTS'},
+  {id: 'activities', numeric: false, disablePadding: true, label: 'ACTIVITIES'},
+  {id: 'overdue', numeric: true, disablePadding: true, label: 'OVERDUE'},
+  {id: 'timeConsumed', numeric: true, disablePadding: true, label: 'TIME CONSUMED'},
+  {id: 'adoption', numeric: true, disablePadding: true, label: 'ADOPTION'},
+  {id: 'changeManagers', numeric: false, disablePadding: true, label: 'CHANGE MANAGER/S'},
+  {id: 'lastLogin', numeric: false, disablePadding: true, label: 'LAST LOGIN'},
+  {id: 'action', numeric: false, disablePadding: true, label: ''},
 ];
 
 const tableHeadStyle = makeStyles(theme => ({
@@ -47,6 +47,7 @@ export function EnhancedTableHead(props) {
             return <TableCell style={{color: 'white', whiteSpace: 'nowrap'}}
                               key={headCell.id}
                               align={"left"}
+                              className={classes.tableCellPadding}
                               sortDirection={orderBy === headCell.id ? order : false}
             >
               <TableSortLabel

@@ -68,24 +68,24 @@ function AllProjects(props) {
       if (isManager && !isSuperAdmin && !isAdmin) {
         projectsFiltering = projectsFiltering.concat(allProjects.filter(project => project.managers.includes(userId)));
       }
-      if (isActivityDeliverer && !isSuperAdmin && !isAdmin) {
-        const _activities = allActivities.find({deliverer: userId}).fetch();
+      if (isActivityDeliverer && !isSuperAdmin && !isAdmin && !isManager && !isChangeManager) {
+        const _activities = allActivities.filter(activity => activity.deliverer === userId);
         if (_activities) {
           _activities.forEach(activity => {
-            const project = allProjects.find(project => project._id === activity.projectId);
+            const project = allProjects.filter(project => project._id === activity.projectId);
             if (project) {
-              projectsFiltering.push(project);
+              projectsFiltering.push(...new Set(project));
             }
           });
         }
       }
-      if (isActivityOwner && !isSuperAdmin && !isAdmin) {
-        const _activities = allActivities.find({owner: userId}).fetch();
+      if (isActivityOwner && !isSuperAdmin && !isAdmin && !isManager && !isChangeManager) {
+        const _activities = allActivities.filter(activity => activity.owner === userId);
         if (_activities) {
           _activities.forEach(activity => {
-            const project = allProjects.find(project => project._id === activity.projectId);
+            const project = allProjects.filter(project => project._id === activity.projectId);
             if (project) {
-              projectsFiltering.push(project);
+              projectsFiltering.push(...new Set(project));
             }
           });
         }
@@ -122,23 +122,23 @@ function AllProjects(props) {
 
   const getImpacts = (projectId) => {
     const impacts = allImpacts.filter(impact => impact.projectId === projectId).length;
-    return impacts !== 0 ? impacts : '-';
+    return impacts;
   };
 
   const getActivities = (projectId) => {
     const activities = allActivities.filter(activity => activity.projectId === projectId).length;
     const completedActivities = allActivities.filter(activity => activity.projectId === projectId && activity.completed).length;
-    return activities !== 0 ? `${completedActivities}/${activities} completed` : '-';
+    return activities !== 0 ? `${completedActivities}/${activities} completed` : '0';
   };
 
   const getOverdueActivities = (projectId) => {
     const overdueActivities = allActivities.filter(activity => activity.projectId === projectId
       && moment(activity.dueDate).isAfter(new Date()) && !activity.completed).length;
-    return overdueActivities !== 0 ? overdueActivities : '-';
+    return overdueActivities;
   };
 
   const getTimeConsumed = (startingDate, endingDate) => {
-    let allTime = moment(endingDate).diff(moment(startingDate), 'weeks')
+    let allTime = moment(endingDate).diff(moment(startingDate), 'weeks');
     const todayDate = new Date();
     let timeConsumed = moment(todayDate).diff(moment(startingDate), 'weeks');
     if (allTime < timeConsumed) {
