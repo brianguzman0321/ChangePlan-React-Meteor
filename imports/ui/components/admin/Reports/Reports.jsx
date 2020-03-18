@@ -14,7 +14,7 @@ import {withSnackbar} from "notistack";
 import TimeAndActivitiesReport from '../../Reports/TimeAndActivitiesReport';
 import AllUpcomingActivities from "./AllUpcomingActivities/AllUpcomingActivities";
 import {Impacts} from "../../../../api/impacts/impacts";
-import AllProjectsReport from "./ProjectReports/AllProjects";
+// import ChangeManagersReport from "./AdminReports/ChangeManagersReport";
 
 const useStyles = makeStyles({
   root: {},
@@ -60,7 +60,7 @@ const useStyles = makeStyles({
 
 function AdminReports(props) {
   let menus = [];
-  let {company, allActivities, allStakeholders, allProjects, allImpacts} = props;
+  let {company, allActivities, allStakeholders, allProjects, allImpacts, allUsers} = props;
   const classes = useStyles();
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -147,11 +147,11 @@ function AdminReports(props) {
           <AllUpcomingActivities match={props.match} allActivities={allActivities} allProjects={allProjects} type={'overdue'}
                                  company={company} isAdmin={isAdmin} isChangeManager={isChangeManager} allStakeholders={allStakeholders}/>
         </Grid>
-        <Grid container direction="row" justify="space-between">
-          <AllProjectsReport allActivities={allActivities} allProjects={allProjects} allImpacts={allImpacts} allStakeholders={allStakeholders}
-                                 company={company} isAdmin={isAdmin} isChangeManager={isChangeManager} {...props}/>
-        </Grid>
       </Grid>
+   {/*   <Grid container direction="row" justify="space-between">
+        <ChangeManagersReport match={props.match} allUsers={allUsers} allProjects={allProjects} company={company}
+                                 allActivities={allActivities}/>
+      </Grid>*/}
     </div>
   )
 }
@@ -169,6 +169,7 @@ const AdminReportsPage = withTracker(props => {
     allStakeholders: Peoples.find({}).fetch(),
     allProjects: Projects.find({}).fetch(),
     allImpacts: Impacts.find({}).fetch(),
+    allUsers: Meteor.users.find({}).fetch(),
   }
 })(withRouter(AdminReports));
 
