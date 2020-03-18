@@ -207,20 +207,23 @@ function AddActivity(props) {
       return false;
     }
 
-    delete project.changeManagerDetails;
-    delete project.managerDetails;
-    delete project.peoplesDetails;
-    delete project.totalActivities;
-    delete project.completedActivities;
-    project.name = description;
-    project.startingDate = startingDate;
-    project.status = status;
-    project.endingDate = dueDate;
-    project.organization = organization;
-    project.function = func;
-    project.managers = person && person.map(p => p.value) || [];
     let params = {
-      project
+      project: {
+        _id: project._id,
+        owner: project.owner,
+        companyId: project.companyId,
+        peoples: project.peoples,
+        stakeHolders: project.stakeHolders,
+        changeManagers: project.changeManagers,
+        peopleCount: project.peopleCount,
+        name: description,
+        startingDate: startingDate,
+        status: status,
+        endingDate: dueDate,
+        organization: organization,
+        function: func,
+        managers: person && person.map(p => p.value) || []
+      }
     };
     Meteor.call('projects.update', params, (err, res) => {
       if (err) {
@@ -369,9 +372,12 @@ function AddActivity(props) {
                     {company && company.organizationField && <Grid item xs={6}>
                       <FormControl fullWidth={true}>
                         <InputLabel id={'select-project-organization'}>Organization</InputLabel>
-                        <Select id={'select-project-organization'} value={organization} onChange={(e) => setOrganization(e.target.value)}>
+                        <Select id={'select-project-organization'} value={organization}
+                                onChange={(e) => setOrganization(e.target.value)}>
                           {company.organization && company.organization.map(_organization => {
-                            return <MenuItem value={_organization}>{_organization[0].toUpperCase() + _organization.slice(1)}</MenuItem>}
+                              return <MenuItem
+                                value={_organization}>{_organization[0].toUpperCase() + _organization.slice(1)}</MenuItem>
+                            }
                           )}
                         </Select>
                       </FormControl>
@@ -381,7 +387,8 @@ function AddActivity(props) {
                         <InputLabel id={'select-project-function'}>Function</InputLabel>
                         <Select id={'select-project-function'} value={func} onChange={(e) => setFunc(e.target.value)}>
                           {company.function && company.function.map(_func => {
-                            return <MenuItem value={_func}>{_func[0].toUpperCase() + _func.slice(1)}</MenuItem>}
+                              return <MenuItem value={_func}>{_func[0].toUpperCase() + _func.slice(1)}</MenuItem>
+                            }
                           )}
                         </Select>
                       </FormControl>

@@ -11,6 +11,8 @@ import Grid from '@material-ui/core/Grid';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import {InputBase} from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
+import AppsIcon from '@material-ui/icons/Apps';
+import ViewListIcon from '@material-ui/icons/ViewList';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
@@ -26,6 +28,9 @@ import {Meteor} from "meteor/meteor";
 import {Peoples} from "../../../api/peoples/peoples";
 import {getTotalStakeholders} from "../../../utils/utils";
 import Chip from "@material-ui/core/Chip";
+import Button from "@material-ui/core/Button";
+import AllProjects from "./ProjectsTable/AllProjects";
+import {Impacts} from "../../../api/impacts/impacts";
 
 
 const useStyles = makeStyles(theme => ({
@@ -180,10 +185,16 @@ const useStyles = makeStyles(theme => ({
     color: 'white',
     marginBottom: '5px',
   },
+  button: {
+    textAlign: "right",
+  },
+  selectedButton: {
+    background: '#e0e0e0',
+  }
 }));
 
 function ProjectCard(props) {
-  let {projects, company, activities, currentCompany, templates, history: {push}, stakeholders} = props;
+  let {projects, company, activities, currentCompany, templates, history: {push}, stakeholders, allImpacts} = props;
   const [selectedTab, setSelectedTab] = useState(0);
   const [currentCompanyId, setCompanyId] = useState(null);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
@@ -193,6 +204,7 @@ function ProjectCard(props) {
   const [isActivityDeliverer, setIsActivityDeliverer] = useState(false);
   const [isActivityOwner, setIsActivityOwner] = useState(false);
   const [projectCard, setProjectCard] = useState(projects || []);
+  const [viewMode, setViewMode] = React.useState(0);
 
   useEffect(() => {
     if (currentCompany) {
@@ -289,7 +301,7 @@ function ProjectCard(props) {
         }
       }
     }
-  }, [isActivityDeliverer, isActivityOwner, isManager, isChangeManager, isAdmin, isSuperAdmin, projects]);
+  }, [isActivityDeliverer, isActivityOwner, isManager, isChangeManager, isAdmin, isSuperAdmin, projects, viewMode]);
 
   useEffect(() => {
     checkRoles();
@@ -375,6 +387,10 @@ function ProjectCard(props) {
     return status !== 'on-hold' ? classes[status] : classes.onHold;
   };
 
+  const changeViewMode = (view) => {
+    setViewMode(view);
+  };
+
   return (
     <>
       <Grid
@@ -445,7 +461,19 @@ function ProjectCard(props) {
               direction="row"
               justify="flex-start"
               alignItems="flex-start">
-          {projectCard.map((project, index) => {
+          <Grid item xs={12}>
+            <Grid container direction={"row"} alignItems={"flex-end"} justify={"flex-end"}>
+              <Grid item xs={11} className={classes.button}>
+                <Button onClick={() => changeViewMode(0)} className={viewMode === 0 && classes.selectedButton}>
+                  <AppsIcon/>
+                </Button>
+                <Button onClick={() => changeViewMode(1)} className={viewMode === 1 && classes.selectedButton}>
+                  <ViewListIcon/>
+                </Button>
+              </Grid>
+            </Grid>
+          </Grid>
+          {viewMode === 0 && projectCard.map((project, index) => {
             return <Grid item xs={12} md={4} sm={6} lg={2} xl={2} key={index} className={classes.grid}>
               <Card className={classes.card} onClick={(e) => selectProject(project)}>
                 <LinearProgress variant="determinate"
@@ -521,6 +549,11 @@ function ProjectCard(props) {
             </Grid>
           })
           }
+          {viewMode === 1 && <AllProjects allActivities={activities} allProjects={projectCard} allImpacts={allImpacts}
+                                          allStakeholders={stakeholders} company={company} isAdmin={isAdmin}
+                                          isChangeManager={isChangeManager} isManager={isManager}
+                                          isActivityDeliverer={isActivityDeliverer}
+                                          isActivityOwner={isActivityOwner} {...props}/>}
         </Grid>
       </Grid>
       {!projectCard.length &&
@@ -600,12 +633,14 @@ const ProjectsPage = withTracker(props => {
   Meteor.subscribe('templates');
   Meteor.subscribe('activities.notLoggedIn');
   Meteor.subscribe('findAllPeoples');
+  Meteor.subscribe('impacts.findAll');
   return {
     templates: Templates.find({}).fetch(),
     company: Companies.findOne({_id: currentCompany && currentCompany._id}),
     activities: Activities.find({}).fetch(),
     projects: sortingFunc(Projects.find().fetch(), local),
     companies: Companies.find({}).fetch(),
+    allImpacts: Impacts.find({}).fetch(),
     currentCompany,
     stakeholders: Peoples.find({}).fetch(),
   };
