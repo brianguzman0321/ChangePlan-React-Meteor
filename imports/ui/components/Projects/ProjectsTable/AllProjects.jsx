@@ -128,13 +128,13 @@ function AllProjects(props) {
   const getActivities = (projectId) => {
     const activities = allActivities.filter(activity => activity.projectId === projectId).length;
     const completedActivities = allActivities.filter(activity => activity.projectId === projectId && activity.completed).length;
-    return activities !== 0 ? `${completedActivities}/${activities} completed` : '0';
+    return activities !== 0 ? `${completedActivities}/${activities} completed` : '0 scheduled';
   };
 
   const getOverdueActivities = (projectId) => {
     const overdueActivities = allActivities.filter(activity => activity.projectId === projectId
       && moment(activity.dueDate).isAfter(new Date()) && !activity.completed).length;
-    return overdueActivities;
+    return overdueActivities !== 0 ? overdueActivities : '-';
   };
 
   const getTimeConsumed = (startingDate, endingDate) => {
