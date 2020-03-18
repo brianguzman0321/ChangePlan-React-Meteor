@@ -295,7 +295,7 @@ function AddProject(props) {
                 >
                   <Typography className={classes.heading}>Company</Typography>
                   <Typography className={classes.secondaryHeading}>
-                    {currentCompany && companies ? companies.find(_company => _company._id === currentCompany._id).name : 'Choose the company (required for Super Admin)'}
+                    {(currentCompany.length > 0 && companies)? companies.find(_company => _company._id === (currentCompany._id)).name : 'Choose the company (required for Super Admin)'}
                   </Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>

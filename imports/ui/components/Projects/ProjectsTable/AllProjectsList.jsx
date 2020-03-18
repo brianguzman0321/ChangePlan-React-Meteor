@@ -10,6 +10,22 @@ import {EnhancedTableHead} from "./ProjectTableHead";
 import Project from "./Project";
 
 function desc(a, b, orderBy) {
+  switch (orderBy) {
+    case 'people':
+      a[orderBy] = a.people === '-' ? 0 : a.people;
+      b[orderBy] = b.people === '-' ? 0 : b.people;
+      break;
+    case 'function':
+      a[orderBy] = a.function ? a.function : '';
+      b[orderBy] = b.function ? b.function : '';
+      break;
+    case 'organization':
+      a[orderBy] = a.organization ? a.organization : '';
+      b[orderBy] = b.organization ? b.organization : '';
+      break;
+    default:
+      break;
+  }
   if (b[orderBy] < a[orderBy]) {
     return -1;
   }
@@ -34,18 +50,15 @@ function getSorting(order, orderBy) {
 }
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    margin: theme.spacing(3),
-  },
+  root: {},
   head: {
     background: 'red'
   },
   paper: {
     width: '100%',
-    marginBottom: theme.spacing(2),
   },
   table: {
-    minWidth: 750,
+    minWidth: 650,
   },
   tableWrapper: {
     overflowX: 'auto',
@@ -61,12 +74,18 @@ const useStyles = makeStyles(theme => ({
     top: 20,
     width: 1,
   },
-  overdue: {
-    color: 'red'
+  zeroCell: {
+    color: 'red',
+    padding: '10px 5px 10px 5px'
   },
   tableCell: {
     whiteSpace: 'nowrap',
+    padding: '10px 5px 10px 5px'
   },
+  tableCellPadding: {
+    padding: '10px 5px 10px 5px'
+  }
+
 }));
 
 export default function AllProjectsList(props) {

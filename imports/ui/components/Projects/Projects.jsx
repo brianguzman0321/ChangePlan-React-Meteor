@@ -209,6 +209,7 @@ function ProjectCard(props) {
   useEffect(() => {
     if (currentCompany) {
       setCompanyId(currentCompany._id);
+      setViewMode(Number(localStorage.getItem(`viewModeProject_${Meteor.userId()}`)));
     }
   }, [currentCompany]);
 
@@ -389,6 +390,7 @@ function ProjectCard(props) {
 
   const changeViewMode = (view) => {
     setViewMode(view);
+    localStorage.setItem(`viewModeProject_${Meteor.userId()}`, view);
   };
 
   return (
