@@ -161,7 +161,6 @@ function Dashboard(props) {
   const [deleteValue, setDeleteValue] = React.useState('');
   const [vision, setVision] = React.useState(project.vision || template.vision || []);
   const [objectives, setObjective] = React.useState(project.objectives || template.objectives || []);
-  const [risks, setRisks] = React.useState(project.risks || template.risks || []);
   const [benefits, setBenefits] = React.useState([]);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -175,16 +174,14 @@ function Dashboard(props) {
     vision: false,
     delete: false,
     objectives: false,
-    impacts: false,
     benefits: false,
-    risks: false,
   });
   let menus = config.menus;
   if (!(params.projectId || params.templateId)) {
     menus = []
   }
 
-  const allowedValues = ['vision', 'delete', 'objectives', 'impacts', 'benefits', 'risks', 'edit'];
+  const allowedValues = ['vision', 'delete', 'objectives', 'benefits', 'edit'];
 
 
   const handleClose = (value) => {
@@ -223,14 +220,6 @@ function Dashboard(props) {
     }
   };
 
-  const editRisks = (index, value) => {
-    if ((isAdmin && template.companyId !== '' || isSuperAdmin) || (type === 'project' && (project && (isAdmin || isChangeManager)))) {
-      setIndex(index);
-      setEditValue(value);
-      handleClose('risks');
-    }
-  };
-
   const deleteEntity = (index, value) => {
     if ((isAdmin && template.companyId !== '' || isSuperAdmin) || (type === 'project' && (project && (isAdmin || isChangeManager)))) {
       setIndex(index);
@@ -255,9 +244,6 @@ function Dashboard(props) {
     }
     if (project && project.benefits) {
       setBenefits(project.benefits)
-    }
-    if (project && project.risks) {
-      setRisks(project.risks)
     }
   };
 
@@ -339,9 +325,6 @@ function Dashboard(props) {
       <ObjectiveModal open={modals.objectives} handleModalClose={handleModalClose} project={project} index={index}
                       template={template}
                       editValue={editValue} currentType={type}/>
-      <RisksModal open={modals.risks} handleModalClose={handleModalClose} project={project} index={index}
-                  template={template}
-                  editValue={editValue} currentType={type}/>
       <BenefitsModal open={modals.benefits} handleModalClose={handleModalClose} project={project}
                      indexBenefits={benefitsIndex} template={template} match={match}
                      editValue={editValue} currentType={type}/>
@@ -587,45 +570,6 @@ function Dashboard(props) {
 
                       </Grid>
                     </Grid>
-                    <Divider/>
-                    {risks.map((v, i) => {
-                      return <><Grid key={i}
-                                     container
-                                     direction="row"
-                                     justify="flex-end"
-                                     alignItems="center"
-                      >
-                        <Grid item xs={9} onClick={(e) => {
-                          editRisks(i, v)
-                        }}>
-                          <Typography className={classes.detailValues} gutterBottom>
-                            {stringHelpers.limitCharacters(v.description, 92)}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={1} onClick={(e) => {
-                          editRisks(i, v)
-                        }}>
-                          {v.level.toUpperCase()}
-                        </Grid>
-                        {((isAdmin && template && (template.companyId === currentCompany._id)) || isSuperAdmin || type === 'project' && (project && (isAdmin || isChangeManager))) ?
-                          <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
-                            <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {
-                              editRisks(i, v)
-                            }}>
-                              edit
-                            </Icon>
-                            <Icon fontSize="small" style={{marginRight: 6, cursor: 'pointer'}} onClick={(e) => {
-                              deleteEntity(i, 'risks')
-                            }}>
-                              delete
-                            </Icon>
-                          </Grid>
-                          : <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}></Grid>}
-                      </Grid>
-                        <Divider/>
-                      </>
-
-                    })}
 
                     <Divider/>
                     {((isAdmin && template && (template.companyId === currentCompany._id)) || isSuperAdmin || type === 'project' && (project && (isAdmin || isChangeManager))) ?
