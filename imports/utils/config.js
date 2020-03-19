@@ -22,13 +22,18 @@ export default config = {
     },
     {
       show: true,
-      name: 'stakeHolders',
+      name: 'risks',
       value: 4,
+    },
+    {
+      show: true,
+      name: 'stakeHolders',
+      value: 5,
     },
     {
       name: 'reports',
       show: true,
-      value: 5,
+      value: 6,
     }
   ],
   projectsMenus: [

@@ -27,6 +27,7 @@ import SurveyStakeholder from "../../ui/components/Survey/SurveyStakeholders/Sur
 import ImpactsPage from "../../ui/components/Impacts/Impacts";
 import AllStakeholders from "../../ui/components/admin/Stakeholders/AllStakeholders";
 import AdminReportsPage from "../../ui/components/admin/Reports/Reports"
+import RisksPage from "../../ui/components/Risks/Risks";
 
 //list of Public Routes
 
@@ -88,6 +89,7 @@ const Routes = appProps => (
         <Authenticated exact path="/projects/:projectId/activities" component={ActivitiesCard} {...appProps}/>
         <Authenticated exact path="/projects/:projectId/stake-holders" component={StakeHoldersCard} {...appProps}/>
         <Authenticated exact path="/projects/:projectId/impacts" component={ImpactsPage} {...appProps}/>
+        <Authenticated exact path="/projects/:projectId/risks" component={RisksPage} {...appProps}/>
         <Authenticated exact path="/projects/:projectId/reports" component={ReportsCard} {...appProps}/>
         <Authenticated exact path="/projects/:projectId/timeline" component={Timeline} {...appProps}/>
         <Authenticated exact path="/all-stakeholders" component={AllStakeholders} {...appProps}/>

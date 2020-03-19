@@ -58,3 +58,8 @@ import '/imports/api/impacts/methods';
 import '/imports/api/additionalStakeholderInfo/additionalStakeholderInfo';
 import '/imports/api/additionalStakeholderInfo/server/publications';
 import '/imports/api/additionalStakeholderInfo/methods';
+
+//risks
+import '/imports/api/risks/risks';
+import '/imports/api/risks/methods';
+import '/imports/api/risks/server/publications';

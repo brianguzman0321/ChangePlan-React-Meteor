@@ -143,20 +143,14 @@ function TopNavBar(props) {
     case 'impacts':
       selectedTab = 3;
       break;
-    case 'stake-holders':
+    case 'risks':
       selectedTab = 4;
       break;
-    case 'reports':
+    case 'stake-holders':
       selectedTab = 5;
       break;
-    case 'all-stakeholders':
-      selectedTab = 11;
-      break;
-    case 'all-reports':
-      selectedTab = 10;
-      break;
-    case 'timeline-for-all-projects':
-      selectedTab = 12;
+    case 'reports':
+      selectedTab = 6;
       break;
     default:
       break;
@@ -293,9 +287,12 @@ function TopNavBar(props) {
           props.history.push(`/projects/${projectId}/impacts`);
           break;
         case 4:
-          props.history.push(`/projects/${projectId}/stake-holders`);
+          props.history.push(`/projects/${projectId}/risks`);
           break;
         case 5:
+          props.history.push(`/projects/${projectId}/stake-holders`);
+          break;
+        case 6:
           props.history.push(`/projects/${projectId}/reports`);
           break;
         default:
@@ -316,10 +313,10 @@ function TopNavBar(props) {
         case 3:
           props.history.push(`/templates/${templateId}/impacts`);
           break;
-        case 4:
+        case 5:
           props.history.push(`/templates/${templateId}/stake-holders`);
           break;
-        case 5:
+        case 6:
           props.history.push(`/templates/${templateId}/reports`);
           break;
         default:
