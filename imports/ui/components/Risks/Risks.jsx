@@ -217,7 +217,7 @@ function RisksTable(props) {
                 Add
               </Button>
               <RisksModal project={project} open={showAddRisk} handleModalClose={handleCloseModal} company={currentCompany}
-                          isNew={true} match={match} projectId={projectId} match={match}/>
+                          isNew={true} match={match} projectId={projectId}/>
             </Grid>
             : ''}
         </Grid>

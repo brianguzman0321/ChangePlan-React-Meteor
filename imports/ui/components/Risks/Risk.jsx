@@ -10,7 +10,7 @@ import moment from "moment";
 const Risk = (props) => {
   const {
     row, isItemSelected, labelId, setRowSelected, deleteCell, selected, index, isAdmin, isSuperAdmin, match,
-    isManager, isChangeManager, isActivityOwner, isActivityDeliverer, company, project, classes,
+    isManager, isChangeManager, isActivityOwner, isActivityDeliverer, company, project, classes, projectId
   } = props;
   const [showEditModalDialog, setShowEditModalDialog] = React.useState(false);
   const disabled = (!(isAdmin || isSuperAdmin) || ((isManager || isActivityDeliverer || isActivityOwner) && !isSuperAdmin && !isAdmin && !isChangeManager));
@@ -85,7 +85,7 @@ const Risk = (props) => {
       <TableCell align="left" className={classes.tableCell} onClick={event => deleteCell(event, row)}>
         <RisksModal isNew={false} risk={row} open={showEditModalDialog} match={match} company={company}
                     isChangeManager={isChangeManager} handleModalClose={handleCloseModalDialog}
-                    isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} project={project}
+                    isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} project={project} projectId={projectId}
                     isManager={isManager} disabled={disabled}/>
         {isAdmin || isSuperAdmin || (project && (isAdmin || isChangeManager)) ?
           <DeleteRiskModal risk={row}/> : null}

@@ -73,6 +73,7 @@ export default function SelectActivities(props) {
   const classes = useStyles();
   const [selActivities, setSelActivities] = React.useState(selectedActivities || []);
   const [showModalDialog, setShowModalDialog] = useState(false);
+  const [newActivity, setNewActivity] = useState(null);
   const [edit, setEdit] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
 
@@ -82,6 +83,7 @@ export default function SelectActivities(props) {
     } else {
       handleClose();
     }
+    setNewActivity(null);
   };
 
   const closeModalDialog = () => {
@@ -101,6 +103,13 @@ export default function SelectActivities(props) {
 
   const selectActivities = (ids) => {
     setSelActivities(ids);
+  };
+
+  const selectNewActivity = (id) => {
+    const newActivities = [...selActivities];
+    newActivities.push(id);
+    setNewActivity(id);
+    setSelActivities(newActivities);
   };
 
   return (
@@ -132,7 +141,7 @@ export default function SelectActivities(props) {
               </Grid>
               <Grid item xs={2}>
                 <Grid container direction={'row'} alignItems={"center"} justify={'flex-end'}>
-                  <Grid item xs={10} style={{textAlign: 'right'}}>
+                  <Grid item xs={9} style={{textAlign: 'right'}}>
                     <AddActivities
                       edit={edit}
                       list={isOneCreate}
@@ -145,6 +154,7 @@ export default function SelectActivities(props) {
                       newActivity={() => setEdit(false)}
                       type={templateId && 'template' || projectId && 'project'}
                       match={match}
+                      selectNewActivity={selectNewActivity}
                       isSuperAdmin={isSuperAdmin}
                       isAdmin={isAdmin}
                       isChangeManager={isChangeManager}
@@ -152,8 +162,8 @@ export default function SelectActivities(props) {
                       isActivityDeliverer={false}
                     />
                   </Grid>
-                  <Grid item xs={2}>
-                    <Button autoFocus color="inherit" onClick={updateActivities}>
+                  <Grid item xs={3}>
+                    <Button autoFocus variant={'contained'} color="primary" onClick={updateActivities}>
                       save
                     </Button>
                   </Grid>
@@ -162,7 +172,7 @@ export default function SelectActivities(props) {
             </Grid>
           </Toolbar>
         </AppBar>
-        <ListActivities activities={activities} company={company}
+        <ListActivities activities={activities} company={company} newActivity={newActivity}
                         selectActivities={selectActivities} classes={classes}
                         selectedActivities={selectedActivities} update={updateValue}/>
         <SaveChanges closeModalDialog={closeModalDialog}
