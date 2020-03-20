@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
 import {EnhancedTableHead} from "./TableHeadActivities";
@@ -8,7 +8,7 @@ import moment from "moment";
 import {getPhase} from "../../../../../utils/utils";
 
 export const ListActivities = (props) => {
-  let {activities, selectActivities, update, selectedActivities, company, classes} = props;
+  let {activities, selectActivities, update, selectedActivities, company, classes, newActivity} = props;
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
   const [selected, setSelected] = React.useState(selectedActivities || []);
@@ -21,6 +21,12 @@ export const ListActivities = (props) => {
     setOrder(isDesc ? 'asc' : 'desc');
     setOrderBy(property);
   };
+
+  useEffect(() => {
+    if (newActivity && !selected.includes(newActivity)) {
+      handleClick(null, newActivity);
+    }
+  }, [newActivity]);
 
   const desc = (a, b, orderBy) => {
     if (b[orderBy] < a[orderBy]) {

@@ -541,48 +541,6 @@ function Dashboard(props) {
                 <Card>
                   <CardContent>
                     <Typography className={classes.displayHeading} gutterBottom>
-                      Change management risks &nbsp;&nbsp;
-                      <Icon color="disabled" fontSize="small" style={{verticalAlign: 'middle', marginBottom: 4}}>
-                        help
-                      </Icon>
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      <span className={classes.helpTipText}>List risks associated with the change that could effect the projects's success?</span>
-                    </Typography>
-                    <Divider/>
-                    <Grid
-                      container
-                      direction="row"
-                      justify="flex-end"
-                      alignItems="center"
-                    >
-                      <Grid item xs={9}>
-                        <Typography className={classes.columnsHeadings} gutterBottom style={{fontWeight: 'bold'}}>
-                          DESCRIPTION
-                        </Typography>
-
-                      </Grid>
-                      <Grid item xs={1}>
-                        <Typography className={classes.columnsHeadings} gutterBottom style={{fontWeight: 'bold'}}>
-                          LEVEL
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
-
-                      </Grid>
-                    </Grid>
-
-                    <Divider/>
-                    {((isAdmin && template && (template.companyId === currentCompany._id)) || isSuperAdmin || type === 'project' && (project && (isAdmin || isChangeManager))) ?
-                      <Button align="right" color="primary" variant="contained" fullWidth={true} style={{marginTop: 7}}
-                              onClick={handleClose.bind(null, 'risks')}>
-                        Add
-                      </Button> : ''}
-                  </CardContent>
-                </Card>
-                <br/>
-                <Card>
-                  <CardContent>
-                    <Typography className={classes.displayHeading} gutterBottom>
                       Benefits &nbsp;&nbsp;
                       <Icon color="disabled" fontSize="small" style={{verticalAlign: 'middle', marginBottom: 4}}>
                         help

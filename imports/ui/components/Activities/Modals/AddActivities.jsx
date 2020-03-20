@@ -298,7 +298,7 @@ function AddActivities(props) {
   let {
     company, stakeHolders, local, project, match, edit, activity, list, isOpen, currentChangeManager, isActivityOwner,
     template, type, stakeHoldersTemplate, isSuperAdmin, isAdmin, isChangeManager, isManager, isActivityDeliverer, step,
-    impacts, isImpact, isOneImpact,
+    impacts, isImpact, isOneImpact, selectNewActivity
   } = props;
   const customActivityIcon = data.find(item => item.category === "Custom").iconSVG;
   const [open, setOpen] = useState(edit || isOpen || false);
@@ -748,7 +748,10 @@ function AddActivities(props) {
           props.enqueueSnackbar(err.reason, {variant: 'error'})
         } else {
           if (isNew) {
-            createImpact(res)
+            createImpact(res);
+            if (isImpact) {
+              selectNewActivity(res);
+            }
           }
           handleClose();
           props.enqueueSnackbar(`Activity ${isNew ? 'Added' : 'Updated'} Successfully.`, {variant: 'success'});
@@ -1012,7 +1015,7 @@ function AddActivities(props) {
                 className={getClass()}
                 fullWidth={!isImpact ? true : false} onClick={handleClickOpen}
         >
-          Add Activity
+          {isImpact ? 'New Activity' : 'Add Activity'}
         </Button> : null
       }
       <Dialog onClose={handleOpenModalDialog} aria-labelledby="customized-dialog-title" open={open} maxWidth="md"

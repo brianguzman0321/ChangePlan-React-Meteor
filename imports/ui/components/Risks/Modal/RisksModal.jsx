@@ -238,7 +238,7 @@ function AddRisk(props) {
         residualProbability: residualProbability,
         residualImpact: residualImpact,
         residualRating: residualRating,
-        owner: owner.value,
+        owner: owner && owner.value,
         comments: comments,
       }
     };
@@ -368,7 +368,7 @@ function AddRisk(props) {
   }, [residualProbability, residualImpact]);
 
   const getRating = (probability, impact) => {
-    let rating = '';
+    let rating = 'Low';
     switch (impact) {
       case 'Insignificant':
         if (probability === 'Almost Certain (96-100%)' || probability === 'Likely (66-95%)') {
@@ -416,10 +416,8 @@ function AddRisk(props) {
       default:
         break;
     }
-    if (impact !== '' || probability !== '' || (impact !== '' && probability !== '')) {
-      return rating;
-    }
-    return rating = '';
+    return !impact || !probability ? '' : rating;
+
   };
 
   return (
@@ -431,24 +429,24 @@ function AddRisk(props) {
         </DialogTitle>
         <DialogContent dividers>
           <Grid container direction={"row"} alignItems={'center'} justify={'flex-start'}>
-              <Grid item xs={2}>
-                <FormControl className={classes.formControl} fullWidth={true}>
-                  <InputLabel id={'select-status'}
-                              required={true}>Status</InputLabel>
-                  <Select
-                    id="select-status"
-                    label="Status"
-                    fullWidth={true}
-                    disabled={disabled}
-                    value={status}
-                    onChange={handleChangeStatus}
-                  >
-                    {['Open', 'Closed'].map((status, index) => {
-                      return <MenuItem value={status} key={index}>{status}</MenuItem>
-                    })
-                    }
-                  </Select>
-                </FormControl>
+            <Grid item xs={2}>
+              <FormControl className={classes.formControl} fullWidth={true}>
+                <InputLabel id={'select-status'}
+                            required={true}>Status</InputLabel>
+                <Select
+                  id="select-status"
+                  label="Status"
+                  fullWidth={true}
+                  disabled={disabled}
+                  value={status}
+                  onChange={handleChangeStatus}
+                >
+                  {['Open', 'Closed'].map((status, index) => {
+                    return <MenuItem value={status} key={index}>{status}</MenuItem>
+                  })
+                  }
+                </Select>
+              </FormControl>
             </Grid>
             <Grid container direction={"row"} alignItems={'center'} justify={'space-between'}>
               <Grid item xs={6} className={classes.gridSelect}>
