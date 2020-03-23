@@ -7,7 +7,6 @@ import MuiDialogContent from '@material-ui/core/DialogContent';
 import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
-import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import {withSnackbar} from 'notistack';
 import 'date-fns';
@@ -18,29 +17,27 @@ import {
   DatePicker,
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import {Companies} from '/imports/api/companies/companies'
 import AutoComplete from '/imports/ui/components/utilityComponents/AutoCompleteInline'
 import {withRouter} from 'react-router'
 import AddNewPerson from "../../Activities/Modals/AddNewPerson";
 import FormControl from "@material-ui/core/FormControl";
-import {InputLabel} from "@material-ui/core";
+import {InputLabel, Step, StepContent, StepLabel, Stepper} from "@material-ui/core";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
+import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
+import {CustomStepConnector, CustomStepIcon} from "../../../../utils/CustomStepper";
 
 const styles = theme => ({
   root: {
     margin: 0,
-    padding: theme.spacing(3, 3),
+    padding: 0,
   },
   closeButton: {
-    position: 'absolute',
+    position: 'fixed',
     right: theme.spacing(1),
     top: theme.spacing(1),
-    color: theme.palette.grey[500],
+    color: theme.palette.grey[200],
   },
 });
 
@@ -64,14 +61,40 @@ const useStyles = makeStyles(theme => ({
     root: {
       background: 'red'
     }
+  },
+  datePicker: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  gridButtons: {
+    padding: '0px 20px 0px 20px'
+  },
+  createButton: {
+    backgroundColor: '#4294db'
+  },
+  stepLabelCompleted: {
+    fontSize: '20px'
+  },
+  stepLabelActive: {
+    padding: '0px 12px 0px 12px',
+    fontSize: '20px'
+  },
+  container: {
+    padding: '0px 20px 20px 20px'
+  },
+  stepLabelMain: {
+    padding: '0px 12px 0px 12px',
+    fontSize: '26px'
+  },
+  stepContentRoot: {
+    marginLeft: '19px'
   }
 }));
 
 const DialogTitle = withStyles(styles)(props => {
-  const {children, classes, onClose} = props;
+  const {classes, onClose} = props;
   return (
     <MuiDialogTitle disableTypography className={classes.root}>
-      <Typography variant="h6">{children}</Typography>
       {onClose ? (
         <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
           <CloseIcon/>
@@ -90,6 +113,7 @@ const DialogContent = withStyles(theme => ({
 const DialogActions = withStyles(theme => ({
   root: {
     margin: 0,
+    backgroundColor: '#f5f5f5',
     padding: theme.spacing(1),
   },
 }))(MuiDialogActions);
@@ -103,9 +127,9 @@ function AddProject(props) {
   const [person, setPerson] = React.useState('');
   const [startingDate, setStartingDate] = React.useState(new Date());
   const [endingDate, setEndingDate] = React.useState(new Date());
-  const [organization, setOrganization] =React.useState('');
-  const [func, setFunc] =React.useState('');
-  const [expanded, setExpanded] = React.useState('panel1');
+  const [organization, setOrganization] = React.useState('');
+  const [func, setFunc] = React.useState('');
+  const [isDone, setIsDone] = React.useState([]);
   const [currentCompany, setCurrentCompany] = React.useState({});
 
   const classes = useStyles();
@@ -119,7 +143,7 @@ function AddProject(props) {
     setUsers([]);
     setOrganization('');
     setFunc('');
-    setExpanded('panel1')
+    setIsDone([]);
   };
 
   useEffect(() => {
@@ -189,13 +213,27 @@ function AddProject(props) {
     updateUsersList();
   }, [currentCompany, isNew, open]);
 
-  const handleChangePanel = panel => (event, isExpanded) => {
-    setExpanded(isExpanded ? panel : false);
-  };
+  useEffect(() => {
+    if (name) {
+      setIsDone([...new Set(['0'].concat(isDone))])
+    }
+  }, [name, company]);
+
+  useEffect(() => {
+    if (startingDate && endingDate) {
+      setIsDone([...new Set(['1'].concat(isDone))])
+    }
+  }, [startingDate, endingDate]);
+
+  useEffect(() => {
+    if (person) {
+      setIsDone([...new Set(['2'].concat(isDone))])
+    }
+  }, [person]);
+
 
   const handleClickOpen = () => {
     setIsNew(true);
-    setExpanded('panel1');
     setOpen(true);
   };
 
@@ -224,6 +262,9 @@ function AddProject(props) {
     setName(e.target.value)
   };
 
+  const onCalendarClick = (id) => {
+    document.getElementById(id).click();
+  };
 
   return (
     <div className={classes.AddNewProject}>
@@ -232,174 +273,166 @@ function AddProject(props) {
       </Button>
       <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md"
               fullWidth={true}>
-        <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-          Create New Project
-        </DialogTitle>
+        <DialogTitle onClose={handleClose}/>
         <form onSubmit={createProject} noValidate>
-          <DialogContent dividers>
+          <DialogContent>
             <div className={classes.root}>
-              <ExpansionPanel expanded={expanded === 'panel1'} onChange={handleChangePanel('panel1')}>
-                <ExpansionPanelSummary
-                  expandIcon={<ExpandMoreIcon/>}
-                  aria-controls="panel4bh-content"
-                  id="panel4bh-header"
-                >
-                  <Typography className={classes.heading}>Project Name</Typography>
-                  <Typography className={classes.secondaryHeading}>
-                  </Typography>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails>
-                  <Grid container direction={'row'} alignItems={"center"} justify={"space-between"}>
-                    <Grid item xs={12}>
-                      <TextField
-                        autoFocus
-                        margin="dense"
-                        id="name"
-                        label="Project Name"
-                        value={name}
-                        onChange={handleNameChange}
-                        required={true}
-                        type="text"
-                        fullWidth
-                      />
-                    </Grid>
-                    {company && company.organizationField &&<Grid item xs={5}>
-                      <FormControl fullWidth={true}>
-                        <InputLabel id={'select-project-status'}>Organization</InputLabel>
-                        <Select id={'select-project-status'} value={organization} onChange={(e) => setOrganization(e.target.value)}>
-                          {company.organization.map(organization => {
-                            return <MenuItem value={organization}>{organization[0].toUpperCase() + organization.slice(1)}</MenuItem>}
-                          )}
-                        </Select>
-                      </FormControl>
-                    </Grid>}
-                    {company && company.functionField && <Grid item xs={5}>
-                      <FormControl fullWidth={true}>
-                        <InputLabel id={'select-project-status'}>Function</InputLabel>
-                        <Select id={'select-project-status'} value={func} onChange={(e) => setFunc(e.target.value)}>
-                          {company.function.map(func => {
-                            return <MenuItem value={func}>{func[0].toUpperCase() + func.slice(1)}</MenuItem>}
-                          )}
-                        </Select>
-                      </FormControl>
-                    </Grid>}
-                  </Grid>
-                </ExpansionPanelDetails>
-              </ExpansionPanel>
-              {isSuperAdmin &&
-              <ExpansionPanel expanded={expanded === 'panel4'} onChange={handleChangePanel('panel4')}>
-                <ExpansionPanelSummary
-                  expandIcon={<ExpandMoreIcon/>}
-                  aria-controls="panel4bh-content"
-                  id="panel4bh-header"
-                >
-                  <Typography className={classes.heading}>Company</Typography>
-                  <Typography className={classes.secondaryHeading}>
-                    {(currentCompany.length > 0 && companies)? companies.find(_company => _company._id === (currentCompany._id)).name : 'Choose the company (required for Super Admin)'}
-                  </Typography>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails>
-                  <Grid container justify="space-between" spacing={2}>
-                    <Grid item xs={6}>
-                      <FormControl fullWidth>
-                        <InputLabel id="selectCompany">Company</InputLabel>
-                        <Select value={currentCompany} id="selectCompany"
-                                onChange={(e) => setCurrentCompany(e.target.value)}>
-                          {companies.map(_company => {
-                            return <MenuItem key={_company._id} value={_company}>
-                              {_company.name}
-                            </MenuItem>
-                          })}
-                        </Select>
-                      </FormControl>
-                    </Grid>
-                  </Grid>
-                </ExpansionPanelDetails>
-              </ExpansionPanel>}
-              <ExpansionPanel expanded={expanded === 'panel2'} onChange={handleChangePanel('panel2')}>
-                <ExpansionPanelSummary
-                  expandIcon={<ExpandMoreIcon/>}
-                  aria-controls="panel1bh-content"
-                  id="panel1bh-header"
-                >
-                  <Typography className={classes.heading}>Date</Typography>
-                  <Typography className={classes.secondaryHeading}>Start and estimated due dates</Typography>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails>
-                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                    <Grid container justify="space-between" spacing={4}>
-                      <Grid item xs={6}>
-                        <DatePicker
+              <Stepper orientation="vertical" connector={<CustomStepConnector />}>
+                <Step key={0} active={true} completed={isDone.includes('0')}>
+                  <StepLabel StepIconComponent={CustomStepIcon} classes={{active: classes.stepLabelMain}}>New
+                    Project</StepLabel>
+                  <StepContent classes={{root: classes.stepContentRoot}}>
+                    <Grid container direction={'row'} alignItems={"center"} justify={'space-between'} className={classes.container}>
+                      <Grid item xs={12} style={{paddingBottom: '10px'}}>
+                        <TextField
+                          autoFocus
+                          margin="dense"
+                          id="name"
+                          label="Project Name"
+                          value={name}
+                          onChange={handleNameChange}
+                          required={true}
+                          type="text"
+                          variant={"outlined"}
                           fullWidth
-                          disableToolbar
-                          variant="inline"
-                          format="MM/dd/yyyy"
-                          margin="normal"
-                          id="date-picker-inline"
-                          label="Start Date"
-                          value={startingDate}
-                          autoOk={true}
-                          onChange={handleStartingDate}
-                          KeyboardButtonProps={{
-                            'aria-label': 'change date',
-                          }}
                         />
                       </Grid>
-                      <Grid item xs={6}>
-                        <DatePicker
-                          disableToolbar
-                          fullWidth
-                          variant="inline"
-                          margin="normal"
-                          id="date-picker-dialog"
-                          label="Estimated Due Date"
-                          format="MM/dd/yyyy"
-                          value={endingDate}
-                          minDate={startingDate}
-                          autoOk={true}
-                          onChange={handleEndingDate}
-                          KeyboardButtonProps={{
-                            'aria-label': 'change date',
-                          }}
-                        />
+                      {company && company.organizationField && <Grid item xs={5}>
+                        <FormControl fullWidth={true}>
+                          <InputLabel id={'select-project-status'}>Organization</InputLabel>
+                          <Select id={'select-project-status'} value={organization}
+                                  onChange={(e) => setOrganization(e.target.value)}>
+                            {company.organization.map(organization => {
+                                return <MenuItem
+                                  value={organization}>{organization[0].toUpperCase() + organization.slice(1)}</MenuItem>
+                              }
+                            )}
+                          </Select>
+                        </FormControl>
+                      </Grid>}
+                      {company && company.functionField && <Grid item xs={6}>
+                        <FormControl fullWidth={true}>
+                          <InputLabel id={'select-project-status'}>Function</InputLabel>
+                          <Select id={'select-project-status'} value={func} onChange={(e) => setFunc(e.target.value)}>
+                            {company.function.map(func => {
+                                return <MenuItem value={func}>{func[0].toUpperCase() + func.slice(1)}</MenuItem>
+                              }
+                            )}
+                          </Select>
+                        </FormControl>
+                      </Grid>}
+
+                      {isSuperAdmin && <Grid item xs={6}>
+                        <Grid container justify="space-between" spacing={2}>
+                          <Grid item xs={12}>
+                            <FormControl fullWidth>
+                              <InputLabel id="selectCompany">Company</InputLabel>
+                              <Select value={currentCompany} id="selectCompany"
+                                      onChange={(e) => setCurrentCompany(e.target.value)}>
+                                {companies.map(_company => {
+                                  return <MenuItem key={_company._id} value={_company}>
+                                    {_company.name}
+                                  </MenuItem>
+                                })}
+                              </Select>
+                            </FormControl>
+                          </Grid>
+                        </Grid>
+                      </Grid>}
+                    </Grid>
+                  </StepContent>
+                </Step>
+                <Step key={1} active={true} completed={isDone.includes('1')}>
+                  <StepLabel StepIconComponent={CustomStepIcon}
+                             classes={{active: classes.stepLabelActive}}>Date</StepLabel>
+                  <StepContent classes={{root: classes.stepContentRoot}}>
+
+                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                      <Grid container justify="space-between" alignItems={"center"} className={classes.container}>
+                        <Grid item xs={6} className={classes.datePicker}>
+                          <Grid item xs={10}>
+                            <DatePicker
+                              fullWidth
+                              disableToolbar
+                              variant="inline"
+                              format="MM/dd/yyyy"
+                              id="start-date-picker"
+                              label="Start Date*"
+                              value={startingDate}
+                              autoOk={true}
+                              onChange={handleStartingDate}
+                            />
+                          </Grid>
+                          <Grid item xs={2}>
+                            <IconButton aria-label="close" className={classes.closeButton}
+                                        onClick={() => onCalendarClick("start-date-picker")}>
+                              <CalendarTodayIcon/>
+                            </IconButton>
+                          </Grid>
+                        </Grid>
+
+                        <Grid item xs={6} className={classes.datePicker}>
+                          <Grid item xs={10}>
+                            <DatePicker
+                              disableToolbar
+                              fullWidth
+                              variant="inline"
+                              id="ending-date-picker"
+                              label="Estimated Due Date*"
+                              format="MM/dd/yyyy"
+                              value={endingDate}
+                              minDate={startingDate}
+                              autoOk={true}
+                              onChange={handleEndingDate}
+                            />
+                          </Grid>
+                          <Grid item xs={2}>
+                            <IconButton aria-label="close" className={classes.closeButton}
+                                        onClick={() => onCalendarClick("ending-date-picker")}>
+                              <CalendarTodayIcon/>
+                            </IconButton>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                    </MuiPickersUtilsProvider>
+                  </StepContent>
+                </Step>
+
+
+                <Step key={2} active={true} completed={true} completed={isDone.includes('2')}>
+                  <StepLabel StepIconComponent={CustomStepIcon}
+                             classes={{active: classes.stepLabelActive}}>Managers</StepLabel>
+                  <StepContent classes={{root: classes.stepContentRoot}}>
+
+                    <Grid container justify="space-between" alignItems={"center"} className={classes.container}>
+                      <Grid item xs={12} style={{paddingBottom: '10px'}}>
+                        <AutoComplete updateUsers={updateUsers} data={users} selectedValue={person} multiple={true}
+                                      isActivity={false} label={'Select Person*'}/>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <AddNewPerson company={company._id}/>
                       </Grid>
                     </Grid>
-                  </MuiPickersUtilsProvider>
-                </ExpansionPanelDetails>
-              </ExpansionPanel>
-              <ExpansionPanel expanded={expanded === 'panal3'} onChange={handleChangePanel('panal3')}>
-                <ExpansionPanelSummary
-                  expandIcon={<ExpandMoreIcon/>}
-                  aria-controls="panal5bh-content"
-                  id="panal5bh-header"
-                >
-                  <Typography className={classes.heading}>Managers</Typography>
-                  <Typography className={classes.secondaryHeading}>
-                    {person && person.length ? person.map(t => t.label).join(", ") : 'Invite for view-only access (optional)'}
-                  </Typography>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails>
-                  <Grid container justify="space-between" spacing={2}>
-                    <Grid item={true} xs={7}>
-                      <AutoComplete updateUsers={updateUsers} data={users} selectedValue={person} multiple={true}
-                                    isActivity={false} label={'Users'}/>
-                    </Grid>
-                    <Grid item={true} xs={5}>
-                      <AddNewPerson company={company._id}/>
-                    </Grid>
-                  </Grid>
-                </ExpansionPanelDetails>
-              </ExpansionPanel>
+                  </StepContent>
+                </Step>
+              </Stepper>
+
             </div>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose} color="secondary">
-              cancel
-            </Button>
-
-            <Button type="submit" color="primary">
-              Create Project
-            </Button>
+            <Grid container direction={"row"} alignItems={"center"} justify={"space-between"}
+                  className={classes.gridButtons}>
+              <Grid item xs={1}>
+                <Button onClick={handleClose} color="default">
+                  cancel
+                </Button>
+              </Grid>
+              <Grid item xs={1}>
+                <Button type="submit" variant="contained" className={classes.createButton} color="primary">
+                  Create
+                </Button>
+              </Grid>
+            </Grid>
           </DialogActions>
         </form>
       </Dialog>

@@ -151,7 +151,7 @@ function SurveyFeedback(props) {
                     <TableCell size="small" className={classes.tableCell}
                                align="center">{getPhase(survey.activity.step, company)}</TableCell>
                     {type === 'isStakeholders' && <TableCell size="small" className={classes.tableCell} align="center">
-                      {survey.stakeholder.firstName ? `${survey.stakeholder.firstName} ${survey.stakeholder.lastName}` : survey.stakeholder.groupName}
+                      {survey.stakeholder && survey.stakeholder.firstName ? `${survey.stakeholder.firstName} ${survey.stakeholder.lastName}` : survey.stakeholder && survey.stakeholder.groupName}
                     </TableCell>}
                     {type === 'isStakeholders' && <TableCell size="small" className={classes.tableCell}
                                                              align="center">{getAnswer(survey.question1)}</TableCell>}

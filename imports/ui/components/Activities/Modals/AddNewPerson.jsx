@@ -10,6 +10,7 @@ import Slide from '@material-ui/core/Slide';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import {withSnackbar} from 'notistack';
+import AddIcon from '@material-ui/icons/Add';
 
 
 import PropTypes from 'prop-types';
@@ -62,12 +63,19 @@ const useStyles = makeStyles(theme => ({
     flex: 1,
   },
   addNewPerson: {
+    backgroundColor: '#f2f7fc',
+    color: '#57a0df',
+    boxShadow: 'none',
     '&:hover': {
       backgroundColor: '#ffffff',
       borderColor: '#ffffff',
       boxShadow: 'none',
     },
   },
+  button: {
+    color: '#57a0df',
+    marginRight: theme.spacing(1),
+  }
 }));
 
 const DialogContent = withStyles(theme => ({
@@ -130,8 +138,9 @@ function AddNewPerson(props) {
                 disabled={(isManager || isActivityDeliverer || isActivityOwner) && !isSuperAdmin && !isAdmin && !isChangeManager}>
           Add New
         </Button> :
-        <Button variant="outlined" color="primary" onClick={handleClickOpen} fullWidth={true}
+        <Button variant="contained" color="primary" onClick={handleClickOpen}
                 className={classes.addNewPerson}>
+          <AddIcon className={classes.button}/>
           Add New Person
         </Button>
       }

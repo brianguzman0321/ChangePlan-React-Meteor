@@ -9,15 +9,14 @@ import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 import Chip from '@material-ui/core/Chip';
 import MenuItem from '@material-ui/core/MenuItem';
-import CancelIcon from '@material-ui/icons/Cancel';
+import ClearIcon from '@material-ui/icons/Clear';
 import {withTracker} from "meteor/react-meteor-data";
 import FormControl from "@material-ui/core/FormControl";
 
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
-    height: 250,
-    minWidth: 290,
+    minWidth: 334,
   },
   rootActivity: {
     flexGrow: 1,
@@ -39,11 +38,12 @@ const useStyles = makeStyles(theme => ({
   },
   chip: {
     margin: theme.spacing(0.5, 0.25),
+    borderRadius: '4px',
+    backgroundColor: '#dfecfa',
   },
   chipFocused: {
     backgroundColor: emphasize(
       theme.palette.type === 'light' ? theme.palette.grey[300] : theme.palette.grey[700],
-      0.08,
     ),
   },
   noOptionsMessage: {
@@ -68,6 +68,12 @@ const useStyles = makeStyles(theme => ({
   divider: {
     height: theme.spacing(2),
   },
+  deleteIcon: {
+    width: '20px',
+    height: '20px',
+    color: '#4495dc',
+    margin: '2px'
+  }
 }));
 
 function NoOptionsMessage(props) {
@@ -259,6 +265,7 @@ ValueContainer.propTypes = {
 };
 
 function MultiValue(props) {
+  const classes = useStyles();
   return (
     <Chip
       tabIndex={-1}
@@ -267,7 +274,7 @@ function MultiValue(props) {
         [props.selectProps.classes.chipFocused]: props.isFocused,
       })}
       onDelete={props.removeProps.onClick}
-      deleteIcon={<CancelIcon {...props.removeProps} />}
+      deleteIcon={<ClearIcon {...props.removeProps} className={classes.deleteIcon}/>}
     />
   );
 }
@@ -312,13 +319,15 @@ const components = {
   Placeholder,
   SingleValue,
   ValueContainer,
+  IndicatorSeparator: () => null
 };
 
 export default function IntegrationReactSelect(props) {
   const classes = useStyles();
+  const {multiple} = props;
   const theme = useTheme();
   const [multi, setMulti] = React.useState(props.selectedValue || props.currentChangeManager);
-  const [multiple, setMultiple] = React.useState(props.multiple || false);
+  const [multiples, setMultiple] = React.useState(multiple || false);
 
   const handleChangeMulti = value => {
     setMulti(value);
@@ -357,10 +366,11 @@ export default function IntegrationReactSelect(props) {
             defaultValue={props.selectedValue}
             placeholder="Select Person"
             options={props.data}
+            className="basic-multi-select"
             components={components}
             value={multi}
             onChange={handleChangeMulti.bind(event)}
-            isMulti={multiple}
+            isMulti={multiples}
             isDisabled={(props.isManager || props.isActivityDeliverer || props.isActivityOwner) && !props.isSuperAdmin && !props.isAdmin && !props.isChangeManager}
           />
         </FormControl>

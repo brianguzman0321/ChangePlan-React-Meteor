@@ -7,7 +7,6 @@ import MuiDialogContent from '@material-ui/core/DialogContent';
 import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
-import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import {withSnackbar} from 'notistack';
 import 'date-fns';
@@ -16,33 +15,30 @@ import {withTracker} from "meteor/react-meteor-data";
 import DateFnsUtils from '@date-io/date-fns';
 import {
   MuiPickersUtilsProvider,
-  KeyboardDatePicker,
   DatePicker
 } from '@material-ui/pickers';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import {data} from "/imports/activitiesContent.json";
 import {Peoples} from '/imports/api/peoples/peoples'
 import {Companies} from '/imports/api/companies/companies'
 import AutoComplete from '/imports/ui/components/utilityComponents/AutoCompleteInline'
 import {withRouter} from 'react-router'
 import SaveChanges from "../../Modals/SaveChanges";
 import FormControl from "@material-ui/core/FormControl";
-import {InputLabel, Select} from "@material-ui/core";
+import {InputLabel, Select, Step, StepContent, StepLabel, Stepper} from "@material-ui/core";
 import MenuItem from "@material-ui/core/MenuItem";
+import {CustomStepConnector, CustomStepIcon} from "../../../../utils/CustomStepper";
+import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
+import AddNewPerson from "../../Activities/Modals/AddNewPerson";
 
 const styles = theme => ({
   root: {
     margin: 0,
-    padding: theme.spacing(3, 3),
+    padding: '0px',
   },
   closeButton: {
-    position: 'absolute',
+    position: 'fixed',
     right: theme.spacing(1),
     top: theme.spacing(1),
-    color: theme.palette.grey[500],
+    color: theme.palette.grey[200],
   },
 });
 
@@ -101,14 +97,40 @@ const useStyles = makeStyles(theme => ({
     root: {
       background: 'red'
     }
-  }
+  },
+  datePicker: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  gridButtons: {
+    padding: '0px 20px 0px 20px'
+  },
+  createButton: {
+    backgroundColor: '#4294db'
+  },
+  stepLabelCompleted: {
+    fontSize: '20px'
+  },
+  stepLabelActive: {
+    padding: '0px 12px 0px 12px',
+    fontSize: '20px'
+  },
+  container: {
+    padding: '0px 20px 20px 20px'
+  },
+  stepLabelMain: {
+    padding: '0px 12px 0px 12px',
+    fontSize: '26px'
+  },
+  stepContentRoot: {
+    marginLeft: '19px'
+  },
 }));
 
 const DialogTitle = withStyles(styles)(props => {
-  const {children, classes, onClose} = props;
+  const {classes, onClose} = props;
   return (
     <MuiDialogTitle disableTypography className={classes.root}>
-      <Typography variant="h6">{children}</Typography>
       {onClose ? (
         <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
           <CloseIcon/>
@@ -127,17 +149,17 @@ const DialogContent = withStyles(theme => ({
 const DialogActions = withStyles(theme => ({
   root: {
     margin: 0,
+    backgroundColor: '#f5f5f5',
     padding: theme.spacing(1),
   },
 }))(MuiDialogActions);
 
 function AddActivity(props) {
-  let {company, open, handleModalClose, handleType, project, template, stakeHolders, local, match, edit, activity, isOpen, displayEditButton, isSuperAdmin, isAdmin, isChangeManager, isManager, isActivityDeliverer = false} = props;
+  let {company, open, handleModalClose, handleType, project, template, stakeHolders, local, match, displayEditButton, isSuperAdmin, isAdmin, isChangeManager, isManager, isActivityDeliverer = false} = props;
   project = project || {}
   const [isNew, setIsNew] = React.useState(false);
   const [status, setStatus] = React.useState(project.status || 'Active');
   const [users, setUsers] = React.useState([]);
-  const [name, setName] = React.useState(project.name || '');
   const [description, setDescription] = React.useState(project.name || '');
   const [showModalDialog, setShowModalDialog] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
@@ -151,15 +173,13 @@ function AddActivity(props) {
         label: `${manager.profile.firstName} ${manager.profile.lastName}`,
         value: manager._id
       }
-    })
+    });
   const [person, setPerson] = React.useState(...managers || '');
-  const [peoples, setPeoples] = React.useState(stakeHolders.map(item => item._id));
-  const [activityType, setActivityType] = React.useState({});
   const [startingDate, setStartingDate] = React.useState(project.startingDate || new Date());
   const [dueDate, setDueDate] = React.useState(project.endingDate || new Date());
   const [func, setFunc] = React.useState(project.function);
   const [organization, setOrganization] = React.useState(project.organization);
-  const [expanded, setExpanded] = React.useState('panel1');
+  const [isDone, setIsDone] = React.useState([]);
 
   const modalName = 'edit';
   let {projectId} = match.params;
@@ -184,16 +204,13 @@ function AddActivity(props) {
   };
 
   const resetValues = () => {
-    setActivityType({});
     setDueDate(new Date());
     setDescription('');
     setPerson(null);
     setStatus('');
     setOrganization('');
     setFunc('');
-    setPeoples(stakeHolders.map(item => item._id));
-    updateFilter('localStakeHolders', 'ids', stakeHolders.map(item => item._id));
-
+    setIsDone([]);
   };
 
 
@@ -229,15 +246,30 @@ function AddActivity(props) {
       if (err) {
         props.enqueueSnackbar(err.reason, {variant: 'error'});
       } else {
-        setName('');
         resetValues();
         props.enqueueSnackbar('Project Updated Successfully.', {variant: 'success'})
         handleClose();
       }
-
     })
-
   };
+
+  useEffect(() => {
+    if (description) {
+      setIsDone([...new Set(['0'].concat(isDone))])
+    }
+  }, [description, company]);
+
+  useEffect(() => {
+    if (startingDate && dueDate) {
+      setIsDone([...new Set(['1'].concat(isDone))])
+    }
+  }, [startingDate, dueDate,]);
+
+  useEffect(() => {
+    if (person) {
+      setIsDone([...new Set(['2'].concat(isDone))])
+    }
+  }, [person]);
 
   const updateUsersList = () => {
     Meteor.call(`users.getPersons`, {company: company}, (err, res) => {
@@ -260,26 +292,18 @@ function AddActivity(props) {
   useEffect(() => {
     updateUsersList();
     if (project && project && project.name) {
-      setExpanded('panel1');
       updateValues();
     }
 
 
   }, [props.company, stakeHolders, company, props.edit, props.activity, isNew, local]);
 
-  const handleChangePanel = panel => (event, isExpanded) => {
-    setExpanded(isExpanded ? panel : false);
-  };
-
   const handleClickOpen = () => {
     setIsNew(true);
-    setExpanded('panel1');
   };
   const handleClose = () => {
-    setName('');
     setIsNew(false);
-    updateFilter('localStakeHolders', 'changed', false);
-    resetValues()
+    resetValues();
     if (handleType !== 'timeline') {
       handleModalClose(modalName);
     } else {
@@ -318,6 +342,10 @@ function AddActivity(props) {
     setDescription(e.target.value)
   };
 
+  const onCalendarClick = (id) => {
+    document.getElementById(id).click();
+  };
+
   return (
     <div className={classes.AddNewActivity}>
       {displayEditButton ? <Button variant="outlined" color="primary" onClick={handleClickOpen}>
@@ -330,148 +358,144 @@ function AddActivity(props) {
           Edit Project Details
         </DialogTitle>
         <form onSubmit={updateProject} noValidate>
-          <DialogContent dividers>
+          <DialogContent>
             <div className={classes.root}>
-              <ExpansionPanel expanded={expanded === 'panel1'} onChange={handleChangePanel('panel1')}>
-                <ExpansionPanelSummary
-                  expandIcon={<ExpandMoreIcon/>}
-                  aria-controls="panel4bh-content"
-                  id="panel4bh-header"
-                >
-                  <Typography className={classes.heading}>Project Name</Typography>
-                  <Typography className={classes.secondaryHeading}>
-                  </Typography>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails>
-                  <Grid container direction={"row"} alignItems={"center"} justify={"space-between"}>
-                    <Grid item xs={((isChangeManager && !isAdmin) || isAdmin) ? 6 : 12}>
-                      <TextField
-                        autoFocus
-                        margin="dense"
-                        id="description"
-                        label="Project Name"
-                        value={description}
-                        onChange={handleDescriptionChange}
-                        required={true}
-                        disabled={disabled}
-                        type="text"
-                        fullWidth
-                      />
-                    </Grid>
-                    {((isChangeManager && !isAdmin) || isAdmin) && <Grid item xs={5}>
-                      <FormControl fullWidth={true}>
-                        <InputLabel id={'select-project-status'}>Select Project Status</InputLabel>
-                        <Select id={'select-project-status'} value={status} onChange={(e) => setStatus(e.target.value)}>
-                          <MenuItem value={'active'}>Active</MenuItem>
-                          <MenuItem value={'completed'}>Completed</MenuItem>
-                          <MenuItem value={'on-hold'}>On-Hold</MenuItem>
-                          <MenuItem value={'canceled'}>Canceled</MenuItem>
-                        </Select>
-                      </FormControl>
-                    </Grid>}
-                    {company && company.organizationField && <Grid item xs={6}>
-                      <FormControl fullWidth={true}>
-                        <InputLabel id={'select-project-organization'}>Organization</InputLabel>
-                        <Select id={'select-project-organization'} value={organization}
-                                onChange={(e) => setOrganization(e.target.value)}>
-                          {company.organization && company.organization.map(_organization => {
-                              return <MenuItem
-                                value={_organization}>{_organization[0].toUpperCase() + _organization.slice(1)}</MenuItem>
-                            }
-                          )}
-                        </Select>
-                      </FormControl>
-                    </Grid>}
-                    {company && company.functionField && <Grid item xs={5}>
-                      <FormControl fullWidth={true}>
-                        <InputLabel id={'select-project-function'}>Function</InputLabel>
-                        <Select id={'select-project-function'} value={func} onChange={(e) => setFunc(e.target.value)}>
-                          {company.function && company.function.map(_func => {
-                              return <MenuItem value={_func}>{_func[0].toUpperCase() + _func.slice(1)}</MenuItem>
-                            }
-                          )}
-                        </Select>
-                      </FormControl>
-                    </Grid>}
-                  </Grid>
-                </ExpansionPanelDetails>
-              </ExpansionPanel>
-              <ExpansionPanel expanded={expanded === 'panel2'} onChange={handleChangePanel('panel2')}>
-                <ExpansionPanelSummary
-                  expandIcon={<ExpandMoreIcon/>}
-                  aria-controls="panel1bh-content"
-                  id="panel1bh-header"
-                >
-                  <Typography className={classes.heading}>Date</Typography>
-                  <Typography className={classes.secondaryHeading}>Start and estimated due dates</Typography>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails>
-                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                    <Grid container justify="space-between" spacing={4}>
-                      <Grid item xs={6}>
-                        <DatePicker
+              <Stepper orientation="vertical" connector={<CustomStepConnector/>}>
+                <Step key={0} active={true} completed={isDone.includes('0')}>
+                  <StepLabel StepIconComponent={CustomStepIcon} classes={{active: classes.stepLabelMain}}>Edit
+                    Project</StepLabel>
+                  <StepContent classes={{root: classes.stepContentRoot}}>
+                    <Grid container direction={'row'} alignItems={"center"} justify={'space-between'}
+                          className={classes.container}>
+                      <Grid item xs={((isChangeManager && !isAdmin) || isAdmin) ? 5 : 12}
+                            style={{paddingBottom: '10px'}}>
+                        <TextField
+                          autoFocus
+                          margin="dense"
+                          id="name"
+                          label="Project Name"
+                          value={description}
+                          onChange={handleDescriptionChange}
+                          required={true}
+                          type="text"
+                          variant={"outlined"}
                           fullWidth
-                          disableToolbar
-                          variant="inline"
-                          format="MM/dd/yyyy"
-                          margin="normal"
-                          id="date-picker-inline"
-                          label="Start Date"
-                          value={startingDate}
-                          autoOk={true}
-                          disabled={disabled}
-                          onChange={handleStartingDate}
-                          KeyboardButtonProps={{
-                            'aria-label': 'change date',
-                          }}
                         />
                       </Grid>
-                      <Grid item xs={6}>
-                        <DatePicker
-                          disableToolbar
-                          fullWidth
-                          variant="inline"
-                          margin="normal"
-                          id="date-picker-dialog"
-                          label="Estimated Due Date"
-                          format="MM/dd/yyyy"
-                          value={dueDate}
-                          minDate={startingDate}
-                          autoOk={true}
-                          disabled={disabled}
-                          onChange={handleDueDate}
-                          KeyboardButtonProps={{
-                            'aria-label': 'change date',
-                          }}
-                        />
+                      {((isChangeManager && !isAdmin) || isAdmin) && <Grid item xs={6}>
+                        <FormControl fullWidth={true}>
+                          <InputLabel id={'select-project-status'}>Select Project Status</InputLabel>
+                          <Select id={'select-project-status'} value={status}
+                                  onChange={(e) => setStatus(e.target.value)}>
+                            <MenuItem value={'active'}>Active</MenuItem>
+                            <MenuItem value={'completed'}>Completed</MenuItem>
+                            <MenuItem value={'on-hold'}>On-Hold</MenuItem>
+                            <MenuItem value={'canceled'}>Canceled</MenuItem>
+                          </Select>
+                        </FormControl>
+                      </Grid>}
+                      {company && company.organizationField && <Grid item xs={5}>
+                        <FormControl fullWidth={true}>
+                          <InputLabel id={'select-project-status'}>Organization</InputLabel>
+                          <Select id={'select-project-status'} value={organization}
+                                  onChange={(e) => setOrganization(e.target.value)}>
+                            {company.organization.map(organization => {
+                                return <MenuItem
+                                  value={organization}>{organization[0].toUpperCase() + organization.slice(1)}</MenuItem>
+                              }
+                            )}
+                          </Select>
+                        </FormControl>
+                      </Grid>}
+                      {company && company.functionField && <Grid item xs={6}>
+                        <FormControl fullWidth={true}>
+                          <InputLabel id={'select-project-status'}>Function</InputLabel>
+                          <Select id={'select-project-status'} value={func} onChange={(e) => setFunc(e.target.value)}>
+                            {company.function.map(func => {
+                                return <MenuItem value={func}>{func[0].toUpperCase() + func.slice(1)}</MenuItem>
+                              }
+                            )}
+                          </Select>
+                        </FormControl>
+                      </Grid>}
+
+                    </Grid>
+                  </StepContent>
+                </Step>
+                <Step key={1} active={true} completed={isDone.includes('1')}>
+                  <StepLabel StepIconComponent={CustomStepIcon}
+                             classes={{active: classes.stepLabelActive}}>Date</StepLabel>
+                  <StepContent classes={{root: classes.stepContentRoot}}>
+
+                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                      <Grid container justify="space-between" alignItems={"center"} className={classes.container}>
+                        <Grid item xs={6} className={classes.datePicker}>
+                          <Grid item xs={10}>
+                            <DatePicker
+                              fullWidth
+                              disableToolbar
+                              variant="inline"
+                              format="MM/dd/yyyy"
+                              id="start-date-picker"
+                              label="Start Date*"
+                              value={startingDate}
+                              autoOk={true}
+                              onChange={handleStartingDate}
+                            />
+                          </Grid>
+                          <Grid item xs={2}>
+                            <IconButton aria-label="close" className={classes.closeButton}
+                                        onClick={() => onCalendarClick("start-date-picker")}>
+                              <CalendarTodayIcon/>
+                            </IconButton>
+                          </Grid>
+                        </Grid>
+
+                        <Grid item xs={6} className={classes.datePicker}>
+                          <Grid item xs={10}>
+                            <DatePicker
+                              disableToolbar
+                              fullWidth
+                              variant="inline"
+                              id="ending-date-picker"
+                              label="Estimated Due Date*"
+                              format="MM/dd/yyyy"
+                              value={dueDate}
+                              minDate={startingDate}
+                              autoOk={true}
+                              onChange={handleDueDate}
+                            />
+                          </Grid>
+                          <Grid item xs={2}>
+                            <IconButton aria-label="close" className={classes.closeButton}
+                                        onClick={() => onCalendarClick("ending-date-picker")}>
+                              <CalendarTodayIcon/>
+                            </IconButton>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                    </MuiPickersUtilsProvider>
+                  </StepContent>
+                </Step>
+
+
+                <Step key={2} active={true} completed={true} completed={isDone.includes('2')}>
+                  <StepLabel StepIconComponent={CustomStepIcon}
+                             classes={{active: classes.stepLabelActive}}>Managers</StepLabel>
+                  <StepContent classes={{root: classes.stepContentRoot}}>
+
+                    <Grid container justify="space-between" alignItems={"center"} className={classes.container}>
+                      <Grid item xs={12} style={{paddingBottom: '10px'}}>
+                        <AutoComplete updateUsers={updateUsers} data={users} selectedValue={person} multiple={true}
+                                      isActivity={false} label={'Select Person*'}/>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <AddNewPerson company={company._id}/>
                       </Grid>
                     </Grid>
-                  </MuiPickersUtilsProvider>
-                </ExpansionPanelDetails>
-              </ExpansionPanel>
-              <ExpansionPanel expanded={expanded === (disabled === true) ? 'panel3' : null}
-                              onChange={handleChangePanel('panal3')}>
-                <ExpansionPanelSummary
-                  expandIcon={<ExpandMoreIcon/>}
-                  aria-controls="panal5bh-content"
-                  id="panal5bh-header"
-                >
-                  <Typography className={classes.heading}>Managers</Typography>
-                  <Typography className={classes.secondaryHeading}>
-                    {person && person.length ? person.map(t => t.label).join(", ") : 'Invite for view-only access (optional)'}
-                  </Typography>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails>
-                  <Grid container justify="space-between" spacing={2}>
-                    <Grid item={true} xs={12}>
-                      <AutoComplete updateUsers={updateUsers} data={users} selectedValue={person} multiple={true}
-                                    isManager={isManager}
-                                    isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager}
-                                    isActivityDeliverer={isActivityDeliverer}/>
-                    </Grid>
-                  </Grid>
-                </ExpansionPanelDetails>
-              </ExpansionPanel>
+                  </StepContent>
+                </Step>
+              </Stepper>
             </div>
             <SaveChanges
               handleClose={handleClose}
@@ -481,13 +505,21 @@ function AddActivity(props) {
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={isUpdated ? handleOpenModalDialog : () => handleClose()} disabled={disabled}
-                    color="secondary">
-              Cancel
-            </Button>
-            <Button type="submit" color="primary" disabled={disabled} onClick={updateProject}>
-              Update Project
-            </Button>
+            <Grid container direction={"row"} alignItems={"center"} justify={"space-between"}
+                  className={classes.gridButtons}>
+              <Grid item xs={1}>
+                <Button onClick={isUpdated ? handleOpenModalDialog : () => handleClose()} disabled={disabled}
+                        color="default">
+                  Cancel
+                </Button>
+              </Grid>
+              <Grid item xs={1}>
+                <Button type="submit" variant="contained" className={classes.createButton} color="primary"
+                        disabled={disabled} onClick={updateProject}>
+                  Update
+                </Button>
+              </Grid>
+            </Grid>
           </DialogActions>
         </form>
       </Dialog>
