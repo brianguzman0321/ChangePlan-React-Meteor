@@ -16,8 +16,8 @@ import {withTracker} from "meteor/react-meteor-data";
 import {Meteor} from "meteor/meteor";
 import ControlledOpenSelect from '/imports/ui/components/admin/control-panel/selectionModal'
 import ProjectsControlPanel from '/imports/ui/components/admin/control-panel/projectsSettings'
-import TopNavBar from '/imports/ui/components/App/App'
 import GeneralSettings from "../admin/control-panel/GeneralSettings";
+import SideMenu from "../App/SideMenu";
 
 
 function TabPanel(props) {
@@ -51,8 +51,18 @@ function a11yProps(index) {
 
 const useStyles = makeStyles(theme => ({
   root: {
-    backgroundColor: theme.palette.background.paper,
-    // width: 500,
+    display: 'flex',
+  },
+  toolbar: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: theme.spacing(0, 1),
+    ...theme.mixins.toolbar,
+  },
+  content: {
+    flexGrow: 1,
+    padding: theme.spacing(3),
   },
 }));
 
@@ -88,38 +98,41 @@ function FullWidthTabs(props) {
 
   return (
     <div className={classes.root}>
-      <TopNavBar {...props}/>
-      <Divider/>
-      <AppBar position="static" color="default">
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          indicatorColor="primary"
-          textColor="primary"
-          variant="fullWidth"
-          aria-label="full width tabs example"
+      <SideMenu {...props}/>
+      <main className={classes.content}>
+        <div className={classes.toolbar}/>
+        <Divider/>
+        <AppBar position="static" color="default">
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            indicatorColor="primary"
+            textColor="primary"
+            variant="fullWidth"
+            aria-label="full width tabs example"
+          >
+            <Tab label="Projects" {...a11yProps(0)} />
+            <Tab label="General Settings" {...a11yProps(1)} />
+          </Tabs>
+        </AppBar>
+        <SwipeableViews
+          axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
+          index={value}
+          onChangeIndex={handleChangeIndex}
         >
-          <Tab label="Projects" {...a11yProps(0)} />
-          <Tab label="General Settings" {...a11yProps(1)} />
-        </Tabs>
-      </AppBar>
-      <SwipeableViews
-        axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-        index={value}
-        onChangeIndex={handleChangeIndex}
-      >
-        <TabPanel value={value} index={0} dir={theme.direction}>
-          <br/>
-          {companies ? <ControlledOpenSelect {...props} title="Companies" entity="Company" entities={companies}
-                                             localCollection="localCompanies" id="companyId"/> : ''}
-          <br/>
-          <ProjectsControlPanel {...props}/>
-        </TabPanel>
-        <TabPanel value={value} index={1} dir={theme.direction}>
-          <br/>
-          <GeneralSettings {...props}/>
-        </TabPanel>
-      </SwipeableViews>
+          <TabPanel value={value} index={0} dir={theme.direction}>
+            <br/>
+            {companies ? <ControlledOpenSelect {...props} title="Companies" entity="Company" entities={companies}
+                                               localCollection="localCompanies" id="companyId"/> : ''}
+            <br/>
+            <ProjectsControlPanel {...props}/>
+          </TabPanel>
+          <TabPanel value={value} index={1} dir={theme.direction}>
+            <br/>
+            <GeneralSettings {...props}/>
+          </TabPanel>
+        </SwipeableViews>
+      </main>
     </div>
   );
 }

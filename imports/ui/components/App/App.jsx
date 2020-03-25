@@ -22,7 +22,6 @@ const Brand = (handleChange1) => (
   <Link to='/' onClick={handleChange1.handleChange1}>
     <img style={{width: 170, marginTop: 8}} src={`/branding/logo-long.png`}/>
   </Link>
-
 );
 
 const useStyles = makeStyles(theme => ({

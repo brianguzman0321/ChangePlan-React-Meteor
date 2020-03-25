@@ -11,7 +11,6 @@ import {Companies} from "/imports/api/companies/companies";
 import {Projects} from "/imports/api/projects/projects";
 import {Peoples} from "/imports/api/peoples/peoples";
 import {Templates} from "/imports/api/templates/templates";
-import TopNavBar from '/imports/ui/components/App/App';
 import config from '/imports/utils/config';
 import {Activities} from "../../../api/activities/activities";
 import {Impacts} from "../../../api/impacts/impacts";
@@ -21,10 +20,23 @@ import ImpactsModal from "./Modals/ImpactsModal";
 import Button from "@material-ui/core/Button";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
+import SideMenu from "../App/SideMenu";
 
 
 const useStyles = makeStyles(theme => ({
   root: {
+    display: 'flex',
+  },
+  toolbar: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: theme.spacing(0, 1),
+    ...theme.mixins.toolbar,
+  },
+  content: {
+    flexGrow: 1,
+    padding: theme.spacing(3),
   },
   createNewImpact: {
     flex: 1,
@@ -232,75 +244,83 @@ function ImpactsTable(props) {
   };
 
   return (
-    <div>
-      <TopNavBar menus={menus} {...props} />
-      <Grid
-        container
-        direction="row"
-        justify="flex-start"
-        alignItems="center"
-        className={classes.gridContainer}
-        spacing={0}
-      >
-        <Grid container className={classes.topBar}>
-          <Grid item xs={12} sm={6} md={4}>
-            <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
-              Impacts
-              &nbsp;&nbsp;&nbsp;
-              <span
-                className={classes.impactsCount}>{impacts.length}</span>
-            </Typography>
-          </Grid>
-          <Grid item xs={4} className={classes.searchGrid} md={3} sm={6}>
-            <InputBase
-              className={classes.input}
-              placeholder="Search"
-              inputProps={{'aria-label': 'search by impact name'}}
-              onChange={searchFilter}
-              value={search}
-            />
-            <IconButton className={classes.iconButton} aria-label="search">
-              <SearchIcon/>
-            </IconButton>
-          </Grid>
-          {((isAdmin && template && (template.companyId === currentCompanyId)) || isSuperAdmin || (type === 'project' && (project && (isAdmin || isChangeManager)))) ?
-            <Grid item xs={4} md={1} sm={2} className={classes.secondTab}>
-              <Button variant="outlined" color="primary" className={classes.createNewImpact} onClick={handleOpenModal}>
-                Add
-              </Button>
-              <ImpactsModal currentType={type} project={project} open={showAddImpact} handleModalClose={handleCloseModal}
-                            isNew={true} template={template} match={match} projectId={projectId} templateId={templateId}/>
+    <div className={classes.root}>
+      <SideMenu menus={menus} {...props} />
+      <main className={classes.content}>
+        <div className={classes.toolbar}/>
+        <Grid
+          container
+          direction="row"
+          justify="flex-start"
+          alignItems="center"
+          className={classes.gridContainer}
+          spacing={0}
+        >
+          <Grid container className={classes.topBar}>
+            <Grid item xs={12} sm={6} md={4}>
+              <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
+                Impacts
+                &nbsp;&nbsp;&nbsp;
+                <span
+                  className={classes.impactsCount}>{impacts.length}</span>
+              </Typography>
             </Grid>
-            : ''}
-          <Grid item xs={2} md={2} sm={2} className={classes.gridFiltering}>
-            <FormControl className={classes.selectFiltering}>
-              <InputLabel id={'fields-for-filtering'} className={classes.labelForSelect}>Filter by</InputLabel>
-              <Select fullWidth id={'fields-for-filtering'} value={filteringField} onChange={selectFieldForFiltering}>
-                <MenuItem key={0} value={0}>None</MenuItem>
-                <MenuItem key={1} value={1}>Type</MenuItem>
-                <MenuItem key={2} value={2}>Level</MenuItem>
-              </Select>
-            </FormControl>
+            <Grid item xs={4} className={classes.searchGrid} md={3} sm={6}>
+              <InputBase
+                className={classes.input}
+                placeholder="Search"
+                inputProps={{'aria-label': 'search by impact name'}}
+                onChange={searchFilter}
+                value={search}
+              />
+              <IconButton className={classes.iconButton} aria-label="search">
+                <SearchIcon/>
+              </IconButton>
+            </Grid>
+            {((isAdmin && template && (template.companyId === currentCompanyId)) || isSuperAdmin || (type === 'project' && (project && (isAdmin || isChangeManager)))) ?
+              <Grid item xs={4} md={1} sm={2} className={classes.secondTab}>
+                <Button variant="outlined" color="primary" className={classes.createNewImpact}
+                        onClick={handleOpenModal}>
+                  Add
+                </Button>
+                <ImpactsModal currentType={type} project={project} open={showAddImpact}
+                              handleModalClose={handleCloseModal}
+                              isNew={true} template={template} match={match} projectId={projectId}
+                              templateId={templateId}/>
+              </Grid>
+              : ''}
+            <Grid item xs={2} md={2} sm={2} className={classes.gridFiltering}>
+              <FormControl className={classes.selectFiltering}>
+                <InputLabel id={'fields-for-filtering'} className={classes.labelForSelect}>Filter by</InputLabel>
+                <Select fullWidth id={'fields-for-filtering'} value={filteringField} onChange={selectFieldForFiltering}>
+                  <MenuItem key={0} value={0}>None</MenuItem>
+                  <MenuItem key={1} value={1}>Type</MenuItem>
+                  <MenuItem key={2} value={2}>Level</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={2} md={2} sm={2} className={classes.gridFiltering}>
+              {filteringField !== 0 &&
+              <FormControl className={classes.selectFiltering}>
+                <InputLabel id={'fields-for-filtering'} className={classes.labelForSelect}>Filter by value</InputLabel>
+                <Select fullWidth id={'fields-for-filtering'} value={filteringValue} onChange={selectValueForFiltering}>
+                  {filteringField === 1 && getFilteringValue('type')}
+                  {filteringField === 2 && getFilteringValue('level')}
+                </Select>
+              </FormControl>
+              }
+            </Grid>
           </Grid>
-          <Grid item xs={2} md={2} sm={2} className={classes.gridFiltering}>
-            {filteringField !== 0 &&
-            <FormControl className={classes.selectFiltering}>
-              <InputLabel id={'fields-for-filtering'} className={classes.labelForSelect}>Filter by value</InputLabel>
-              <Select fullWidth id={'fields-for-filtering'} value={filteringValue} onChange={selectValueForFiltering}>
-                {filteringField === 1 && getFilteringValue('type')}
-                {filteringField === 2 && getFilteringValue('level')}
-              </Select>
-            </FormControl>
-            }
-          </Grid>
+          <ImpactsList className={classes.impactsList} template={template} company={currentCompany}
+                       activities={allActivities}
+                       isChangeManager={isChangeManager} isActivityDeliverer={isActivityDeliverer}
+                       isActivityOwner={isActivityOwner}
+                       isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isManager={isManager} projectId={projectId}
+                       project={project} match={match}
+                       allStakeholders={type === 'project' ? stakeholders : stakeholdersTemplate}
+                       rows={impacts} type={type}/>
         </Grid>
-        <ImpactsList className={classes.impactsList} template={template} company={currentCompany} activities={allActivities}
-                         isChangeManager={isChangeManager} isActivityDeliverer={isActivityDeliverer} isActivityOwner={isActivityOwner}
-                         isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isManager={isManager} projectId={projectId}
-                         project={project} match={match} allStakeholders={type === 'project' ? stakeholders : stakeholdersTemplate}
-                         rows={impacts} type={type}/>
-      </Grid>
-
+      </main>
     </div>
   )
 }

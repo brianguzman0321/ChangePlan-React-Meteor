@@ -17,10 +17,24 @@ import RisksModal from "./Modal/RisksModal";
 import {InputBase} from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import SearchIcon from "@material-ui/core/SvgIcon/SvgIcon";
+import SideMenu from "../App/SideMenu";
 
 
 const useStyles = makeStyles(theme => ({
-  root: {},
+  root: {
+    display: 'flex',
+  },
+  toolbar: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: theme.spacing(0, 1),
+    ...theme.mixins.toolbar,
+  },
+  content: {
+    flexGrow: 1,
+    padding: theme.spacing(3),
+  },
   createNewRisk: {
     flex: 1,
     marginTop: 2,
@@ -180,55 +194,58 @@ function RisksTable(props) {
   };
 
   return (
-    <div>
-      <TopNavBar menus={menus} {...props} />
-      <Grid
-        container
-        direction="row"
-        justify="flex-start"
-        alignItems="center"
-        className={classes.gridContainer}
-        spacing={0}
-      >
-        <Grid container className={classes.topBar}>
-          <Grid item xs={12} sm={6} md={4}>
-            <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
-              Risks
-              &nbsp;&nbsp;&nbsp;
-              <span
-                className={classes.risksCount}>{risks.length}</span>
-            </Typography>
-          </Grid>
-          <Grid item xs={4} className={classes.searchGrid} md={3} sm={6}>
-            <InputBase
-              className={classes.input}
-              placeholder="Search"
-              inputProps={{'aria-label': 'search by impact name'}}
-              onChange={searchFilter}
-              value={search}
-            />
-            <IconButton className={classes.iconButton} aria-label="search">
-              <SearchIcon/>
-            </IconButton>
-          </Grid>
-          {((isAdmin || isSuperAdmin || isChangeManager)) ?
-            <Grid item xs={4} md={1} sm={2} className={classes.secondTab}>
-              <Button variant="outlined" color="primary" className={classes.createNewRisk} onClick={handleOpenModal}>
-                Add
-              </Button>
-              <RisksModal project={project} open={showAddRisk} handleModalClose={handleCloseModal} company={currentCompany}
-                          isNew={true} match={match} projectId={projectId}/>
+    <div className={classes.root}>
+      <SideMenu menus={menus} {...props} />
+      <main className={classes.content}>
+        <div className={classes.toolbar}/>
+        <Grid
+          container
+          direction="row"
+          justify="flex-start"
+          alignItems="center"
+          className={classes.gridContainer}
+          spacing={0}
+        >
+          <Grid container className={classes.topBar}>
+            <Grid item xs={12} sm={6} md={4}>
+              <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
+                Risks
+                &nbsp;&nbsp;&nbsp;
+                <span
+                  className={classes.risksCount}>{risks.length}</span>
+              </Typography>
             </Grid>
-            : ''}
+            <Grid item xs={4} className={classes.searchGrid} md={3} sm={6}>
+              <InputBase
+                className={classes.input}
+                placeholder="Search"
+                inputProps={{'aria-label': 'search by impact name'}}
+                onChange={searchFilter}
+                value={search}
+              />
+              <IconButton className={classes.iconButton} aria-label="search">
+                <SearchIcon/>
+              </IconButton>
+            </Grid>
+            {((isAdmin || isSuperAdmin || isChangeManager)) ?
+              <Grid item xs={4} md={1} sm={2} className={classes.secondTab}>
+                <Button variant="outlined" color="primary" className={classes.createNewRisk} onClick={handleOpenModal}>
+                  Add
+                </Button>
+                <RisksModal project={project} open={showAddRisk} handleModalClose={handleCloseModal}
+                            company={currentCompany}
+                            isNew={true} match={match} projectId={projectId}/>
+              </Grid>
+              : ''}
+          </Grid>
+          <RisksList className={classes.risksList} company={currentCompany}
+                     isChangeManager={isChangeManager} isActivityDeliverer={isActivityDeliverer}
+                     isActivityOwner={isActivityOwner}
+                     isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isManager={isManager} projectId={projectId}
+                     project={project} match={match}
+                     rows={risks}/>
         </Grid>
-        <RisksList className={classes.risksList} company={currentCompany}
-                   isChangeManager={isChangeManager} isActivityDeliverer={isActivityDeliverer}
-                   isActivityOwner={isActivityOwner}
-                   isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isManager={isManager} projectId={projectId}
-                   project={project} match={match}
-                   rows={risks}/>
-      </Grid>
-
+      </main>
     </div>
   )
 }

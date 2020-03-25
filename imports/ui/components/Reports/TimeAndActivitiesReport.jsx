@@ -11,12 +11,11 @@ import MaterialTable from "material-table";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    width: '98%',
-    margin: theme.spacing(3),
+    width: '100vw',
+    padding: 20,
   },
   paper: {
-    width: '100%',
-    marginBottom: theme.spacing(2),
+    width: '90vw',
   },
   table: {
     minWidth: '750px'
