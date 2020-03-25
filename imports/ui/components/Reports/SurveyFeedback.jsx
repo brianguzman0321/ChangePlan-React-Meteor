@@ -11,11 +11,11 @@ import {getPhase} from "../../../utils/utils";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    width: '98%',
+    width: '100vw',
     margin: theme.spacing(3),
   },
   paper: {
-    width: '100%',
+    width: '90vw',
     marginBottom: theme.spacing(2),
   },
   table: {

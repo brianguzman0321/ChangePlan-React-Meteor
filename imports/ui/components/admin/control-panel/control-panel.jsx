@@ -15,7 +15,7 @@ import {withTracker} from "meteor/react-meteor-data";
 import ControlledOpenSelect from './selectionModal'
 import CompaniesControlPanel from './companiesSettings'
 import ProjectsControlPanel from './projectsSettings'
-import TopNavBar from '/imports/ui/components/App/App'
+import SideMenu from "../../App/SideMenu";
 
 
 function TabPanel(props) {
@@ -49,8 +49,18 @@ function a11yProps(index) {
 
 const useStyles = makeStyles(theme => ({
   root: {
-    backgroundColor: theme.palette.background.paper,
-    // width: 500,
+    display: 'flex',
+  },
+  toolbar: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: theme.spacing(0, 1),
+    ...theme.mixins.toolbar,
+  },
+  content: {
+    flexGrow: 1,
+    padding: theme.spacing(3),
   },
 }));
 
@@ -69,47 +79,50 @@ function FullWidthTabs(props) {
 
   return (
     <div className={classes.root}>
-      <TopNavBar {...props}/>
-      <Divider/>
-      <AppBar position="static" color="default">
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          indicatorColor="primary"
-          textColor="primary"
-          variant="fullWidth"
-          aria-label="full width tabs example"
+      <SideMenu {...props}/>
+      <main className={classes.content}>
+        <div className={classes.toolbar}/>
+        <Divider/>
+        <AppBar position="static" color="default">
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            indicatorColor="primary"
+            textColor="primary"
+            variant="fullWidth"
+            aria-label="full width tabs example"
+          >
+            <Tab label="Companies" {...a11yProps(0)} />
+            <Tab label="Projects" {...a11yProps(1)} />
+          </Tabs>
+        </AppBar>
+        <SwipeableViews
+          axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
+          index={value}
+          onChangeIndex={handleChangeIndex}
         >
-          <Tab label="Companies" {...a11yProps(0)} />
-          <Tab label="Projects" {...a11yProps(1)} />
-        </Tabs>
-      </AppBar>
-      <SwipeableViews
-        axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-        index={value}
-        onChangeIndex={handleChangeIndex}
-      >
-        <TabPanel value={value} index={0} dir={theme.direction}>
-          <br/>
-          <ControlledOpenSelect {...props}
-                                title="Companies"
-                                entity="Company"
-                                entities={props.companies}
-                                localCollection="localCompanies"
-                                id="companyId"
-                                index={value}
-          />
-          <br/>
-          <CompaniesControlPanel {...props} parentProps="localCompanies"/>
-        </TabPanel>
-        <TabPanel value={value} index={1} dir={theme.direction}>
-          <br/>
-          <ControlledOpenSelect {...props} title="Companies" entity="Company" entities={props.companies}
-                                localCollection="localCompanies" id="companyId" index={value}/>
-          <br/>
-          <ProjectsControlPanel {...props} parentProps="localProjects"/>
-        </TabPanel>
-      </SwipeableViews>
+          <TabPanel value={value} index={0} dir={theme.direction}>
+            <br/>
+            <ControlledOpenSelect {...props}
+                                  title="Companies"
+                                  entity="Company"
+                                  entities={props.companies}
+                                  localCollection="localCompanies"
+                                  id="companyId"
+                                  index={value}
+            />
+            <br/>
+            <CompaniesControlPanel {...props} parentProps="localCompanies"/>
+          </TabPanel>
+          <TabPanel value={value} index={1} dir={theme.direction}>
+            <br/>
+            <ControlledOpenSelect {...props} title="Companies" entity="Company" entities={props.companies}
+                                  localCollection="localCompanies" id="companyId" index={value}/>
+            <br/>
+            <ProjectsControlPanel {...props} parentProps="localProjects"/>
+          </TabPanel>
+        </SwipeableViews>
+      </main>
     </div>
   );
 }

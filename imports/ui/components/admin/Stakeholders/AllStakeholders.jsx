@@ -2,7 +2,6 @@ import React, {useEffect, useState} from "react";
 import {withSnackbar} from "notistack";
 import {withTracker} from "meteor/react-meteor-data";
 import {Peoples} from "../../../../api/peoples/peoples";
-import TopNavBar from "../../App/App";
 import Grid from "@material-ui/core/Grid";
 import {InputLabel, makeStyles, Select} from "@material-ui/core";
 import {Projects} from "../../../../api/projects/projects";
@@ -15,8 +14,23 @@ import Typography from "@material-ui/core/Typography";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
 import AddStakeHolder from "../../StakeHolders/Modals/AddStakeHolder";
+import SideMenu from "../../App/SideMenu";
 
 const useStyles = makeStyles(theme => ({
+  root: {
+    display: 'flex',
+  },
+  toolbar: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: theme.spacing(0, 1),
+    ...theme.mixins.toolbar,
+  },
+  content: {
+    flexGrow: 1,
+    padding: theme.spacing(3),
+  },
   gridContainer: {
     overFlow: 'hidden'
   },
@@ -287,67 +301,70 @@ const AllStakeholders = (props) => {
   };
 
   return (
-    <div>
-      <TopNavBar {...props} />
-      <Grid
-        container
-        direction="row"
-        justify="flex-start"
-        alignItems="center"
-        className={classes.gridContainer}
-        spacing={0}
-      >
-        <Grid container className={classes.topBar}>
-          <Grid item xs={12} sm={6} md={filteringField === 0 ? 4 : 3}>
-            <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
-              Stakeholders
-              &nbsp;&nbsp;&nbsp;
-              <span
-                className={classes.stakeholdersCount}>{getNumberStakeholders()}</span>
-            </Typography>
-          </Grid>
-          <Grid item xs={2} md={2} sm={2}>
-            <Grid item xs={4} md={2} sm={2} className={classes.secondTab}>
-              <AddStakeHolder company={company} type={'project'}
-                              projects={isAdmin ? allProjects.filter(project => project.companyId === company._id)
-                                : allProjects.filter(project => project.changeManagers.includes(Meteor.userId()))}/>
+    <div className={classes.root}>
+      <SideMenu {...props} />
+      <main className={classes.content}>
+        <div className={classes.toolbar}/>
+        <Grid
+          container
+          direction="row"
+          justify="flex-start"
+          alignItems="center"
+          className={classes.gridContainer}
+          spacing={0}
+        >
+          <Grid container className={classes.topBar}>
+            <Grid item xs={12} sm={6} md={filteringField === 0 ? 4 : 3}>
+              <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
+                Stakeholders
+                &nbsp;&nbsp;&nbsp;
+                <span
+                  className={classes.stakeholdersCount}>{getNumberStakeholders()}</span>
+              </Typography>
             </Grid>
+            <Grid item xs={2} md={2} sm={2}>
+              <Grid item xs={4} md={2} sm={2} className={classes.secondTab}>
+                <AddStakeHolder company={company} type={'project'}
+                                projects={isAdmin ? allProjects.filter(project => project.companyId === company._id)
+                                  : allProjects.filter(project => project.changeManagers.includes(Meteor.userId()))}/>
+              </Grid>
+            </Grid>
+            <Grid item xs={2} md={2} sm={2} className={classes.gridFiltering}>
+              <FormControl className={classes.selectFiltering}>
+                <InputLabel id={'fields-for-filtering'} className={classes.labelForSelect}>Filter by</InputLabel>
+                <Select fullWidth id={'fields-for-filtering'} value={filteringField} onChange={selectFieldForFiltering}>
+                  <MenuItem key={0} value={0}>None</MenuItem>
+                  <MenuItem key={1} value={1}>Project</MenuItem>
+                  <MenuItem key={2} value={2}>Business unit</MenuItem>
+                  <MenuItem key={3} value={3}>Team</MenuItem>
+                  <MenuItem key={4} value={4}>Job Title</MenuItem>
+                  <MenuItem key={5} value={5}>Tag</MenuItem>
+                  <MenuItem key={6} value={6}>Location</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={2} md={2} sm={2} className={classes.gridFiltering}>
+              {filteringField !== 0 &&
+              <FormControl className={classes.selectFiltering}>
+                <InputLabel id={'fields-for-filtering'} className={classes.labelForSelect}>Filter by value</InputLabel>
+                <Select fullWidth id={'fields-for-filtering'} value={filteringValue} onChange={selectValueForFiltering}>
+                  {filteringField === 1 && getFilteringValue('project')}
+                  {filteringField === 2 && getFilteringValue('businessUnit')}
+                  {filteringField === 3 && getFilteringValue('team')}
+                  {filteringField === 4 && getFilteringValue('jobTitle')}
+                  {filteringField === 5 && getFilteringValue('roleTags')}
+                  {filteringField === 6 && getFilteringValue('location')}
+                </Select>
+              </FormControl>
+              }
+            </Grid>
+            <AllStakeholderList className={classes.stakeHoldersList} company={company}
+                                isChangeManager={isChangeManager} projects={currentProjects}
+                                isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isManager={isManager}
+                                rows={currentStakeholders}/>
           </Grid>
-          <Grid item xs={2} md={2} sm={2} className={classes.gridFiltering}>
-            <FormControl className={classes.selectFiltering}>
-              <InputLabel id={'fields-for-filtering'} className={classes.labelForSelect}>Filter by</InputLabel>
-              <Select fullWidth id={'fields-for-filtering'} value={filteringField} onChange={selectFieldForFiltering}>
-                <MenuItem key={0} value={0}>None</MenuItem>
-                <MenuItem key={1} value={1}>Project</MenuItem>
-                <MenuItem key={2} value={2}>Business unit</MenuItem>
-                <MenuItem key={3} value={3}>Team</MenuItem>
-                <MenuItem key={4} value={4}>Job Title</MenuItem>
-                <MenuItem key={5} value={5}>Tag</MenuItem>
-                <MenuItem key={6} value={6}>Location</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item xs={2} md={2} sm={2} className={classes.gridFiltering}>
-            {filteringField !== 0 &&
-            <FormControl className={classes.selectFiltering}>
-              <InputLabel id={'fields-for-filtering'} className={classes.labelForSelect}>Filter by value</InputLabel>
-              <Select fullWidth id={'fields-for-filtering'} value={filteringValue} onChange={selectValueForFiltering}>
-                {filteringField === 1 && getFilteringValue('project')}
-                {filteringField === 2 && getFilteringValue('businessUnit')}
-                {filteringField === 3 && getFilteringValue('team')}
-                {filteringField === 4 && getFilteringValue('jobTitle')}
-                {filteringField === 5 && getFilteringValue('roleTags')}
-                {filteringField === 6 && getFilteringValue('location')}
-              </Select>
-            </FormControl>
-            }
-          </Grid>
-          <AllStakeholderList className={classes.stakeHoldersList} company={company}
-                              isChangeManager={isChangeManager} projects={currentProjects}
-                              isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isManager={isManager}
-                              rows={currentStakeholders}/>
         </Grid>
-      </Grid>
+      </main>
     </div>
   )
 };

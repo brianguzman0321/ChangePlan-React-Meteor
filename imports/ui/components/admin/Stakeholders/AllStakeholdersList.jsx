@@ -69,15 +69,13 @@ function getSorting(order, orderBy) {
 
 const useStyles = makeStyles(theme => ({
   root: {
-    width: '100%',
-    margin: theme.spacing(3),
+    width: '100vw',
   },
   head: {
     background: 'red'
   },
   paper: {
-    width: '100%',
-    marginBottom: theme.spacing(2),
+    width: '90vw',
   },
   table: {
     minWidth: 750,
@@ -96,6 +94,9 @@ const useStyles = makeStyles(theme => ({
     top: 20,
     width: 1,
   },
+  tableCell: {
+    whiteSpace: 'nowrap'
+  }
 }));
 
 export default function AllStakeholderList(props) {

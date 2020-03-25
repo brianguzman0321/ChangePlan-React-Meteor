@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
-import TopNavBar from '/imports/ui/components/App/App'
 import Grid from "@material-ui/core/Grid/Grid";
 import Typography from "@material-ui/core/Typography/Typography";
 import {Meteor} from "meteor/meteor";
@@ -14,10 +13,24 @@ import {withSnackbar} from "notistack";
 import TimeAndActivitiesReport from '../../Reports/TimeAndActivitiesReport';
 import AllUpcomingActivities from "./AllUpcomingActivities/AllUpcomingActivities";
 import {Impacts} from "../../../../api/impacts/impacts";
+import SideMenu from "../../App/SideMenu";
 // import ChangeManagersReport from "./AdminReports/ChangeManagersReport";
 
-const useStyles = makeStyles({
-  root: {},
+const useStyles = makeStyles(theme => ({
+  root: {
+    display: 'flex',
+  },
+  toolbar: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: theme.spacing(0, 1),
+    ...theme.mixins.toolbar,
+  },
+  content: {
+    flexGrow: 1,
+    padding: theme.spacing(3),
+  },
   activitiesGrid: {
     paddingRight: 20
   },
@@ -56,7 +69,7 @@ const useStyles = makeStyles({
   topBar: {
     marginTop: 13,
   }
-});
+}));
 
 function AdminReports(props) {
   let menus = [];
@@ -109,49 +122,56 @@ function AdminReports(props) {
   }, [isAdmin, isChangeManager, allStakeholders]);
 
   return (
-    <div>
-      <TopNavBar {...props} />
-      <Grid
-        container
-        direction="row"
-        justify="space-between"
-        alignItems="center"
-        className={classes.gridContainer}
-        spacing={0}
-      >
+    <div className={classes.root}>
+      <SideMenu {...props} />
+      <main className={classes.content}>
+        <div className={classes.toolbar}/>
         <Grid
           container
-          className={classes.topBar}
           direction="row"
           justify="space-between"
+          alignItems="center"
+          className={classes.gridContainer}
+          spacing={0}
         >
-          <Grid item xs={3} md={7}>
-            <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
-              Reports
-            </Typography>
+          <Grid
+            container
+            className={classes.topBar}
+            direction="row"
+            justify="space-between"
+          >
+            <Grid item xs={3} md={7}>
+              <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
+                Reports
+              </Typography>
+            </Grid>
+          </Grid>
+          <Grid container direction="row" justify="space-between">
+            <TimeAndActivitiesReport match={props.match} allStakeholders={currentStakeholders}
+                                     allActivities={allActivities} type={"time"}/>
+          </Grid>
+          <Grid container direction="row" justify="space-between">
+            <TimeAndActivitiesReport match={props.match} allStakeholders={currentStakeholders}
+                                     allActivities={allActivities} type={"activities"}/>
+          </Grid>
+          <Grid container direction="row" justify="space-between">
+            <AllUpcomingActivities match={props.match} allActivities={allActivities} allProjects={allProjects}
+                                   type={'upcoming'}
+                                   company={company} isAdmin={isAdmin} isChangeManager={isChangeManager}
+                                   allStakeholders={allStakeholders}/>
+          </Grid>
+          <Grid container direction="row" justify="space-between">
+            <AllUpcomingActivities match={props.match} allActivities={allActivities} allProjects={allProjects}
+                                   type={'overdue'}
+                                   company={company} isAdmin={isAdmin} isChangeManager={isChangeManager}
+                                   allStakeholders={allStakeholders}/>
           </Grid>
         </Grid>
-        <Grid container direction="row" justify="space-between">
-          <TimeAndActivitiesReport match={props.match} allStakeholders={currentStakeholders}
-                                   allActivities={allActivities} type={"time"}/>
-        </Grid>
-        <Grid container direction="row" justify="space-between">
-          <TimeAndActivitiesReport match={props.match} allStakeholders={currentStakeholders}
-                                   allActivities={allActivities} type={"activities"}/>
-        </Grid>
-        <Grid container direction="row" justify="space-between">
-          <AllUpcomingActivities match={props.match} allActivities={allActivities} allProjects={allProjects} type={'upcoming'}
-                                 company={company} isAdmin={isAdmin} isChangeManager={isChangeManager} allStakeholders={allStakeholders}/>
-        </Grid>
-        <Grid container direction="row" justify="space-between">
-          <AllUpcomingActivities match={props.match} allActivities={allActivities} allProjects={allProjects} type={'overdue'}
-                                 company={company} isAdmin={isAdmin} isChangeManager={isChangeManager} allStakeholders={allStakeholders}/>
-        </Grid>
-      </Grid>
-   {/*   <Grid container direction="row" justify="space-between">
+        {/*   <Grid container direction="row" justify="space-between">
         <ChangeManagersReport match={props.match} allUsers={allUsers} allProjects={allProjects} company={company}
                                  allActivities={allActivities}/>
       </Grid>*/}
+      </main>
     </div>
   )
 }

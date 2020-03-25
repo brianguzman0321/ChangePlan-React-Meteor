@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import TopNavBar from '/imports/ui/components/App/App';
 import Grid from "@material-ui/core/Grid/Grid";
 import Typography from "@material-ui/core/Typography/Typography";
 import Button from "@material-ui/core/Button/Button";
@@ -15,7 +14,6 @@ import Divider from '@material-ui/core/Divider';
 import Icon from '@material-ui/core/Icon';
 import VisionModal from './Modals/VisionModal';
 import ObjectiveModal from './Modals/ObjectiveModal';
-import RisksModal from './Modals/RisksModal';
 import DeleteValue from './Modals/deleteModal';
 import config from '/imports/utils/config';
 import {stringHelpers} from '/imports/helpers/stringHelpers';
@@ -31,13 +29,23 @@ import {Meteor} from "meteor/meteor";
 import {getTotalStakeholders} from '/imports/utils/utils';
 import {changeManagersNames} from "../../../utils/utils";
 import Chip from "@material-ui/core/Chip";
+import SideMenu from "../App/SideMenu";
 
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   root: {
-    // flexGrow: 1,
-    // maxWidth: 400,
-    // maxHeight: 200
+    display: 'flex',
+  },
+  toolbar: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: theme.spacing(0, 1),
+    ...theme.mixins.toolbar,
+  },
+  content: {
+    flexGrow: 1,
+    padding: theme.spacing(3),
   },
   activityTabs: {
     wrapper: {
@@ -145,12 +153,13 @@ const useStyles = makeStyles({
     color: 'white',
     marginBottom: '5px',
   },
-});
+}));
 
 function Dashboard(props) {
   let {match, project: currentProject, template: currentTemplate, currentCompany, companies, company, allStakeholders} = props;
   let {projectId, templateId} = match.params;
   const classes = useStyles();
+
   let {params} = props.match;
   const [project, setProject] = useState({});
   const [template, setTemplate] = useState({});
@@ -318,7 +327,7 @@ function Dashboard(props) {
   };
 
   return (
-    <div>
+    <div className={classes.root}>
       <VisionModal open={modals.vision} handleModalClose={handleModalClose} project={project} index={index}
                    template={template}
                    editValue={editValue} currentType={type}/>
@@ -333,295 +342,301 @@ function Dashboard(props) {
                    deleteValue={deleteValue} type={type}/>
       <ChangeTemplate closeModalDialog={handleOpenChangeTemplateModal} showModalDialog={isOpen}/>
 
-      <TopNavBar menus={menus} {...props} />
-      <Grid
-        container
-        direction="row"
-        justify="space-between"
-        alignItems="center"
-        className={classes.gridContainer}
-        spacing={0}
-      >
-      </Grid>
-      <Grid
-        container
-        className={classes.topBar}
-        direction="row"
-        justify="space-between"
-      >
-        <Grid item xs={12}>
-          <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
-            Project
-          </Typography>
-        </Grid>
+      <SideMenu menus={menus} {...props} />
+      <main className={classes.content}>
+        <div className={classes.toolbar}/>
         <Grid
           container
           direction="row"
           justify="space-between"
           alignItems="center"
-          className={classes.initialRow}
-        >
-          <Grid item xs={6}>
-            <Typography variant="h4" className={classes.projectName}>
-              {type === 'project' ? project && project.name : template && template.name}
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              {type === 'project' && project.status &&
-              <Chip label={project.status[0].toUpperCase() + project.status.slice(1)}
-                    className={getClass(project.status)}/>}
-            </Typography>
-            {type === 'project' && <Grid>
-              <Typography gutterBottom style={{marginTop: 5}}>
-                <b>Start date:</b> {moment(project.startingDate).format('DD-MMM-YY')}
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <b>Due date:</b> {moment(project.endingDate).format('DD-MMM-YY')}
-              </Typography>
-            </Grid>
-            }
-          </Grid>
-          {type === 'project' && project &&
-          <Grid item xs={4} style={{paddingLeft: 39}}>
-            <Typography gutterBottom>
-              <b>{project.changeManagers && project.changeManagers.length > 1 ? "Change managers" : "Change manager"}:</b>
-              &nbsp;&nbsp;&nbsp;&nbsp;
-              {changeManagersNames(project) || '-'}
-            </Typography>
-            <Typography gutterBottom>
-              <b>{project.managers && project.managers.length > 1 ? "Managers" : "Manager"}:</b>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              {ManagersNames(project)}
-            </Typography>
-            {company && company.organizationField && <Typography gutterBottom>
-              <b>Organization:</b>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              {project.organization ? project.organization : '-'}
-            </Typography>}
-            {company && company.functionField && <Typography gutterBottom>
-              <b>Function:</b>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              {project.function ? project.function : '-'}
-            </Typography>}
-          </Grid>
-          }
-          {(type === 'project' && (project && (isSuperAdmin || isAdmin || isChangeManager))) &&
-          <Grid item xs={2} onClick={handleClose.bind(null, 'edit')}>
-            <EditProject open={modals.edit} handleModalClose={handleModalClose} project={project} template={template}
-                         isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager}
-                         isManger={isManager} isActivityOwner={isActivityOwner}
-                         isActivityDeliverer={isActivityDeliverer}
-                         displayEditButton={true}/>
-          </Grid>
-          }
-
-        </Grid>
-        <Grid
-          container
-          direction="row"
-          justify="space-between"
-          alignItems="center"
-          className={classes.firstRow}
+          className={classes.gridContainer}
           spacing={0}
         >
+        </Grid>
+        <Grid
+          container
+          className={classes.topBar}
+          direction="row"
+          justify="space-between"
+        >
           <Grid item xs={12}>
-            <Card className={classes.firstRowCard} style={{background: '#f5f5f5'}}>
-              <LinearProgress variant="determinate" color="primary" value={100}/>
-              <CardContent>
-                <Typography className={classes.displayHeading} style={{marginBottom: 15}}>
-                  {type === 'project' ? 'PROJECT ' : 'TEMPLATE '}INFORMATION
+            <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
+              Project
+            </Typography>
+          </Grid>
+          <Grid
+            container
+            direction="row"
+            justify="space-between"
+            alignItems="center"
+            className={classes.initialRow}
+          >
+            <Grid item xs={6}>
+              <Typography variant="h4" className={classes.projectName}>
+                {type === 'project' ? project && project.name : template && template.name}
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                {type === 'project' && project.status &&
+                <Chip label={project.status[0].toUpperCase() + project.status.slice(1)}
+                      className={getClass(project.status)}/>}
+              </Typography>
+              {type === 'project' && <Grid>
+                <Typography gutterBottom style={{marginTop: 5}}>
+                  <b>Start date:</b> {moment(project.startingDate).format('DD-MMM-YY')}
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  <b>Due date:</b> {moment(project.endingDate).format('DD-MMM-YY')}
                 </Typography>
-                <Card>
-                  <CardContent>
-                    <Typography className={classes.displayHeading} gutterBottom>
-                      Vision &nbsp;&nbsp;
-                      <Icon color="disabled" fontSize="small" style={{verticalAlign: 'middle', marginBottom: 4}}>
-                        help
-                      </Icon>
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      <span className={classes.helpTipText}>What is the big picture vision for this project and how it will benefit the organisation?</span>
-                    </Typography>
-                    <Divider/>
-                    {vision.map((v, i) => {
-                      return <><Grid key={i}
-                                     container
-                                     direction="row"
-                                     justify="flex-end"
-                                     alignItems="center"
+              </Grid>
+              }
+            </Grid>
+            {type === 'project' && project &&
+            <Grid item xs={4} style={{paddingLeft: 39}}>
+              <Typography gutterBottom>
+                <b>{project.changeManagers && project.changeManagers.length > 1 ? "Change managers" : "Change manager"}:</b>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                {changeManagersNames(project) || '-'}
+              </Typography>
+              <Typography gutterBottom>
+                <b>{project.managers && project.managers.length > 1 ? "Managers" : "Manager"}:</b>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                {ManagersNames(project)}
+              </Typography>
+              {company && company.organizationField && <Typography gutterBottom>
+                <b>Organization:</b>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                {project.organization ? project.organization : '-'}
+              </Typography>}
+              {company && company.functionField && <Typography gutterBottom>
+                <b>Function:</b>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                {project.function ? project.function : '-'}
+              </Typography>}
+            </Grid>
+            }
+            {(type === 'project' && (project && (isSuperAdmin || isAdmin || isChangeManager))) &&
+            <Grid item xs={2} onClick={handleClose.bind(null, 'edit')}>
+              <EditProject open={modals.edit} handleModalClose={handleModalClose} project={project} template={template}
+                           isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isChangeManager={isChangeManager}
+                           isManger={isManager} isActivityOwner={isActivityOwner}
+                           isActivityDeliverer={isActivityDeliverer}
+                           displayEditButton={true}/>
+            </Grid>
+            }
+
+          </Grid>
+          <Grid
+            container
+            direction="row"
+            justify="space-between"
+            alignItems="center"
+            className={classes.firstRow}
+            spacing={0}
+          >
+            <Grid item xs={12}>
+              <Card className={classes.firstRowCard} style={{background: '#f5f5f5'}}>
+                <LinearProgress variant="determinate" color="primary" value={100}/>
+                <CardContent>
+                  <Typography className={classes.displayHeading} style={{marginBottom: 15}}>
+                    {type === 'project' ? 'PROJECT ' : 'TEMPLATE '}INFORMATION
+                  </Typography>
+                  <Card>
+                    <CardContent>
+                      <Typography className={classes.displayHeading} gutterBottom>
+                        Vision &nbsp;&nbsp;
+                        <Icon color="disabled" fontSize="small" style={{verticalAlign: 'middle', marginBottom: 4}}>
+                          help
+                        </Icon>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span className={classes.helpTipText}>What is the big picture vision for this project and how it will benefit the organisation?</span>
+                      </Typography>
+                      <Divider/>
+                      {vision.map((v, i) => {
+                        return <><Grid key={i}
+                                       container
+                                       direction="row"
+                                       justify="flex-end"
+                                       alignItems="center"
+                        >
+                          <Grid item xs={10} onClick={(e) => {
+                            editVision(i, v)
+                          }}>
+                            <Typography className={classes.detailValues} gutterBottom>
+                              {stringHelpers.limitCharacters(v, 112)}
+                            </Typography>
+                          </Grid>
+                          {((isAdmin && template && (template.companyId === currentCompany._id)) || isSuperAdmin || type === 'project' && (project && (isAdmin || isChangeManager))) ?
+                            <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
+                              <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {
+                                editVision(i, v)
+                              }}>
+                                edit
+                              </Icon>
+                              <Icon fontSize="small" style={{marginRight: 6, cursor: 'pointer'}} onClick={(e) => {
+                                deleteEntity(i, 'vision')
+                              }}>
+                                delete
+                              </Icon>
+                            </Grid> : <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}></Grid>}
+                        </Grid>
+                          <Divider/>
+                        </>
+
+                      })}
+
+                      <Divider/>
+                      {((isAdmin && template && (template.companyId === currentCompany._id)) || isSuperAdmin || type === 'project' && (project && (isAdmin || isChangeManager))) ?
+                        <Button align="right" color="primary" variant="contained" fullWidth={true}
+                                style={{marginTop: 7}}
+                                onClick={handleClose.bind(null, 'vision')}>
+                          Add
+                        </Button> : ''}
+                    </CardContent>
+                  </Card>
+                  <br/>
+                  <Card>
+                    <CardContent>
+                      <Typography className={classes.displayHeading} gutterBottom>
+                        Objectives &nbsp;&nbsp;
+                        <Icon color="disabled" fontSize="small" style={{verticalAlign: 'middle', marginBottom: 4}}>
+                          help
+                        </Icon>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span className={classes.helpTipText}>What are we trying to achieve?</span>
+                      </Typography>
+                      <Divider/>
+
+                      {objectives.map((v, i) => {
+                        return <><Grid key={i}
+                                       container
+                                       direction="row"
+                                       justify="flex-end"
+                                       alignItems="center"
+                        >
+                          <Grid item xs={10} onClick={(e) => {
+                            editObjectives(i, v)
+                          }}>
+                            <Typography className={classes.detailValues} gutterBottom>
+                              {stringHelpers.limitCharacters(v, 112)}
+                            </Typography>
+                          </Grid>
+                          {((isAdmin && template && (template.companyId === currentCompany._id)) || isSuperAdmin || type === 'project' && (project && (isAdmin || isChangeManager))) ?
+                            <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
+                              <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {
+                                editObjectives(i, v)
+                              }}>
+                                edit
+                              </Icon>
+                              <Icon fontSize="small" style={{marginRight: 6, cursor: 'pointer'}} onClick={(e) => {
+                                deleteEntity(i, 'objectives')
+                              }}>
+                                delete
+                              </Icon>
+                            </Grid> : <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}></Grid>}
+                        </Grid>
+                          <Divider/>
+                        </>
+
+                      })}
+
+                      <Divider/>
+                      {((isAdmin && template && (template.companyId === currentCompany._id)) || isSuperAdmin || type === 'project' && (project && (isAdmin || isChangeManager))) ?
+                        <Button align="right" color="primary" variant="contained" fullWidth={true}
+                                style={{marginTop: 7}}
+                                onClick={handleClose.bind(null, 'objectives')}>
+                          Add
+                        </Button> : ''}
+
+                    </CardContent>
+                  </Card>
+                  <br/>
+                  <Card>
+                    <CardContent>
+                      <Typography className={classes.displayHeading} gutterBottom>
+                        Benefits &nbsp;&nbsp;
+                        <Icon color="disabled" fontSize="small" style={{verticalAlign: 'middle', marginBottom: 4}}>
+                          help
+                        </Icon>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span className={classes.helpTipText}>List the project's benefit?</span>
+                      </Typography>
+                      <Divider/>
+                      <Grid
+                        container
+                        direction="row"
+                        justify="flex-end"
+                        alignItems="center"
                       >
-                        <Grid item xs={10} onClick={(e) => {
-                          editVision(i, v)
-                        }}>
-                          <Typography className={classes.detailValues} gutterBottom>
-                            {stringHelpers.limitCharacters(v, 112)}
+                        <Grid item xs={8}>
+                          <Typography className={classes.columnsHeadings} gutterBottom style={{fontWeight: 'bold'}}>
+                            DESCRIPTION
+                          </Typography>
+
+                        </Grid>
+                        <Grid item xs={2}>
+                          <Typography className={classes.columnsHeadings} gutterBottom style={{fontWeight: 'bold'}}>
+                            STAKEHOLDERS
                           </Typography>
                         </Grid>
-                        {((isAdmin && template && (template.companyId === currentCompany._id)) || isSuperAdmin || type === 'project' && (project && (isAdmin || isChangeManager))) ?
-                          <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
-                            <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {
-                              editVision(i, v)
-                            }}>
-                              edit
-                            </Icon>
-                            <Icon fontSize="small" style={{marginRight: 6, cursor: 'pointer'}} onClick={(e) => {
-                              deleteEntity(i, 'vision')
-                            }}>
-                              delete
-                            </Icon>
-                          </Grid> : <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}></Grid>}
-                      </Grid>
-                        <Divider/>
-                      </>
+                        <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
 
-                    })}
-
-                    <Divider/>
-                    {((isAdmin && template && (template.companyId === currentCompany._id)) || isSuperAdmin || type === 'project' && (project && (isAdmin || isChangeManager))) ?
-                      <Button align="right" color="primary" variant="contained" fullWidth={true} style={{marginTop: 7}}
-                              onClick={handleClose.bind(null, 'vision')}>
-                        Add
-                      </Button> : ''}
-                  </CardContent>
-                </Card>
-                <br/>
-                <Card>
-                  <CardContent>
-                    <Typography className={classes.displayHeading} gutterBottom>
-                      Objectives &nbsp;&nbsp;
-                      <Icon color="disabled" fontSize="small" style={{verticalAlign: 'middle', marginBottom: 4}}>
-                        help
-                      </Icon>
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      <span className={classes.helpTipText}>What are we trying to achieve?</span>
-                    </Typography>
-                    <Divider/>
-
-                    {objectives.map((v, i) => {
-                      return <><Grid key={i}
-                                     container
-                                     direction="row"
-                                     justify="flex-end"
-                                     alignItems="center"
-                      >
-                        <Grid item xs={10} onClick={(e) => {
-                          editObjectives(i, v)
-                        }}>
-                          <Typography className={classes.detailValues} gutterBottom>
-                            {stringHelpers.limitCharacters(v, 112)}
-                          </Typography>
                         </Grid>
-                        {((isAdmin && template && (template.companyId === currentCompany._id)) || isSuperAdmin || type === 'project' && (project && (isAdmin || isChangeManager))) ?
-                          <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
-                            <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {
-                              editObjectives(i, v)
-                            }}>
-                              edit
-                            </Icon>
-                            <Icon fontSize="small" style={{marginRight: 6, cursor: 'pointer'}} onClick={(e) => {
-                              deleteEntity(i, 'objectives')
-                            }}>
-                              delete
-                            </Icon>
-                          </Grid> : <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}></Grid>}
                       </Grid>
-                        <Divider/>
-                      </>
-
-                    })}
-
-                    <Divider/>
-                    {((isAdmin && template && (template.companyId === currentCompany._id)) || isSuperAdmin || type === 'project' && (project && (isAdmin || isChangeManager))) ?
-                      <Button align="right" color="primary" variant="contained" fullWidth={true} style={{marginTop: 7}}
-                              onClick={handleClose.bind(null, 'objectives')}>
-                        Add
-                      </Button> : ''}
-
-                  </CardContent>
-                </Card>
-                <br/>
-                <Card>
-                  <CardContent>
-                    <Typography className={classes.displayHeading} gutterBottom>
-                      Benefits &nbsp;&nbsp;
-                      <Icon color="disabled" fontSize="small" style={{verticalAlign: 'middle', marginBottom: 4}}>
-                        help
-                      </Icon>
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      <span className={classes.helpTipText}>List the project's benefit?</span>
-                    </Typography>
-                    <Divider/>
-                    <Grid
-                      container
-                      direction="row"
-                      justify="flex-end"
-                      alignItems="center"
-                    >
-                      <Grid item xs={8}>
-                        <Typography className={classes.columnsHeadings} gutterBottom style={{fontWeight: 'bold'}}>
-                          DESCRIPTION
-                        </Typography>
-
-                      </Grid>
-                      <Grid item xs={2}>
-                        <Typography className={classes.columnsHeadings} gutterBottom style={{fontWeight: 'bold'}}>
-                          STAKEHOLDERS
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
-
-                      </Grid>
-                    </Grid>
-                    <Divider/>
-                    {benefits.map((v, i) => {
-                      return <><Grid key={i}
-                                     container
-                                     direction="row"
-                                     justify="flex-end"
-                                     alignItems="center"
-                      >
-                        <Grid item xs={8} onClick={(e) => {
-                          editBenefits(i, v)
-                        }}>
-                          <Typography className={classes.detailValues} gutterBottom>
-                            {stringHelpers.limitCharacters(v.description, 92)}
-                          </Typography>
+                      <Divider/>
+                      {benefits.map((v, i) => {
+                        return <><Grid key={i}
+                                       container
+                                       direction="row"
+                                       justify="flex-end"
+                                       alignItems="center"
+                        >
+                          <Grid item xs={8} onClick={(e) => {
+                            editBenefits(i, v)
+                          }}>
+                            <Typography className={classes.detailValues} gutterBottom>
+                              {stringHelpers.limitCharacters(v.description, 92)}
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={2} onClick={(e) => {
+                            editBenefits(i, v)
+                          }}>
+                            {getTotalStakeholders(allStakeholders, v.stakeholders)}
+                          </Grid>
+                          {((isAdmin && template && (template.companyId === currentCompany._id)) || isSuperAdmin || type === 'project' && (project && (isAdmin || isChangeManager))) ?
+                            <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
+                              <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {
+                                editBenefits(i, v)
+                              }}>
+                                edit
+                              </Icon>
+                              <Icon fontSize="small" style={{marginRight: 6, cursor: 'pointer'}} onClick={(e) => {
+                                deleteEntity(i, 'benefits')
+                              }}>
+                                delete
+                              </Icon>
+                            </Grid> : <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}></Grid>}
                         </Grid>
-                        <Grid item xs={2} onClick={(e) => {
-                          editBenefits(i, v)
-                        }}>
-                          {getTotalStakeholders(allStakeholders, v.stakeholders)}
-                        </Grid>
-                        {((isAdmin && template && (template.companyId === currentCompany._id)) || isSuperAdmin || type === 'project' && (project && (isAdmin || isChangeManager))) ?
-                          <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}>
-                            <Icon fontSize="small" style={{marginRight: 12, cursor: 'pointer'}} onClick={(e) => {
-                              editBenefits(i, v)
-                            }}>
-                              edit
-                            </Icon>
-                            <Icon fontSize="small" style={{marginRight: 6, cursor: 'pointer'}} onClick={(e) => {
-                              deleteEntity(i, 'benefits')
-                            }}>
-                              delete
-                            </Icon>
-                          </Grid> : <Grid item xs={2} justify="flex-end" style={{display: 'flex'}}></Grid>}
-                      </Grid>
-                        <Divider/>
-                      </>
+                          <Divider/>
+                        </>
 
-                    })}
+                      })}
 
-                    <Divider/>
-                    {((isAdmin && template && (template.companyId === currentCompany._id)) || isSuperAdmin || type === 'project' && (project && (isAdmin || isChangeManager))) ?
-                      <Button align="right" color="primary" variant="contained" fullWidth={true} style={{marginTop: 7}}
-                              onClick={handleClose.bind(null, 'benefits')}>
-                        Add
-                      </Button> : null}
-                  </CardContent>
-                </Card>
-              </CardContent>
-            </Card>
+                      <Divider/>
+                      {((isAdmin && template && (template.companyId === currentCompany._id)) || isSuperAdmin || type === 'project' && (project && (isAdmin || isChangeManager))) ?
+                        <Button align="right" color="primary" variant="contained" fullWidth={true}
+                                style={{marginTop: 7}}
+                                onClick={handleClose.bind(null, 'benefits')}>
+                          Add
+                        </Button> : null}
+                    </CardContent>
+                  </Card>
+                </CardContent>
+              </Card>
+            </Grid>
           </Grid>
         </Grid>
-      </Grid>
+      </main>
 
     </div>
   )

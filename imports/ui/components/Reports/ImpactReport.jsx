@@ -13,11 +13,10 @@ import {calculationLevels} from "../../../utils/utils";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    width: '100%',
-    margin: theme.spacing(3),
+    width: '100vw',
   },
   paper: {
-    width: '100%',
+    width: '90vw',
     marginBottom: theme.spacing(2),
   },
   table: {

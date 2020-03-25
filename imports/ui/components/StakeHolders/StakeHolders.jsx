@@ -23,13 +23,23 @@ import MenuItem from "@material-ui/core/MenuItem";
 import {AdditionalStakeholderInfo} from "../../../api/additionalStakeholderInfo/additionalStakeholderInfo";
 import {Impacts} from "../../../api/impacts/impacts";
 import {calculationLevels} from "../../../utils/utils";
+import SideMenu from "../App/SideMenu";
 
 
 const useStyles = makeStyles(theme => ({
   root: {
-    // flexGrow: 1,
-    // maxWidth: 400,
-    // maxHeight: 200
+    display: 'flex',
+  },
+  toolbar: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: theme.spacing(0, 1),
+    ...theme.mixins.toolbar,
+  },
+  content: {
+    flexGrow: 1,
+    padding: theme.spacing(3),
   },
   gridContainer: {
     // marginBottom: 15,
@@ -345,80 +355,82 @@ function StakeHolders(props) {
   };
 
   return (
-    <div>
-      <TopNavBar menus={menus} {...props} />
-      <Grid
-        container
-        direction="row"
-        justify="flex-start"
-        alignItems="center"
-        className={classes.gridContainer}
-        spacing={0}
-      >
-        <Grid container className={classes.topBar}>
-          <Grid item xs={12} sm={6} md={filteringField === 0 ? 4 : 3}>
-            <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
-              Stakeholders
-              &nbsp;&nbsp;&nbsp;
-              <span
-                className={classes.stakeholdersCount}>{getNumberStakeholders()}</span>
-            </Typography>
-          </Grid>
-          <Grid item xs={4} className={classes.searchGrid} md={3} sm={6}>
-            <InputBase
-              className={classes.input}
-              placeholder="Search"
-              inputProps={{'aria-label': 'search by project name'}}
-              onChange={searchFilter}
-              value={search}
-            />
-            <IconButton className={classes.iconButton} aria-label="search">
-              <SearchIcon/>
-            </IconButton>
-          </Grid>
-          {((isAdmin && template && (template.companyId === currentCompanyId)) || isSuperAdmin || (type === 'project' && (project && (isAdmin || isChangeManager)))) ?
-            <Grid item xs={4} md={2} sm={2} className={classes.secondTab}>
-              <AddStakeHolder type={type} company={currentCompany} projectId={projectId} templateId={templateId}
-                              project={project} template={template}/>
+    <div className={classes.root}>
+      <SideMenu menus={menus} {...props} />
+      <main className={classes.content}>
+        <div className={classes.toolbar}/>
+        <Grid
+          container
+          direction="row"
+          justify="flex-start"
+          alignItems="center"
+          className={classes.gridContainer}
+          spacing={0}
+        >
+          <Grid container className={classes.topBar}>
+            <Grid item xs={12} sm={6} md={filteringField === 0 ? 4 : 3}>
+              <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
+                Stakeholders
+                &nbsp;&nbsp;&nbsp;
+                <span
+                  className={classes.stakeholdersCount}>{getNumberStakeholders()}</span>
+              </Typography>
             </Grid>
-            : ''}
-          <Grid item xs={2} md={2} sm={2} className={classes.gridFiltering}>
-            <FormControl className={classes.selectFiltering}>
-              <InputLabel id={'fields-for-filtering'} className={classes.labelForSelect}>Filter by</InputLabel>
-              <Select fullWidth id={'fields-for-filtering'} value={filteringField} onChange={selectFieldForFiltering}>
-                <MenuItem key={0} value={0}>None</MenuItem>
-                <MenuItem key={1} value={1}>Business unit</MenuItem>
-                <MenuItem key={2} value={2}>Team</MenuItem>
-                <MenuItem key={3} value={3}>Job Title</MenuItem>
-                <MenuItem key={4} value={4}>Tag</MenuItem>
-                <MenuItem key={5} value={5}>Location</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item xs={2} md={2} sm={2} className={classes.gridFiltering}>
-            {filteringField !== 0 &&
-            <FormControl className={classes.selectFiltering}>
-              <InputLabel id={'fields-for-filtering'} className={classes.labelForSelect}>Filter by value</InputLabel>
-              <Select fullWidth id={'fields-for-filtering'} value={filteringValue} onChange={selectValueForFiltering}>
-                {filteringField === 1 && getFilteringValue('businessUnit')}
-                {filteringField === 2 && getFilteringValue('team')}
-                {filteringField === 3 && getFilteringValue('jobTitle')}
-                {filteringField === 4 && getFilteringValue('roleTags')}
-                {filteringField === 5 && getFilteringValue('location')}
-              </Select>
-            </FormControl>
-            }
+            <Grid item xs={4} className={classes.searchGrid} md={3} sm={6}>
+              <InputBase
+                className={classes.input}
+                placeholder="Search"
+                inputProps={{'aria-label': 'search by project name'}}
+                onChange={searchFilter}
+                value={search}
+              />
+              <IconButton className={classes.iconButton} aria-label="search">
+                <SearchIcon/>
+              </IconButton>
+            </Grid>
+            {((isAdmin && template && (template.companyId === currentCompanyId)) || isSuperAdmin || (type === 'project' && (project && (isAdmin || isChangeManager)))) ?
+              <Grid item xs={4} md={2} sm={2} className={classes.secondTab}>
+                <AddStakeHolder type={type} company={currentCompany} projectId={projectId} templateId={templateId}
+                                project={project} template={template}/>
+              </Grid>
+              : ''}
+            <Grid item xs={2} md={2} sm={2} className={classes.gridFiltering}>
+              <FormControl className={classes.selectFiltering}>
+                <InputLabel id={'fields-for-filtering'} className={classes.labelForSelect}>Filter by</InputLabel>
+                <Select fullWidth id={'fields-for-filtering'} value={filteringField} onChange={selectFieldForFiltering}>
+                  <MenuItem key={0} value={0}>None</MenuItem>
+                  <MenuItem key={1} value={1}>Business unit</MenuItem>
+                  <MenuItem key={2} value={2}>Team</MenuItem>
+                  <MenuItem key={3} value={3}>Job Title</MenuItem>
+                  <MenuItem key={4} value={4}>Tag</MenuItem>
+                  <MenuItem key={5} value={5}>Location</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={2} md={2} sm={2} className={classes.gridFiltering}>
+              {filteringField !== 0 &&
+              <FormControl className={classes.selectFiltering}>
+                <InputLabel id={'fields-for-filtering'} className={classes.labelForSelect}>Filter by value</InputLabel>
+                <Select fullWidth id={'fields-for-filtering'} value={filteringValue} onChange={selectValueForFiltering}>
+                  {filteringField === 1 && getFilteringValue('businessUnit')}
+                  {filteringField === 2 && getFilteringValue('team')}
+                  {filteringField === 3 && getFilteringValue('jobTitle')}
+                  {filteringField === 4 && getFilteringValue('roleTags')}
+                  {filteringField === 5 && getFilteringValue('location')}
+                </Select>
+              </FormControl>
+              }
 
+            </Grid>
           </Grid>
+          <StakeHolderList className={classes.stakeHoldersList} template={template} company={currentCompany}
+                           isChangeManager={isChangeManager} isActivityDeliverer={isActivityDeliverer}
+                           isActivityOwner={isActivityOwner}
+                           isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isManager={isManager} projectId={projectId}
+                           project={project}
+                           rows={stakeholders} type={type}/>
         </Grid>
-        <StakeHolderList className={classes.stakeHoldersList} template={template} company={currentCompany}
-                         isChangeManager={isChangeManager} isActivityDeliverer={isActivityDeliverer}
-                         isActivityOwner={isActivityOwner}
-                         isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isManager={isManager} projectId={projectId}
-                         project={project}
-                         rows={stakeholders} type={type}/>
-      </Grid>
-
+      </main>
     </div>
   )
 }

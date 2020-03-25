@@ -34,6 +34,17 @@ import {Impacts} from "../../../api/impacts/impacts";
 
 
 const useStyles = makeStyles(theme => ({
+  toolbar: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: theme.spacing(0, 1),
+    ...theme.mixins.toolbar,
+  },
+  content: {
+    flexGrow: 1,
+    padding: theme.spacing(3),
+  },
   card: {
     minHeight: 192,
     marginTop: 23,
@@ -91,13 +102,24 @@ const useStyles = makeStyles(theme => ({
   input: {
     marginLeft: theme.spacing(1),
     flex: 1,
+    [theme.breakpoints.up('md')]: {
+      width: 200,
+    },
+    [theme.breakpoints.down('md')]: {
+      width: 150,
+    },
   },
   searchGrid: {
     display: 'flex',
     background: '#fff',
     border: '1px solid #cbcbcc',
     maxHeight: 40,
-    maxWidth: 352,
+    [theme.breakpoints.up('md')]: {
+      width: 200,
+    },
+    [theme.breakpoints.down('md')]: {
+      width: 150,
+    },
   },
   iconButton: {
     marginTop: -3
@@ -190,7 +212,8 @@ const useStyles = makeStyles(theme => ({
   },
   selectedButton: {
     background: '#e0e0e0',
-  }
+  },
+
 }));
 
 function ProjectCard(props) {
@@ -394,7 +417,8 @@ function ProjectCard(props) {
   };
 
   return (
-    <>
+    <main className={classes.content}>
+      <div className={classes.toolbar}/>
       <Grid
         container
         direction="row"
@@ -412,6 +436,7 @@ function ProjectCard(props) {
           <Grid item xs={4} className={classes.searchGrid}>
             <InputBase
               className={classes.input}
+              classes={{input: classes.input}}
               inputProps={{'aria-label': 'search by project name'}}
               onChange={searchFilter}
               value={search}
@@ -575,7 +600,7 @@ function ProjectCard(props) {
         </Grid>
       </Grid>
       }
-    </>
+    </main>
 
   );
 }

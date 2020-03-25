@@ -20,7 +20,6 @@ import {Projects} from '/imports/api/projects/projects';
 import Gantt, {handleImportData, handleDownload} from './Gantt/index.js';
 import ExportDialog from './Dialog/ExportDialog';
 import ImportDialog from './Dialog/ImportDialog';
-import TopNavBar from '/imports/ui/components/App/App';
 import EditProject from '/imports/ui/components/Projects/Models/EditProject';
 import {useStyles, changeManagersNames} from './utils';
 import {scaleTypes, colors} from './constants';
@@ -32,6 +31,7 @@ import AddEventModal from "../Events/AddEventModal";
 import {ProjectEvents} from "../../../api/projectEvents/projectEvents";
 import {Peoples} from "../../../api/peoples/peoples";
 import {getTotalStakeholders} from "../../../utils/utils";
+import SideMenu from "../App/SideMenu";
 
 
 function Timeline(props) {
@@ -252,7 +252,7 @@ function Timeline(props) {
     });
 
     if (!_.isEqual(data.data, tempData))
-    setData({data: tempData});
+      setData({data: tempData});
   }, [props]);
 
   useEffect(() => {
@@ -278,34 +278,148 @@ function Timeline(props) {
     setShowAddEventModal(false);
   };
   return (
-    <div>
-      <TopNavBar menus={config.menus} {...props} />
-      <Grid
-        container
-        direction="row"
-        justify="space-between"
-        alignItems="center"
-        className={classes.gridContainer}
-        spacing={0}
-      >
+    <div className={classes.root}>
+      <SideMenu menus={config.menus} {...props} />
+      <main className={classes.content}>
+        <div className={classes.toolbar}/>
         <Grid
           container
-          className={classes.topBar}
           direction="row"
           justify="space-between"
+          alignItems="center"
+          className={classes.gridContainer}
+          spacing={0}
         >
-          <Grid item className={classes.flexBox}>
-            <Typography color="textSecondary" variant="h4" className={classes.topHeading} display="inline">
-              Timeline
-            </Typography>
-            <Grid item className={classes.addEventContainer}>
+          <Grid
+            container
+            className={classes.topBar}
+            direction="row"
+            justify="space-between"
+          >
+            <Grid item className={classes.flexBox}>
+              <Typography color="textSecondary" variant="h4" className={classes.topHeading} display="inline">
+                Timeline
+              </Typography>
+              <Grid item className={classes.addEventContainer}>
+                <AddActivities
+                  edit={false}
+                  list={false}
+                  isOpen={false}
+                  project={projects0}
+                  template={template}
+                  activity={{}}
+                  newActivity={() => setEdit(false)}
+                  type={templateId && 'template' || projectId && 'project'}
+                  match={match}
+                  isSuperAdmin={isSuperAdmin}
+                  isAdmin={isAdmin}
+                  isChangeManager={isChangeManager}
+                  isManager={isManager}
+                  isActivityDeliverer={isActivityDeliverer}
+                />
+              </Grid>
+              <Grid item className={classes.addEventContainer}>
+                <Button variant="contained" onClick={() => setShowAddEventModal(true)}
+                        className={classes.addEventButton}>
+                  Add Project Event
+                </Button>
+              </Grid>
+            </Grid>
+
+            <Grid className={classes.flexBox}>
+              {viewMode === 0 &&
+              <Grid className={classes.flexBox}>
+                <Button
+                  color="primary"
+                  onClick={() => setIsImporting(true)}
+                >
+                  Import
+                </Button>
+                <Button
+                  color="primary"
+                  onClick={() => setIsExporting(true)}
+                  style={{marginLeft: "20px"}}
+                >
+                  Export
+                </Button>
+                <Tabs
+                  value={Number(zoomMode)}
+                  onChange={(e, newValue) => changeZoom(newValue)}
+                  indicatorColor="primary"
+                  textColor="primary"
+                  style={{
+                    marginLeft: "20px",
+                    background: "white",
+                  }}
+                >
+                  {scaleTypes.map((unit, idx) =>
+                    <Tab
+                      key={`date-unit-tab-${idx}`}
+                      className={classes.activityTab}
+                      label={<div className={classes.iconTab}>&nbsp; {unit.toUpperCase()}</div>}
+                    />
+                  )}
+                </Tabs>
+              </Grid>
+              }
+              <Tabs
+                value={viewMode}
+                onChange={changeView}
+                indicatorColor="primary"
+                textColor="primary"
+                aria-label="icon tabs example"
+                style={{background: "white"}}
+              >
+                {viewMode === 0 && <Tab className={classes.activityTab} style={{display: 'none'}}
+                                        label={<div className={classes.iconTab}><ViewColumnIcon/>&nbsp; Gantt</div>}/>}
+                {viewMode === 1 && <Tab className={classes.activityTab}
+                                        label={<div className={classes.iconTab}><ViewColumnIcon/>&nbsp; Gantt</div>}/>}
+                <Tab className={classes.activityTab}
+                     label={<div className={classes.iconTab}><ListIcon/>&nbsp; List</div>}/>
+              </Tabs>
+            </Grid>
+          </Grid>
+          {viewMode === 0 &&
+          <Grid container>
+            <Gantt
+              tasks={data}
+              scaleText={scaleTypes[zoomMode]}
+              setActivityId={setActivityId}
+              setEdit={setEdit}
+              activities={activities}
+              project={projects0}
+              isSuperAdmin={isSuperAdmin}
+              isAdmin={isAdmin}
+              isManager={isManager}
+              isChangeManager={isChangeManager}
+              template={template}
+              event={events}
+            />
+            <ExportDialog
+              isExporting={isExporting}
+              setIsExporting={setIsExporting}
+              exportType={exportType}
+              setExportType={setExportType}
+              handleDownload={handleDownload}
+            />
+            <ImportDialog
+              isImporting={isImporting}
+              setIsImporting={setIsImporting}
+              handleImportData={handleImportData}
+              currentProject={projects0}
+              activities={activities}
+            />
+
+            {(eventType === "Awareness" || (eventType === 'Activity Event' && extraType === 'Awareness')) ? (
               <AddActivities
-                edit={false}
-                list={false}
+                edit={edit}
+                list={true}
                 isOpen={false}
+                step={1}
+                color={'#f1753e'}
                 project={projects0}
                 template={template}
-                activity={{}}
+                activity={activity}
                 newActivity={() => setEdit(false)}
                 type={templateId && 'template' || projectId && 'project'}
                 match={match}
@@ -314,220 +428,113 @@ function Timeline(props) {
                 isChangeManager={isChangeManager}
                 isManager={isManager}
                 isActivityDeliverer={isActivityDeliverer}
-              />
-            </Grid>
-            <Grid item className={classes.addEventContainer}>
-              <Button variant="contained" onClick={() => setShowAddEventModal(true)} className={classes.addEventButton}>
-                Add Project Event
-              </Button>
-            </Grid>
-          </Grid>
+              />) : null}
 
-          <Grid className={classes.flexBox}>
-            {viewMode === 0 &&
-            <Grid className={classes.flexBox}>
-              <Button
-                color="primary"
-                onClick={() => setIsImporting(true)}
-              >
-                Import
-              </Button>
-              <Button
-                color="primary"
-                onClick={() => setIsExporting(true)}
-                style={{marginLeft: "20px"}}
-              >
-                Export
-              </Button>
-              <Tabs
-                value={Number(zoomMode)}
-                onChange={(e, newValue) => changeZoom(newValue)}
-                indicatorColor="primary"
-                textColor="primary"
-                style={{
-                  marginLeft: "20px",
-                  background: "white",
-                }}
-              >
-                {scaleTypes.map((unit, idx) =>
-                  <Tab
-                    key={`date-unit-tab-${idx}`}
-                    className={classes.activityTab}
-                    label={<div className={classes.iconTab}>&nbsp; {unit.toUpperCase()}</div>}
-                  />
-                )}
-              </Tabs>
-            </Grid>
-            }
-            <Tabs
-              value={viewMode}
-              onChange={changeView}
-              indicatorColor="primary"
-              textColor="primary"
-              aria-label="icon tabs example"
-              style={{background: "white"}}
-            >
-              {viewMode === 0 && <Tab className={classes.activityTab} style={{display: 'none'}}
-                                      label={<div className={classes.iconTab}><ViewColumnIcon/>&nbsp; Gantt</div>}/>}
-              {viewMode === 1 && <Tab className={classes.activityTab}
-                                      label={<div className={classes.iconTab}><ViewColumnIcon/>&nbsp; Gantt</div>}/>}
-              <Tab className={classes.activityTab}
-                   label={<div className={classes.iconTab}><ListIcon/>&nbsp; List</div>}/>
-            </Tabs>
-          </Grid>
+            {(eventType === "Ability" || (eventType === 'Activity Event' && extraType === 'Ability')) ? (<AddActivities
+              edit={edit}
+              list={true}
+              isOpen={false}
+              step={2}
+              color={'#53cbd0'}
+              project={projects0}
+              template={template}
+              activity={activity}
+              newActivity={() => setEdit(false)}
+              type={templateId && 'template' || projectId && 'project'}
+              match={match}
+              isSuperAdmin={isSuperAdmin}
+              isAdmin={isAdmin}
+              isChangeManager={isChangeManager}
+              isManager={isManager}
+              isActivityDeliverer={isActivityDeliverer}
+            />) : null}
+
+            {(eventType === "Reinforcement" || (eventType === 'Activity Event' && extraType === 'Reinforcement')) ? (
+              <AddActivities
+                edit={edit}
+                list={true}
+                isOpen={false}
+                step={3}
+                color={'#bbabd2'}
+                project={projects0}
+                template={template}
+                activity={activity}
+                newActivity={() => setEdit(false)}
+                type={templateId && 'template' || projectId && 'project'}
+                match={match}
+                isSuperAdmin={isSuperAdmin}
+                isAdmin={isAdmin}
+                isChangeManager={isChangeManager}
+                isManager={isManager}
+                isActivityDeliverer={isActivityDeliverer}
+              />) : null}
+
+            {(eventType === "Desire" || (eventType === 'Activity Event' && extraType === 'Desire')) ? (<AddActivities
+              edit={edit}
+              list={true}
+              isOpen={false}
+              step={4}
+              color={'#8BC34A'}
+              project={projects0}
+              template={template}
+              activity={activity}
+              newActivity={() => setEdit(false)}
+              type={templateId && 'template' || projectId && 'project'}
+              match={match}
+              isSuperAdmin={isSuperAdmin}
+              isAdmin={isAdmin}
+              isChangeManager={isChangeManager}
+              isManager={isManager}
+              isActivityDeliverer={isActivityDeliverer}
+            />) : null}
+
+            {(eventType === "Knowledge" || (eventType === 'Activity Event' && extraType === 'Knowledge')) ? (
+              <AddActivities
+                edit={edit}
+                list={true}
+                isOpen={false}
+                step={5}
+                color={'#03A9F4'}
+                project={projects0}
+                template={template}
+                activity={activity}
+                newActivity={() => setEdit(false)}
+                type={templateId && 'template' || projectId && 'project'}
+                match={match}
+                isSuperAdmin={isSuperAdmin}
+                isAdmin={isAdmin}
+                isChangeManager={isChangeManager}
+                isManager={isManager}
+                isActivityDeliverer={isActivityDeliverer}
+              />) : null}
+
+            {eventType === "Project Event" &&
+            <AddEventModal open={edit} event={event} handleClose={handleModalClose} isNew={false}/>}
+            {(eventType === "Project_Start" || eventType === "Project_End") ? (<EditProject
+              open={edit}
+              handleModalClose={handleModalClose}
+              project={projects0}
+              template={template}
+              handleType={'timeline'}
+              displayEditButton={false}
+              isSuperAdmin={isSuperAdmin}
+              isAdmin={isAdmin}
+              isManager={isManager}
+              isActivityDeliverer={isActivityDeliverer}
+              isChangeManager={isChangeManager}
+            />) : null}
+
+          </Grid>}
+          {viewMode === 1 &&
+          <ListView rows={type === 'project' ? props.activities : props.activitiesTemplate} addNew={false} type={type}
+                    isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
+                    isChangeManager={isChangeManager} isManager={isManager} isActivityDeliverer={isActivityDeliverer}
+                    project={projects0} projectId={projectId} companyId={currentCompanyId}
+                    template={template} match={match}/>
+          }
         </Grid>
-        {viewMode === 0 &&
-        <Grid container>
-          <Gantt
-            tasks={data}
-            scaleText={scaleTypes[zoomMode]}
-            setActivityId={setActivityId}
-            setEdit={setEdit}
-            activities={activities}
-            project={projects0}
-            isSuperAdmin={isSuperAdmin}
-            isAdmin={isAdmin}
-            isManager={isManager}
-            isChangeManager={isChangeManager}
-            template={template}
-            event={events}
-          />
-          <ExportDialog
-            isExporting={isExporting}
-            setIsExporting={setIsExporting}
-            exportType={exportType}
-            setExportType={setExportType}
-            handleDownload={handleDownload}
-          />
-          <ImportDialog
-            isImporting={isImporting}
-            setIsImporting={setIsImporting}
-            handleImportData={handleImportData}
-            currentProject={projects0}
-            activities={activities}
-          />
-
-          {(eventType === "Awareness" || (eventType === 'Activity Event' && extraType === 'Awareness')) ? (<AddActivities
-            edit={edit}
-            list={true}
-            isOpen={false}
-            step={1}
-            color={'#f1753e'}
-            project={projects0}
-            template={template}
-            activity={activity}
-            newActivity={() => setEdit(false)}
-            type={templateId && 'template' || projectId && 'project'}
-            match={match}
-            isSuperAdmin={isSuperAdmin}
-            isAdmin={isAdmin}
-            isChangeManager={isChangeManager}
-            isManager={isManager}
-            isActivityDeliverer={isActivityDeliverer}
-          />) : null}
-
-          {(eventType === "Ability" || (eventType === 'Activity Event' && extraType === 'Ability')) ? (<AddActivities
-            edit={edit}
-            list={true}
-            isOpen={false}
-            step={2}
-            color={'#53cbd0'}
-            project={projects0}
-            template={template}
-            activity={activity}
-            newActivity={() => setEdit(false)}
-            type={templateId && 'template' || projectId && 'project'}
-            match={match}
-            isSuperAdmin={isSuperAdmin}
-            isAdmin={isAdmin}
-            isChangeManager={isChangeManager}
-            isManager={isManager}
-            isActivityDeliverer={isActivityDeliverer}
-          />) : null}
-
-          {(eventType === "Reinforcement" || (eventType === 'Activity Event' && extraType === 'Reinforcement')) ? (<AddActivities
-            edit={edit}
-            list={true}
-            isOpen={false}
-            step={3}
-            color={'#bbabd2'}
-            project={projects0}
-            template={template}
-            activity={activity}
-            newActivity={() => setEdit(false)}
-            type={templateId && 'template' || projectId && 'project'}
-            match={match}
-            isSuperAdmin={isSuperAdmin}
-            isAdmin={isAdmin}
-            isChangeManager={isChangeManager}
-            isManager={isManager}
-            isActivityDeliverer={isActivityDeliverer}
-          />) : null}
-
-          {(eventType === "Desire" || (eventType === 'Activity Event' && extraType === 'Desire')) ? (<AddActivities
-            edit={edit}
-            list={true}
-            isOpen={false}
-            step={4}
-            color={'#8BC34A'}
-            project={projects0}
-            template={template}
-            activity={activity}
-            newActivity={() => setEdit(false)}
-            type={templateId && 'template' || projectId && 'project'}
-            match={match}
-            isSuperAdmin={isSuperAdmin}
-            isAdmin={isAdmin}
-            isChangeManager={isChangeManager}
-            isManager={isManager}
-            isActivityDeliverer={isActivityDeliverer}
-          />) : null}
-
-          {(eventType === "Knowledge" || (eventType === 'Activity Event' && extraType === 'Knowledge')) ? (<AddActivities
-            edit={edit}
-            list={true}
-            isOpen={false}
-            step={5}
-            color={'#03A9F4'}
-            project={projects0}
-            template={template}
-            activity={activity}
-            newActivity={() => setEdit(false)}
-            type={templateId && 'template' || projectId && 'project'}
-            match={match}
-            isSuperAdmin={isSuperAdmin}
-            isAdmin={isAdmin}
-            isChangeManager={isChangeManager}
-            isManager={isManager}
-            isActivityDeliverer={isActivityDeliverer}
-          />) : null}
-
-          {eventType === "Project Event" &&
-          <AddEventModal open={edit} event={event} handleClose={handleModalClose} isNew={false}/>}
-          {(eventType === "Project_Start" || eventType === "Project_End") ? (<EditProject
-            open={edit}
-            handleModalClose={handleModalClose}
-            project={projects0}
-            template={template}
-            handleType={'timeline'}
-            displayEditButton={false}
-            isSuperAdmin={isSuperAdmin}
-            isAdmin={isAdmin}
-            isManager={isManager}
-            isActivityDeliverer={isActivityDeliverer}
-            isChangeManager={isChangeManager}
-          />) : null}
-
-        </Grid>}
-        {viewMode === 1 &&
-        <ListView rows={type === 'project' ? props.activities : props.activitiesTemplate} addNew={false} type={type}
-                  isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
-                  isChangeManager={isChangeManager} isManager={isManager} isActivityDeliverer={isActivityDeliverer}
-                  project={projects0} projectId={projectId} companyId={currentCompanyId}
-                  template={template} match={match}/>
-        }
-      </Grid>
-      <AddEventModal open={showAddEventModal} handleClose={handleCloseAddEventModal}/>
+        <AddEventModal open={showAddEventModal} handleClose={handleCloseAddEventModal}/>
+      </main>
     </div>
   )
 }
@@ -551,8 +558,8 @@ const TimelinePage = withTracker(props => {
     currentCompany = company;
   }
   Meteor.subscribe('findAllPeoples');
-  Meteor.subscribe('compoundActivities', projectId);
-  Meteor.subscribe('compoundActivitiesTemplate', templateId);
+  Meteor.subscribe('compoundActivities');
+  Meteor.subscribe('compoundActivitiesTemplate');
   // Meteor.subscribe('myProjects', null, {
   //     sort: local.sort || {},
   //     name: local.search

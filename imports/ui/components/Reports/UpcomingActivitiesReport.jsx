@@ -14,11 +14,10 @@ import {stringHelpers} from "../../../helpers/stringHelpers";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    width: '98%',
-    margin: theme.spacing(3),
+    width: '100vw',
   },
   paper: {
-    width: '100%',
+    width: '90vw',
     marginBottom: theme.spacing(2),
   },
   table: {

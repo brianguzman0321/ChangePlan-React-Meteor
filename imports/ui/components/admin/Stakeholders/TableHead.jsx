@@ -54,6 +54,7 @@ export function EnhancedTableHead(props) {
         {headCells.map(headCell => (
           <TableCell style={{color: 'white'}}
                      key={headCell.id}
+                     className={classes.tableCell}
                      align={selectAlign(headCell.id)}
                      sortDirection={orderBy === headCell.id ? order : false}
           >

@@ -31,66 +31,24 @@ const useStyles = makeStyles(theme => ({
       color: '#1890ff',
       fontWeight: theme.typography.fontWeightMedium,
     },
-
   },
+  select: {
+    backgroundColor: '#2f3d4a',
+    color: '#f5f5f5',
+    borderRadius: '4px',
+    height: '46px',
+  }
 }));
 
 function ProjectSelectMenu(props) {
   const classes = useStyles();
-  let {match, currentCompany, projects} = props;
+  let {match, currentCompany, projects, isSuperAdmin,
+    isAdmin, isManager, isChangeManager, isActivityDeliverer, isActivityOwner} = props;
   let {projectId} = match.params;
-  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [isChangeManager, setIsChangeManager] = useState(false);
-  const [isManager, setIsManager] = useState(false);
-  const [isActivityOwner, setIsActivityOwner] = useState(false);
-  const [isActivityDeliverer, setIsActivityDeliverer] = useState(false);
   const [projectsMenu, setProjectsMenu] = useState(projects || []);
   const [age, setAge] = React.useState(projectId || '');
   const [itemIndex, setIndex] = React.useState(props.index);
   const [open, setOpen] = React.useState(false);
-
-  const checkRole = () => {
-    const userId = Meteor.userId();
-    if (Roles.userIsInRole(userId, 'superAdmin')) {
-      setIsSuperAdmin(true);
-    }
-    if (currentCompany && currentCompany.admins.includes(userId)) {
-      setIsAdmin(true);
-    }
-    if (currentCompany) {
-      const projectsCurCompany = Projects.find({companyId: currentCompany._id}).fetch();
-      if (projectsCurCompany) {
-        const changeManagers = [...new Set([].concat.apply([], projectsCurCompany.map(project => project.changeManagers)))];
-        if (changeManagers.includes(userId)) {
-          setIsChangeManager(true);
-        }
-        const managers = [...new Set([].concat.apply([], projectsCurCompany.map(project => project.managers)))];
-        if (managers.includes(userId)) {
-          setIsManager(true);
-        }
-      }
-    }
-    if (projects) {
-      projects.forEach(project => {
-        const activities = Activities.find({projectId: project._id}).fetch();
-        if (activities) {
-          activities.forEach(activity => {
-            if (!Roles.userIsInRole(userId, 'superAdmin') && activity.deliverer && activity.deliverer.includes(Meteor.userId())) {
-              setIsActivityDeliverer(true);
-            }
-            if (!Roles.userIsInRole(userId, 'superAdmin') && activity.owner && activity.owner.includes(Meteor.userId())) {
-              setIsActivityOwner(true);
-            }
-          })
-        }
-      })
-    }
-  };
-
-  useEffect(() => {
-    checkRole()
-  }, [projects]);
 
   useEffect(() => {
     let menuItem = [];
@@ -137,7 +95,7 @@ function ProjectSelectMenu(props) {
         }
       }
     }
-  }, [projects, isActivityDeliverer, isManager, isChangeManager, isAdmin, isSuperAdmin]);
+  }, [projects, isActivityDeliverer, isActivityOwner, isManager, isChangeManager, isAdmin, isSuperAdmin]);
 
   function handleChange(event) {
     setAge(event.target.value);
@@ -178,8 +136,10 @@ function ProjectSelectMenu(props) {
           onClose={handleClose}
           onOpen={handleOpen}
           value={age}
+          variant="outlined"
           defaultValue={projectId}
           onChange={handleChange}
+          className={classes.select}
           inputProps={{
             name: 'age',
             id: 'demo-controlled-open-select',

@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
-import TopNavBar from '/imports/ui/components/App/App'
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import ActivitiesColumn from './ActivitiesColumn';
@@ -12,12 +11,22 @@ import {Templates} from "../../../api/templates/templates";
 import {Projects} from "../../../api/projects/projects";
 import {Companies} from "../../../api/companies/companies";
 import {Meteor} from "meteor/meteor";
+import SideMenu from "../App/SideMenu";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    // flexGrow: 1,
-    // maxWidth: 400,
-    // maxHeight: 200
+    display: 'flex',
+  },
+  toolbar: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: theme.spacing(0, 1),
+    ...theme.mixins.toolbar,
+  },
+  content: {
+    flexGrow: 1,
+    padding: theme.spacing(3),
   },
   activitiesGrid: {
     paddingRight: 20
@@ -83,7 +92,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function ActivitiesCard(props) {
-  let {match, project, template, company, currentCompany} = props;
+  let {match, project, template, company, currentCompany, activities, activitiesTemplate} = props;
   let {projectId, templateId} = match.params;
   project = project || {};
   template = template || {};
@@ -148,93 +157,100 @@ function ActivitiesCard(props) {
 
   let menus = config.menus;
   return (
-    <div>
-      <TopNavBar menus={menus} {...props} />
-      <Grid
-        container
-        direction="row"
-        justify="space-between"
-        alignItems="center"
-        className={classes.gridContainer}
-        spacing={0}
-      >
+    <div className={classes.root}>
+      <SideMenu menus={menus} {...props} />
+      <main className={classes.content}>
+        <div className={classes.toolbar}/>
         <Grid
           container
-          className={classes.topBar}
           direction="row"
           justify="space-between"
+          alignItems="center"
+          className={classes.gridContainer}
+          spacing={0}
         >
-          <Grid item xs={3} md={7}>
-            <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
-              Phases
-            </Typography>
+          <Grid
+            container
+            className={classes.topBar}
+            direction="row"
+            justify="space-between"
+          >
+            <Grid item xs={3} md={7}>
+              <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
+                Phases
+              </Typography>
+            </Grid>
+            <Grid item xs={3} md={2}>
+              {false
+              }
+            </Grid>
           </Grid>
-          <Grid item xs={3} md={2}>
-            {false
-            }
+        </Grid>
+        <Grid
+          container
+          direction="row"
+          justify="space-around"
+          alignItems="flex-start"
+          spacing={0}
+          className={classes.mainContainer}
+        >
+          <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
+            <ActivitiesColumn activities={type === 'project' ?
+              activities : activitiesTemplate}
+                              name='Awareness' step={1} color='#f1753e'
+                              type={type} match={match}
+                              template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
+                              isChangeManager={isChangeManager} isManager={isManager}
+                              isActivityDeliverer={isActivityDeliverer}
+                              isActivityOwner={isActivityOwner}
+                              project={project}/>
+          </Grid>
+          <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
+            <ActivitiesColumn activities={type === 'project' ?
+              activities : activitiesTemplate}
+                              name='Interest' step={4} color='#8BC34A'
+                              type={type} match={match}
+                              template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
+                              isChangeManager={isChangeManager} isManager={isManager}
+                              isActivityDeliverer={isActivityDeliverer}
+                              isActivityOwner={isActivityOwner}
+                              project={project}/>
+          </Grid>
+          <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
+            <ActivitiesColumn activities={type === 'project' ?
+              activities : activitiesTemplate}
+                              step={5} name='Understanding' color='#03A9F4'
+                              type={type} match={match}
+                              template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
+                              isChangeManager={isChangeManager} isManager={isManager}
+                              isActivityDeliverer={isActivityDeliverer}
+                              isActivityOwner={isActivityOwner}
+                              project={project}/>
+          </Grid>
+          <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
+            <ActivitiesColumn activities={type === 'project' ?
+              activities : activitiesTemplate}
+                              name='Preparedness' step={2} color='#53cbd0'
+                              type={type} match={match}
+                              template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
+                              isChangeManager={isChangeManager} isManager={isManager}
+                              isActivityDeliverer={isActivityDeliverer}
+                              isActivityOwner={isActivityOwner}
+                              project={project}/>
+          </Grid>
+          <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
+            <ActivitiesColumn activities={type === 'project' ?
+              activities : activitiesTemplate}
+                              step={3} name='Support' color='#bbabd2'
+                              type={type} match={match}
+                              template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
+                              isChangeManager={isChangeManager} isManager={isManager}
+                              isActivityDeliverer={isActivityDeliverer}
+                              isActivityOwner={isActivityOwner}
+                              project={project}/>
           </Grid>
         </Grid>
-      </Grid>
-      <Grid
-        container
-        direction="row"
-        justify="space-around"
-        alignItems="flex-start"
-        spacing={0}
-        className={classes.mainContainer}
-      >
-        <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
-          <ActivitiesColumn activities={type === 'project' ?
-            props.activities : props.activitiesTemplate}
-                            name='Awareness' step={1} color='#f1753e'
-                            type={type} match={match}
-                            template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
-                            isChangeManager={isChangeManager} isManager={isManager} isActivityDeliverer={isActivityDeliverer}
-                            isActivityOwner={isActivityOwner}
-                            project={project}/>
-        </Grid>
-        <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
-          <ActivitiesColumn activities={type === 'project' ?
-            props.activities : props.activitiesTemplate}
-                            name='Interest' step={4} color='#8BC34A'
-                            type={type} match={match}
-                            template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
-                            isChangeManager={isChangeManager} isManager={isManager} isActivityDeliverer={isActivityDeliverer}
-                            isActivityOwner={isActivityOwner}
-                            project={project}/>
-        </Grid>
-        <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
-          <ActivitiesColumn activities={type === 'project' ?
-            props.activities : props.activitiesTemplate}
-                            step={5} name='Understanding' color='#03A9F4'
-                            type={type} match={match}
-                            template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
-                            isChangeManager={isChangeManager} isManager={isManager} isActivityDeliverer={isActivityDeliverer}
-                            isActivityOwner={isActivityOwner}
-                            project={project}/>
-        </Grid>
-        <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
-          <ActivitiesColumn activities={type === 'project' ?
-            props.activities : props.activitiesTemplate}
-                            name='Preparedness' step={2} color='#53cbd0'
-                            type={type} match={match}
-                            template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
-                            isChangeManager={isChangeManager} isManager={isManager} isActivityDeliverer={isActivityDeliverer}
-                            isActivityOwner={isActivityOwner}
-                            project={project}/>
-        </Grid>
-        <Grid item xs={12} md={5} sm={5} lg={2} xl={2} className={classes.gridColumn}>
-          <ActivitiesColumn activities={type === 'project' ?
-            props.activities : props.activitiesTemplate}
-                            step={3} name='Support' color='#bbabd2'
-                            type={type} match={match}
-                            template={template} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
-                            isChangeManager={isChangeManager} isManager={isManager} isActivityDeliverer={isActivityDeliverer}
-                            isActivityOwner={isActivityOwner}
-                            project={project}/>
-        </Grid>
-      </Grid>
-
+      </main>
     </div>
   )
 }
@@ -243,13 +259,15 @@ function ActivitiesCard(props) {
 const ActivitiesPage = withTracker(props => {
   let {match} = props;
   let {projectId, templateId} = match.params;
+  Meteor.subscribe('projects.notLoggedIn');
+  Meteor.subscribe('templates');
+  Meteor.subscribe('compoundActivities');
+  Meteor.subscribe('compoundActivitiesTemplate');
+  Meteor.subscribe('companies');
   let userId = Meteor.userId();
   let currentCompany = {};
-  Meteor.subscribe('projects');
-  Meteor.subscribe('templates');
   const project = Projects.findOne({_id: projectId});
   const template = Templates.findOne({_id: templateId});
-  Meteor.subscribe('companies');
   const companies = Companies.find({}).fetch();
   const company = Companies.findOne({_id: project && project.companyId || template && template.companyId});
   if (!company) {
@@ -257,10 +275,9 @@ const ActivitiesPage = withTracker(props => {
   } else {
     currentCompany = company;
   }
-  Meteor.subscribe('compoundActivities', projectId);
-  Meteor.subscribe('compoundActivitiesTemplate', templateId);
   return {
     activities: Activities.find({projectId: projectId}).fetch(),
+    project: project,
     template: Templates.findOne({_id: templateId}),
     activitiesTemplate: Activities.find({templateId: templateId}).fetch(),
     templates: Templates.find({}).fetch(),
