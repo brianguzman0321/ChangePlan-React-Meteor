@@ -6,7 +6,6 @@ import config from '../../../utils/config';
 import {Companies} from '../../../api/companies/companies';
 import {makeStyles} from '@material-ui/core';
 import AppBar from "@material-ui/core/AppBar/AppBar";
-import Divider from "@material-ui/core/Divider";
 
 
 const useStyles = makeStyles(theme => ({

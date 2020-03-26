@@ -6,18 +6,17 @@ import Grid from '@material-ui/core/Grid';
 import {withTracker} from "meteor/react-meteor-data";
 import {Companies} from "/imports/api/companies/companies";
 import {Projects} from "/imports/api/projects/projects";
-import TopNavBar from '/imports/ui/components/App/App';
 import config from '/imports/utils/config';
 import {Activities} from "../../../api/activities/activities";
 import {Meteor} from "meteor/meteor";
-import Button from "@material-ui/core/Button";
 import {Risks} from "../../../api/risks/risks";
 import RisksList from "./RisksList";
 import RisksModal from "./Modal/RisksModal";
 import {InputBase} from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
-import SearchIcon from "@material-ui/core/SvgIcon/SvgIcon";
+import SearchIcon from '@material-ui/icons/Search';
 import SideMenu from "../App/SideMenu";
+import AddBoxRoundedIcon from '@material-ui/icons/AddBoxRounded';
 
 
 const useStyles = makeStyles(theme => ({
@@ -43,9 +42,6 @@ const useStyles = makeStyles(theme => ({
   gridContainer: {
     overFlow: 'hidden'
   },
-  topBar: {
-    marginTop: 13,
-  },
   topHeading: {
     fontSize: '1.8rem',
     fontWeight: 500,
@@ -59,14 +55,28 @@ const useStyles = makeStyles(theme => ({
     background: '#fff',
     border: '1px solid #cbcbcc',
     maxHeight: 40,
-    maxWidth: 352,
+    backgroundColor: '#e2e8ed',
+    borderRadius: 2,
+    [theme.breakpoints.up('md')]: {
+      width: 200,
+    },
+    [theme.breakpoints.down('md')]: {
+      width: 150,
+    },
   },
   iconButton: {
     marginTop: -3
   },
   input: {
     marginLeft: theme.spacing(1),
+    backgroundColor: '#e2e8ed',
     flex: 1,
+    [theme.breakpoints.up('md')]: {
+      width: 200,
+    },
+    [theme.breakpoints.down('md')]: {
+      width: 150,
+    },
   },
   risksList: {
     margin: theme.spacing(2)
@@ -82,6 +92,11 @@ const useStyles = makeStyles(theme => ({
   },
   labelForSelect: {
     top: '8px',
+  },
+  icon: {
+    width: 40,
+    height: 40,
+    color: '#4294db'
   },
 }));
 
@@ -206,45 +221,45 @@ function RisksTable(props) {
           className={classes.gridContainer}
           spacing={0}
         >
-          <Grid container className={classes.topBar}>
-            <Grid item xs={12} sm={6} md={4}>
-              <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
-                Risks
-                &nbsp;&nbsp;&nbsp;
-                <span
-                  className={classes.risksCount}>{risks.length}</span>
-              </Typography>
-            </Grid>
-            <Grid item xs={4} className={classes.searchGrid} md={3} sm={6}>
-              <InputBase
-                className={classes.input}
-                placeholder="Search"
-                inputProps={{'aria-label': 'search by impact name'}}
-                onChange={searchFilter}
-                value={search}
-              />
-              <IconButton className={classes.iconButton} aria-label="search">
-                <SearchIcon/>
-              </IconButton>
-            </Grid>
-            {((isAdmin || isSuperAdmin || isChangeManager)) ?
-              <Grid item xs={4} md={1} sm={2} className={classes.secondTab}>
-                <Button variant="outlined" color="primary" className={classes.createNewRisk} onClick={handleOpenModal}>
-                  Add
-                </Button>
-                <RisksModal project={project} open={showAddRisk} handleModalClose={handleCloseModal}
-                            company={currentCompany}
-                            isNew={true} match={match} projectId={projectId}/>
+          <Grid item xs={2} sm={6} md={2}>
+            <Grid container direction="row" justify="flex-start" alignItems="center">
+              <Grid item xs={6}>
+                <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
+                  Risks
+                </Typography>
               </Grid>
-              : ''}
+              {((isAdmin || isSuperAdmin || isChangeManager)) ?
+                <Grid item xs={6} className={classes.secondTab}>
+                  <IconButton variant="contained" color="primary" onClick={handleOpenModal}>
+                    <AddBoxRoundedIcon className={classes.icon}/>
+                  </IconButton>
+                  <RisksModal project={project} open={showAddRisk} handleModalClose={handleCloseModal}
+                              company={currentCompany}
+                              isNew={true} match={match} projectId={projectId}/>
+                </Grid>
+                : ''}
+            </Grid>
           </Grid>
-          <RisksList className={classes.risksList} company={currentCompany}
-                     isChangeManager={isChangeManager} isActivityDeliverer={isActivityDeliverer}
-                     isActivityOwner={isActivityOwner}
-                     isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isManager={isManager} projectId={projectId}
-                     project={project} match={match}
-                     rows={risks}/>
+          <Grid item xs={6}/>
+          <Grid item xs={3} className={classes.searchGrid}>
+            <InputBase
+              className={classes.input}
+              placeholder="Search"
+              inputProps={{'aria-label': 'search by impact name'}}
+              onChange={searchFilter}
+              value={search}
+            />
+            <IconButton className={classes.iconButton} aria-label="search">
+              <SearchIcon/>
+            </IconButton>
+          </Grid>
         </Grid>
+        <RisksList className={classes.risksList} company={currentCompany}
+                   isChangeManager={isChangeManager} isActivityDeliverer={isActivityDeliverer}
+                   isActivityOwner={isActivityOwner}
+                   isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isManager={isManager} projectId={projectId}
+                   project={project} match={match}
+                   rows={risks}/>
       </main>
     </div>
   )

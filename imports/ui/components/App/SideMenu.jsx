@@ -134,10 +134,7 @@ const useStyles = makeStyles(theme => ({
   },
   sectionDesktop: {
     marginLeft: '10px',
-    display: 'none',
-    [theme.breakpoints.up('md')]: {
-      display: 'flex',
-    },
+    display: 'flex',
   },
   icon: {
     color: '#92a1af',
@@ -167,8 +164,8 @@ function SideMenu(props) {
   let {projectId, templateId} = match.params;
   const classes = useStyles();
   const theme = useTheme();
-  const [open, setOpen] = useState(false);
   const [userName, setUserName] = useState('');
+  const [open, setOpen] = useState(localStorage.getItem('sideMenu') ? (localStorage.getItem('sideMenu') === 'true') : true);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isChangeManager, setIsChangeManager] = useState(false);
@@ -235,25 +232,16 @@ function SideMenu(props) {
       const currentProject = projects.find(project => project._id === projectId);
       currentProject && setStakeholders(currentProject.stakeHolders);
     }
-  }, [allStakeholders, projectId, projects]);
-
-  useEffect(() => {
-    if (allStakeholders) {
+    if (allActivities) {
       setActivities(allActivities.filter(activity => activity.projectId === projectId));
     }
-  }, [allActivities, projectId]);
-
-  useEffect(() => {
     if (allRisks) {
       setRisks(allRisks.filter(risk => risk.projectId === projectId));
     }
-  }, [allRisks, projectId]);
-
-  useEffect(() => {
     if (allImpacts) {
       setImpacts(allImpacts.filter(impact => impact.projectId === projectId))
     }
-  }, [allImpacts, projectId]);
+  }, [allStakeholders, allActivities, allImpacts, allRisks, projectId, projects]);
 
   useEffect(() => {
     checkRole()
@@ -266,24 +254,37 @@ function SideMenu(props) {
   useEffect(() => {
     let currentLocation = history.location.pathname.split("/");
     let currentNav = currentLocation[currentLocation.length - 1];
-    const navigation = [`${projectId}`, 'impacts', 'risks', 'stake-holders', 'activities', 'timeline', 'reports', 'all-stakeholders', 'all-reports'];
+    const navigation = [`${projectId}`, 'impacts', 'risks', 'stake-holders', 'activities', 'reports', 'none', 'all-stakeholders', 'all-reports', '',  'all-activities', 'templates'];
     setSelectedListItem(navigation.indexOf(currentNav));
   }, [history]);
 
   const handleChange = (value) => {
-    if (value === 7) {
-      props.history.push(`/all-stakeholders`);
-    }
-    if (value === 8) {
-      props.history.push(`/all-reports`);
-    }
-    if (type === 'project' && value !== 7 && value !== 8) {
-      const routes = ['', '/impacts', '/risks', '/stake-holders', '/activities', '/timeline', '/reports'];
-      props.history.push(`/projects/${projectId}${routes[value]}`);
-    }
-    if (type === 'template' && value !== 7 && value !== 8) {
-      const routes = ['', '/impacts', '/risks', '/stake-holders', '/activities', '/timeline', '/reports'];
-      props.history.push(`/projects/${projectId}${routes[value]}`);
+    switch (value) {
+      case 7:
+        props.history.push(`/all-stakeholders`);
+        break;
+      case 8:
+        props.history.push(`/all-reports`);
+        break;
+      case 9:
+        props.history.push(`/`);
+        break;
+      case 10:
+        props.history.push(`/`);
+        break;
+      case 11:
+        props.history.push(`/templates`);
+        break;
+      default:
+        if (type === 'project') {
+          const routes = ['', '/impacts', '/risks', '/stake-holders', '/activities', '/reports'];
+          props.history.push(`/projects/${projectId}${routes[value]}`);
+        }
+        if (type === 'template') {
+          const routes = ['', '/impacts', '/risks', '/stake-holders', '/activities', '/reports'];
+          props.history.push(`/projects/${projectId}${routes[value]}`);
+        }
+        break;
     }
   };
 
@@ -304,10 +305,12 @@ function SideMenu(props) {
 
   const handleDrawerOpen = () => {
     setOpen(true);
+    localStorage.setItem('sideMenu', 'true');
   };
 
   const handleDrawerClose = () => {
     setOpen(false);
+    localStorage.setItem('sideMenu', 'false');
   };
 
   useEffect(() => {
@@ -346,7 +349,7 @@ function SideMenu(props) {
 
   const getName = () => {
     const user = Meteor.users.findOne({_id: Meteor.userId()});
-    return `${user.profile.firstName} ${user.profile.lastName}`
+    return user && `${user.profile.firstName} ${user.profile.lastName}`
   };
 
   useEffect(() => {
@@ -395,9 +398,9 @@ function SideMenu(props) {
             <img style={{width: 170, marginTop: 8}} src={`/branding/logo-white.svg`}/>
           </Link>}
           <Grid container direction="row" justify="flex-start" alignItems="center">
-            {projectId ? <Grid item xs={6}>
+            <Grid item xs={6}>
               <Grid container direction="row" justify="flex-start" alignItems="flex-start">
-                <Grid item xs={4}>
+                <Grid item xs={3}>
                   <Button variant="outlined" className={classes.button} onClick={() => history.push('/')}>
                     All Projects</Button>
                 </Grid>
@@ -408,7 +411,7 @@ function SideMenu(props) {
                                      isActivityDeliverer={isActivityDeliverer} isActivityOwner={isActivityOwner}/>
                 </Grid>
               </Grid>
-            </Grid> : <Grid item xs={6}/>}
+            </Grid>
             <Grid item xs={6}>
               <Grid container direction="row" justify="flex-end" alignItems="flex-start">
                 <Grid item xs={1}>

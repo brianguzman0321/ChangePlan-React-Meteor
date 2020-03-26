@@ -18,10 +18,10 @@ const useStyles = makeStyles(theme => ({
     minWidth: 65,
     color: '#465563',
     [theme.breakpoints.up('md')]: {
-      width: 300,
+      width: 350,
     },
     [theme.breakpoints.down('md')]: {
-      width: 200,
+      width: 250,
     },
   },
   topTexts: {
@@ -34,6 +34,7 @@ const useStyles = makeStyles(theme => ({
   },
   select: {
     backgroundColor: '#2f3d4a',
+    textTransform: 'none',
     color: '#f5f5f5',
     borderRadius: '4px',
     height: '46px',
@@ -42,8 +43,10 @@ const useStyles = makeStyles(theme => ({
 
 function ProjectSelectMenu(props) {
   const classes = useStyles();
-  let {match, currentCompany, projects, isSuperAdmin,
-    isAdmin, isManager, isChangeManager, isActivityDeliverer, isActivityOwner} = props;
+  let {
+    match, currentCompany, projects, isSuperAdmin,
+    isAdmin, isManager, isChangeManager, isActivityDeliverer, isActivityOwner
+  } = props;
   let {projectId} = match.params;
   const [projectsMenu, setProjectsMenu] = useState(projects || []);
   const [age, setAge] = React.useState(projectId || '');
@@ -147,7 +150,7 @@ function ProjectSelectMenu(props) {
         >
           {projectsMenu && projectsMenu.map((entity) => {
             return <MenuItem key={entity._id} className={classes.topTexts}
-                             value={entity._id}>{entity.name.toUpperCase()}</MenuItem>
+                             value={entity._id}>{entity.name}</MenuItem>
           })}
         </Select>
       </FormControl>

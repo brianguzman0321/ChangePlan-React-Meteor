@@ -19,7 +19,6 @@ export default function Home(props) {
   }
   return (
     <div className={classes.root}>
-      <SideMenu {...props}/>
       <ProjectCard {...props}/>
     </div>
   )

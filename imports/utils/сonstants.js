@@ -274,3 +274,10 @@ const getTicksLabel = (value) => {
   }
 };
 
+export const svg = {
+  iconCard: '<svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <image xlink:href="/branding/Cards.svg" x="0" y="0" height="100" width="100" /></svg>',
+  iconList: '<svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <image xlink:href="/branding/Activities-list.svg" x="0" y="0" height="100" width="100" /></svg>',
+  iconTimeline: '<svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <image xlink:href="/branding/Activities-timeline.svg" x="0" y="0" height="100" width="100" /></svg>',
+  iconPhases: '<svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <image xlink:href="/branding/Activities-phases.svg" x="0" y="0" height="100" width="100" /></svg>',
+};
+

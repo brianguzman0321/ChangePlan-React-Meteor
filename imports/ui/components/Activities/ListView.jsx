@@ -270,6 +270,7 @@ function StakeHolderList(props) {
       row.activityDeliverer = '';
     }
   });
+
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
@@ -360,12 +361,6 @@ function StakeHolderList(props) {
                      expandAccordian={true} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin} isManager={isManager}
                      isActivityDeliverer={isActivityDeliverer} isChangeManager={isChangeManager}
                      color={step === 1 ? '#f1753e' : step === 2 ? '#53cbd0' : step === 3 ? '#bbabd2' : step === 4 ? '#8BC34A' : step === 5 ? '#03A9F4' : null}/>
-      {/*<AddActivity edit={edit} activity={sActivity} newActivity={() => setEdit(false)} list={true} isOpen={addNew}
-                     type={type} template={template} match={match}/>
-        <AddActivity2 edit={edit2} activity={sActivity} newActivity={() => setEdit2(false)} list={true} type={type}
-                      template={template} match={match}/>
-        <AddActivity3 edit={edit3} activity={sActivity} newActivity={() => setEdit3(false)} list={true}
-                      type={type} template={template} match={match}/>*/}
     </div>
   );
 }
