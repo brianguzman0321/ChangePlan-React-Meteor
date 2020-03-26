@@ -46,6 +46,7 @@ import {Impacts} from "../../../../api/impacts/impacts";
 import SelectImpacts from "./SelectImpacts";
 import {getNumberOfStakeholders} from "../../../../utils/utils";
 import SelectActivityType from "./SelectActivityType";
+import AddBoxRoundedIcon from '@material-ui/icons/AddBoxRounded';
 
 
 const styles = theme => ({
@@ -265,6 +266,11 @@ const useStyles = makeStyles(theme => ({
     width: '918px',
     maxWidth: '920px',
   },
+  icon: {
+    width: 40,
+    height: 40,
+    color: '#4294db'
+  },
 }));
 
 const DialogTitle = withStyles(styles)(props => {
@@ -298,7 +304,7 @@ function AddActivities(props) {
   let {
     company, stakeHolders, local, project, match, edit, activity, list, isOpen, currentChangeManager, isActivityOwner,
     template, type, stakeHoldersTemplate, isSuperAdmin, isAdmin, isChangeManager, isManager, isActivityDeliverer, step,
-    impacts, isImpact, isOneImpact, selectNewActivity
+    impacts, isImpact, isOneImpact, selectNewActivity, addNew,
   } = props;
   const customActivityIcon = data.find(item => item.category === "Custom").iconSVG;
   const [open, setOpen] = useState(edit || isOpen || false);
@@ -1010,14 +1016,17 @@ function AddActivities(props) {
 
   return (
     <div className={classes.AddNewActivity}>
-      {!list && !disabled ?
+      {!list && !disabled && !addNew ?
         <Button variant={!isImpact ? "contained" : null} color={isImpact && 'inherit'}
                 className={getClass()}
-                fullWidth={!isImpact ? true : false} onClick={handleClickOpen}
+                fullWidth={!isImpact} onClick={handleClickOpen}
         >
           {isImpact ? 'New Activity' : 'Add Activity'}
         </Button> : null
       }
+      {!list && !disabled && addNew && <IconButton variant="contained" color="primary" onClick={handleClickOpen}>
+        <AddBoxRoundedIcon className={classes.icon}/>
+      </IconButton>}
       <Dialog onClose={handleOpenModalDialog} aria-labelledby="customized-dialog-title" open={open} maxWidth="md"
               fullWidth={true}>
         <DialogTitle id="customized-dialog-title" onClose={handleOpenModalDialog}>

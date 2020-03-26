@@ -11,18 +11,12 @@ import Grid from '@material-ui/core/Grid';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import {InputBase} from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
-import AppsIcon from '@material-ui/icons/Apps';
-import ViewListIcon from '@material-ui/icons/ViewList';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
 import {withTracker} from "meteor/react-meteor-data";
 import {Companies} from "/imports/api/companies/companies";
 import {Projects} from "/imports/api/projects/projects";
 import NewProject from './Models/CreateProject';
 import ProjectMenus from './ProjectMenus';
 import {Activities} from "../../../api/activities/activities";
-import ProjectNavBar from "./ProjectsNavBar";
 import {Templates} from "../../../api/templates/templates";
 import {Meteor} from "meteor/meteor";
 import {Peoples} from "../../../api/peoples/peoples";
@@ -31,9 +25,15 @@ import Chip from "@material-ui/core/Chip";
 import Button from "@material-ui/core/Button";
 import AllProjects from "./ProjectsTable/AllProjects";
 import {Impacts} from "../../../api/impacts/impacts";
+import SVGInline from "react-svg-inline";
+import SideMenu from "../App/SideMenu";
+import {svg} from "../../../utils/сonstants";
 
 
 const useStyles = makeStyles(theme => ({
+  root: {
+    display: 'flex',
+  },
   toolbar: {
     display: 'flex',
     alignItems: 'center',
@@ -42,6 +42,9 @@ const useStyles = makeStyles(theme => ({
     ...theme.mixins.toolbar,
   },
   content: {
+    backgroundColor: '#f4f5f7',
+    height: '100vw',
+    width: '95vw',
     flexGrow: 1,
     padding: theme.spacing(3),
   },
@@ -88,7 +91,6 @@ const useStyles = makeStyles(theme => ({
     color: '##455564'
   },
   searchContainer: {
-    marginTop: 13,
     overflow: 'hidden'
   },
   topHeading: {
@@ -101,6 +103,7 @@ const useStyles = makeStyles(theme => ({
   },
   input: {
     marginLeft: theme.spacing(1),
+    backgroundColor: '#e2e8ed',
     flex: 1,
     [theme.breakpoints.up('md')]: {
       width: 200,
@@ -114,6 +117,8 @@ const useStyles = makeStyles(theme => ({
     background: '#fff',
     border: '1px solid #cbcbcc',
     maxHeight: 40,
+    backgroundColor: '#e2e8ed',
+    borderRadius: 2,
     [theme.breakpoints.up('md')]: {
       width: 200,
     },
@@ -176,13 +181,13 @@ const useStyles = makeStyles(theme => ({
   },
   notFound: {},
   noData: {
+    backgroundColor: '#f4f5f7',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     padding: theme.spacing(3, 2),
     minHeight: 200,
     margin: 23
-
   },
   selected: {
     background: 'white'
@@ -211,14 +216,30 @@ const useStyles = makeStyles(theme => ({
     textAlign: "right",
   },
   selectedButton: {
-    background: '#e0e0e0',
+    background: '#ffffff',
+    textTransform: 'none',
+    border: '1px #92a1af solid',
+    borderRadius: 1,
+    width: 100,
+    marginRight: 10,
   },
-
+  viewButton: {
+    color: '#92a1af',
+    textTransform: 'none',
+    border: '1px #92a1af solid',
+    borderRadius: 1,
+    width: 100,
+    marginRight: 10,
+  },
+  svg: {
+    paddingRight: 5,
+    width: 20,
+    height: 20,
+  }
 }));
 
 function ProjectCard(props) {
   let {projects, company, activities, currentCompany, templates, history: {push}, stakeholders, allImpacts} = props;
-  const [selectedTab, setSelectedTab] = useState(0);
   const [currentCompanyId, setCompanyId] = useState(null);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -331,44 +352,6 @@ function ProjectCard(props) {
     checkRoles();
   }, [projects]);
 
-  useEffect(() => {
-    let currentNav = location.pathname;
-    switch (currentNav) {
-      case '/':
-        setSelectedTab(0);
-        break;
-      case `/${currentCompanyId}/templates`:
-        setSelectedTab(1);
-        break;
-      case '/templates':
-        setSelectedTab(2);
-        break;
-      default:
-        break;
-    }
-  }, [location.pathname]);
-
-
-  const changeTab = (value) => {
-    setSelectedTab(value);
-    switch (value) {
-      case 0: {
-        push(`/`);
-        break;
-      }
-      case 1: {
-        push(`/${currentCompanyId}/templates`);
-        break;
-      }
-      case 2: {
-        push(`/templates`);
-        break;
-      }
-      default:
-        break;
-    }
-    window.scroll(0, 0);
-  };
 
   const useStyles1 = makeStyles(theme => ({
     title: {
@@ -379,7 +362,6 @@ function ProjectCard(props) {
 
   const classes = useStyles();
   const classes1 = useStyles1();
-  const [age, setAge] = React.useState('endingDate');
   const [search, setSearch] = React.useState('');
   search || updateFilter('localProjects', 'search', '');
 
@@ -393,10 +375,6 @@ function ProjectCard(props) {
     });
   }, [activities]);
 
-  const handleChange = event => {
-    setAge(event.target.value);
-    updateFilter('localProjects', 'sort', event.target.value);
-  };
   const selectProject = (project, e) => {
     props.history.push(`/projects/${project._id}`);
     window.scroll(0, 0);
@@ -417,191 +395,174 @@ function ProjectCard(props) {
   };
 
   return (
-    <main className={classes.content}>
-      <div className={classes.toolbar}/>
-      <Grid
-        container
-        direction="row"
-        justify="flex-start"
-        alignItems="center"
-        className={classes.gridContainer}
-        spacing={0}
-      >
-        <Grid container className={classes.searchContainer}>
-          <Grid item xs={2}>
-            <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
-              My Projects
-            </Typography>
-          </Grid>
-          <Grid item xs={4} className={classes.searchGrid}>
-            <InputBase
-              className={classes.input}
-              classes={{input: classes.input}}
-              inputProps={{'aria-label': 'search by project name'}}
-              onChange={searchFilter}
-              value={search}
-            />
-            <IconButton className={classes.iconButton} aria-label="search">
-              <SearchIcon/>
-            </IconButton>
-          </Grid>
-          <Grid item xs={4} className={(isAdmin || isSuperAdmin || isChangeManager) ? classes.secondTab : null}>
-            {(isAdmin || isSuperAdmin || isChangeManager) &&
-            <NewProject {...props} className={classes.createNewProject} isSuperAdmin={isSuperAdmin}/>}
-            <Typography color="textSecondary" variant="title" className={classes.sortBy}>
-              Sort by
-            </Typography>
-          </Grid>
-          <Grid item xs={2}>
-            <FormControl className={classes.formControl}>
-              <Select
-                style={{background: 'white'}}
-                value={age}
-                onChange={handleChange}
-                displayEmpty
-                name="age"
-                className={classes.selectEmpty}
-              >
-                <MenuItem value="createdAt" classes={{root: classes.selected, selected: classes.selected}}>Date
-                  Added</MenuItem>
-                <MenuItem value="endingDate" classes={{root: classes.selected, selected: classes.selected}}>Date
-                  Due</MenuItem>
-                <MenuItem value="name" classes={{root: classes.selected, selected: classes.selected}}>Project
-                  Name</MenuItem>
-                <MenuItem value="stakeHolder" classes={{root: classes.selected, selected: classes.selected}}>Stakeholder
-                  Count</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-        </Grid>
-        <Grid container
-              direction="row"
-              justify="flex-start"
-              alignItems="center"
-              className={classes.gridContainer}
-              spacing={0}>
-          <ProjectNavBar {...props} selectedTab={selectedTab} handleChange={changeTab} templates={templates}
-                         isSuperAdmin={isSuperAdmin}
-                         isAdmin={isAdmin} currentCompanyId={currentCompanyId} isChangeManager={isChangeManager}/>
-        </Grid>
-        <Grid container
-              direction="row"
-              justify="flex-start"
-              alignItems="flex-start">
-          <Grid item xs={12}>
-            <Grid container direction={"row"} alignItems={"flex-end"} justify={"flex-end"}>
-              <Grid item xs={11} className={classes.button}>
-                <Button onClick={() => changeViewMode(0)} className={viewMode === 0 && classes.selectedButton}>
-                  <AppsIcon/>
-                </Button>
-                <Button onClick={() => changeViewMode(1)} className={viewMode === 1 && classes.selectedButton}>
-                  <ViewListIcon/>
-                </Button>
+    <div className={classes.root}>
+      <SideMenu projects={projectCard} {...props}/>
+      <main className={classes.content}>
+        <div className={classes.toolbar}/>
+        <Grid
+          container
+          direction="row"
+          justify="flex-start"
+          alignItems="center"
+          className={classes.gridContainer}
+          spacing={0}
+        >
+          <Grid container className={classes.searchContainer} direction="row" alignItems="center"
+                justify="space-between">
+            <Grid item xs={3}>
+              <Grid container direction="row" justify="flex-start" alignItems="center">
+                <Grid item xs={5}>
+                  <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
+                    Projects
+                  </Typography>
+                </Grid>
+                <Grid item xs={7}>
+                  {(isAdmin || isSuperAdmin || isChangeManager) &&
+                  <NewProject {...props} className={classes.createNewProject} isSuperAdmin={isSuperAdmin}/>}
+                </Grid>
               </Grid>
             </Grid>
-          </Grid>
-          {viewMode === 0 && projectCard.map((project, index) => {
-            return <Grid item xs={12} md={4} sm={6} lg={2} xl={2} key={index} className={classes.grid}>
-              <Card className={classes.card} onClick={(e) => selectProject(project)}>
-                <LinearProgress variant="determinate"
-                                value={project.totalActivities && project.totalActivities > 0 ? parseInt((100 * project.completedActivities) / project.totalActivities) : 0}
-                                color="primary"/>
-                <CardHeader
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                  }}
-                  action={<ProjectMenus project={project} company={company} activities={activities}
-                                        isManager={isManager}
-                                        isChangeManager={isChangeManager} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin}
-                                        isActivityOwner={isActivityOwner} isActivityDeliverer={isActivityDeliverer}/>}
-                  classes={classes1}
-                  style={{cursor: "auto"}}
-                  title={projectName(project.name)}
-                />
-                <CardContent className={classes.cardContent}>
-                  {project.status &&
-                  <Chip size="small" label={project.status[0].toUpperCase() + project.status.slice(1)}
-                        className={getClass(project.status)}/>}
-                  <Grid container direction={"row"} alignItems={"center"} justify={"flex-start"}>
-                    <Grid item xs={4}>
-                      <Typography className={classes.title} gutterBottom>
-                        STAKEHOLDERS
-                      </Typography>
-                      <Typography className={classes.pos} color="textSecondary">
-                        {getTotalStakeholders(stakeholders, project.stakeHolders)}
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={4} className={classes.activities}>
-                      <Typography className={classes.title} gutterBottom>
-                        ACTIVITIES
-                      </Typography>
-                      <Typography className={classes.pos} color="textSecondary">
-                        {project.totalActivities || 0}
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={4}>
-                      <Typography className={classes.title} gutterBottom>
-                        DUE
-                      </Typography>
-                      <Typography className={classes.pos} color="textSecondary">
-                        {moment(project.endingDate).format('DD-MMM-YY')}
-                      </Typography>
-                    </Grid>
+            <Grid item xs={5}>
+              <Grid container direction={"row"} alignItems={"flex-end"} justify={"flex-end"}>
+                <Grid item xs={11} className={classes.button}>
+                  <Button onClick={() => changeViewMode(1)}
+                          className={viewMode === 1 ? classes.selectedButton : classes.viewButton}>
+                    <SVGInline
+                      className={classes.svg}
+                      svg={svg.iconList}/>
+                    List
+                  </Button>
+                  <Button onClick={() => changeViewMode(0)}
+                          className={viewMode === 0 ? classes.selectedButton : classes.viewButton}>
+                    <SVGInline
+                      className={classes.svg}
+                      svg={svg.iconCard}/>
+                    Card
+                  </Button>
 
-                    <Grid item xs={4}>
-                      <Typography variant="body2" component="p" className={classes.bottomText}>
-                        {project.changeManagers.length > 1 ? "CHANGE MANAGERS" : "CHANGE MANAGER"}
-                        <br/>
-                        {ChangeManagersNames(project)}
-                      </Typography>
-                    </Grid>
-                    {company && company.organizationField && project.organization && <Grid item xs={4}>
-                      <Typography variant={"body2"} component="p" className={classes.bottomText}>
-                        ORGANIZATION:
-                        <br/>
-                        {project.organization && project.organization[0].toUpperCase() + project.organization.slice(1)}
-                      </Typography>
-                    </Grid>}
-                    {company && company.functionField && project.function && <Grid item xs={4}>
-                      <Typography variant={"body2"} component="p" className={classes.bottomText}>
-                        FUNCTION:
-                        <br/>
-                        {project.function && project.function[0].toUpperCase() + project.function.slice(1)}
-                      </Typography>
-                    </Grid>}
-                  </Grid>
-                </CardContent>
-              </Card>
+                </Grid>
+              </Grid>
             </Grid>
-          })
-          }
-          {viewMode === 1 && <AllProjects allActivities={activities} allProjects={projectCard} allImpacts={allImpacts}
-                                          allStakeholders={stakeholders} company={company} isAdmin={isAdmin}
-                                          isChangeManager={isChangeManager} isManager={isManager}
-                                          isActivityDeliverer={isActivityDeliverer}
-                                          isActivityOwner={isActivityOwner} {...props}/>}
-        </Grid>
-      </Grid>
-      {!projectCard.length &&
-      <Grid
-        container
-        direction="row"
-        justify="center"
-        alignItems="center"
-        justify-content="center"
-      >
-        <Grid item xs={12}>
-          <Paper className={classes.noData}>
-            <Typography variant="h5" component="h5" align="center">
-              No Data Found.
-            </Typography>
-          </Paper>
-        </Grid>
-      </Grid>
-      }
-    </main>
+            <Grid item xs={3} className={classes.searchGrid}>
+              <InputBase
+                className={classes.input}
+                classes={{input: classes.input}}
+                inputProps={{'aria-label': 'search by project name'}}
+                onChange={searchFilter}
+                value={search}
+              />
+              <IconButton className={classes.iconButton} aria-label="search">
+                <SearchIcon/>
+              </IconButton>
+            </Grid>
+          </Grid>
+          <Grid container
+                direction="row"
+                justify="flex-start"
+                alignItems="flex-start">
+            {viewMode === 0 && projectCard.map((project, index) => {
+              return <Grid item xs={12} md={4} sm={6} lg={2} xl={2} key={index} className={classes.grid}>
+                <Card className={classes.card} onClick={(e) => selectProject(project)}>
+                  <LinearProgress variant="determinate"
+                                  value={project.totalActivities && project.totalActivities > 0 ? parseInt((100 * project.completedActivities) / project.totalActivities) : 0}
+                                  color="primary"/>
+                  <CardHeader
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                    }}
+                    action={<ProjectMenus project={project} company={company} activities={activities}
+                                          isManager={isManager}
+                                          isChangeManager={isChangeManager} isAdmin={isAdmin}
+                                          isSuperAdmin={isSuperAdmin}
+                                          isActivityOwner={isActivityOwner} isActivityDeliverer={isActivityDeliverer}/>}
+                    classes={classes1}
+                    style={{cursor: "auto"}}
+                    title={projectName(project.name)}
+                  />
+                  <CardContent className={classes.cardContent}>
+                    {project.status &&
+                    <Chip size="small" label={project.status[0].toUpperCase() + project.status.slice(1)}
+                          className={getClass(project.status)}/>}
+                    <Grid container direction={"row"} alignItems={"center"} justify={"flex-start"}>
+                      <Grid item xs={4}>
+                        <Typography className={classes.title} gutterBottom>
+                          STAKEHOLDERS
+                        </Typography>
+                        <Typography className={classes.pos} color="textSecondary">
+                          {getTotalStakeholders(stakeholders, project.stakeHolders)}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={4} className={classes.activities}>
+                        <Typography className={classes.title} gutterBottom>
+                          ACTIVITIES
+                        </Typography>
+                        <Typography className={classes.pos} color="textSecondary">
+                          {project.totalActivities || 0}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={4}>
+                        <Typography className={classes.title} gutterBottom>
+                          DUE
+                        </Typography>
+                        <Typography className={classes.pos} color="textSecondary">
+                          {moment(project.endingDate).format('DD-MMM-YY')}
+                        </Typography>
+                      </Grid>
 
+                      <Grid item xs={4}>
+                        <Typography variant="body2" component="p" className={classes.bottomText}>
+                          {project.changeManagers.length > 1 ? "CHANGE MANAGERS" : "CHANGE MANAGER"}
+                          <br/>
+                          {ChangeManagersNames(project)}
+                        </Typography>
+                      </Grid>
+                      {company && company.organizationField && project.organization && <Grid item xs={4}>
+                        <Typography variant={"body2"} component="p" className={classes.bottomText}>
+                          ORGANIZATION:
+                          <br/>
+                          {project.organization && project.organization[0].toUpperCase() + project.organization.slice(1)}
+                        </Typography>
+                      </Grid>}
+                      {company && company.functionField && project.function && <Grid item xs={4}>
+                        <Typography variant={"body2"} component="p" className={classes.bottomText}>
+                          FUNCTION:
+                          <br/>
+                          {project.function && project.function[0].toUpperCase() + project.function.slice(1)}
+                        </Typography>
+                      </Grid>}
+                    </Grid>
+                  </CardContent>
+                </Card>
+              </Grid>
+            })
+            }
+            {viewMode === 1 && <AllProjects allActivities={activities} allProjects={projectCard} allImpacts={allImpacts}
+                                            allStakeholders={stakeholders} company={company} isAdmin={isAdmin}
+                                            isChangeManager={isChangeManager} isManager={isManager}
+                                            isActivityDeliverer={isActivityDeliverer}
+                                            isActivityOwner={isActivityOwner} {...props}/>}
+          </Grid>
+        </Grid>
+        {!projectCard.length &&
+        <Grid
+          container
+          direction="row"
+          justify="center"
+          alignItems="center"
+          justify-content="center"
+        >
+          <Grid item xs={12}>
+            <Paper className={classes.noData}>
+              <Typography variant="h5" component="h5" align="center">
+                No Data Found.
+              </Typography>
+            </Paper>
+          </Grid>
+        </Grid>
+        }
+      </main>
+    </div>
   );
 }
 

@@ -11,7 +11,7 @@ import moment from "moment";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    width: '100vw',
+    width: '93vw',
   },
   head: {
     background: 'red'
@@ -77,6 +77,8 @@ function AllUpcomingActivities(props) {
           projectActivities = allActivities.filter(activity => activity.projectId === project._id && !activity.completed && moment(activity.dueDate).isAfter(moment(today)));
         } else if (type === 'overdue') {
           projectActivities = allActivities.filter(activity => activity.projectId === project._id && !activity.completed && moment(activity.dueDate).isBefore(moment(today)));
+        } else if (type === 'activities') {
+          projectActivities = allActivities.filter(activity => activity.projectId === project._id);
         }
         projectActivities.map(activity => {
           activity.project = project.name;
@@ -95,7 +97,9 @@ function AllUpcomingActivities(props) {
         <Grid container direction="row" justify="space-between" alignItems="center">
           <Grid item xs={12}>
             <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
-              {type === 'upcoming' ? 'Upcoming activities' : 'Overdue Activities'}
+              {type === 'upcoming' && 'Upcoming activities'}
+              {type === 'overdue' && 'Overdue Activities'}
+              {type === 'activities' && ''}
             </Typography>
           </Grid>
           <Grid item xs={12} className={classes.gridTable}>

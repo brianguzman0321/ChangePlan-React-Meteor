@@ -30,12 +30,12 @@ import AddExistingStakeholder from "./AddExistingStakeholder";
 import {Projects} from '../../../../api/projects/projects'
 import AddStakeHoldersResults from "./AddStakeholdersResults";
 import {Templates} from "../../../../api/templates/templates";
-import Input from "@material-ui/core/Input";
 import Checkbox from "@material-ui/core/Checkbox";
 import ListItemText from "@material-ui/core/ListItemText";
 import AddGroupStakeholders from "./AddGroupStakeholders";
 import {Companies} from "../../../../api/companies/companies";
 import {Meteor} from "meteor/meteor";
+import AddBoxRoundedIcon from '@material-ui/icons/AddBoxRounded';
 
 function TabPanel(props) {
   const {children, value, index, ...other} = props;
@@ -102,6 +102,11 @@ const useStyles = makeStyles(theme => ({
   uploadButton: {
     width: 200,
     marginBottom: 20,
+  },
+  icon: {
+    width: 40,
+    height: 40,
+    color: '#4294db',
   },
 }));
 
@@ -630,9 +635,9 @@ function AddStakeHolder(props) {
 
   return (
     <div className={classes.createNewProject}>
-      <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-        ADD/IMPORT
-      </Button>
+      <IconButton variant="contained" color="primary" onClick={handleClickOpen}>
+        <AddBoxRoundedIcon className={classes.icon}/>
+      </IconButton>
       <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth={true}
               classes={{paper: classes.dialogPaper}}>
         <DialogTitle id="customized-dialog-title" onClose={handleClose}>

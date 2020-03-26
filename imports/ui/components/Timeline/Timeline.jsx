@@ -32,15 +32,17 @@ import {ProjectEvents} from "../../../api/projectEvents/projectEvents";
 import {Peoples} from "../../../api/peoples/peoples";
 import {getTotalStakeholders} from "../../../utils/utils";
 import SideMenu from "../App/SideMenu";
+import SVGInline from "react-svg-inline";
+import {svg} from "../../../utils/сonstants";
+import AllUpcomingActivities from "../admin/Reports/AllUpcomingActivities/AllUpcomingActivities";
 
 
 function Timeline(props) {
-  let {match, projects0, activities, currentCompany, template, project, company, events, allStakeholders} = props;
+  let {match, projects0, activities, currentCompany, template, project, company, events, allStakeholders, activitiesTemplate, allProjects} = props;
   let {projectId, templateId} = match.params;
   const classes = useStyles();
-  const [viewMode, setViewMode] = useState(Number(localStorage.getItem(`viewMode_${projectId}_${Meteor.userId()}`)) || 0);
+  const [viewMode, setViewMode] = useState(1);
   const [zoomMode, setZoomMode] = useState(localStorage.getItem('zoomCondition') || 1);
-  const [type, setType] = useState(templateId && 'template' || projectId && 'project');
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
   const [exportType, setExportType] = useState(null);
@@ -105,15 +107,6 @@ function Timeline(props) {
     setZoomMode(newValue);
     localStorage.setItem('zoomCondition', newValue);
   };
-
-  const changeView = (event, value) => {
-    setViewMode(value);
-    localStorage.setItem(`viewMode_${projectId}_${Meteor.userId()}`, value);
-  };
-
-  useEffect(() => {
-    setViewMode(Number(localStorage.getItem(`viewMode_${projectId}_${Meteor.userId()}`)));
-  }, [projectId]);
 
   useEffect(() => {
 
@@ -277,6 +270,14 @@ function Timeline(props) {
   const handleCloseAddEventModal = () => {
     setShowAddEventModal(false);
   };
+
+  const changeViewMode = (value) => {
+    if (value === 0) {
+      props.history.push(`/projects/${projectId}/activities`);
+    }
+    setViewMode(value);
+  };
+
   return (
     <div className={classes.root}>
       <SideMenu menus={config.menus} {...props} />
@@ -327,7 +328,6 @@ function Timeline(props) {
             </Grid>
 
             <Grid className={classes.flexBox}>
-              {viewMode === 0 &&
               <Grid className={classes.flexBox}>
                 <Button
                   color="primary"
@@ -361,25 +361,36 @@ function Timeline(props) {
                   )}
                 </Tabs>
               </Grid>
-              }
-              <Tabs
-                value={viewMode}
-                onChange={changeView}
-                indicatorColor="primary"
-                textColor="primary"
-                aria-label="icon tabs example"
-                style={{background: "white"}}
-              >
-                {viewMode === 0 && <Tab className={classes.activityTab} style={{display: 'none'}}
-                                        label={<div className={classes.iconTab}><ViewColumnIcon/>&nbsp; Gantt</div>}/>}
-                {viewMode === 1 && <Tab className={classes.activityTab}
-                                        label={<div className={classes.iconTab}><ViewColumnIcon/>&nbsp; Gantt</div>}/>}
-                <Tab className={classes.activityTab}
-                     label={<div className={classes.iconTab}><ListIcon/>&nbsp; List</div>}/>
-              </Tabs>
+            </Grid>
+            <Grid item xs={12}>
+              <Grid container direction={"row"} alignItems={"flex-end"} justify={"flex-end"}>
+                <Grid item xs={11} className={classes.button}>
+                  <Button onClick={() => changeViewMode(0)}
+                          className={viewMode === 0 ? classes.selectedButton : classes.viewButton}>
+                    <SVGInline
+                      className={classes.svg}
+                      svg={svg.iconPhases}/>
+                    Phases
+                  </Button>
+                  <Button onClick={() => changeViewMode(1)}
+                          className={viewMode === 1 ? classes.selectedButton : classes.viewButton}>
+                    <SVGInline
+                      className={classes.svg}
+                      svg={svg.iconTimeline}/>
+                    Timeline
+                  </Button>
+                  <Button onClick={() => changeViewMode(2)}
+                          className={viewMode === 2 ? classes.selectedButton : classes.viewButton}>
+                    <SVGInline
+                      className={classes.svg}
+                      svg={svg.iconList}/>
+                    List
+                  </Button>
+                </Grid>
+              </Grid>
             </Grid>
           </Grid>
-          {viewMode === 0 &&
+          {viewMode === 1 &&
           <Grid container>
             <Gantt
               tasks={data}
@@ -525,13 +536,10 @@ function Timeline(props) {
             />) : null}
 
           </Grid>}
-          {viewMode === 1 &&
-          <ListView rows={type === 'project' ? props.activities : props.activitiesTemplate} addNew={false} type={type}
-                    isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
-                    isChangeManager={isChangeManager} isManager={isManager} isActivityDeliverer={isActivityDeliverer}
-                    project={projects0} projectId={projectId} companyId={currentCompanyId}
-                    template={template} match={match}/>
-          }
+          {viewMode === 2 && <AllUpcomingActivities  match={props.match} allActivities={activities ? activities : activitiesTemplate} allProjects={allProjects.filter(project => project._id === projectId)}
+                                                     type={'activities'}
+                                                     company={company} isAdmin={isAdmin} isChangeManager={isChangeManager}
+                                                     allStakeholders={allStakeholders}/>}
         </Grid>
         <AddEventModal open={showAddEventModal} handleClose={handleCloseAddEventModal}/>
       </main>
@@ -573,6 +581,7 @@ const TimelinePage = withTracker(props => {
     templates: Templates.find({}).fetch(),
     companies: Companies.find({}).fetch(),
     events: ProjectEvents.find({}).fetch(),
+    allProjects: Projects.find({}).fetch(),
     company,
     currentCompany,
     allStakeholders: Peoples.find({}).fetch(),

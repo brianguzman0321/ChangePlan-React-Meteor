@@ -27,6 +27,7 @@ import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 import {CustomStepConnector, CustomStepIcon} from "../../../../utils/CustomStepper";
+import AddBoxRoundedIcon from '@material-ui/icons/AddBoxRounded';
 
 const styles = theme => ({
   root: {
@@ -88,6 +89,11 @@ const useStyles = makeStyles(theme => ({
   },
   stepContentRoot: {
     marginLeft: '19px'
+  },
+  icon: {
+    width: 40,
+    height: 40,
+    color: '#4294db'
   }
 }));
 
@@ -268,9 +274,9 @@ function AddProject(props) {
 
   return (
     <div className={classes.AddNewProject}>
-      <Button variant="contained" color="primary" onClick={handleClickOpen}>
-        Create New Project
-      </Button>
+      <IconButton variant="contained" color="primary" onClick={handleClickOpen}>
+        <AddBoxRoundedIcon className={classes.icon}/>
+      </IconButton>
       <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth="md"
               fullWidth={true}>
         <DialogTitle onClose={handleClose}/>

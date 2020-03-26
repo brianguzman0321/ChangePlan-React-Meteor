@@ -31,38 +31,45 @@ export default config = {
       iconSvg: "<svg width=\"100%\" height=\"100%\" viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <image xlink:href=\"/branding/icon-activities.svg\" x=\"0\" y=\"0\" height=\"100\" width=\"100\" /></svg>",
     },
     {
-      show: true,
-      name: 'Timeline',
-      value: 5,
-      iconSvg: "<svg width=\"100%\" height=\"100%\" viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <image xlink:href=\"/branding/icon-dashboard.svg\" x=\"0\" y=\"0\" height=\"100\" width=\"100\" /></svg>",
-    },
-    {
       name: 'Reports',
       show: true,
-      value: 6,
+      value: 5,
       iconSvg: "<svg width=\"100%\" height=\"100%\" viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <image xlink:href=\"/branding/icon-reports.svg\" x=\"0\" y=\"0\" height=\"100\" width=\"100\" /></svg>",
     }
   ],
   adminMenus: [
     {
       show: true,
-      name: 'All Stakeholders',
+      name: 'Projects',
+      value: 9,
+      iconSvg: "<svg width=\"100%\" height=\"100%\" viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <image xlink:href=\"/branding/icon-dashboard.svg\" x=\"0\" y=\"0\" height=\"100\" width=\"100\" /></svg>",
+    },
+    {
+      show: true,
+      name: 'People',
       value: 7,
       iconSvg: "<svg width=\"100%\" height=\"100%\" viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <image xlink:href=\"/branding/icon-people.svg\" x=\"0\" y=\"0\" height=\"100\" width=\"100\" /></svg>",
     },
     {
-      name: 'All Reports',
+      show: true,
+      name: 'Activities',
+      value: 10,
+      iconSvg: "<svg width=\"100%\" height=\"100%\" viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <image xlink:href=\"/branding/icon-activities.svg\" x=\"0\" y=\"0\" height=\"100\" width=\"100\" /></svg>",
+    },
+    {
+      name: 'Reports',
       show: true,
       value: 8,
       iconSvg: "<svg width=\"100%\" height=\"100%\" viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <image xlink:href=\"/branding/icon-reports.svg\" x=\"0\" y=\"0\" height=\"100\" width=\"100\" /></svg>",
     },
-  ],
-  projectsMenus: [
     {
       show: true,
-      name: 'My projects',
-      value: 0,
+      name: 'Templates',
+      value: 11,
+      iconSvg: "<svg width=\"100%\" height=\"100%\" viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <image xlink:href=\"/branding/icon-dashboard.svg\" x=\"0\" y=\"0\" height=\"100\" width=\"100\" /></svg>",
     },
+  ],
+  projectsMenus: [
     {
       show: true,
       name: 'Company Templates',
@@ -75,11 +82,6 @@ export default config = {
     },
   ],
   adminProjectsMenus: [
-    {
-      show: true,
-      name: 'My projects',
-      value: 0,
-    },
     {
       show: false,
       name: 'Company Templates',

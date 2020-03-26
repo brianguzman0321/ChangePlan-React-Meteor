@@ -20,14 +20,26 @@ import {Templates} from "/imports/api/templates/templates";
 import NewTemplate from './Modals/CreateTemplate';
 import TemplateMenus from './TemplateMenus';
 import {Activities} from "../../../api/activities/activities";
-import {Peoples} from '../../../api/peoples/peoples';
 import ProjectNavBar from "../Projects/ProjectsNavBar";
-import TopNavBar from "../App/App";
-import config from "../../../utils/config";
 import {Projects} from "../../../api/projects/projects";
+import SideMenu from "../App/SideMenu";
 
 
 const useStyles = makeStyles(theme => ({
+  root: {
+    display: 'flex',
+  },
+  toolbar: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: theme.spacing(0, 1),
+    ...theme.mixins.toolbar,
+  },
+  content: {
+    flexGrow: 1,
+    padding: theme.spacing(3),
+  },
   card: {
     minHeight: 192,
     minWidth: 300,
@@ -291,127 +303,111 @@ function TemplateCard(props) {
   };
 
   return (
-    <>
-      <TopNavBar menus={[]} {...props} />
-      <Grid
-        container
-        direction="row"
-        justify="flex-start"
-        alignItems="center"
-        className={classes.gridContainer}
-        spacing={0}
-      >
-        <Grid container className={classes.searchContainer}>
-          <Grid item xs={2}>
-            <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
-              Templates
-            </Typography>
-          </Grid>
-          <Grid item xs={4} className={classes.searchGrid}>
-            <InputBase
-              className={classes.input}
-              inputProps={{'aria-label': 'search by template name'}}
-              onChange={searchFilter}
-              value={search}
-            />
-            <IconButton className={classes.iconButton} aria-label="search">
-              <SearchIcon/>
-            </IconButton>
-          </Grid>
-          <Grid item xs={4} className={(isAdmin || isSuperAdmin) && company ? classes.secondTab : ''}>
-            <NewTemplate {...props} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} selectedTab={selectedTab}
-                         className={classes.createNewTemplate}/>
-            <Typography color="textSecondary" variant="title" className={classes.sortBy}>
-              Sort by
-            </Typography>
-          </Grid>
-          <Grid item xs={2}>
-            <FormControl className={classes.formControl}>
-              <Select
-                value={age}
-                onChange={handleChange}
-                displayEmpty
-                name="age"
-                className={classes.selectEmpty}
-              >
-                <MenuItem value="createdAt">Date Added</MenuItem>
-                <MenuItem value="endingDate">Date Due</MenuItem>
-                <MenuItem value="name">Template Name</MenuItem>
-                <MenuItem value="stakeHolder">Stakeholder Count</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-        </Grid>
-        <Grid container
-              direction="row"
-              justify="flex-start"
-              alignItems="center"
-              className={classes.gridContainer}
-              spacing={0}>
-          <ProjectNavBar {...props} selectedTab={selectedTab} handleChange={changeTab} isSuperAdmin={isSuperAdmin}
-                         isAdmin={isAdmin} isChangeManager={isChangeManager} currentCompanyId={currentCompanyId}/>
-        </Grid>
-        {templates.map((template, index) => {
-          return <Grid item xs spacing={1} key={index} className={classes.grid}>
-            <Card className={classes.card} onClick={(e) => selectTemplate(template)}>
-              <LinearProgress variant="determinate"
-                              value={template.totalActivities && template.totalActivities > 0 ? parseInt((100 * template.completedActivities) / templates.totalActivities) : 0}
-                              color="primary"/>
-              <CardHeader
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                }}
-                action={<TemplateMenus template={template} company={company} isAdmin={isAdmin}
-                                       isSuperAdmin={isSuperAdmin}/>}
-                classes={classes1}
-                style={{cursor: "auto"}}
-                title={templateName(template.name)}
+    <div className={classes.root}>
+      <SideMenu {...props} />
+      <main className={classes.content}>
+        <div className={classes.toolbar}/>
+        <Grid
+          container
+          direction="row"
+          justify="flex-start"
+          alignItems="center"
+          className={classes.gridContainer}
+          spacing={0}
+        >
+          <Grid container className={classes.searchContainer}>
+            <Grid item xs={2}>
+              <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
+                Templates
+              </Typography>
+            </Grid>
+            <Grid item xs={4} className={classes.searchGrid}>
+              <InputBase
+                className={classes.input}
+                inputProps={{'aria-label': 'search by template name'}}
+                onChange={searchFilter}
+                value={search}
               />
-              <CardContent className={classes.cardContent}>
-                <Grid container>
-                  <Grid item xs={4}>
-                    <Typography className={classes.title} gutterBottom>
-                      STAKEHOLDERS
-                    </Typography>
-                    <Typography className={classes.pos} color="textSecondary">
-                      {template.stakeHolders.length}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={4} className={classes.activities}>
-                    <Typography className={classes.title} gutterBottom>
-                      ACTIVITIES
-                    </Typography>
-                    <Typography className={classes.pos} color="textSecondary">
-                      {template.totalActivities}
-                    </Typography>
-                  </Grid>
-
-                </Grid>
-              </CardContent>
-            </Card>
+              <IconButton className={classes.iconButton} aria-label="search">
+                <SearchIcon/>
+              </IconButton>
+            </Grid>
+            <Grid item xs={4} className={(isAdmin || isSuperAdmin) && company ? classes.secondTab : ''}>
+              <NewTemplate {...props} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} selectedTab={selectedTab}
+                           className={classes.createNewTemplate}/>
+            </Grid>
           </Grid>
-        })
-        }
-      </Grid>
-      {!templates.length &&
-      <Grid
-        container
-        direction="row"
-        justify="center"
-        alignItems="center"
-        justify-content="center"
-      >
-        <Grid item xs={12}>
-          <Paper className={classes.noData}>
-            <Typography variant="h5" component="h5" align="center">
-              No Data Found.
-            </Typography>
-          </Paper>
+          <Grid container
+                direction="row"
+                justify="flex-start"
+                alignItems="center"
+                className={classes.gridContainer}
+                spacing={0}>
+            <ProjectNavBar {...props} selectedTab={selectedTab} handleChange={changeTab} isSuperAdmin={isSuperAdmin}
+                           isAdmin={isAdmin} isChangeManager={isChangeManager} currentCompanyId={currentCompanyId}/>
+          </Grid>
+          {templates.map((template, index) => {
+            return <Grid item xs spacing={1} key={index} className={classes.grid}>
+              <Card className={classes.card} onClick={(e) => selectTemplate(template)}>
+                <LinearProgress variant="determinate"
+                                value={template.totalActivities && template.totalActivities > 0 ? parseInt((100 * template.completedActivities) / templates.totalActivities) : 0}
+                                color="primary"/>
+                <CardHeader
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                  }}
+                  action={<TemplateMenus template={template} company={company} isAdmin={isAdmin}
+                                         isSuperAdmin={isSuperAdmin}/>}
+                  classes={classes1}
+                  style={{cursor: "auto"}}
+                  title={templateName(template.name)}
+                />
+                <CardContent className={classes.cardContent}>
+                  <Grid container>
+                    <Grid item xs={4}>
+                      <Typography className={classes.title} gutterBottom>
+                        STAKEHOLDERS
+                      </Typography>
+                      <Typography className={classes.pos} color="textSecondary">
+                        {template.stakeHolders.length}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={4} className={classes.activities}>
+                      <Typography className={classes.title} gutterBottom>
+                        ACTIVITIES
+                      </Typography>
+                      <Typography className={classes.pos} color="textSecondary">
+                        {template.totalActivities}
+                      </Typography>
+                    </Grid>
+
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
+          })
+          }
         </Grid>
-      </Grid>
-      }
-    </>
+        {!templates.length &&
+        <Grid
+          container
+          direction="row"
+          justify="center"
+          alignItems="center"
+          justify-content="center"
+        >
+          <Grid item xs={12}>
+            <Paper className={classes.noData}>
+              <Typography variant="h5" component="h5" align="center">
+                No Data Found.
+              </Typography>
+            </Paper>
+          </Grid>
+        </Grid>
+        }
+      </main>
+    </div>
 
   );
 }

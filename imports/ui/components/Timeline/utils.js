@@ -126,6 +126,32 @@ export const useStyles = makeStyles(theme => ({
   selectEmpty: {
     marginTop: theme.spacing(2),
   },
+  button: {
+    textAlign: "right",
+  },
+  selectedButton: {
+    background: '#ffffff',
+    textTransform: 'none',
+    border: '1px #92a1af solid',
+    borderRadius: 1,
+    width: 100,
+    marginRight: 10,
+    marginTop: 10,
+  },
+  viewButton: {
+    color: '#92a1af',
+    textTransform: 'none',
+    border: '1px #92a1af solid',
+    borderRadius: 1,
+    width: 100,
+    marginRight: 10,
+    marginTop: 10,
+  },
+  svg: {
+    paddingRight: 5,
+    width: 20,
+    height: 20,
+  }
 }));
 
 export function changeManagersNames({changeManagerDetails}) {

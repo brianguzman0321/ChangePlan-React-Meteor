@@ -12,6 +12,12 @@ import {Projects} from "../../../api/projects/projects";
 import {Companies} from "../../../api/companies/companies";
 import {Meteor} from "meteor/meteor";
 import SideMenu from "../App/SideMenu";
+import AddActivities from "./Modals/AddActivities";
+import Button from "@material-ui/core/Button";
+import SVGInline from "react-svg-inline";
+import {svg} from "../../../utils/сonstants";
+import AllUpcomingActivities from "../admin/Reports/AllUpcomingActivities/AllUpcomingActivities";
+import {Peoples} from "../../../api/peoples/peoples";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -88,11 +94,35 @@ const useStyles = makeStyles(theme => ({
   },
   topBar: {
     marginTop: 13,
+  },
+  button: {
+    textAlign: "right",
+  },
+  selectedButton: {
+    background: '#ffffff',
+    textTransform: 'none',
+    border: '1px #92a1af solid',
+    borderRadius: 1,
+    width: 100,
+    marginRight: 10,
+  },
+  viewButton: {
+    color: '#92a1af',
+    textTransform: 'none',
+    border: '1px #92a1af solid',
+    borderRadius: 1,
+    width: 100,
+    marginRight: 10,
+  },
+  svg: {
+    paddingRight: 5,
+    width: 20,
+    height: 20,
   }
 }));
 
 function ActivitiesCard(props) {
-  let {match, project, template, company, currentCompany, activities, activitiesTemplate} = props;
+  let {match, project, template, company, currentCompany, activities, activitiesTemplate, allProjects, allStakeholders} = props;
   let {projectId, templateId} = match.params;
   project = project || {};
   template = template || {};
@@ -105,6 +135,8 @@ function ActivitiesCard(props) {
   const [isActivityDeliverer, setIsActivityDeliverer] = useState(false);
   const [isActivityOwner, setIsActivityOwner] = useState(false);
   const [currentCompanyId, setCompanyId] = useState(null);
+  const [edit, setEdit] = useState(false);
+  const [viewMode, setViewMode] = useState(0);
 
   useEffect(() => {
     checkRoles();
@@ -155,6 +187,13 @@ function ActivitiesCard(props) {
     }
   };
 
+  const changeViewMode = (value) => {
+    if (value === 1) {
+      props.history.push(`/projects/${projectId}/timeline`);
+    }
+    setViewMode(value);
+  };
+
   let menus = config.menus;
   return (
     <div className={classes.root}>
@@ -175,18 +214,54 @@ function ActivitiesCard(props) {
             direction="row"
             justify="space-between"
           >
-            <Grid item xs={3} md={7}>
-              <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
-                Phases
-              </Typography>
+            <Grid item xs={5}>
+              <Grid container direction="row" justify="flex-start" alignItems="center">
+                <Grid item xs={3}>
+                  <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
+                    Activities
+                  </Typography>
+                </Grid>
+                <Grid item xs={5}>
+                  <AddActivities edit={edit} list={false} isOpen={false} project={project} template={template}
+                                 activity={{}} newActivity={() => setEdit(false)}
+                                 type={templateId && 'template' || projectId && 'project'}
+                                 match={match} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}
+                                 isChangeManager={isChangeManager} isManager={isManager}
+                                 isActivityDeliverer={isActivityDeliverer} addNew={true}
+                  />
+                </Grid>
+              </Grid>
             </Grid>
-            <Grid item xs={3} md={2}>
-              {false
-              }
+            <Grid item xs={7}>
+              <Grid container direction={"row"} alignItems={"flex-end"} justify={"flex-end"}>
+                <Grid item xs={11} className={classes.button}>
+                  <Button onClick={() => changeViewMode(0)}
+                          className={viewMode === 0 ? classes.selectedButton : classes.viewButton}>
+                    <SVGInline
+                      className={classes.svg}
+                      svg={svg.iconPhases}/>
+                    Phases
+                  </Button>
+                  <Button onClick={() => changeViewMode(1)}
+                          className={viewMode === 1 ? classes.selectedButton : classes.viewButton}>
+                    <SVGInline
+                      className={classes.svg}
+                      svg={svg.iconTimeline}/>
+                    Timeline
+                  </Button>
+                  <Button onClick={() => changeViewMode(2)}
+                          className={viewMode === 2 ? classes.selectedButton : classes.viewButton}>
+                    <SVGInline
+                      className={classes.svg}
+                      svg={svg.iconList}/>
+                    List
+                  </Button>
+                </Grid>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
-        <Grid
+        {viewMode === 0 && <Grid
           container
           direction="row"
           justify="space-around"
@@ -249,7 +324,11 @@ function ActivitiesCard(props) {
                               isActivityOwner={isActivityOwner}
                               project={project}/>
           </Grid>
-        </Grid>
+        </Grid>}
+        {viewMode === 2 && <AllUpcomingActivities  match={props.match} allActivities={activities ? activities : activitiesTemplate} allProjects={allProjects.filter(project => project._id === projectId)}
+                                                   type={'activities'}
+                                                   company={company} isAdmin={isAdmin} isChangeManager={isChangeManager}
+                                                   allStakeholders={allStakeholders}/>}
       </main>
     </div>
   )
@@ -264,6 +343,7 @@ const ActivitiesPage = withTracker(props => {
   Meteor.subscribe('compoundActivities');
   Meteor.subscribe('compoundActivitiesTemplate');
   Meteor.subscribe('companies');
+  Meteor.subscribe('findAllPeoples');
   let userId = Meteor.userId();
   let currentCompany = {};
   const project = Projects.findOne({_id: projectId});
@@ -278,10 +358,12 @@ const ActivitiesPage = withTracker(props => {
   return {
     activities: Activities.find({projectId: projectId}).fetch(),
     project: project,
+    allProjects: Projects.find({}).fetch(),
     template: Templates.findOne({_id: templateId}),
     activitiesTemplate: Activities.find({templateId: templateId}).fetch(),
     templates: Templates.find({}).fetch(),
     companies: Companies.find({}).fetch(),
+    allStakeholders: Peoples.find({}).fetch(),
     company,
     currentCompany,
   };

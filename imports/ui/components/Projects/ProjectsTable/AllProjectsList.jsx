@@ -55,7 +55,7 @@ const useStyles = makeStyles(theme => ({
     background: 'red'
   },
   paper: {
-    width: '100%',
+    width: '90vw',
   },
   table: {
     minWidth: 650,
