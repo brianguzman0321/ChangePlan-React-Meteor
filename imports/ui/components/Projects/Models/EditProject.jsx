@@ -23,11 +23,12 @@ import AutoComplete from '/imports/ui/components/utilityComponents/AutoCompleteI
 import {withRouter} from 'react-router'
 import SaveChanges from "../../Modals/SaveChanges";
 import FormControl from "@material-ui/core/FormControl";
-import {InputLabel, Select, Step, StepContent, StepLabel, Stepper} from "@material-ui/core";
+import {InputLabel, Select, Step, StepContent, StepLabel, Stepper, Typography} from "@material-ui/core";
 import MenuItem from "@material-ui/core/MenuItem";
 import {CustomStepConnector, CustomStepIcon} from "../../../../utils/CustomStepper";
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 import AddNewPerson from "../../Activities/Modals/AddNewPerson";
+import Slider from "@material-ui/core/Slider";
 
 const styles = theme => ({
   root: {
@@ -125,6 +126,9 @@ const useStyles = makeStyles(theme => ({
   stepContentRoot: {
     marginLeft: '19px'
   },
+  sliderContainer: {
+    padding: '30px 0px 0px 0px'
+  },
 }));
 
 const DialogTitle = withStyles(styles)(props => {
@@ -180,6 +184,8 @@ function AddActivity(props) {
   const [func, setFunc] = React.useState(project.function);
   const [organization, setOrganization] = React.useState(project.organization);
   const [isDone, setIsDone] = React.useState([]);
+  const [adoptionTarget, setAdoptionTarget] = React.useState(project.adoptionTarget);
+  const [resistanceTarget, setResistanceTarget] = React.useState(project.resistanceTarget);
 
   const modalName = 'edit';
   let {projectId} = match.params;
@@ -201,6 +207,8 @@ function AddActivity(props) {
     setStatus(project.status);
     setOrganization(project.organization);
     setFunc(project.function);
+    setAdoptionTarget(project.adoptionTarget);
+    setResistanceTarget(project.resistanceTarget);
   };
 
   const resetValues = () => {
@@ -211,6 +219,8 @@ function AddActivity(props) {
     setOrganization('');
     setFunc('');
     setIsDone([]);
+    setAdoptionTarget(0);
+    setResistanceTarget('None');
   };
 
 
@@ -239,7 +249,9 @@ function AddActivity(props) {
         endingDate: dueDate,
         organization: organization,
         function: func,
-        managers: person && person.map(p => p.value) || []
+        managers: person && person.map(p => p.value) || [],
+        adoptionTarget: adoptionTarget,
+        resistanceTarget: resistanceTarget,
       }
     };
     Meteor.call('projects.update', params, (err, res) => {
@@ -247,7 +259,7 @@ function AddActivity(props) {
         props.enqueueSnackbar(err.reason, {variant: 'error'});
       } else {
         resetValues();
-        props.enqueueSnackbar('Project Updated Successfully.', {variant: 'success'})
+        props.enqueueSnackbar('Project Updated Successfully.', {variant: 'success'});
         handleClose();
       }
     })
@@ -417,6 +429,27 @@ function AddActivity(props) {
                             )}
                           </Select>
                         </FormControl>
+                      </Grid>}
+
+                      {isAdmin && <Grid item xs={12} className={classes.sliderContainer}>
+                        <Grid container direction="row" justify="space-between" alignItems="center">
+                          <Grid item xs={5}>
+                            <Typography gutterBottom>Adoption</Typography>
+                            <Slider marks step={5} min={0} max={100} value={adoptionTarget} valueLabelDisplay="auto"
+                                    onChange={(e, newValue) => setAdoptionTarget(newValue)}/>
+                          </Grid>
+                          <Grid item xs={6}>
+                            <FormControl fullWidth={true}>
+                              <InputLabel id={'select-project-resistance'}>Resistance</InputLabel>
+                              <Select id={'select-project-resistance'} value={resistanceTarget} onChange={(e) => setResistanceTarget(e.target.value)}>
+                                {['None', 'Low', 'Moderate', 'High', 'Extreme'].map(resistance => {
+                                    return <MenuItem value={resistance}>{resistance}</MenuItem>
+                                  }
+                                )}
+                              </Select>
+                            </FormControl>
+                          </Grid>
+                        </Grid>
                       </Grid>}
 
                     </Grid>

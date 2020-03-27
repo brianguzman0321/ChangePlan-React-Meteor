@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Grid from "@material-ui/core/Grid/Grid";
 import Typography from "@material-ui/core/Typography/Typography";
 import Button from "@material-ui/core/Button/Button";
-import {makeStyles} from "@material-ui/core";
+import {InputLabel, makeStyles, Select} from "@material-ui/core";
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import {withTracker} from "meteor/react-meteor-data";
@@ -30,6 +30,9 @@ import {getTotalStakeholders} from '/imports/utils/utils';
 import {changeManagersNames} from "../../../utils/utils";
 import Chip from "@material-ui/core/Chip";
 import SideMenu from "../App/SideMenu";
+import Slider from "@material-ui/core/Slider";
+import FormControl from "@material-ui/core/FormControl";
+import MenuItem from "@material-ui/core/MenuItem";
 
 
 const useStyles = makeStyles(theme => ({
@@ -170,6 +173,8 @@ function Dashboard(props) {
   const [deleteValue, setDeleteValue] = React.useState('');
   const [vision, setVision] = React.useState(project.vision || template.vision || []);
   const [objectives, setObjective] = React.useState(project.objectives || template.objectives || []);
+  const [adoptionReported, setAdoptionReported] = React.useState(0);
+  const [resistanceReported, setResistanceReported] = React.useState('None');
   const [benefits, setBenefits] = React.useState([]);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -179,6 +184,7 @@ function Dashboard(props) {
   const [currentCompanyId, setCompanyId] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isManager, setIsManager] = useState(false);
+  const timer = useRef(null);
   const [modals, setModals] = React.useState({
     vision: false,
     delete: false,
@@ -237,6 +243,53 @@ function Dashboard(props) {
     }
   };
 
+  useEffect(() => {
+    if (adoptionReported && (adoptionReported !== project.adoptionReported)) {
+      if (timer.current) {
+        clearTimeout(timer.current);
+      }
+      timer.current = setTimeout(() => {
+        timer.current = null;
+        updateAdoptionValue();
+      }, 500);
+    }
+  }, [adoptionReported]);
+
+  const handleMouseDown = () => {
+    if (timer.current) {
+      clearTimeout(timer.current);
+    }
+  };
+
+  const updateAdoptionValue = () => {
+    let params = {
+      project: {
+        _id: project._id,
+        adoptionReported: adoptionReported,
+      }
+    };
+    Meteor.call('projects.update', params, (err) => {
+      if (err) {
+        props.enqueueSnackbar(err.reason, {variant: 'error'});
+      }
+    })
+  };
+
+  const updateResistanceValue = (resistance) => {
+    setResistanceReported(resistance);
+    let params = {
+      project: {
+        _id: project._id,
+        resistanceReported: resistance,
+      }
+    };
+    Meteor.call('projects.update', params, (err) => {
+      if (err) {
+        props.enqueueSnackbar(err.reason, {variant: 'error'});
+      }
+    })
+  };
+
   const handleModalClose = obj => {
     setModals({modals, ...obj});
     setIndex('');
@@ -253,6 +306,16 @@ function Dashboard(props) {
     }
     if (project && project.benefits) {
       setBenefits(project.benefits)
+    }
+    if (project && project.adoptionTarget && !project.adoptionReported) {
+      setAdoptionReported(project.adoptionTarget);
+    } else if (project && project.adoptionReported) {
+      setAdoptionReported(project.adoptionReported);
+    }
+    if (project && project.resistanceTarget && !project.resistanceReported) {
+      setResistanceReported(project.resistanceTarget);
+    } else if (project && project.resistanceReported) {
+      setResistanceReported(project.resistanceReported);
     }
   };
 
@@ -314,7 +377,7 @@ function Dashboard(props) {
       updateValues(currentProject)
     } else if (currentTemplate) {
       setTemplate(currentTemplate);
-      updateValues(currentTemplate)
+      updateValues(currentTemplate);
     }
   }, [currentProject, currentTemplate]);
 
@@ -386,6 +449,30 @@ function Dashboard(props) {
                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                   <b>Due date:</b> {moment(project.endingDate).format('DD-MMM-YY')}
                 </Typography>
+
+                <Grid item xs={12}>
+                  {isChangeManager && <Grid container direction="row" justify="space-between" alignItems="center">
+                    <Grid item xs={6}>
+                      <Typography gutterBottom>Adoption</Typography>
+                      <Slider marks step={5} min={0} max={100} value={adoptionReported} valueLabelDisplay="auto"
+                              onChange={(e, newValue) => setAdoptionReported(newValue)}
+                              onMouseDown={handleMouseDown}/>
+                    </Grid>
+                    <Grid item xs={1}/>
+                    <Grid item xs={6}>
+                      <FormControl fullWidth={true}>
+                        <InputLabel id={'select-project-resistance'}>Resistance</InputLabel>
+                        <Select id={'select-project-resistance'} value={resistanceReported}
+                                onChange={(e) => updateResistanceValue(e.target.value)}>
+                          {['None', 'Low', 'Moderate', 'High', 'Extreme'].map(resistance => {
+                              return <MenuItem value={resistance}>{resistance}</MenuItem>
+                            }
+                          )}
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                  </Grid>}
+                </Grid>
               </Grid>
               }
             </Grid>

@@ -213,15 +213,13 @@ function ActivitiesCard(props) {
             className={classes.topBar}
             direction="row"
             justify="space-between"
+            alignItems="center"
           >
             <Grid item xs={5}>
               <Grid container direction="row" justify="flex-start" alignItems="center">
-                <Grid item xs={3}>
                   <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
                     Activities
                   </Typography>
-                </Grid>
-                <Grid item xs={5}>
                   <AddActivities edit={edit} list={false} isOpen={false} project={project} template={template}
                                  activity={{}} newActivity={() => setEdit(false)}
                                  type={templateId && 'template' || projectId && 'project'}
@@ -229,7 +227,6 @@ function ActivitiesCard(props) {
                                  isChangeManager={isChangeManager} isManager={isManager}
                                  isActivityDeliverer={isActivityDeliverer} addNew={true}
                   />
-                </Grid>
               </Grid>
             </Grid>
             <Grid item xs={7}>

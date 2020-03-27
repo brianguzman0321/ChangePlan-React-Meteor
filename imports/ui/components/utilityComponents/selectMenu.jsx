@@ -8,6 +8,7 @@ import {withTracker} from "meteor/react-meteor-data";
 import {withRouter, generatePath} from 'react-router';
 import {Activities} from "../../../api/activities/activities";
 import {Meteor} from "meteor/meteor";
+import InputLabel from "@material-ui/core/InputLabel";
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -38,6 +39,14 @@ const useStyles = makeStyles(theme => ({
     color: '#f5f5f5',
     borderRadius: '4px',
     height: '46px',
+  },
+  label: {
+    color: '#8696a4',
+    textAlign: 'center',
+    zIndex: 1,
+    fontWeight: 500,
+    paddingLeft: 34,
+    marginTop: -6,
   }
 }));
 
@@ -105,7 +114,11 @@ function ProjectSelectMenu(props) {
     updateFilter(props.localCollection, props.id, event.target.value);
     projectId = event.target.value;
     const path = generatePath(props.match.path, {projectId});
-    props.history.replace(path);
+    if (path === '/') {
+      props.history.push(`/projects/${projectId}`)
+    } else {
+      props.history.replace(path);
+    }
   }
 
   function handleClose() {
@@ -134,6 +147,7 @@ function ProjectSelectMenu(props) {
   return (
     <form autoComplete="off" style={{marginLeft: 23, flexGrow: 1, fontWeight: 'bold'}}>
       <FormControl className={classes.formControl} fullWidth>
+        {!age && !open && <InputLabel htmlFor="select-project" className={classes.label}>Select project</InputLabel>}
         <Select
           open={open}
           onClose={handleClose}
@@ -145,7 +159,7 @@ function ProjectSelectMenu(props) {
           className={classes.select}
           inputProps={{
             name: 'age',
-            id: 'demo-controlled-open-select',
+            id: 'select-project',
           }}
         >
           {projectsMenu && projectsMenu.map((entity) => {
