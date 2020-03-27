@@ -11,13 +11,13 @@ import moment from "moment";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    width: '93vw',
+    width: '100%',
   },
   head: {
     background: 'red'
   },
   paper: {
-    width: '90vw',
+    width: '92vw',
     marginBottom: theme.spacing(2),
   },
   table: {

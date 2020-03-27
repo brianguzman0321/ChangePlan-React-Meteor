@@ -22,12 +22,13 @@ import AutoComplete from '/imports/ui/components/utilityComponents/AutoCompleteI
 import {withRouter} from 'react-router'
 import AddNewPerson from "../../Activities/Modals/AddNewPerson";
 import FormControl from "@material-ui/core/FormControl";
-import {InputLabel, Step, StepContent, StepLabel, Stepper} from "@material-ui/core";
+import {InputLabel, Step, StepContent, StepLabel, Stepper, Typography} from "@material-ui/core";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 import {CustomStepConnector, CustomStepIcon} from "../../../../utils/CustomStepper";
 import AddBoxRoundedIcon from '@material-ui/icons/AddBoxRounded';
+import Slider from "@material-ui/core/Slider";
 
 const styles = theme => ({
   root: {
@@ -83,6 +84,9 @@ const useStyles = makeStyles(theme => ({
   container: {
     padding: '0px 20px 20px 20px'
   },
+  sliderContainer: {
+    padding: '30px 0px 0px 0px'
+  },
   stepLabelMain: {
     padding: '0px 12px 0px 12px',
     fontSize: '26px'
@@ -125,7 +129,7 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 function AddProject(props) {
-  let {company, companies, allCompany, isSuperAdmin} = props;
+  let {company, companies, allCompany, isSuperAdmin, isAdmin} = props;
   const [open, setOpen] = React.useState(false);
   const [isNew, setIsNew] = React.useState(false);
   const [users, setUsers] = React.useState([]);
@@ -137,6 +141,8 @@ function AddProject(props) {
   const [func, setFunc] = React.useState('');
   const [isDone, setIsDone] = React.useState([]);
   const [currentCompany, setCurrentCompany] = React.useState({});
+  const [adoptionTarget, setAdoptionTarget] = React.useState(0);
+  const [resistanceTarget, setResistanceTarget] = React.useState('None');
 
   const classes = useStyles();
 
@@ -150,6 +156,8 @@ function AddProject(props) {
     setOrganization('');
     setFunc('');
     setIsDone([]);
+    setResistanceTarget('None');
+    setAdoptionTarget(0);
   };
 
   useEffect(() => {
@@ -182,6 +190,10 @@ function AddProject(props) {
         managers: person && person.map(p => p.value) || []
       }
     };
+    if (isAdmin) {
+      params.project.adoptionTarget =  adoptionTarget;
+      params.project.resistanceTarget = resistanceTarget;
+    }
     Meteor.call('projects.insert', params, (err, res) => {
       if (err) {
         props.enqueueSnackbar(err.reason, {variant: 'error'})
@@ -305,8 +317,8 @@ function AddProject(props) {
                       </Grid>
                       {company && company.organizationField && <Grid item xs={5}>
                         <FormControl fullWidth={true}>
-                          <InputLabel id={'select-project-status'}>Organization</InputLabel>
-                          <Select id={'select-project-status'} value={organization}
+                          <InputLabel id={'select-project-organization'}>Organization</InputLabel>
+                          <Select id={'select-project-organization'} value={organization}
                                   onChange={(e) => setOrganization(e.target.value)}>
                             {company.organization.map(organization => {
                                 return <MenuItem
@@ -318,14 +330,35 @@ function AddProject(props) {
                       </Grid>}
                       {company && company.functionField && <Grid item xs={6}>
                         <FormControl fullWidth={true}>
-                          <InputLabel id={'select-project-status'}>Function</InputLabel>
-                          <Select id={'select-project-status'} value={func} onChange={(e) => setFunc(e.target.value)}>
+                          <InputLabel id={'select-project-function'}>Function</InputLabel>
+                          <Select id={'select-project-function'} value={func} onChange={(e) => setFunc(e.target.value)}>
                             {company.function.map(func => {
                                 return <MenuItem value={func}>{func[0].toUpperCase() + func.slice(1)}</MenuItem>
                               }
                             )}
                           </Select>
                         </FormControl>
+                      </Grid>}
+
+                      {isAdmin && <Grid item xs={12} className={classes.sliderContainer}>
+                        <Grid container direction="row" justify="space-between" alignItems="center">
+                          <Grid item xs={5}>
+                            <Typography gutterBottom>Adoption</Typography>
+                            <Slider marks step={5} min={0} max={100} value={adoptionTarget} valueLabelDisplay="auto"
+                                    onChange={(e, newValue) => setAdoptionTarget(newValue)}/>
+                          </Grid>
+                          <Grid item xs={6}>
+                            <FormControl fullWidth={true}>
+                              <InputLabel id={'select-project-resistance'}>Resistance</InputLabel>
+                              <Select id={'select-project-resistance'} value={resistanceTarget} onChange={(e) => setResistanceTarget(e.target.value)}>
+                                {['None', 'Low', 'Moderate', 'High', 'Extreme'].map(resistance => {
+                                    return <MenuItem value={resistance}>{resistance}</MenuItem>
+                                  }
+                                )}
+                              </Select>
+                            </FormControl>
+                          </Grid>
+                        </Grid>
                       </Grid>}
 
                       {isSuperAdmin && <Grid item xs={6}>

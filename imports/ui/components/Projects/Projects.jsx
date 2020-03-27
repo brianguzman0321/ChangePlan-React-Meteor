@@ -411,15 +411,11 @@ function ProjectCard(props) {
                 justify="space-between">
             <Grid item xs={3}>
               <Grid container direction="row" justify="flex-start" alignItems="center">
-                <Grid item xs={5}>
-                  <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
-                    Projects
-                  </Typography>
-                </Grid>
-                <Grid item xs={7}>
-                  {(isAdmin || isSuperAdmin || isChangeManager) &&
-                  <NewProject {...props} className={classes.createNewProject} isSuperAdmin={isSuperAdmin}/>}
-                </Grid>
+                <Typography color="textSecondary" variant="h4" className={classes.topHeading}>
+                  Projects
+                </Typography>
+                {(isAdmin || isSuperAdmin || isChangeManager) &&
+                <NewProject {...props} className={classes.createNewProject} isSuperAdmin={isSuperAdmin} isAdmin={isAdmin}/>}
               </Grid>
             </Grid>
             <Grid item xs={5}>

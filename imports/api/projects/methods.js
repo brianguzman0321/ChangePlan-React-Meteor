@@ -134,6 +134,22 @@ export const insert = new ValidatedMethod({
       type: String,
       optional: true,
     },
+    'project.adoptionTarget': {
+      type: Number,
+      optional: true,
+    },
+    'project.adoptionReported': {
+      type: Number,
+      optional: true,
+    },
+    'project.resistanceTarget': {
+      type: String,
+      optional: true,
+    },
+    'project.resistanceReported': {
+      type: String,
+      optional: true,
+    },
   }).validator(),
   run({project}) {
     if (!project.owner) {
@@ -162,36 +178,44 @@ export const update = new ValidatedMethod({
     },
     'project.owner': {
       type: String,
+      optional: true,
     },
     'project.name': {
       type: String,
+      optional: true,
     },
     'project.companyId': {
       type: String,
+      optional: true,
     },
     'project.status': {
       type: String,
+      optional: true,
     },
     'project.peoples': {
       type: Array,
+      optional: true,
     },
     'project.peoples.$': {
       type: String
     },
     'project.stakeHolders': {
       type: Array,
+      optional: true,
     },
     'project.stakeHolders.$': {
       type: String
     },
     'project.managers': {
       type: Array,
+      optional: true,
     },
     'project.managers.$': {
       type: String
     },
     'project.changeManagers': {
       type: Array,
+      optional: true,
     },
     'project.changeManagers.$': {
       type: String
@@ -249,12 +273,15 @@ export const update = new ValidatedMethod({
     },
     'project.startingDate': {
       type: Date,
+      optional: true,
     },
     'project.peopleCount': {
       type: Number,
+      optional: true,
     },
     'project.endingDate': {
       type: Date,
+      optional: true,
     },
     'project.organization': {
       type: String,
@@ -271,6 +298,22 @@ export const update = new ValidatedMethod({
     'project.updatedAt': {
       type: Date,
       optional: true
+    },
+    'project.adoptionTarget': {
+      type: Number,
+      optional: true,
+    },
+    'project.adoptionReported': {
+      type: Number,
+      optional: true,
+    },
+    'project.resistanceTarget': {
+      type: String,
+      optional: true,
+    },
+    'project.resistanceReported': {
+      type: String,
+      optional: true,
     },
   }).validator(),
   run({project}) {

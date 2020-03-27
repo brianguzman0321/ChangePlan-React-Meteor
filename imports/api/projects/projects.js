@@ -146,6 +146,26 @@ Projects.schema = new SimpleSchema({
     label: 'Project Function',
     optional: true,
   },
+  adoptionTarget: {
+    type: Number,
+    label: 'Project adoption which admin sets',
+    optional: true,
+  },
+  adoptionReported: {
+    type: Number,
+    label: 'Project adoption which change manager sets',
+    optional: true,
+  },
+  resistanceTarget: {
+    type: String,
+    label: 'Project Resistance which admin sets',
+    optional: true,
+  },
+  resistanceReported: {
+    type: String,
+    label: 'Project Resistance which change manager sets',
+    optional: true,
+  },
   createdAt: {
     type: Date,
     label: 'Created At Company',

@@ -295,9 +295,10 @@ function Timeline(props) {
             container
             className={classes.topBar}
             direction="row"
-            justify="space-between"
+            justify="flex-start"
+            alignItems="center"
           >
-            <Grid item className={classes.flexBox}>
+            {viewMode === 1 && <Grid item xs={6} className={classes.flexBox}>
               <Typography color="textSecondary" variant="h4" className={classes.topHeading} display="inline">
                 Timeline
               </Typography>
@@ -325,10 +326,44 @@ function Timeline(props) {
                   Add Project Event
                 </Button>
               </Grid>
+            </Grid>}
+            {viewMode === 2 &&
+            <Grid item xs={6} className={classes.flexBox}>
+              <Typography color="textSecondary" variant="h4" className={classes.topHeading} display="inline">
+                Activities
+              </Typography>
+            </Grid>}
+
+            <Grid item xs={6} className={classes.containerButton}>
+              <Grid container direction={"row"} alignItems={"center"} justify={"flex-end"}>
+                <Grid item xs={8} className={classes.button}>
+                  <Button onClick={() => changeViewMode(0)}
+                          className={viewMode === 0 ? classes.selectedButton : classes.viewButton}>
+                    <SVGInline
+                      className={classes.svg}
+                      svg={svg.iconPhases}/>
+                    Phases
+                  </Button>
+                  <Button onClick={() => changeViewMode(1)}
+                          className={viewMode === 1 ? classes.selectedButton : classes.viewButton}>
+                    <SVGInline
+                      className={classes.svg}
+                      svg={svg.iconTimeline}/>
+                    Timeline
+                  </Button>
+                  <Button onClick={() => changeViewMode(2)}
+                          className={viewMode === 2 ? classes.selectedButton : classes.viewButton}>
+                    <SVGInline
+                      className={classes.svg}
+                      svg={svg.iconList}/>
+                    List
+                  </Button>
+                </Grid>
+              </Grid>
             </Grid>
 
-            <Grid className={classes.flexBox}>
-              <Grid className={classes.flexBox}>
+            {viewMode === 1 && <Grid item xs={12} className={classes.container}>
+              <Grid container direction="row" justify="flex-end" alignItems="" className={classes.flexBox}>
                 <Button
                   color="primary"
                   onClick={() => setIsImporting(true)}
@@ -361,34 +396,7 @@ function Timeline(props) {
                   )}
                 </Tabs>
               </Grid>
-            </Grid>
-            <Grid item xs={12}>
-              <Grid container direction={"row"} alignItems={"flex-end"} justify={"flex-end"}>
-                <Grid item xs={11} className={classes.button}>
-                  <Button onClick={() => changeViewMode(0)}
-                          className={viewMode === 0 ? classes.selectedButton : classes.viewButton}>
-                    <SVGInline
-                      className={classes.svg}
-                      svg={svg.iconPhases}/>
-                    Phases
-                  </Button>
-                  <Button onClick={() => changeViewMode(1)}
-                          className={viewMode === 1 ? classes.selectedButton : classes.viewButton}>
-                    <SVGInline
-                      className={classes.svg}
-                      svg={svg.iconTimeline}/>
-                    Timeline
-                  </Button>
-                  <Button onClick={() => changeViewMode(2)}
-                          className={viewMode === 2 ? classes.selectedButton : classes.viewButton}>
-                    <SVGInline
-                      className={classes.svg}
-                      svg={svg.iconList}/>
-                    List
-                  </Button>
-                </Grid>
-              </Grid>
-            </Grid>
+            </Grid>}
           </Grid>
           {viewMode === 1 &&
           <Grid container>

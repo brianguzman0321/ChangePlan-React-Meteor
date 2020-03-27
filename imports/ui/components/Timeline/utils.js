@@ -80,6 +80,13 @@ export const useStyles = makeStyles(theme => ({
   flexBox: {
     display: "flex",
   },
+  container: {
+    display: "flex",
+    paddingRight: 10,
+  },
+  containerButton: {
+    paddingBottom: 10,
+  },
   sampleCsv: {
     textDecoration: 'none',
     color: '#303f9f',
