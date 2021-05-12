@@ -13,7 +13,7 @@
     "@material-ui/icons": "^4.4.1",
     "@material-ui/pickers": "^3.2.6",
     "bcrypt": "^3.0.6",
-    "chart.js": "^2.9.3",
+    "chart.js": "^2.9.4",
     "chartjs-plugin-annotation": "^0.5.7",
     "chartjs-plugin-datalabels": "^0.7.0",
     "material-table": "^1.57.2",
